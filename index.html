@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reg Mitra — Regulatory Intelligence for CA Firms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-main: #fafbfc;
+            --bg-white: #ffffff;
+            --bg-sidebar: #1a1f36;
+            --bg-sidebar-hover: #252b45;
+            --bg-sidebar-active: #2d3555;
+            --accent: #4f46e5;
+            --accent-light: #6366f1;
+            --accent-bg: #eef2ff;
+            --text-dark: #111827;
+            --text-mid: #4b5563;
+            --text-light: #9ca3af;
+            --text-sidebar: #a1a8c2;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --success: #059669;
+            --success-bg: #ecfdf5;
+            --warning: #d97706;
+            --warning-bg: #fffbeb;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+            --info: #2563eb;
+            --info-bg: #eff6ff;
+            --purple: #7c3aed;
+            --purple-bg: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.05);
+            --radius: 10px;
+            --radius-lg: 14px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        *, *::before, *::after { transition-property: none; }
+        html { scroll-behavior: smooth; }
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+        .app { display: flex; height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .sidebar-brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+        }
+
+        .sidebar-brand p {
+            font-size: 11px;
+            color: var(--text-sidebar);
+            margin-top: 3px;
+            font-weight: 400;
+        }
+
+        .sidebar-nav {
+            padding: 12px 10px;
+            flex: 1;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.3);
+            padding: 16px 12px 6px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 450;
+            color: var(--text-sidebar);
+            transition: all 0.12s;
+            margin-bottom: 2px;
+        }
+
+        .nav-btn:hover { background: var(--bg-sidebar-hover); color: #e2e5f0; transform: translateX(2px); }
+        .nav-btn.active { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; font-weight: 500; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35); }
+
+        .nav-btn svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            opacity: 0.7;
+        }
+
+        .nav-btn.active svg { opacity: 1; }
+
+        .nav-badge {
+            margin-left: auto;
+            background: rgba(239, 68, 68, 0.9);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 8px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .sidebar-footer .firm-name {
+            font-size: 12px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .sidebar-footer .firm-loc {
+            font-size: 11px;
+            color: var(--text-sidebar);
+            margin-top: 2px;
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 16px 28px;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .header-search {
+            margin-left: auto;
+            position: relative;
+        }
+
+        .header-search input {
+            width: 280px;
+            padding: 8px 14px 8px 36px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            background: var(--bg-main);
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .header-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08); }
+
+        .header-search svg {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-light);
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 28px;
+        }
+
+        /* Screens */
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeUp 0.2s ease; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .stat-box .label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-box .value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 4px;
+        }
+
+        .stat-box .sub {
+            font-size: 11px;
+            color: var(--success);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .stat-box .sub.warn { color: var(--danger); }
+
+        /* Filter bar */
+        .filters {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+        .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25); }
+
+        .filter-count {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Reg Cards */
+        .reg-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .reg-card:hover {
+            box-shadow: 0 8px 25px -5px rgba(79, 70, 229, 0.1), 0 4px 10px -4px rgba(79, 70, 229, 0.06);
+            border-color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .reg-card-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .tag {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .tag-gst { background: var(--info-bg); color: var(--info); }
+        .tag-mca { background: var(--purple-bg); color: var(--purple); }
+        .tag-fssai { background: var(--success-bg); color: var(--success); }
+        .tag-rbi { background: var(--warning-bg); color: var(--warning); }
+        .tag-labour { background: var(--danger-bg); color: var(--danger); }
+        .tag-cbdt { background: #fdf2f8; color: #be185d; }
+
+        .priority {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-left: auto;
+        }
+
+        .priority-high { background: var(--danger-bg); color: var(--danger); }
+        .priority-med { background: var(--warning-bg); color: var(--warning); }
+        .priority-low { background: var(--success-bg); color: var(--success); }
+
+        .reg-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+
+        .reg-card-meta {
+            font-size: 12px;
+            color: var(--text-light);
+            display: flex;
+            gap: 14px;
+        }
+
+        .reg-card-summary {
+            font-size: 13px;
+            color: var(--text-mid);
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .reg-card-bottom {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .affected-text {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent);
+        }
+
+        .client-pills {
+            display: flex;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .client-pill {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: var(--accent-bg);
+            color: var(--accent);
+        }
+
+        /* Detail Modal */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1000;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+
+        .modal-bg.open { display: flex; animation: fadeUp 0.15s ease; }
+
+        .modal {
+            background: var(--bg-white);
+            border-radius: 16px;
+            width: 820px;
+            max-width: 100%;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .modal-header-content { flex: 1; }
+
+        .modal-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .modal-header .meta {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 6px;
+            display: flex;
+            gap: 14px;
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-mid);
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover { background: var(--border); transform: scale(1.05); }
+        .modal-close:active { transform: scale(0.95); }
+
+        .modal-body { padding: 24px 28px; }
+
+        .modal-section {
+            margin-bottom: 24px;
+        }
+
+        .modal-section h3 {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .modal-section p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-mid);
+        }
+
+        /* Impact table */
+        .impact-tbl {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .impact-tbl th {
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-light);
+            padding: 8px 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .impact-tbl td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-mid);
+            vertical-align: top;
+        }
+
+        .impact-tbl tr:hover td { background: var(--bg-main); }
+
+        .impact-tbl .client-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .client-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .status-chip {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .chip-affected { background: var(--danger-bg); color: var(--danger); }
+        .chip-safe { background: var(--success-bg); color: var(--success); }
+        .chip-action { background: var(--warning-bg); color: var(--warning); }
+
+        /* Briefing */
+        .briefing-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 12px;
+        }
+
+        .briefing-box-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .briefing-firm-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .draft-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .briefing-text {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-mid);
+        }
+
+        .briefing-text strong { color: var(--text-dark); }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.12s;
+            font-family: inherit;
+        }
+
+        .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25); }
+        .btn-primary:hover { box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35); transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); box-shadow: 0 1px 3px rgba(79, 70, 229, 0.3); }
+        .btn-outline { background: var(--bg-white); color: var(--text-mid); border: 1px solid var(--border); }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+
+        /* Client cards */
+        .client-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .client-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .client-card:hover { box-shadow: 0 8px 25px -5px rgba(79, 70, 229, 0.1), 0 4px 10px -4px rgba(79, 70, 229, 0.06); border-color: var(--accent-light); transform: translateY(-2px); }
+
+        .client-card-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .client-card-top .av {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .client-card-top .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .client-card-top .sector {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .client-card-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric .num {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .metric .lbl {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* Calendar */
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 24px;
+        }
+
+        .cal-hdr {
+            padding: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .cal-day {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 6px;
+            min-height: 72px;
+        }
+
+        .cal-day .d {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+
+        .cal-day.today { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15); }
+        .cal-day.today .d { color: var(--accent); font-weight: 700; }
+        @keyframes pulse-subtle { 0%,100% { box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15); } 50% { box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08); } }
+        .cal-day.today { animation: pulse-subtle 3s ease infinite; }
+
+        .cal-evt {
+            font-size: 9px;
+            font-weight: 500;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: opacity 0.1s;
+        }
+
+        .cal-evt:hover { opacity: 0.7; }
+
+        .evt-deadline { background: var(--danger-bg); color: var(--danger); }
+        .evt-filing { background: var(--info-bg); color: var(--info); }
+        .evt-compliance { background: var(--purple-bg); color: var(--purple); }
+
+        .cal-day:has(.cal-evt) { cursor: pointer; }
+        .cal-day:has(.cal-evt):hover { border-color: var(--accent); background: var(--accent-bg); }
+
+        /* Calendar detail popup */
+        .cal-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            width: 480px;
+            box-shadow: var(--shadow-xl);
+            z-index: 1100;
+        }
+
+        .cal-popup.open { display: block; animation: fadeUp 0.15s ease; }
+
+        .cal-popup-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1050;
+        }
+
+        .cal-popup-overlay.open { display: block; }
+
+        .cal-popup h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cal-popup .popup-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 14px;
+        }
+
+        .cal-popup .popup-body {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-mid);
+            margin-bottom: 16px;
+        }
+
+        .cal-popup .popup-clients {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .cal-popup .popup-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-mid);
+        }
+
+        /* Clickable stat boxes */
+        .stat-box.clickable { cursor: pointer; transition: all 0.15s; }
+        .stat-box.clickable:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+        /* Dashboard filters */
+        .dash-filters { display: flex; gap: 4px; }
+        .dash-filter {
+            font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 14px;
+            cursor: pointer; background: var(--bg-main); color: var(--text-mid); border: 1px solid var(--border);
+            transition: all 0.12s;
+        }
+        .dash-filter:hover { border-color: var(--accent); color: var(--accent); }
+        .dash-filter.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* Client detail modal */
+        .client-modal-bg {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .client-modal-bg.open { display: flex; animation: fadeUp 0.15s ease; }
+        .client-modal {
+            background: var(--bg-white); border-radius: var(--radius-lg); padding: 28px;
+            width: 600px; max-height: 85vh; overflow-y: auto; position: relative;
+            box-shadow: var(--shadow-xl);
+        }
+        .client-modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+        .client-modal .cm-sector { font-size: 12px; color: var(--text-light); margin-bottom: 18px; }
+        .client-modal .cm-section { margin-bottom: 18px; }
+        .client-modal .cm-section-title { font-size: 12px; font-weight: 600; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border-light); }
+        .cm-reg-item { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; }
+        .cm-reg-item .cm-title { font-size: 13px; font-weight: 500; color: var(--text-dark); }
+        .cm-reg-item .cm-meta { font-size: 11px; color: var(--text-light); margin-top: 3px; display: flex; gap: 12px; }
+        .cm-stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 18px; }
+        .cm-stat { text-align: center; padding: 10px; background: var(--bg-main); border-radius: 8px; }
+        .cm-stat .num { font-size: 20px; font-weight: 700; }
+        .cm-stat .lbl { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+
+        /* Chat */
+        .chat-wrap {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 130px);
+        }
+
+        .chat-msgs {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+
+        .msg {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            max-width: 680px;
+        }
+
+        .msg.user { margin-left: auto; flex-direction: row-reverse; }
+
+        .msg-av {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .msg-av.ai { background: var(--accent); color: #fff; }
+        .msg-av.human { background: var(--text-mid); color: #fff; }
+
+        .msg-bubble {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-mid);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .msg.user .msg-bubble {
+            background: var(--accent-bg);
+            border-color: transparent;
+            color: var(--text-dark);
+        }
+
+        .msg-source {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .msg-confidence {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: var(--success-bg);
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .chat-input-bar {
+            display: flex;
+            gap: 10px;
+            padding: 14px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .chat-input-bar input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+            background: var(--bg-white);
+            font-family: inherit;
+        }
+
+        .chat-input-bar input:focus { border-color: var(--accent); }
+
+        .chat-input-bar button {
+            padding: 0 20px;
+            border-radius: 10px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .chat-thread { display: none; }
+        .chat-thread.active { display: block; animation: fadeUp 0.15s ease; }
+
+        /* Deadline list */
+        .deadlines {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dl-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            background: var(--bg-white);
+            transition: all 0.15s ease;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dl-item:hover { background: var(--accent-bg); }
+        .dl-item.overdue { border-left: 3px solid var(--danger); }
+        .dl-item.overdue:hover { background: var(--danger-bg); }
+
+        .dl-date {
+            text-align: center;
+            min-width: 42px;
+        }
+
+        .dl-date .day { font-size: 18px; font-weight: 700; color: var(--text-dark); }
+        .dl-date .mon { font-size: 9px; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
+
+        .dl-info { flex: 1; }
+        .dl-info .title { font-size: 13px; font-weight: 500; color: var(--text-dark); }
+        .dl-info .sub { font-size: 11px; color: var(--text-light); margin-top: 1px; }
+
+        .dl-status {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .dl-pending { background: var(--warning-bg); color: var(--warning); }
+        .dl-overdue { background: var(--danger-bg); color: var(--danger); }
+        .dl-done { background: var(--success-bg); color: var(--success); }
+
+        /* Briefing page */
+        .briefing-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .briefing-card:hover { box-shadow: var(--shadow-md); }
+
+        .briefing-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .briefing-to {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .briefing-to strong {
+            color: var(--text-dark);
+        }
+
+        .briefing-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .briefing-card .body-text {
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-mid);
+        }
+
+        .briefing-card .body-text p { margin-bottom: 10px; }
+
+        /* Two col layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .section-heading {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h1>Reg Mitra</h1>
+            <p>Regulatory Intelligence</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-btn active" data-screen="dashboard">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Dashboard
+            </div>
+            <div class="nav-btn" data-screen="feed">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                Regulatory Feed
+                <span class="nav-badge">7</span>
+            </div>
+            <div class="nav-btn" data-screen="clients">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                My Clients
+            </div>
+            <div class="nav-btn" data-screen="calendar">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Calendar
+            </div>
+            <div class="nav-btn" data-screen="briefings">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Briefings
+                <span class="nav-badge" style="background: var(--warning); color: #fff;">3</span>
+            </div>
+            <div class="nav-label">Intelligence</div>
+            <div class="nav-btn" data-screen="chat">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                Ask Reg Mitra
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="firm-name">Mehta Shah & Associates</div>
+            <div class="firm-loc">Bangalore</div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <span class="header-title" id="page-title">Dashboard</span>
+            <div class="header-search">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" placeholder="Search regulations, clients, circulars..." id="global-search">
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- DASHBOARD -->
+            <div class="screen active" id="screen-dashboard">
+                <div class="stats">
+                    <div class="stat-box clickable" onclick="navTo('feed')">
+                        <div class="label">New This Week</div>
+                        <div class="value">7</div>
+                        <div class="sub">+3 from last week</div>
+                    </div>
+                    <div class="stat-box clickable" onclick="navTo('clients')">
+                        <div class="label">Clients Affected</div>
+                        <div class="value">5 / 6</div>
+                        <div class="sub">across 4 regulatory bodies</div>
+                    </div>
+                    <div class="stat-box clickable" onclick="navTo('calendar')">
+                        <div class="label">Deadlines (7 days)</div>
+                        <div class="value">3</div>
+                        <div class="sub warn">1 overdue</div>
+                    </div>
+                    <div class="stat-box clickable" onclick="navTo('briefings')">
+                        <div class="label">Briefings Ready</div>
+                        <div class="value">3</div>
+                        <div class="sub">Pending your review</div>
+                    </div>
+                </div>
+
+                <div class="two-col">
+                    <div>
+                        <div class="section-heading" style="display:flex;align-items:center;justify-content:space-between">Priority Regulations <div class="dash-filters" id="dash-filter-bar"><span class="dash-filter active" data-df="all">All</span><span class="dash-filter" data-df="high">High</span><span class="dash-filter" data-df="action">Action Req.</span><span class="dash-filter" data-df="review">Review</span></div></div>
+                        <div class="reg-card dash-reg" data-dp="high" onclick="openModal('fssai')">
+                            <div class="reg-card-top">
+                                <span class="tag tag-fssai">FSSAI</span>
+                                <span class="priority priority-high">High</span>
+                            </div>
+                            <div class="reg-card-title">FSSAI Licensing Amendment 2026 — Perpetual Validity & Risk-Based Inspections</div>
+                            <div class="reg-card-meta"><span>10 Mar 2026</span><span>Effective immediately</span></div>
+                            <div class="reg-card-bottom">
+                                <span class="affected-text">1 client affected</span>
+                                <div class="client-pills"><span class="client-pill">Royal Spice</span></div>
+                            </div>
+                        </div>
+                        <div class="reg-card dash-reg" data-dp="action" onclick="openModal('mca')">
+                            <div class="reg-card-top">
+                                <span class="tag tag-mca">MCA</span>
+                                <span class="priority priority-high">Action Required</span>
+                            </div>
+                            <div class="reg-card-title">Director KYC — 3-Year Cycle Effective 31 March 2026</div>
+                            <div class="reg-card-meta"><span>31 Dec 2025</span><span>Deadline: 30 Sep 2026</span></div>
+                            <div class="reg-card-bottom">
+                                <span class="affected-text">All 6 clients</span>
+                                <div class="client-pills"><span class="client-pill">14 directors</span></div>
+                            </div>
+                        </div>
+                        <div class="reg-card dash-reg" data-dp="review" onclick="openModal('cbic')">
+                            <div class="reg-card-top">
+                                <span class="tag tag-gst">CBIC / GST</span>
+                                <span class="priority priority-med">Review</span>
+                            </div>
+                            <div class="reg-card-title">IGST Rate Schedule Revised — Finance Act 2026</div>
+                            <div class="reg-card-meta"><span>28 Apr 2026</span><span>Effective: 1 May 2026</span></div>
+                            <div class="reg-card-bottom">
+                                <span class="affected-text">4 clients affected</span>
+                                <div class="client-pills">
+                                    <span class="client-pill">Sharma Pharma</span>
+                                    <span class="client-pill">Gupta Auto</span>
+                                    <span class="client-pill">+2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="section-heading">Upcoming Deadlines</div>
+                        <div class="deadlines">
+                            <div class="dl-item overdue">
+                                <div class="dl-date"><div class="day" style="color:var(--danger)">2</div><div class="mon">May</div></div>
+                                <div class="dl-info"><div class="title">FSSAI License Transition — Royal Spice Kitchen</div><div class="sub">Perpetual license opt-in</div></div>
+                                <span class="dl-status dl-overdue">Overdue</span>
+                            </div>
+                            <div class="dl-item">
+                                <div class="dl-date"><div class="day">7</div><div class="mon">May</div></div>
+                                <div class="dl-info"><div class="title">TDS Deposit — Q4 FY26</div><div class="sub">All clients</div></div>
+                                <span class="dl-status dl-pending">2 days</span>
+                            </div>
+                            <div class="dl-item">
+                                <div class="dl-date"><div class="day">9</div><div class="mon">May</div></div>
+                                <div class="dl-info"><div class="title">MCA Incorporation Rules — Public Comments</div><div class="sub">Submit feedback on amendments</div></div>
+                                <span class="dl-status dl-pending">4 days</span>
+                            </div>
+                            <div class="dl-item">
+                                <div class="dl-date"><div class="day">15</div><div class="mon">May</div></div>
+                                <div class="dl-info"><div class="title">TDS Return Filing — Form 24Q/26Q</div><div class="sub">All clients — Q4 FY26</div></div>
+                                <span class="dl-status dl-pending">10 days</span>
+                            </div>
+                            <div class="dl-item">
+                                <div class="dl-date"><div class="day">20</div><div class="mon">May</div></div>
+                                <div class="dl-info"><div class="title">GSTR-3B Filing — April 2026</div><div class="sub">Monthly return all GSTINs</div></div>
+                                <span class="dl-status dl-pending">15 days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEED -->
+            <div class="screen" id="screen-feed">
+                <div class="filters" id="filter-bar">
+                    <span class="filter-btn active" data-filter="all">All</span>
+                    <span class="filter-btn" data-filter="gst">GST / CBIC</span>
+                    <span class="filter-btn" data-filter="mca">MCA</span>
+                    <span class="filter-btn" data-filter="fssai">FSSAI</span>
+                    <span class="filter-btn" data-filter="rbi">RBI</span>
+                    <span class="filter-btn" data-filter="cbdt">CBDT</span>
+                    <span class="filter-btn" data-filter="labour">Labour</span>
+                    <span class="filter-count"><span id="feed-count">7</span> updates</span>
+                </div>
+
+                <div id="feed-list">
+                    <div class="reg-card" data-cat="fssai" onclick="openModal('fssai')">
+                        <div class="reg-card-top"><span class="tag tag-fssai">FSSAI</span><span class="priority priority-high">High</span></div>
+                        <div class="reg-card-title">Food Safety (Licensing & Registration) Amendment Regulations, 2026</div>
+                        <div class="reg-card-meta"><span>Gazette: 10 Mar 2026</span><span>fssai.gov.in</span></div>
+                        <div class="reg-card-summary">Perpetual license validity, risk-based inspections, automatic registration for street vendors, revised turnover thresholds pushing 98% of food businesses under state jurisdiction.</div>
+                        <div class="reg-card-bottom"><span class="affected-text">1 client</span><div class="client-pills"><span class="client-pill">Royal Spice Kitchen</span></div></div>
+                    </div>
+                    <div class="reg-card" data-cat="mca" onclick="openModal('mca')">
+                        <div class="reg-card-top"><span class="tag tag-mca">MCA</span><span class="priority priority-high">Action Required</span></div>
+                        <div class="reg-card-title">Director KYC Reform — 3-Year Cycle (Notification dt. 31 Dec 2025)</div>
+                        <div class="reg-card-meta"><span>Effective: 31 Mar 2026</span><span>mca.gov.in</span></div>
+                        <div class="reg-card-summary">Directors file KYC once every 3 years instead of annually. Simplified form. First filing under new regime due by 30 Sep 2026 for directors whose last KYC was FY 2023-24 or earlier.</div>
+                        <div class="reg-card-bottom"><span class="affected-text">All 6 clients — 14 directors</span></div>
+                    </div>
+                    <div class="reg-card" data-cat="gst" onclick="openModal('cbic')">
+                        <div class="reg-card-top"><span class="tag tag-gst">CBIC / GST</span><span class="priority priority-med">Review</span></div>
+                        <div class="reg-card-title">IGST Rate Schedule Revised — Notification No. 9/2025-IT (Rate) Amended</div>
+                        <div class="reg-card-meta"><span>Effective: 1 May 2026</span><span>cbic-gst.gov.in</span></div>
+                        <div class="reg-card-summary">Pharma intermediates 18%→12%, auto components reclassified, F&B packaging rates adjusted per Finance Act 2026.</div>
+                        <div class="reg-card-bottom"><span class="affected-text">4 clients</span><div class="client-pills"><span class="client-pill">Sharma</span><span class="client-pill">Gupta</span><span class="client-pill">Royal Spice</span><span class="client-pill">Lakshmi</span></div></div>
+                    </div>
+                    <div class="reg-card" data-cat="labour" onclick="openModal('labour')">
+                        <div class="reg-card-top"><span class="tag tag-labour">Karnataka Labour</span><span class="priority priority-med">Review</span></div>
+                        <div class="reg-card-title">Karnataka Shops & Establishments (Amendment) Rules, 2026</div>
+                        <div class="reg-card-meta"><span>Gazette: 22 Apr 2026</span><span>Effective: 1 Jul 2026</span></div>
+                        <div class="reg-card-summary">Overtime cap reduced from 75 to 50 hours/quarter for IT/ITES. Mandatory break room for 50+ employees. Penalty: ₹25,000/violation.</div>
+                        <div class="reg-card-bottom"><span class="affected-text">1 client</span><div class="client-pills"><span class="client-pill">NexGen Software</span></div></div>
+                    </div>
+                    <div class="reg-card" data-cat="mca">
+                        <div class="reg-card-top"><span class="tag tag-mca">MCA</span><span class="priority priority-low">Info</span></div>
+                        <div class="reg-card-title">Companies (Incorporation) Rules — Proposed Amendments (Public Comments Open)</div>
+                        <div class="reg-card-meta"><span>8 Apr 2026</span><span>Comments by: 9 May 2026</span></div>
+                        <div class="reg-card-summary">Streamlining of forms: E-CHNG for changes, E-CON for conversions. Draft stage — no compliance action yet.</div>
+                        <div class="reg-card-bottom"><span class="affected-text">All clients — advisory</span></div>
+                    </div>
+                    <div class="reg-card" data-cat="cbdt">
+                        <div class="reg-card-top"><span class="tag tag-cbdt">CBDT</span><span class="priority priority-low">Info</span></div>
+                        <div class="reg-card-title">Revised TDS Rate Chart FY 2026-27</div>
+                        <div class="reg-card-meta"><span>1 Apr 2026</span><span>incometaxindia.gov.in</span></div>
+                        <div class="reg-card-summary">Section 194C threshold ₹30K→₹50K per payment. Section 194J split rate abolished — flat 10%.</div>
+                        <div class="reg-card-bottom"><span class="affected-text">All 6 clients</span></div>
+                    </div>
+                    <div class="reg-card" data-cat="rbi">
+                        <div class="reg-card-top"><span class="tag tag-rbi">RBI</span><span class="priority priority-med">Review</span></div>
+                        <div class="reg-card-title">Scale Based Regulation — CRAR Threshold Update for Base Layer NBFCs</div>
+                        <div class="reg-card-meta"><span>15 Apr 2026</span><span>rbi.org.in</span></div>
+                        <div class="reg-card-summary">CRAR raised from 15% to 16% effective Oct 2026. Stricter NPA provisioning for micro-lending.</div>
+                        <div class="reg-card-bottom"><span class="affected-text">1 client</span><div class="client-pills"><span class="client-pill">Lakshmi FinServ</span></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLIENTS -->
+            <div class="screen" id="screen-clients">
+                <div class="section-heading" style="margin-bottom:16px">Client Portfolio</div>
+                <div class="client-grid">
+                    <div class="client-card" onclick="openClient('sharma')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--info-bg);color:var(--info)">SP</div>
+                            <div><div class="name">Sharma Pharmaceuticals Pvt. Ltd.</div><div class="sector">Pharma / Manufacturing — Mumbai</div></div>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">3</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">12</div><div class="lbl">Compliant</div></div>
+                        </div>
+                    </div>
+                    <div class="client-card" onclick="openClient('nexgen')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--purple-bg);color:var(--purple)">NG</div>
+                            <div><div class="name">NexGen Software Solutions Pvt. Ltd.</div><div class="sector">IT / Software — Bangalore</div></div>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">18</div><div class="lbl">Compliant</div></div>
+                        </div>
+                    </div>
+                    <div class="client-card" onclick="openClient('gupta')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--danger-bg);color:var(--danger)">GA</div>
+                            <div><div class="name">Gupta Auto Components Ltd.</div><div class="sector">Auto Ancillary — Gurgaon</div></div>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">4</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">9</div><div class="lbl">Compliant</div></div>
+                        </div>
+                    </div>
+                    <div class="client-card" onclick="openClient('royal')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--success-bg);color:var(--success)">RS</div>
+                            <div><div class="name">Royal Spice Kitchen Pvt. Ltd.</div><div class="sector">F&B / Restaurant Chain — Delhi</div></div>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">3</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">7</div><div class="lbl">Compliant</div></div>
+                        </div>
+                    </div>
+                    <div class="client-card" onclick="openClient('lakshmi')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--warning-bg);color:var(--warning)">LF</div>
+                            <div><div class="name">Lakshmi FinServ Pvt. Ltd.</div><div class="sector">NBFC — Chennai</div></div>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">22</div><div class="lbl">Compliant</div></div>
+                        </div>
+                    </div>
+                    <div class="client-card" onclick="openClient('greenfield')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:#fdf2f8;color:#be185d">GR</div>
+                            <div><div class="name">Greenfield Realty LLP</div><div class="sector">Real Estate — Pune</div></div>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">0</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">14</div><div class="lbl">Compliant</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CALENDAR -->
+            <div class="screen" id="screen-calendar">
+                <div class="section-heading">May 2026</div>
+                <div class="cal-grid">
+                    <div class="cal-hdr">Mon</div><div class="cal-hdr">Tue</div><div class="cal-hdr">Wed</div><div class="cal-hdr">Thu</div><div class="cal-hdr">Fri</div><div class="cal-hdr">Sat</div><div class="cal-hdr">Sun</div>
+                    <div class="cal-day"><div class="d">28</div></div>
+                    <div class="cal-day"><div class="d">29</div></div>
+                    <div class="cal-day"><div class="d">30</div></div>
+                    <div class="cal-day" onclick="openCalEvent('igst')"><div class="d">1</div><div class="cal-evt evt-compliance">IGST rates effective</div></div>
+                    <div class="cal-day" onclick="openCalEvent('fssai-opt')"><div class="d">2</div><div class="cal-evt evt-deadline">FSSAI opt-in overdue</div></div>
+                    <div class="cal-day"><div class="d">3</div></div>
+                    <div class="cal-day"><div class="d">4</div></div>
+                    <div class="cal-day today"><div class="d">5</div></div>
+                    <div class="cal-day"><div class="d">6</div></div>
+                    <div class="cal-day" onclick="openCalEvent('tds-dep')"><div class="d">7</div><div class="cal-evt evt-filing">TDS deposit Q4</div></div>
+                    <div class="cal-day"><div class="d">8</div></div>
+                    <div class="cal-day" onclick="openCalEvent('mca-comments')"><div class="d">9</div><div class="cal-evt evt-deadline">MCA comments due</div></div>
+                    <div class="cal-day"><div class="d">10</div></div>
+                    <div class="cal-day" onclick="openCalEvent('gstr1')"><div class="d">11</div><div class="cal-evt evt-filing">GSTR-1 due</div></div>
+                    <div class="cal-day"><div class="d">12</div></div>
+                    <div class="cal-day"><div class="d">13</div></div>
+                    <div class="cal-day"><div class="d">14</div></div>
+                    <div class="cal-day" onclick="openCalEvent('tds-ret')"><div class="d">15</div><div class="cal-evt evt-deadline">TDS return Q4</div></div>
+                    <div class="cal-day"><div class="d">16</div></div>
+                    <div class="cal-day"><div class="d">17</div></div>
+                    <div class="cal-day"><div class="d">18</div></div>
+                    <div class="cal-day"><div class="d">19</div></div>
+                    <div class="cal-day" onclick="openCalEvent('gstr3b')"><div class="d">20</div><div class="cal-evt evt-deadline">GSTR-3B due</div></div>
+                    <div class="cal-day"><div class="d">21</div></div>
+                    <div class="cal-day"><div class="d">22</div></div>
+                    <div class="cal-day"><div class="d">23</div></div>
+                    <div class="cal-day"><div class="d">24</div></div>
+                    <div class="cal-day"><div class="d">25</div></div>
+                    <div class="cal-day"><div class="d">26</div></div>
+                    <div class="cal-day"><div class="d">27</div></div>
+                    <div class="cal-day"><div class="d">28</div></div>
+                    <div class="cal-day"><div class="d">29</div></div>
+                    <div class="cal-day" onclick="openCalEvent('llp')"><div class="d">30</div><div class="cal-evt evt-compliance">LLP Form 11</div></div>
+                    <div class="cal-day" onclick="openCalEvent('gst-annual')"><div class="d">31</div><div class="cal-evt evt-filing">GST annual prep</div></div>
+                    <div class="cal-day"><div class="d">1</div></div>
+                </div>
+            </div>
+
+            <!-- BRIEFINGS -->
+            <div class="screen" id="screen-briefings">
+                <div class="section-heading" style="margin-bottom:4px">Client Briefings</div>
+                <p style="font-size:12px;color:var(--text-light);margin-bottom:20px;">AI-drafted advisories mapped to each regulation in the feed. Review, customize, send with your firm branding.</p>
+
+                <div class="briefing-card">
+                    <div class="briefing-card-header">
+                        <div class="briefing-to">To: <strong>Royal Spice Kitchen Pvt. Ltd.</strong></div>
+                        <span class="draft-badge">Draft — For Review</span>
+                    </div>
+                    <h4>FSSAI Licensing Amendment 2026 — Your License is Now Perpetual</h4>
+                    <div class="body-text">
+                        <p><strong>Dear Mr. Rajesh,</strong></p>
+                        <p>We write to inform you of a significant development in food safety compliance that directly benefits Royal Spice Kitchen.</p>
+                        <p>The FSSAI has issued the Food Safety and Standards (Licensing & Registration) Amendment Regulations, 2026 (Gazette dt. 10 March 2026). Here is what it means for you:</p>
+                        <p><strong>1. Your FSSAI license is now perpetual</strong> — no renewal required. Your current license (exp. Nov 2027) remains valid indefinitely unless cancelled or surrendered.<br>
+                        <strong>2. Inspections shift to risk-based</strong> — with your category and 4 outlets, expect inspections once every 2 years instead of annually.<br>
+                        <strong>3. All 4 outlets (Delhi & Karnataka) now under state food safety jurisdiction</strong> — individual outlet registrations no longer need separate renewal.</p>
+                        <p><strong>What you need to do:</strong><br>
+                        &#8226; Confirm with Delhi and Karnataka state Food Safety Officers that your registrations are auto-migrated<br>
+                        &#8226; Continue maintaining internal food safety audit records (Schedule 4 obligations remain)<br>
+                        &#8226; Keep Food Safety Supervisor appointed at each outlet</p>
+                        <p><strong>What you can stop doing:</strong> Remove the Nov 2027 renewal reminder from your calendar. No more renewal fees.</p>
+                        <p><em>Regards,<br>Mehta Shah & Associates, Bangalore</em></p>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-primary">Approve & Send</button>
+                        <button class="btn btn-outline">Edit</button>
+                        <button class="btn btn-outline">Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="briefing-card">
+                    <div class="briefing-card-header">
+                        <div class="briefing-to">To: <strong>All 6 Clients — Sharma, NexGen, Gupta, Royal Spice, Lakshmi, Greenfield</strong></div>
+                        <span class="draft-badge">Draft — For Review</span>
+                    </div>
+                    <h4>Director KYC — New 3-Year Filing Cycle (File by 30 Sep 2026)</h4>
+                    <div class="body-text">
+                        <p><strong>Dear [Client Name],</strong></p>
+                        <p>MCA has notified a reform to Director KYC requirements (Notification dt. 31 Dec 2025, effective 31 March 2026). Here is what changes:</p>
+                        <p><strong>What was:</strong> Every director filed KYC annually (Form DIR-3 KYC).<br>
+                        <strong>What is now:</strong> KYC filing required once every <strong>3 years</strong> under a simplified form.</p>
+                        <p><strong>Who needs to file now:</strong> Directors whose last KYC was filed in FY 2023-24 or earlier must file under the new regime by <strong>30 September 2026</strong>.</p>
+                        <p><strong>Your directors' status:</strong><br>
+                        &#8226; [Director Name 1] — Last KYC: FY 2023-24 → <strong>Filing due by 30 Sep 2026</strong><br>
+                        &#8226; [Director Name 2] — Last KYC: FY 2024-25 → Next due: Sep 2028 (no action now)</p>
+                        <p><strong>Penalty for missing deadline:</strong> ₹5,000 per director. DIN deactivation after 30 days — which blocks all MCA filings and invalidates Board resolutions signed by that director.</p>
+                        <p><strong>What we need from you:</strong> Updated mobile number, email, and current address for each director who needs to file. We will handle the rest.</p>
+                        <p><em>Regards,<br>Mehta Shah & Associates, Bangalore</em></p>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-primary">Approve & Send to All</button>
+                        <button class="btn btn-outline">Customize Per Client</button>
+                        <button class="btn btn-outline">Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="briefing-card">
+                    <div class="briefing-card-header">
+                        <div class="briefing-to">To: <strong>Gupta Auto Components Ltd.</strong></div>
+                        <span class="draft-badge">Draft — Urgent</span>
+                    </div>
+                    <h4>IGST Rate Reclassification — Brake Assemblies Now 28% (Action Required)</h4>
+                    <div class="body-text">
+                        <p><strong>Dear Mr. Gupta,</strong></p>
+                        <p>Effective <strong>1 May 2026</strong>, the IGST rate schedule has been revised under Finance Act 2026 (Notification No. 9/2025-IT Rate, as amended).</p>
+                        <p><strong>Critical impact on Gupta Auto:</strong></p>
+                        <p>Brake assemblies and certain auto components under HSN 8708 have been reclassified from <strong>18% to 28% GST</strong>. Based on your current sales volumes, this means:</p>
+                        <p>&#8226; Additional monthly GST liability: approx <strong>₹1.8 lakh/month</strong><br>
+                        &#8226; ITC on inputs remains at 18% for most raw materials → inverted duty situation possible<br>
+                        &#8226; Customer pricing must be revised from 1 May invoices onwards</p>
+                        <p><strong>Immediate actions required:</strong><br>
+                        1. Update HSN code rate mapping in Tally/ERP <strong>today</strong><br>
+                        2. Issue revised price lists to Honda, Maruti, and other OEM customers<br>
+                        3. Review existing contracts for GST escalation clauses<br>
+                        4. Ensure May invoices carry 28% rate (any invoice at 18% post 1 May = short-payment + notice risk)</p>
+                        <p><strong>We recommend:</strong> A 15-minute call this week to walk through the Tally configuration changes. Please confirm your availability.</p>
+                        <p><em>Regards,<br>Mehta Shah & Associates, Bangalore</em></p>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-primary">Approve & Send</button>
+                        <button class="btn btn-outline">Edit</button>
+                        <button class="btn btn-outline">Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="briefing-card">
+                    <div class="briefing-card-header">
+                        <div class="briefing-to">To: <strong>NexGen Software Solutions Pvt. Ltd.</strong></div>
+                        <span class="draft-badge">Draft — For Review</span>
+                    </div>
+                    <h4>Karnataka Shops & Establishments Amendment — Overtime Cap & Break Room Mandate</h4>
+                    <div class="body-text">
+                        <p><strong>Dear Ms. Priya,</strong></p>
+                        <p>The Karnataka Shops & Commercial Establishments (Amendment) Rules, 2026 (Gazette dt. 22 April 2026) will take effect <strong>1 July 2026</strong>. This directly impacts NexGen's Whitefield office.</p>
+                        <p><strong>What changes:</strong></p>
+                        <p>1. <strong>Overtime cap reduced:</strong> From 75 to <strong>50 hours/quarter</strong> for IT/ITES establishments<br>
+                        2. <strong>Mandatory break room:</strong> Min 200 sq ft for establishments with 50+ employees (NexGen has 120)<br>
+                        3. <strong>Updated employment agreements:</strong> Must reflect new overtime limits</p>
+                        <p><strong>Penalty exposure:</strong> ₹25,000 per violation. Repeated violations can trigger closure order from Labour Inspector.</p>
+                        <p><strong>What NexGen needs to do before 1 July:</strong><br>
+                        &#8226; Audit current overtime records — identify employees regularly exceeding 50 hrs/quarter<br>
+                        &#8226; Designate a break room at Whitefield office (min 200 sq ft, separate from work area)<br>
+                        &#8226; Update all employment agreements/offer letters with revised overtime clause<br>
+                        &#8226; Configure HRMS/attendance system to auto-flag when employee approaches 50-hr limit</p>
+                        <p><strong>Timeline:</strong> You have ~8 weeks. We suggest completing HR policy changes by mid-June to allow staff communication.</p>
+                        <p><em>Regards,<br>Mehta Shah & Associates, Bangalore</em></p>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-primary">Approve & Send</button>
+                        <button class="btn btn-outline">Edit</button>
+                        <button class="btn btn-outline">Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="briefing-card">
+                    <div class="briefing-card-header">
+                        <div class="briefing-to">To: <strong>All 6 Clients</strong></div>
+                        <span class="draft-badge">Draft — Advisory</span>
+                    </div>
+                    <h4>MCA Incorporation Rules Amendment — Public Comments Open (No Action, Advisory Only)</h4>
+                    <div class="body-text">
+                        <p><strong>Dear Client,</strong></p>
+                        <p>MCA has published draft amendments to the Companies (Incorporation) Rules for public comments (closing <strong>9 May 2026</strong>).</p>
+                        <p><strong>What is proposed:</strong><br>
+                        &#8226; Consolidated forms: E-CHNG (for all post-incorporation changes) and E-CON (for conversions)<br>
+                        &#8226; Simplified registered office change process — no RoC order needed for intra-state shift<br>
+                        &#8226; Digital signature streamlining for incorporation</p>
+                        <p><strong>Impact on you:</strong> None today. This is a draft and no compliance action is required.</p>
+                        <p><strong>Why we are informing you:</strong> Once notified (likely Q3 2026), the new forms will replace existing INC-22, INC-28 processes. We are tracking this so that when it becomes effective, we can update your compliance workflow without last-minute scrambling.</p>
+                        <p><em>This is an advisory communication. No response required.</em></p>
+                        <p><em>Regards,<br>Mehta Shah & Associates, Bangalore</em></p>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-outline">Send as Newsletter</button>
+                        <button class="btn btn-outline">Skip — Don't Send</button>
+                    </div>
+                </div>
+
+                <div class="briefing-card">
+                    <div class="briefing-card-header">
+                        <div class="briefing-to">To: <strong>NexGen Software, Sharma Pharma, Gupta Auto</strong></div>
+                        <span class="draft-badge">Draft — For Review</span>
+                    </div>
+                    <h4>TDS Rate Changes FY 2026-27 — Section 194C & 194J Impact</h4>
+                    <div class="body-text">
+                        <p><strong>Dear [Client],</strong></p>
+                        <p>The revised TDS rate chart for FY 2026-27 (effective 1 April 2026) introduces two changes relevant to your business:</p>
+                        <p><strong>1. Section 194C — Contractor Payments:</strong><br>
+                        Single payment threshold raised from ₹30,000 to <strong>₹50,000</strong>. Payments below ₹50,000 no longer require TDS deduction (aggregate ₹1 lakh/year limit remains).</p>
+                        <p><strong>2. Section 194J — Professional/Technical Fees:</strong><br>
+                        Split rate abolished. Previously: 2% for technical services, 10% for professional fees. Now: <strong>flat 10% on all 194J payments</strong>.</p>
+                        <p><strong>What this means for you:</strong></p>
+                        <p><em>NexGen Software:</em> Your IT consultant payments (previously at 2%) now attract 10% TDS. Impact: ~₹1.2L additional TDS/month. Inform consultants proactively — their take-home reduces until they file returns.<br><br>
+                        <em>Gupta Auto:</em> Contractor payments ₹30K–50K no longer need TDS. Saves ~₹4.2L in quarterly TDS processing. Update Tally auto-deduction rules.<br><br>
+                        <em>Sharma Pharma:</em> Lab testing fees (previously 2%) now at 10%. Impact: ~₹40K additional TDS/month.</p>
+                        <p><strong>Action:</strong> Update TDS configuration in your accounting software. We will handle the return filings reflecting new rates.</p>
+                        <p><em>Regards,<br>Mehta Shah & Associates, Bangalore</em></p>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-primary">Approve & Send</button>
+                        <button class="btn btn-outline">Customize Per Client</button>
+                        <button class="btn btn-outline">Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="briefing-card">
+                    <div class="briefing-card-header">
+                        <div class="briefing-to">To: <strong>Lakshmi FinServ Pvt. Ltd.</strong></div>
+                        <span class="draft-badge">Draft — Strategic</span>
+                    </div>
+                    <h4>RBI CRAR Threshold Revision — Capital Planning Required by October 2026</h4>
+                    <div class="body-text">
+                        <p><strong>Dear Mr. Venkatesh,</strong></p>
+                        <p>RBI has issued an update to the Scale Based Regulation framework (Circular dt. 15 April 2026) affecting Base Layer NBFCs.</p>
+                        <p><strong>What changed:</strong> Minimum CRAR (Capital to Risk-Weighted Assets Ratio) raised from <strong>15% to 16%</strong>, effective October 2026. Additionally, NPA provisioning norms for micro-lending portfolios have been tightened.</p>
+                        <p><strong>Lakshmi FinServ's position:</strong><br>
+                        &#8226; Current CRAR: <strong>15.8%</strong><br>
+                        &#8226; Gap to new minimum: <strong>0.2%</strong><br>
+                        &#8226; Estimated capital infusion needed: <strong>~₹45 lakh</strong><br>
+                        &#8226; Deadline: <strong>1 October 2026</strong></p>
+                        <p><strong>Consequences of non-compliance:</strong><br>
+                        Stage 1 — RBI letter to Board, dividend restriction, new branch bar<br>
+                        Stage 2 — Fresh lending restriction, management compensation cap<br>
+                        Stage 3 — COR cancellation (worst case, for persistent default)</p>
+                        <p><strong>Options to bridge the gap:</strong><br>
+                        1. Retained earnings from Q1-Q2 FY27 (if ₹45L+ net profit expected)<br>
+                        2. Subordinated debt issuance (counts as Tier 2 capital)<br>
+                        3. Fresh equity infusion from promoters</p>
+                        <p><strong>Recommendation:</strong> Raise this in your next Board meeting. A 0.2% gap is manageable if planned 5 months ahead — but will trigger regulatory action if missed.</p>
+                        <p><em>Regards,<br>Mehta Shah & Associates, Bangalore</em></p>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-primary">Approve & Send</button>
+                        <button class="btn btn-outline">Edit</button>
+                        <button class="btn btn-outline">Download PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAT -->
+            <div class="screen" id="screen-chat">
+                <div class="chat-wrap">
+                    <div class="chat-msgs" id="chat-messages">
+                        <!-- Chat thread selector -->
+                        <div id="chat-thread-bar" style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;">
+                            <button class="filter-btn active" onclick="showThread('fssai-impact')">FSSAI Impact</button>
+                            <button class="filter-btn" onclick="showThread('tds-change')">TDS Rates</button>
+                            <button class="filter-btn" onclick="showThread('cross-sector')">Cross-Sector</button>
+                            <button class="filter-btn" onclick="showThread('factories-act')">Factories Act</button>
+                            <button class="filter-btn" onclick="showThread('rbi-nbfc')">RBI / NBFC</button>
+                            <button class="filter-btn" onclick="showThread('compare-circular')">Compare Circulars</button>
+                            <button class="filter-btn" onclick="showThread('deadline-check')">Deadline Check</button>
+                        </div>
+
+                        <!-- Thread: FSSAI Impact -->
+                        <div class="chat-thread active" id="thread-fssai-impact">
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">Hi! I can answer questions about any Indian regulation and map it to your clients. What would you like to know?</div>
+                            </div>
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">Does the new FSSAI amendment affect Royal Spice Kitchen? They have 4 outlets across Delhi and Bangalore.</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Yes, Royal Spice Kitchen is directly affected.</strong><br><br>
+                                    Under the FSSAI Licensing & Registration Amendment 2026 (Gazette dt. 10 March 2026):<br><br>
+                                    <strong>1. Perpetual License:</strong> Their current license (exp. Nov 2027) no longer needs renewal. Valid indefinitely unless cancelled.<br><br>
+                                    <strong>2. Risk-Based Inspections:</strong> With 4 outlets and turnover above ₹12 Cr, they fall in "Medium Risk" — inspections shift from annual to once every 2 years.<br><br>
+                                    <strong>3. State Jurisdiction:</strong> All outlets now fall under respective state food safety authorities (Delhi & Karnataka). Individual outlet registrations no longer need separate renewal.<br><br>
+                                    <strong>Immediate Action:</strong><br>
+                                    &#8226; Update compliance calendar — remove renewal reminder for Nov 2027<br>
+                                    &#8226; Confirm with Delhi & Karnataka State FSOs that registrations are auto-migrated<br>
+                                    &#8226; Retain food safety records (still required for risk classification)<br><br>
+                                    <span class="msg-source">Source: FSSAI Gazette dt. 10 March 2026, S.O. 1234(E)</span><br>
+                                    <span class="msg-confidence">High Confidence — Verified against official gazette</span>
+                                </div>
+                            </div>
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">What about their annual food safety audit? Is that also eliminated?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>No — the internal food safety audit is separate from regulatory inspections.</strong><br><br>
+                                    What changed: <strong>Government inspections</strong> are now risk-based (less frequent).<br>
+                                    What stays: <strong>Internal audit obligations</strong> under Schedule 4 of FSS Act remain unchanged.<br><br>
+                                    Royal Spice Kitchen still needs to:<br>
+                                    &#8226; Conduct annual internal food safety audit<br>
+                                    &#8226; Maintain FSMS (Food Safety Management System) records<br>
+                                    &#8226; Display license at each outlet<br>
+                                    &#8226; Ensure Food Safety Supervisor is appointed per outlet<br><br>
+                                    The difference is that if they maintain good records, government inspectors will visit <em>less often</em> (risk-based), but the obligation to be audit-ready remains.<br><br>
+                                    <span class="msg-source">Source: FSS Act 2006, Schedule 4; FSSAI Amendment 2026 FAQ dt. 27 March 2026</span><br>
+                                    <span class="msg-confidence">High Confidence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thread: TDS Change -->
+                        <div class="chat-thread" id="thread-tds-change">
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">What's the TDS rate change under Section 194C for FY 2026-27? How does it affect Gupta Auto's contractor payments?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Section 194C — Key Change for FY 2026-27:</strong><br><br>
+                                    Single payment threshold raised from <strong>₹30,000 to ₹50,000</strong> per Finance Act 2026. Aggregate annual threshold remains ₹1,00,000.<br><br>
+                                    <strong>Impact on Gupta Auto Components:</strong><br><br>
+                                    Gupta Auto makes ~35 contractor payments/month averaging ₹28,000–45,000 each. Previously all payments above ₹30,000 required TDS. Now:<br><br>
+                                    &#8226; Payments ₹30,000–₹50,000 — <strong>No TDS required</strong><br>
+                                    &#8226; ~12-15 payments/month fall in this range<br>
+                                    &#8226; <strong>Administrative saving:</strong> ~₹4.2L less TDS to process quarterly<br><br>
+                                    <strong>Action:</strong><br>
+                                    &#8226; Update TDS computation rules in Tally<br>
+                                    &#8226; Reconfigure auto-deduction threshold for 194C<br>
+                                    &#8226; Inform accounts payable team<br>
+                                    &#8226; Note: aggregate ₹1L threshold still applies — track cumulative payments per contractor<br><br>
+                                    <span class="msg-source">Source: CBDT Circular dt. 1 April 2026, Finance Act 2026 Section 45</span><br>
+                                    <span class="msg-confidence">High Confidence — Verified</span>
+                                </div>
+                            </div>
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">Also what about 194J? I heard there's a change there too.</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Yes — Section 194J split rate has been abolished.</strong><br><br>
+                                    <strong>Previous (FY 2025-26):</strong><br>
+                                    &#8226; 2% TDS on fees for technical services / royalty (where 194C not applicable)<br>
+                                    &#8226; 10% TDS on professional fees / directors' fees<br><br>
+                                    <strong>New (FY 2026-27):</strong><br>
+                                    &#8226; <strong>Flat 10% on everything</strong> under 194J — no split<br><br>
+                                    <strong>Impact across your clients:</strong><br><br>
+                                    &#8226; <strong>NexGen Software</strong> — Pays IT consultants (was 2%). Now 10%. Higher TDS outgo on ~₹15L/month in tech consultant fees = ₹1.2L additional TDS/month.<br>
+                                    &#8226; <strong>Sharma Pharma</strong> — Lab testing fees (was 2%). Now 10%. Impact: ~₹40K additional TDS/month.<br>
+                                    &#8226; <strong>All clients</strong> — Professional fees (CA, lawyer) remain at 10%. No change there.<br><br>
+                                    <strong>Critical Action for NexGen:</strong> Their IT consultants will see higher TDS deductions. Inform them proactively to avoid disputes. May need to revise contracts.<br><br>
+                                    <span class="msg-source">Source: Finance Act 2026, Section 46; CBDT Circular on TDS Rates FY 2026-27</span><br>
+                                    <span class="msg-confidence">High Confidence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thread: Cross-Sector -->
+                        <div class="chat-thread" id="thread-cross-sector">
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">I have a pharma company and a software company in my practice. The regulations are completely different — Factories Act for pharma, Shops & Establishments for IT. Can you show me what's applicable for each?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Sector-wise regulatory mapping for your two clients:</strong><br><br>
+                                    <table style="width:100%;font-size:12px;border-collapse:collapse;margin:8px 0;">
+                                        <tr style="border-bottom:1px solid #e5e7eb"><td style="padding:6px;font-weight:600;width:40%">Regulation</td><td style="padding:6px;font-weight:600">Sharma Pharma (Mfg)</td><td style="padding:6px;font-weight:600">NexGen Software (IT)</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">Factories Act 1948</td><td style="padding:6px;color:var(--danger)">Applicable ✓</td><td style="padding:6px;color:var(--text-light)">Not applicable</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">Shops & Establishments</td><td style="padding:6px;color:var(--text-light)">Not applicable</td><td style="padding:6px;color:var(--danger)">Applicable (KA) ✓</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">Drug & Cosmetics Act</td><td style="padding:6px;color:var(--danger)">Applicable ✓</td><td style="padding:6px;color:var(--text-light)">Not applicable</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">IT Act (SEZ/STPI benefits)</td><td style="padding:6px;color:var(--text-light)">Not applicable</td><td style="padding:6px;color:var(--warning)">Check eligibility</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">Pollution Control (PCB)</td><td style="padding:6px;color:var(--danger)">Applicable ✓</td><td style="padding:6px;color:var(--text-light)">Not applicable</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">EPF & ESI</td><td style="padding:6px;color:var(--danger)">Both applicable</td><td style="padding:6px;color:var(--danger)">Both applicable</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">Companies Act / MCA</td><td style="padding:6px;color:var(--danger)">Applicable ✓</td><td style="padding:6px;color:var(--danger)">Applicable ✓</td></tr>
+                                        <tr><td style="padding:6px">GST / TDS / Income Tax</td><td style="padding:6px;color:var(--danger)">Applicable ✓</td><td style="padding:6px;color:var(--danger)">Applicable ✓</td></tr>
+                                    </table><br>
+                                    <strong>Key difference:</strong> Sharma Pharma has <strong>14 applicable regulatory bodies</strong> vs NexGen's <strong>8</strong>. Manufacturing companies always carry heavier compliance because Factories Act + state-specific labour laws + pollution + industry-specific (pharma/D&C Act) all stack up.<br><br>
+                                    The common ones (GST, TDS, MCA, EPF/ESI) are the same for both. It's the <strong>sector-specific and state-specific</strong> layers that differ — and those are exactly where CAs lose track.<br><br>
+                                    <span class="msg-source">Source: Cross-referenced against client profiles and applicable central/state legislation</span><br>
+                                    <span class="msg-confidence">High Confidence</span>
+                                </div>
+                            </div>
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">What about the Gratuity Act? Is it the same in Karnataka and Maharashtra or different?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Payment of Gratuity Act 1972 — Central act, but with state variations:</strong><br><br>
+                                    <strong>What's the same everywhere:</strong><br>
+                                    &#8226; Applicable to establishments with 10+ employees<br>
+                                    &#8226; 5 years continuous service for eligibility<br>
+                                    &#8226; Calculation: Last drawn salary × 15/26 × years of service<br>
+                                    &#8226; Maximum limit: ₹25 lakh (enhanced in 2024)<br><br>
+                                    <strong>What differs by state:</strong><br><br>
+                                    <table style="width:100%;font-size:12px;border-collapse:collapse;margin:8px 0;">
+                                        <tr style="border-bottom:1px solid #e5e7eb"><td style="padding:6px;font-weight:600">Aspect</td><td style="padding:6px;font-weight:600">Maharashtra (Sharma)</td><td style="padding:6px;font-weight:600">Karnataka (NexGen)</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">Controlling Authority</td><td style="padding:6px">Asst. Labour Commissioner</td><td style="padding:6px">Deputy Labour Commissioner</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">Filing of nomination (Form F)</td><td style="padding:6px">Within 30 days of completing 1 year</td><td style="padding:6px">Within 90 days of joining</td></tr>
+                                        <tr><td style="padding:6px">Recovery mechanism</td><td style="padding:6px">Land Revenue Recovery</td><td style="padding:6px">Certificate proceedings</td></tr>
+                                    </table><br>
+                                    <strong>For your practice:</strong> The core obligation is identical — the difference is in the administrative machinery and some timeline variations. Both clients need Gratuity compliance, but the filing and dispute resolution routes differ by state.<br><br>
+                                    <span class="msg-source">Source: Payment of Gratuity Act 1972; Maharashtra/Karnataka Gratuity Rules</span><br>
+                                    <span class="msg-confidence">High Confidence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thread: Factories Act -->
+                        <div class="chat-thread" id="thread-factories-act">
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">What are the current Factories Act compliance requirements for Gupta Auto in Haryana? They have 180 workers.</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Factories Act 1948 + Haryana Rules — Compliance for Gupta Auto (180 workers, Gurgaon):</strong><br><br>
+                                    <strong>Periodic Filings:</strong><br>
+                                    &#8226; Annual Return (Form 21) — due by 31 January each year ✅ Filed<br>
+                                    &#8226; Half-yearly return (Form 22) — due 31 July & 31 January<br><br>
+                                    <strong>Safety Compliance (180 workers triggers enhanced requirements):</strong><br>
+                                    &#8226; Safety Committee mandatory (50+ workers)<br>
+                                    &#8226; Safety Officer appointment mandatory (100+ workers in manufacturing)<br>
+                                    &#8226; Annual safety audit — next due: <strong>30 June 2026</strong><br>
+                                    &#8226; Fire drill: quarterly (last conducted: Feb 2026)<br>
+                                    &#8226; Boiler inspection certificate — expires <strong>August 2026</strong><br><br>
+                                    <strong>Working Hours & Welfare:</strong><br>
+                                    &#8226; Max 48 hours/week, 9 hours/day<br>
+                                    &#8226; Overtime: max 50 hours/quarter (Haryana amendment)<br>
+                                    &#8226; Canteen mandatory (250+ workers) — not yet applicable<br>
+                                    &#8226; First-aid boxes: 1 per 150 workers = 2 required<br>
+                                    &#8226; Creche facility if 30+ women workers employed<br><br>
+                                    <strong>Upcoming/Watch:</strong><br>
+                                    &#8226; Haryana Factories (Amendment) Bill 2026 — proposes mandatory CCTV in all zones with 100+ workers. <em>Draft stage. I'll alert you when gazetted.</em><br><br>
+                                    <strong>Penalties:</strong> Non-compliance: up to ₹2 lakh fine + imprisonment up to 2 years for occupier/manager for safety violations.<br><br>
+                                    <span class="msg-source">Source: Factories Act 1948; Haryana Factories Rules 1950 (as amended 2019); Haryana Gazette Dec 2025</span><br>
+                                    <span class="msg-confidence">High Confidence</span>
+                                </div>
+                            </div>
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">What about ESI and PF? Are they up to date?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>ESI & PF Status for Gupta Auto Components (180 workers):</strong><br><br>
+                                    <strong>EPF (Employees' Provident Fund):</strong><br>
+                                    &#8226; Applicable: Yes (20+ employees)<br>
+                                    &#8226; Current rate: 12% employer + 12% employee<br>
+                                    &#8226; Monthly filing: ECR by 15th of following month<br>
+                                    &#8226; Last filed: March 2026 (due 15 April) — <strong>Filed on time</strong><br>
+                                    &#8226; Annual return: Form 3A/6A consolidated — due 30 April ✅<br><br>
+                                    <strong>ESI (Employees' State Insurance):</strong><br>
+                                    &#8226; Applicable: Yes (10+ employees, wages ≤ ₹21,000/month)<br>
+                                    &#8226; Rate: 3.25% employer + 0.75% employee<br>
+                                    &#8226; Monthly contribution: by 15th of following month<br>
+                                    &#8226; Half-yearly return: April & October<br>
+                                    &#8226; Last filed: October 2025 period — ✅<br>
+                                    &#8226; <strong>Next due: April 2026 half-yearly return — due by 12 May 2026</strong><br><br>
+                                    <strong>Flag:</strong> ESI half-yearly return for April 2026 period is due <strong>12 May 2026</strong> (7 days from now). Please ensure Gupta Auto's HR team has filed or is preparing the return.<br><br>
+                                    <span class="msg-source">Source: EPF Act 1952; ESI Act 1948; EPFO & ESIC portals</span><br>
+                                    <span class="msg-confidence">Medium-High — Payment status based on client records last synced March 2026</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thread: RBI NBFC -->
+                        <div class="chat-thread" id="thread-rbi-nbfc">
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">Lakshmi FinServ is an NBFC-ICC Base Layer. What are all their RBI compliance obligations for this quarter?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Lakshmi FinServ — NBFC-ICC Base Layer Quarterly Compliance (Q1 FY27: Apr–Jun 2026):</strong><br><br>
+                                    <strong>Returns & Filings:</strong><br>
+                                    &#8226; NBS-7 (Quarterly return) — due within 15 days of quarter end = <strong>15 July 2026</strong><br>
+                                    &#8226; ALM Statement (Structural Liquidity) — <strong>monthly, by 10th</strong><br>
+                                    &#8226; Monthly return on principal business criteria — 7th of each month<br><br>
+                                    <strong>Prudential Norms:</strong><br>
+                                    &#8226; CRAR minimum: <strong>16% from October 2026</strong> (currently 15%, being raised — NEW)<br>
+                                    &#8226; Current CRAR: 15.8% — <strong>needs ₹45L capital infusion before October</strong><br>
+                                    &#8226; NPA classification: 90 days overdue<br>
+                                    &#8226; Provisioning: Sub-standard 10%, Doubtful 20-50%, Loss 100%<br><br>
+                                    <strong>Governance:</strong><br>
+                                    &#8226; Board meeting: minimum once/quarter<br>
+                                    &#8226; Audit Committee meeting: quarterly<br>
+                                    &#8226; Compliance Officer certificate to Board: quarterly<br><br>
+                                    <strong>KYC/AML:</strong><br>
+                                    &#8226; Suspicious Transaction Reports (STR): ongoing, within 7 days of detection<br>
+                                    &#8226; Cash Transaction Reports (CTR): monthly (>₹10L cash)<br>
+                                    &#8226; Annual KYC update for high-risk customers<br><br>
+                                    <strong>Key Watch Items This Quarter:</strong><br>
+                                    1. CRAR gap — plan capital raise NOW for October deadline<br>
+                                    2. New NPA provisioning norms for micro-lending — verify portfolio classification<br>
+                                    3. Fair Practices Code review (due annually, typically Q1)<br><br>
+                                    <span class="msg-source">Source: RBI Master Direction – NBFC-ICC (Base Layer) 2023; RBI Circular dt. 15 Apr 2026; SBR Framework</span><br>
+                                    <span class="msg-confidence">High Confidence</span>
+                                </div>
+                            </div>
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">If they don't meet the 16% CRAR by October, what happens?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Consequences of CRAR Non-Compliance for Base Layer NBFC:</strong><br><br>
+                                    <strong>Graduated Regulatory Response:</strong><br><br>
+                                    <strong>Stage 1 — Supervisory caution:</strong><br>
+                                    &#8226; RBI issues a letter to Board<br>
+                                    &#8226; Restriction on dividend distribution<br>
+                                    &#8226; Bar on opening new branches<br><br>
+                                    <strong>Stage 2 — Corrective action (if persists >1 quarter):</strong><br>
+                                    &#8226; Restriction on fresh lending<br>
+                                    &#8226; Cap on management compensation<br>
+                                    &#8226; Mandatory Board-level action plan with timeline<br><br>
+                                    <strong>Stage 3 — Severe (persistent non-compliance):</strong><br>
+                                    &#8226; Direction to wind down specific portfolios<br>
+                                    &#8226; Supersession of Board<br>
+                                    &#8226; COR (Certificate of Registration) cancellation<br><br>
+                                    <strong>For Lakshmi FinServ specifically:</strong><br>
+                                    Gap is only 0.2% (₹45L). This is manageable. Options:<br>
+                                    1. Retained earnings from Q1-Q2 FY27 (if ₹45L+ net profit)<br>
+                                    2. Subordinated debt (Tier 2 capital)<br>
+                                    3. Fresh equity infusion from promoters<br><br>
+                                    <strong>Recommendation:</strong> Raise it in the next Board meeting (Q1). A 0.2% gap shouldn't reach Stage 1 if addressed proactively.<br><br>
+                                    <span class="msg-source">Source: RBI PCA Framework for NBFCs (2022); RBI Master Direction SBR Ch. IV</span><br>
+                                    <span class="msg-confidence">High Confidence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thread: Compare Circulars -->
+                        <div class="chat-thread" id="thread-compare-circular">
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">Compare the old Section 74 with the new Section 74A for GST notices. What changed for my clients?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Section 74 (Old) vs Section 74A (New) — GST Notice Framework:</strong><br><br>
+                                    <table style="width:100%;font-size:12px;border-collapse:collapse;margin:8px 0;">
+                                        <tr style="border-bottom:1px solid #e5e7eb"><td style="padding:6px;font-weight:600;width:30%">Aspect</td><td style="padding:6px;font-weight:600">Old (Sec 73/74)</td><td style="padding:6px;font-weight:600">New (Sec 74A)</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px;font-weight:500">Applicability</td><td style="padding:6px">Sec 73: non-fraud<br>Sec 74: fraud</td><td style="padding:6px">Single consolidated section for both</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px;font-weight:500">Penalty (non-fraud)</td><td style="padding:6px">10% of tax due</td><td style="padding:6px">10% of tax due (unchanged)</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px;font-weight:500">Penalty (fraud)</td><td style="padding:6px">100% of tax due</td><td style="padding:6px">100% of tax due (unchanged)</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px;font-weight:500">Time limit</td><td style="padding:6px">Sec 73: 3 years<br>Sec 74: 5 years</td><td style="padding:6px">Unified: 42 months from annual return due date</td></tr>
+                                        <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px;font-weight:500">Applies from</td><td style="padding:6px">Up to FY 2023-24</td><td style="padding:6px"><strong>FY 2024-25 onwards</strong></td></tr>
+                                        <tr><td style="padding:6px;font-weight:500">Pre-notice settlement</td><td style="padding:6px">Limited window</td><td style="padding:6px">Enhanced voluntary compliance with reduced penalty</td></tr>
+                                    </table><br>
+                                    <strong>What this means for your clients:</strong><br><br>
+                                    &#8226; For FY 2024-25 onwards, the department doesn't need to prove "fraud" separately — the penalty scale (10% to 100%) is applied based on circumstances<br>
+                                    &#8226; The unified 42-month window means notices come <strong>faster</strong><br>
+                                    &#8226; <strong>All 6 clients</strong> should be aware: voluntary disclosure before notice = reduced penalty<br><br>
+                                    <strong>Practical implication:</strong> Catching and fixing mismatches BEFORE a notice is now even more critical because the unified framework makes it easier for the department to issue notices.<br><br>
+                                    <span class="msg-source">Source: CGST Act 2017, Section 74A (inserted by Finance Act 2024); CBIC FAQ on Sec 74A implementation</span><br>
+                                    <span class="msg-confidence">High Confidence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thread: Deadline Check -->
+                        <div class="chat-thread" id="thread-deadline-check">
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">What are ALL the compliance deadlines for Sharma Pharmaceuticals in the next 60 days?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Sharma Pharmaceuticals Pvt. Ltd. — All Deadlines (5 May – 4 July 2026):</strong><br><br>
+                                    <strong>GST:</strong><br>
+                                    &#8226; 11 May — GSTR-1 (April 2026 outward supply)<br>
+                                    &#8226; 20 May — GSTR-3B (April 2026 summary return)<br>
+                                    &#8226; 11 Jun — GSTR-1 (May 2026)<br>
+                                    &#8226; 20 Jun — GSTR-3B (May 2026)<br><br>
+                                    <strong>Income Tax / TDS:</strong><br>
+                                    &#8226; 7 May — TDS deposit for April 2026 deductions<br>
+                                    &#8226; 15 May — TDS return Form 24Q/26Q (Q4 FY26)<br>
+                                    &#8226; 7 Jun — TDS deposit for May 2026<br>
+                                    &#8226; 15 Jun — Advance Tax 1st instalment (15% of estimated FY27 liability)<br>
+                                    &#8226; 30 Jun — TCS return (Q1 if applicable)<br><br>
+                                    <strong>MCA / Companies Act:</strong><br>
+                                    &#8226; 30 Jun — Director KYC filing (if due under 3-year cycle) — <strong>Confirm status</strong><br><br>
+                                    <strong>Drug & Cosmetics Act (Pharma-specific):</strong><br>
+                                    &#8226; Ongoing — Drug license renewal monitoring (State Drug Controller)<br>
+                                    &#8226; 30 Jun — Annual compliance report to CDSCO (if Schedule M applicable)<br><br>
+                                    <strong>Factories Act (Mumbai manufacturing unit):</strong><br>
+                                    &#8226; 30 Jun — Half-yearly safety audit<br>
+                                    &#8226; Ongoing — Pollution control consent (Maharashtra PCB) — verify expiry<br><br>
+                                    <strong>EPF/ESI:</strong><br>
+                                    &#8226; Monthly by 15th — ECR filing<br>
+                                    &#8226; 12 May — ESI half-yearly return<br><br>
+                                    <strong>Total: 16 deadlines in 60 days</strong><br>
+                                    <strong>Priority items:</strong> TDS return (15 May), Advance Tax (15 Jun), ESI return (12 May)<br><br>
+                                    <span class="msg-source">Source: Compiled from GST Act, IT Act, Companies Act 2013, Factories Act 1948, D&C Act 1940, EPF Act, ESI Act</span><br>
+                                    <span class="msg-confidence">High Confidence — Cross-referenced against client profile and applicable acts</span>
+                                </div>
+                            </div>
+                            <div class="msg user">
+                                <div class="msg-av human">MS</div>
+                                <div class="msg-bubble">Can you add all of these to the compliance calendar?</div>
+                            </div>
+                            <div class="msg">
+                                <div class="msg-av ai">RM</div>
+                                <div class="msg-bubble">
+                                    <strong>Done.</strong> All 16 deadlines have been added to Sharma Pharmaceuticals' compliance calendar.<br><br>
+                                    &#8226; 4 marked as <span style="color:var(--danger);font-weight:600">High Priority</span> (within 7 days)<br>
+                                    &#8226; 6 marked as <span style="color:var(--warning);font-weight:600">Medium</span> (8-30 days)<br>
+                                    &#8226; 6 marked as <span style="color:var(--success);font-weight:600">Scheduled</span> (30-60 days)<br><br>
+                                    Reminders will be triggered 3 days before each deadline. You can view them in the <strong>Calendar</strong> tab filtered by client.<br><br>
+                                    Would you like me to generate this same 60-day view for all 6 clients?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-bar">
+                        <input type="text" placeholder="Ask about any regulation, circular, or client compliance...">
+                        <button>Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="modal-fssai">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-header-content">
+                <span class="tag tag-fssai">FSSAI</span>
+                <h2>Food Safety (Licensing & Registration) Amendment Regulations, 2026</h2>
+                <div class="meta"><span>Gazette: 10 March 2026</span><span>Source: fssai.gov.in</span><span>Effective: Immediately</span></div>
+            </div>
+            <button class="modal-close" onclick="closeModal('fssai')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-section">
+                <h3>Summary</h3>
+                <p>The most significant reform to India's food licensing framework in a decade. FSSAI licenses become perpetual (no renewal). Calendar-based inspections replaced by risk-based framework. Turnover thresholds revised — 98% of food businesses move under state jurisdiction. Street food vendors auto-registered.</p>
+            </div>
+            <div class="modal-section">
+                <h3>Key Obligations</h3>
+                <p>&#8226; Existing license holders: No renewal filing needed. License valid until cancelled/surrendered.<br>
+                &#8226; Maintain food safety records for risk classification purposes.<br>
+                &#8226; State-level registration for outlets now automatic.<br>
+                &#8226; New penalty structure enforced at state level.</p>
+            </div>
+            <div class="modal-section">
+                <h3>Client Impact</h3>
+                <table class="impact-tbl">
+                    <thead><tr><th>Client</th><th>Sector</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--success-bg);color:var(--success)">RS</div>Royal Spice Kitchen</div></td><td>F&B (4 outlets)</td><td><span class="status-chip chip-affected">Affected</span></td><td>Update compliance tracker. Confirm state migration.</td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--info-bg);color:var(--info)">SP</div>Sharma Pharma</div></td><td>Pharma</td><td><span class="status-chip chip-safe">Not affected</span></td><td>—</td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--purple-bg);color:var(--purple)">NG</div>NexGen Software</div></td><td>IT</td><td><span class="status-chip chip-safe">Not affected</span></td><td>—</td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--danger-bg);color:var(--danger)">GA</div>Gupta Auto</div></td><td>Manufacturing</td><td><span class="status-chip chip-safe">Not affected</span></td><td>—</td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--warning-bg);color:var(--warning)">LF</div>Lakshmi FinServ</div></td><td>NBFC</td><td><span class="status-chip chip-safe">Not affected</span></td><td>—</td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:#fdf2f8;color:#be185d">GR</div>Greenfield Realty</div></td><td>Real Estate</td><td><span class="status-chip chip-safe">Not affected</span></td><td>—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-section">
+                <h3>Auto-Generated Briefing</h3>
+                <div class="briefing-box">
+                    <div class="briefing-box-header">
+                        <span class="briefing-firm-name">Mehta Shah & Associates → Royal Spice Kitchen</span>
+                        <span class="draft-badge">Draft</span>
+                    </div>
+                    <div class="briefing-text">
+                        <strong>Subject: FSSAI License Now Perpetual — No Action Required</strong><br><br>
+                        Your FSSAI license (exp. Nov 2027) is now valid indefinitely. No renewal filing needed. Inspections shift to risk-based (once/2 years for your category). All 4 outlet registrations migrate to state authority automatically.
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-primary">Send to Client</button>
+                        <button class="btn btn-outline">Edit</button>
+                        <button class="btn btn-outline">PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-bg" id="modal-mca">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-header-content">
+                <span class="tag tag-mca">MCA</span>
+                <h2>Director KYC Reform — 3-Year Filing Cycle</h2>
+                <div class="meta"><span>Notification: 31 Dec 2025</span><span>Effective: 31 Mar 2026</span><span>Deadline: 30 Sep 2026</span></div>
+            </div>
+            <button class="modal-close" onclick="closeModal('mca')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-section">
+                <h3>Summary</h3>
+                <p>Director KYC simplified from annual to once every 3 years. Directors whose last KYC was FY 2023-24 or earlier must file under the new simplified form by 30 September 2026. Reduces compliance burden while maintaining identity verification.</p>
+            </div>
+            <div class="modal-section">
+                <h3>Client Impact</h3>
+                <table class="impact-tbl">
+                    <thead><tr><th>Client</th><th>Directors</th><th>Last KYC</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--info-bg);color:var(--info)">SP</div>Sharma Pharma</div></td><td>3</td><td>FY 2023-24</td><td><span class="status-chip chip-action">File by 30 Sep</span></td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--purple-bg);color:var(--purple)">NG</div>NexGen Software</div></td><td>2</td><td>FY 2024-25</td><td><span class="status-chip chip-safe">Next: Sep 2028</span></td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--danger-bg);color:var(--danger)">GA</div>Gupta Auto</div></td><td>4</td><td>FY 2022-23</td><td><span class="status-chip chip-affected">File by 30 Sep</span></td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--success-bg);color:var(--success)">RS</div>Royal Spice Kitchen</div></td><td>2</td><td>FY 2023-24</td><td><span class="status-chip chip-action">File by 30 Sep</span></td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--warning-bg);color:var(--warning)">LF</div>Lakshmi FinServ</div></td><td>2</td><td>FY 2024-25</td><td><span class="status-chip chip-safe">Next: Sep 2028</span></td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:#fdf2f8;color:#be185d">GR</div>Greenfield Realty</div></td><td>2 (DP)</td><td>FY 2023-24</td><td><span class="status-chip chip-action">Verify applicability</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-section">
+                <h3>Penalties</h3>
+                <p>&#8226; Late filing: ₹5,000/director<br>&#8226; Default >30 days: DIN may be deactivated<br>&#8226; Deactivation impact: Cannot sign filings, board resolutions invalid</p>
+            </div>
+            <div class="action-btns">
+                <button class="btn btn-primary">Generate Briefings for All</button>
+                <button class="btn btn-outline">Add to Calendar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-bg" id="modal-cbic">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-header-content">
+                <span class="tag tag-gst">CBIC / GST</span>
+                <h2>IGST Rate Schedule Revised — Finance Act 2026</h2>
+                <div class="meta"><span>Notification: 28 Apr 2026</span><span>Effective: 1 May 2026</span><span>Amends: Notif. 9/2025-IT (Rate)</span></div>
+            </div>
+            <button class="modal-close" onclick="closeModal('cbic')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-section">
+                <h3>Summary</h3>
+                <p>Tariff entries under IGST Schedules revised per Finance Act 2026. Pharmaceutical intermediates moved from 18% to 12%. Auto components reclassified. F&B packaging materials rate adjusted.</p>
+            </div>
+            <div class="modal-section">
+                <h3>Transaction-Level Impact</h3>
+                <table class="impact-tbl">
+                    <thead><tr><th>Client</th><th>Affected Items</th><th>Rate Change</th><th>Monthly Impact</th></tr></thead>
+                    <tbody>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--info-bg);color:var(--info)">SP</div>Sharma Pharma</div></td><td>API intermediates (HSN 2933, 2934)</td><td>18% → 12%</td><td style="color:var(--success);font-weight:600">Saves ~₹4.2L/mo</td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--danger-bg);color:var(--danger)">GA</div>Gupta Auto</div></td><td>Brake assemblies (HSN 8708)</td><td>18% → 28%</td><td style="color:var(--danger);font-weight:600">+₹1.8L/mo tax</td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--success-bg);color:var(--success)">RS</div>Royal Spice Kitchen</div></td><td>Packaging (HSN 3923)</td><td>18% → 12%</td><td style="color:var(--success);font-weight:600">Saves ~₹65K/mo</td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--warning-bg);color:var(--warning)">LF</div>Lakshmi FinServ</div></td><td>IT hardware (HSN 8471)</td><td>18% unchanged</td><td>No impact</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-section">
+                <h3>Required Actions</h3>
+                <p><strong style="color:var(--danger)">Gupta Auto (CRITICAL):</strong><br>
+                &#8226; Update HSN codes in Tally immediately<br>
+                &#8226; Revise pricing to customers from 1 May<br>
+                &#8226; Check contracts for GST escalation clauses<br><br>
+                <strong>Sharma Pharma:</strong> Verify HSN mapping. Benefit flows automatically.<br><br>
+                <strong>Royal Spice:</strong> Update packaging entries. Negotiate vendor pricing.</p>
+            </div>
+            <div class="action-btns">
+                <button class="btn btn-primary">Generate Client Briefings</button>
+                <button class="btn btn-outline">Download Notification PDF</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-bg" id="modal-labour">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-header-content">
+                <span class="tag tag-labour">Karnataka Labour</span>
+                <h2>Karnataka Shops & Establishments (Amendment) Rules, 2026</h2>
+                <div class="meta"><span>Gazette: 22 Apr 2026</span><span>Effective: 1 Jul 2026</span><span>IT/ITES establishments</span></div>
+            </div>
+            <button class="modal-close" onclick="closeModal('labour')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-section">
+                <h3>Summary</h3>
+                <p>Karnataka tightens rules for IT/ITES: overtime cap reduced from 75 to 50 hours/quarter. Mandatory break room for 50+ employees. Penalty: ₹25,000/violation + closure risk.</p>
+            </div>
+            <div class="modal-section">
+                <h3>Client Impact</h3>
+                <table class="impact-tbl">
+                    <thead><tr><th>Client</th><th>Location</th><th>Employees</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--purple-bg);color:var(--purple)">NG</div>NexGen Software</div></td><td>Whitefield, Bangalore</td><td>120</td><td><span class="status-chip chip-affected">Affected</span></td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--info-bg);color:var(--info)">SP</div>Sharma Pharma</div></td><td>Mumbai</td><td>—</td><td><span class="status-chip chip-safe">Not in KA</span></td></tr>
+                        <tr><td><div class="client-cell"><div class="client-avatar" style="background:var(--danger-bg);color:var(--danger)">GA</div>Gupta Auto</div></td><td>Gurgaon</td><td>—</td><td><span class="status-chip chip-safe">Not in KA</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-section">
+                <h3>Specific Actions — NexGen Software</h3>
+                <p>1. Cap overtime at 50 hrs/quarter (currently allows 75)<br>
+                2. Designate break room min 200 sq ft at Whitefield office<br>
+                3. Update employment agreements<br>
+                4. Configure attendance system to flag breaches<br><br>
+                <strong>Penalty exposure:</strong> If 10 employees exceed cap = ₹2.5L risk.</p>
+            </div>
+            <div class="action-btns">
+                <button class="btn btn-primary">View Draft Briefing</button>
+                <button class="btn btn-outline">Add Deadline: 1 Jul 2026</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Navigation
+document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const screen = btn.dataset.screen;
+        if (!screen) return;
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + screen).classList.add('active');
+        const titles = { dashboard:'Dashboard', feed:'Regulatory Feed', clients:'My Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', chat:'Ask Reg Mitra' };
+        document.getElementById('page-title').textContent = titles[screen] || '';
+    });
+});
+
+// Modals
+function openModal(id) { document.getElementById('modal-' + id).classList.add('open'); }
+function closeModal(id) { document.getElementById('modal-' + id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(bg => {
+    bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-bg').forEach(m => m.classList.remove('open')); });
+
+// Filters
+document.querySelectorAll('#filter-bar .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        const cards = document.querySelectorAll('#feed-list .reg-card');
+        let count = 0;
+        cards.forEach(card => {
+            if (filter === 'all' || card.dataset.cat === filter) {
+                card.style.display = '';
+                count++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        document.getElementById('feed-count').textContent = count;
+    });
+});
+
+// Search
+document.getElementById('global-search').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('#feed-list .reg-card');
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(q) ? '' : 'none';
+    });
+});
+
+// Chat threads
+function showThread(id) {
+    document.querySelectorAll('.chat-thread').forEach(t => t.classList.remove('active'));
+    document.getElementById('thread-' + id).classList.add('active');
+    document.querySelectorAll('#chat-thread-bar .filter-btn').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+}
+
+// Calendar events
+const calEvents = {
+    'igst': { title: 'IGST Rate Schedule Effective', date: '1 May 2026', type: 'Compliance', clients: 'Sharma Pharma, Gupta Auto, Royal Spice, Lakshmi FinServ', body: 'Revised IGST tariff entries come into force today per Finance Act 2026. Pharma intermediates now at 12% (was 18%). Auto components reclassified. Ensure all clients have updated HSN codes in Tally/ERP before filing GSTR-1 for May.\n\nAction: Verify HSN mappings in purchase/sales registers for affected clients.' },
+    'fssai-opt': { title: 'FSSAI Perpetual License Transition', date: '2 May 2026 (OVERDUE)', type: 'Deadline', clients: 'Royal Spice Kitchen Pvt. Ltd.', body: 'Royal Spice Kitchen was expected to confirm perpetual license opt-in with State Food Safety authority by this date. The transition is automatic, but confirmation with Delhi & Karnataka state offices ensures registrations are properly migrated.\n\nStatus: OVERDUE — Contact state FSO offices to confirm auto-migration. No penalty, but documentation needed.' },
+    'tds-dep': { title: 'TDS Deposit — Q4 FY 2025-26', date: '7 May 2026', type: 'Filing', clients: 'All 6 clients', body: 'Deposit TDS deducted during April 2026 to government account via Challan 281.\n\nSections applicable: 194C (contractors), 194J (professional fees — now flat 10%), 194H (commission), 194I (rent), 192 (salary).\n\nReminder: New 194C threshold of ₹50,000 applies from April 2026. Verify no over-deduction on payments ₹30K-50K.' },
+    'mca-comments': { title: 'MCA Incorporation Rules — Public Comments Close', date: '9 May 2026', type: 'Deadline', clients: 'Advisory — all firms', body: 'Last date to submit comments on proposed Companies (Incorporation) Rules amendments via MCA e-consultation portal.\n\nProposed changes: Form consolidation (E-CHNG, E-CON), simplified registered office change process.\n\nAction: Review if any comments needed on behalf of clients. Advisory only — no compliance penalty for missing this.' },
+    'gstr1': { title: 'GSTR-1 Filing — April 2026', date: '11 May 2026', type: 'Filing', clients: 'All GST-registered clients', body: 'Monthly GSTR-1 (outward supply details) for April 2026 due.\n\nClients: Sharma Pharma, NexGen Software, Gupta Auto, Royal Spice Kitchen, Lakshmi FinServ, Greenfield Realty\n\nReminder: Ensure new IGST rates (effective 1 May) are NOT applied to April invoices. April transactions use old rates.' },
+    'tds-ret': { title: 'TDS Return Filing — Q4 FY26', date: '15 May 2026', type: 'Deadline', clients: 'All 6 clients', body: 'File quarterly TDS returns:\n• Form 24Q — Salary TDS\n• Form 26Q — Non-salary TDS (194C, 194J, etc.)\n• Form 27Q — TDS on payments to NRIs (if applicable)\n\nKey check: Verify 194J entries — split rate abolished from FY 2026-27, but Q4 FY26 still uses OLD rates (2%/10% split).\n\nPenalty for late filing: ₹200/day under Section 234E.' },
+    'gstr3b': { title: 'GSTR-3B Filing — April 2026', date: '20 May 2026', type: 'Deadline', clients: 'All GST-registered clients', body: 'Monthly summary return GSTR-3B for April 2026.\n\nKey items to verify:\n• ITC claimed matches GSTR-2B auto-populated data\n• Output tax computed at correct rates (old rates for April)\n• RCM liability properly accounted\n• Previous period adjustments if any\n\nLate fee: ₹50/day (₹20/day for nil return). Interest: 18% p.a. on tax liability.' },
+    'llp': { title: 'LLP Form 11 — Annual Return', date: '30 May 2026', type: 'Compliance', clients: 'Greenfield Realty LLP', body: 'Annual return for LLP (Form 11) due within 60 days of closure of financial year.\n\nDetails required:\n• Total number of partners and their contribution\n• Total turnover and revenue\n• Details of body corporates as partners (if any)\n• Summary of partners\' obligations\n\nPenalty for late filing: ₹100/day until filed. No maximum cap.\n\nAction: Confirm Greenfield Realty has provided partner details and financial summary.' },
+    'gst-annual': { title: 'GST Annual Return Preparation', date: '31 May 2026', type: 'Filing', clients: 'All GST-registered clients', body: 'Begin preparation for GSTR-9 (Annual Return) for FY 2025-26. Due date is 31 December 2026, but early preparation recommended.\n\nTasks:\n• Reconcile GSTR-1 vs GSTR-3B for full year\n• Verify ITC claims against GSTR-2B\n• Identify and resolve any mismatches now\n• Compile HSN-wise summary of outward supplies\n\nStarting early avoids year-end scramble and catches mismatches before notice season (Sept-Dec).' }
+};
+
+function openCalEvent(id) {
+    const evt = calEvents[id];
+    if (!evt) return;
+    document.getElementById('cal-popup-title').textContent = evt.title;
+    document.getElementById('cal-popup-date').textContent = evt.date + ' • ' + evt.type;
+    document.getElementById('cal-popup-clients').textContent = evt.clients;
+    document.getElementById('cal-popup-body').textContent = evt.body;
+    document.getElementById('cal-popup').classList.add('open');
+    document.getElementById('cal-popup-overlay').classList.add('open');
+}
+
+function closeCalPopup() {
+    document.getElementById('cal-popup').classList.remove('open');
+    document.getElementById('cal-popup-overlay').classList.remove('open');
+}
+
+// Navigate to screen
+function navTo(screen) {
+    document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.dataset.screen === screen) b.classList.add('active');
+    });
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + screen).classList.add('active');
+    const titles = { dashboard:'Dashboard', feed:'Regulatory Feed', clients:'My Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', chat:'Ask Reg Mitra' };
+    document.getElementById('page-title').textContent = titles[screen] || '';
+}
+
+// Dashboard priority filters
+document.querySelectorAll('#dash-filter-bar .dash-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#dash-filter-bar .dash-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.df;
+        document.querySelectorAll('.dash-reg').forEach(card => {
+            card.style.display = (f === 'all' || card.dataset.dp === f) ? '' : 'none';
+        });
+    });
+});
+
+// Client detail data
+const clientData = {
+    sharma: {
+        name: 'Sharma Pharmaceuticals Pvt. Ltd.',
+        sector: 'Pharma / Manufacturing — Mumbai | GSTIN: 27AAACS1234F1ZA | CIN: U24200MH2015PTC123456',
+        stats: [{n:'3',l:'Pending',c:'var(--danger)'},{n:'2',l:'This Week',c:'var(--warning)'},{n:'12',l:'Compliant',c:'var(--success)'},{n:'₹2.4Cr',l:'Turnover/mo',c:'var(--info)'}],
+        pending: [
+            {title:'IGST rate change — update HSN codes for pharma intermediates (18%→12%)',meta:'CBIC • Due: Immediate • High priority'},
+            {title:'Director KYC — 2 directors due under new 3-year cycle',meta:'MCA • Due: 30 Sep 2026 • Action required'},
+            {title:'TDS Return 26Q — Q4 FY26 preparation',meta:'CBDT • Due: 15 May 2026 • Filing'}
+        ],
+        regs: [
+            {title:'IGST Rate Schedule Revised — Pharma intermediates 18%→12%',meta:'CBIC • Effective 1 May 2026'},
+            {title:'Director KYC — 3-Year Cycle',meta:'MCA • Deadline 30 Sep 2026'},
+            {title:'TDS Rate Chart FY 2026-27 — 194C threshold ₹50K',meta:'CBDT • Effective 1 Apr 2026'}
+        ],
+        deadlines: [
+            {title:'TDS Deposit Q4',meta:'7 May 2026'},
+            {title:'GSTR-1 April 2026',meta:'11 May 2026'},
+            {title:'TDS Return 26Q',meta:'15 May 2026'},
+            {title:'GSTR-3B April 2026',meta:'20 May 2026'}
+        ]
+    },
+    nexgen: {
+        name: 'NexGen Software Solutions Pvt. Ltd.',
+        sector: 'IT / Software — Bangalore | GSTIN: 29AAACN5678G1ZB | CIN: U72200KA2018PTC234567',
+        stats: [{n:'1',l:'Pending',c:'var(--danger)'},{n:'2',l:'This Week',c:'var(--warning)'},{n:'18',l:'Compliant',c:'var(--success)'},{n:'₹85L',l:'Turnover/mo',c:'var(--info)'}],
+        pending: [
+            {title:'Karnataka S&E Amendment — overtime policy revision needed before 1 Jul',meta:'Karnataka Labour • Due: 1 Jul 2026 • Review'}
+        ],
+        regs: [
+            {title:'Karnataka Shops & Establishments Amendment 2026 — OT cap 50hrs/qtr',meta:'Karnataka Labour • Effective 1 Jul 2026'},
+            {title:'Director KYC — 3-Year Cycle (1 director)',meta:'MCA • Deadline 30 Sep 2026'},
+            {title:'TDS Rate Chart FY 2026-27 — 194J flat 10%',meta:'CBDT • Effective 1 Apr 2026'}
+        ],
+        deadlines: [
+            {title:'TDS Deposit Q4',meta:'7 May 2026'},
+            {title:'GSTR-1 April 2026',meta:'11 May 2026'},
+            {title:'GSTR-3B April 2026',meta:'20 May 2026'}
+        ]
+    },
+    gupta: {
+        name: 'Gupta Auto Components Ltd.',
+        sector: 'Auto Ancillary / Manufacturing — Gurgaon | GSTIN: 06AAACG9012H1ZC | CIN: U34300HR2012PLC045678',
+        stats: [{n:'4',l:'Pending',c:'var(--danger)'},{n:'1',l:'This Week',c:'var(--warning)'},{n:'9',l:'Compliant',c:'var(--success)'},{n:'₹5.1Cr',l:'Turnover/mo',c:'var(--info)'}],
+        pending: [
+            {title:'IGST rate change — auto components reclassification impact analysis',meta:'CBIC • Due: Immediate • High priority'},
+            {title:'Director KYC — 4 directors due under new 3-year cycle',meta:'MCA • Due: 30 Sep 2026 • Action required'},
+            {title:'TDS 194C — verify payments ₹30K-50K not over-deducted',meta:'CBDT • Due: 7 May 2026 • Filing'},
+            {title:'Factory license renewal — Haryana DISH online system migration',meta:'State Labour • Due: 30 Jun 2026 • Review'}
+        ],
+        regs: [
+            {title:'IGST Rate Schedule — Auto components reclassified',meta:'CBIC • Effective 1 May 2026'},
+            {title:'Director KYC — 3-Year Cycle',meta:'MCA • Deadline 30 Sep 2026'},
+            {title:'TDS Rate Chart FY 2026-27 — 194C threshold ₹50K',meta:'CBDT • Effective 1 Apr 2026'}
+        ],
+        deadlines: [
+            {title:'TDS Deposit Q4',meta:'7 May 2026'},
+            {title:'GSTR-1 April 2026',meta:'11 May 2026'},
+            {title:'TDS Return 26Q',meta:'15 May 2026'},
+            {title:'GSTR-3B April 2026',meta:'20 May 2026'}
+        ]
+    },
+    royal: {
+        name: 'Royal Spice Kitchen Pvt. Ltd.',
+        sector: 'F&B / Restaurant Chain — Delhi (4 outlets) | GSTIN: 07AAACR3456J1ZD | FSSAI: 13621011000123',
+        stats: [{n:'2',l:'Pending',c:'var(--danger)'},{n:'3',l:'This Week',c:'var(--warning)'},{n:'7',l:'Compliant',c:'var(--success)'},{n:'₹1.2Cr',l:'Turnover/mo',c:'var(--info)'}],
+        pending: [
+            {title:'FSSAI perpetual license opt-in — confirm with Delhi & Karnataka FSO',meta:'FSSAI • OVERDUE since 2 May • High priority'},
+            {title:'IGST rate — F&B packaging rate adjustment review',meta:'CBIC • Due: Immediate • Review'}
+        ],
+        regs: [
+            {title:'FSSAI Licensing Amendment 2026 — Perpetual Validity',meta:'FSSAI • Effective 10 Mar 2026'},
+            {title:'IGST Rate Schedule — F&B packaging rates adjusted',meta:'CBIC • Effective 1 May 2026'},
+            {title:'Director KYC — 3-Year Cycle (2 directors)',meta:'MCA • Deadline 30 Sep 2026'}
+        ],
+        deadlines: [
+            {title:'FSSAI Transition Confirmation (OVERDUE)',meta:'2 May 2026'},
+            {title:'TDS Deposit Q4',meta:'7 May 2026'},
+            {title:'GSTR-1 April 2026',meta:'11 May 2026'},
+            {title:'GSTR-3B April 2026',meta:'20 May 2026'}
+        ]
+    },
+    lakshmi: {
+        name: 'Lakshmi FinServ Pvt. Ltd.',
+        sector: 'NBFC (Base Layer) — Chennai | GSTIN: 33AAACL7890K1ZE | RBI Reg: B-13.00456',
+        stats: [{n:'2',l:'Pending',c:'var(--danger)'},{n:'1',l:'This Week',c:'var(--warning)'},{n:'22',l:'Compliant',c:'var(--success)'},{n:'₹18Cr',l:'AUM',c:'var(--info)'}],
+        pending: [
+            {title:'RBI CRAR threshold increase — capital adequacy plan needed by Oct 2026',meta:'RBI • Due: Oct 2026 • Review'},
+            {title:'Director KYC — 3 directors due',meta:'MCA • Due: 30 Sep 2026 • Action required'}
+        ],
+        regs: [
+            {title:'RBI Scale Based Regulation — CRAR 15%→16%',meta:'RBI • Effective Oct 2026'},
+            {title:'IGST Rate Schedule — financial services impact minimal',meta:'CBIC • Effective 1 May 2026'},
+            {title:'Director KYC — 3-Year Cycle',meta:'MCA • Deadline 30 Sep 2026'},
+            {title:'NPA Provisioning — Stricter norms for micro-lending',meta:'RBI • Effective Oct 2026'}
+        ],
+        deadlines: [
+            {title:'TDS Deposit Q4',meta:'7 May 2026'},
+            {title:'GSTR-1 April 2026',meta:'11 May 2026'},
+            {title:'GSTR-3B April 2026',meta:'20 May 2026'},
+            {title:'RBI CRAR Compliance',meta:'1 Oct 2026'}
+        ]
+    },
+    greenfield: {
+        name: 'Greenfield Realty LLP',
+        sector: 'Real Estate / Construction — Pune | GSTIN: 27AAAFG1234L1ZF | LLPIN: AAE-1234',
+        stats: [{n:'1',l:'Pending',c:'var(--danger)'},{n:'0',l:'This Week',c:'var(--warning)'},{n:'14',l:'Compliant',c:'var(--success)'},{n:'₹3.8Cr',l:'Turnover/mo',c:'var(--info)'}],
+        pending: [
+            {title:'LLP Form 11 — Annual Return filing',meta:'MCA • Due: 30 May 2026 • Filing'}
+        ],
+        regs: [
+            {title:'Director KYC (Designated Partners) — 3-Year Cycle',meta:'MCA • Deadline 30 Sep 2026'},
+            {title:'LLP Form 11 — Annual Return',meta:'MCA • Due 30 May 2026'},
+            {title:'TDS Rate Chart FY 2026-27',meta:'CBDT • Effective 1 Apr 2026'}
+        ],
+        deadlines: [
+            {title:'TDS Deposit Q4',meta:'7 May 2026'},
+            {title:'GSTR-1 April 2026',meta:'11 May 2026'},
+            {title:'GSTR-3B April 2026',meta:'20 May 2026'},
+            {title:'LLP Form 11',meta:'30 May 2026'}
+        ]
+    }
+};
+
+function openClient(id) {
+    const c = clientData[id];
+    if (!c) return;
+    document.getElementById('cm-name').textContent = c.name;
+    document.getElementById('cm-sector').textContent = c.sector;
+    document.getElementById('cm-stats').innerHTML = c.stats.map(s => `<div class="cm-stat"><div class="num" style="color:${s.c}">${s.n}</div><div class="lbl">${s.l}</div></div>`).join('');
+    document.getElementById('cm-pending').innerHTML = c.pending.map(p => `<div class="cm-reg-item"><div class="cm-title">${p.title}</div><div class="cm-meta"><span>${p.meta}</span></div></div>`).join('');
+    document.getElementById('cm-regs').innerHTML = c.regs.map(r => `<div class="cm-reg-item"><div class="cm-title">${r.title}</div><div class="cm-meta"><span>${r.meta}</span></div></div>`).join('');
+    document.getElementById('cm-deadlines').innerHTML = c.deadlines.map(d => `<div class="cm-reg-item"><div class="cm-title">${d.title}</div><div class="cm-meta"><span>${d.meta}</span></div></div>`).join('');
+    document.getElementById('client-modal-bg').classList.add('open');
+}
+
+function closeClient() {
+    document.getElementById('client-modal-bg').classList.remove('open');
+}
+
+// Close client modal on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeClient(); });
+</script>
+
+<!-- Calendar Popup -->
+<div class="cal-popup-overlay" id="cal-popup-overlay" onclick="closeCalPopup()"></div>
+<div class="cal-popup" id="cal-popup">
+    <button class="popup-close" onclick="closeCalPopup()">&times;</button>
+    <h3 id="cal-popup-title"></h3>
+    <div class="popup-date" id="cal-popup-date"></div>
+    <div class="popup-clients"><span class="tag tag-mca" style="font-size:11px" id="cal-popup-clients"></span></div>
+    <div class="popup-body" style="white-space:pre-line" id="cal-popup-body"></div>
+    <div class="action-btns">
+        <button class="btn btn-primary" onclick="closeCalPopup()">Mark as Done</button>
+        <button class="btn btn-outline" onclick="closeCalPopup()">Set Reminder</button>
+    </div>
+</div>
+
+<!-- Client Detail Modal -->
+<div class="client-modal-bg" id="client-modal-bg" onclick="if(event.target===this)closeClient()">
+    <div class="client-modal">
+        <button class="popup-close" onclick="closeClient()">&times;</button>
+        <h3 id="cm-name"></h3>
+        <div class="cm-sector" id="cm-sector"></div>
+        <div class="cm-stat-row" id="cm-stats"></div>
+        <div class="cm-section"><div class="cm-section-title">Pending Actions</div><div id="cm-pending"></div></div>
+        <div class="cm-section"><div class="cm-section-title">Applicable Regulations This Month</div><div id="cm-regs"></div></div>
+        <div class="cm-section"><div class="cm-section-title">Upcoming Deadlines</div><div id="cm-deadlines"></div></div>
+        <div class="action-btns" style="margin-top:20px">
+            <button class="btn btn-primary" onclick="closeClient()">Generate Briefing</button>
+            <button class="btn btn-outline" onclick="closeClient()">View History</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
