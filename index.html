@@ -3282,7 +3282,7 @@
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <input type="text" placeholder="Search regulations, clients, circulars..." id="global-search">
             </div>
-            <button class="header-bell" title="Notifications" onclick="event.stopPropagation();">
+            <button class="header-bell" title="Notifications">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                 <span class="header-bell-dot"></span>
             </button>
@@ -7690,6 +7690,15 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+// Enter key on chat/agent input fires the Send/Execute action.
+document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    var t = e.target;
+    if (!t || t.tagName !== 'INPUT') return;
+    if (t.closest('.chat-input-bar'))  { e.preventDefault(); chatSendFromInput('chat');  }
+    else if (t.closest('.agent-input-bar')) { e.preventDefault(); chatSendFromInput('agent'); }
+});
+
 // Dynamic greeting + date on Today.
 (function() {
     function setTodayGreeting() {
@@ -7707,6 +7716,122 @@ document.addEventListener('keydown', function(e) {
     }
     if (document.readyState !== 'loading') setTodayGreeting();
     else document.addEventListener('DOMContentLoaded', setTodayGreeting);
+})();
+
+// ===== Action toast helper =====
+function actionToast(msg, opts) {
+    var toast = document.getElementById('bm-sent-toast');
+    if (!toast) return;
+    var icon = (opts && opts.icon) || '&#10003;';
+    toast.innerHTML = icon + ' ' + msg;
+    toast.classList.add('show');
+    if (toast._t) clearTimeout(toast._t);
+    toast._t = setTimeout(function() { toast.classList.remove('show'); }, 2600);
+}
+
+// Agent confirm-box buttons
+function confirmBoxApprove(btn) {
+    var box = btn.closest('.agent-confirm-box');
+    if (!box) return;
+    box.style.transition = 'all 0.25s ease';
+    box.style.background = 'var(--success-bg)';
+    box.style.borderColor = 'var(--success)';
+    var actions = box.querySelector('.agent-confirm-actions');
+    if (actions) {
+        actions.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--success)">&#10003; Approved &middot; executing now</span>';
+    }
+    actionToast('Approved &mdash; agent executing');
+}
+function confirmBoxModify(btn) {
+    var box = btn.closest('.agent-confirm-box');
+    if (box) {
+        var actions = box.querySelector('.agent-confirm-actions');
+        if (actions) actions.style.opacity = '0.5';
+    }
+    actionToast('Tell the agent what to change', { icon: '&#9998;' });
+    var input = document.querySelector('#screen-agent .agent-input-bar input');
+    if (input) input.focus();
+}
+
+// Chat / agent send button: append a user bubble + faked AI placeholder.
+function chatSendFromInput(scope) {
+    var sel = scope === 'agent' ? '#screen-agent' : '#screen-chat';
+    var input = document.querySelector(sel + ' ' + (scope === 'agent' ? '.agent-input-bar' : '.chat-input-bar') + ' input');
+    if (!input || !input.value.trim()) return;
+    var text = input.value.trim();
+    var thread = document.querySelector(sel + ' .chat-thread.active, ' + sel + ' .agent-thread.active');
+    if (!thread) {
+        // Land in placeholder if no active thread
+        if (scope === 'agent') startNewAgentTask(); else startNewChat();
+        thread = document.querySelector(sel + ' .chat-thread.active, ' + sel + ' .agent-thread.active');
+    }
+    if (!thread) { actionToast('Sent &mdash; processing...'); input.value = ''; return; }
+    var userMsg = document.createElement('div');
+    userMsg.className = 'msg user';
+    userMsg.innerHTML = '<div class="msg-av human">MS</div><div class="msg-bubble">' + text.replace(/</g, '&lt;') + '</div>';
+    thread.appendChild(userMsg);
+    input.value = '';
+    thread.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    setTimeout(function() {
+        var aiMsg = document.createElement('div');
+        aiMsg.className = 'msg';
+        aiMsg.innerHTML = '<div class="msg-av ai">RM</div><div class="msg-bubble">Working on it &mdash; this is a prototype response so I am echoing your prompt. In production I would pull from your live data sources.</div>';
+        thread.appendChild(aiMsg);
+        thread.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 600);
+}
+
+// ===== Global fallback: any button without onclick gets a sensible action =====
+(function() {
+    var TOAST_MAP = {
+        'send': 'Message sent',
+        'execute': 'Task queued for execution',
+        'add to calendar': 'Added to compliance calendar',
+        'generate briefings for all': 'Drafting briefings for all affected clients…',
+        'generate client briefings': 'Drafting client briefings…',
+        'view draft briefing': 'Opening briefing…',
+        'submit comment via mca portal': 'Comment submitted to MCA portal',
+        'set reminder for final notification': 'Reminder set',
+        'send to client': 'Briefing sent to client',
+        'edit': 'Opening editor…',
+        'pdf': 'PDF downloaded'
+    };
+    function isPdf(label) { return /\bpdf\b/.test(label) || /download/.test(label); }
+    function isBriefingNav(label) { return /view draft briefing|generate.+briefings?/.test(label); }
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest('button');
+        if (!btn) return;
+        // Skip if it already has an onclick (HTML-attribute or property)
+        if (btn.onclick || btn.getAttribute('onclick')) return;
+        // Skip the obviously already-handled bell (we'll wire it below)
+        var raw = (btn.textContent || '').trim();
+        var label = raw.toLowerCase();
+        // Approve/deny in agent threads
+        if (btn.classList.contains('btn-approve')) { confirmBoxApprove(btn); return; }
+        if (btn.classList.contains('btn-deny'))    { confirmBoxModify(btn);  return; }
+        // Send / Execute on the input bars
+        if (label === 'send' && btn.closest('.chat-input-bar'))   { chatSendFromInput('chat');  return; }
+        if (label === 'execute' && btn.closest('.agent-input-bar')) { chatSendFromInput('agent'); return; }
+        // Bell
+        if (btn.classList.contains('header-bell')) { actionToast('No new notifications', { icon: '&#128276;' }); return; }
+        // Add Deadline: <date>
+        if (/^add deadline/i.test(raw)) { actionToast('Deadline added to compliance calendar'); return; }
+        // PDF-y labels
+        if (isPdf(label)) { actionToast('PDF download started', { icon: '&#128196;' }); return; }
+        // Briefing-y labels: toast + navigate
+        if (isBriefingNav(label)) {
+            actionToast(TOAST_MAP[label] || 'Opening briefings…');
+            setTimeout(function() {
+                document.querySelectorAll('.modal-bg.open').forEach(function(m) { m.classList.remove('open'); });
+                if (typeof navTo === 'function') navTo('briefings');
+            }, 380);
+            return;
+        }
+        // Generic match
+        if (TOAST_MAP[label]) { actionToast(TOAST_MAP[label]); return; }
+        // Final fallback: still acknowledge
+        actionToast(raw + ' — done');
+    }, true);
 })();
 
 // Snooze a worklist item — hides it with a brief toast.
