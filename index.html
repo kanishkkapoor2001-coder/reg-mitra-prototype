@@ -161,6 +161,112 @@
             text-align: center;
             letter-spacing: 0.2px;
         }
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 14px 16px;
+        }
+        .assistant-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+        .assistant-mode-toggle .mode-toggle-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-right: 4px;
+        }
+        .assistant-mode-toggle .mode-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .assistant-mode-toggle .mode-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .assistant-mode-toggle .mode-toggle-hint {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .settings-page {
+            max-width: 880px;
+        }
+        .settings-section {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 22px;
+            margin-bottom: 16px;
+        }
+        .settings-section h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+        .settings-section .sec-sub {
+            font-size: 12px;
+            color: var(--text-mid);
+            margin-bottom: 14px;
+        }
+        .settings-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .settings-item:hover { background: var(--accent-bg); border-color: var(--accent); }
+        .settings-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--accent-bg);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .settings-item-body { flex: 1; }
+        .settings-item-title { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+        .settings-item-sub { font-size: 11px; color: var(--text-mid); margin-top: 2px; }
+        .settings-item-status {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background: var(--success-bg);
+            color: var(--success);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .settings-item-status.off {
+            background: var(--bg-main);
+            color: var(--text-light);
+        }
 
         .sidebar-footer {
             padding: 18px 20px;
@@ -2461,60 +2567,31 @@
         </div>
         <nav class="sidebar-nav">
             <div class="nav-btn active" data-screen="dashboard">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                Dashboard
-            </div>
-            <div class="nav-btn" data-screen="feed">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-                Regulatory Feed
-                <span class="nav-badge">7</span>
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Today
             </div>
             <div class="nav-btn" data-screen="clients">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                My Clients
+                Clients
             </div>
-            <div class="nav-btn" data-screen="calendar">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                Calendar
+            <div class="nav-btn" data-screen="feed">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                Regulations
+                <span class="nav-badge">7</span>
             </div>
             <div class="nav-btn" data-screen="briefings">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Briefings
                 <span class="nav-badge" style="background: var(--warning); color: #fff;">3</span>
             </div>
-            <div class="nav-label">Integrations</div>
-            <div class="nav-btn" data-screen="tally">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"/><path d="M9 12h6M12 9v6"/></svg>
-                Tally Intelligence
-                <span class="nav-badge" style="background: var(--success); color: #fff;">Live</span>
-            </div>
-            <div class="nav-btn" data-screen="gst">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 7h6m-6 4h6m-3 4h3M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg>
-                GST Portal
-                <span class="nav-badge">3</span>
-            </div>
-            <div class="nav-btn" data-screen="incometax">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Income Tax & TDS
-            </div>
-            <div class="nav-btn" data-screen="mca">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                MCA Portal
-            </div>
-            <div class="nav-btn" data-screen="comms">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                Communication Hub
-                <span class="nav-badge" style="background: linear-gradient(135deg, #16a34a, #059669); color: #fff;">AI</span>
-            </div>
-            <div class="nav-label">Intelligence</div>
-            <div class="nav-btn" data-screen="chat">
+            <div class="nav-divider"></div>
+            <div class="nav-btn" data-screen="assistant" id="nav-assistant">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                Ask Reg Mitra
+                Assistant
             </div>
-            <div class="nav-btn" data-screen="agent">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                AI Agent
-                <span class="nav-badge" style="background: linear-gradient(135deg, #16a34a, #059669); color: #fff;">New</span>
+            <div class="nav-btn" data-screen="settings">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Settings
             </div>
         </nav>
         <div class="sidebar-footer">
@@ -2525,7 +2602,7 @@
 
     <main class="main">
         <header class="header">
-            <span class="header-title" id="page-title">Dashboard</span>
+            <span class="header-title" id="page-title">Today</span>
             <div class="header-search">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <input type="text" placeholder="Search regulations, clients, circulars..." id="global-search">
@@ -3437,6 +3514,12 @@
 
             <!-- CHAT -->
             <div class="screen" id="screen-chat">
+                <div class="assistant-mode-toggle">
+                    <span class="mode-toggle-label">Mode</span>
+                    <button class="mode-btn active" data-mode="answer" onclick="switchAssistantMode('answer')">Answer</button>
+                    <button class="mode-btn" data-mode="act" onclick="switchAssistantMode('act')">Act</button>
+                    <span class="mode-toggle-hint">Answer: read-only Q&amp;A. Act: AI can perform actions.</span>
+                </div>
                 <p class="screen-desc">Ask questions in natural language about any regulation, client, or compliance topic. AI draws on gazette sources, client profiles, and Tally data for contextual answers.</p>
                 <div class="chat-layout">
                     <!-- Chat Sidebar -->
@@ -4103,7 +4186,13 @@
 
             <!-- AI AGENT -->
             <div class="screen" id="screen-agent">
-                <p class="screen-desc">Unlike Ask Reg Mitra (which answers questions), the AI Agent <strong>takes actions</strong> on your behalf — syncs Tally data, files returns, dispatches briefings, and manages compliance calendars. Step-by-step progress shown for every task.</p>
+                <div class="assistant-mode-toggle">
+                    <span class="mode-toggle-label">Mode</span>
+                    <button class="mode-btn" data-mode="answer" onclick="switchAssistantMode('answer')">Answer</button>
+                    <button class="mode-btn active" data-mode="act" onclick="switchAssistantMode('act')">Act</button>
+                    <span class="mode-toggle-hint">Answer: read-only Q&amp;A. Act: AI can perform actions.</span>
+                </div>
+                <p class="screen-desc">In Act mode, the assistant <strong>takes actions</strong> on your behalf — syncs Tally data, files returns, dispatches briefings, and manages compliance calendars. It will ask for confirmation before any irreversible action.</p>
                 <div class="agent-wrap">
                     <div class="agent-msgs" id="agent-messages">
                         <!-- Agent Header Banner -->
@@ -5140,6 +5229,68 @@
                 </div>
             </div>
 
+            <!-- SETTINGS -->
+            <div class="screen" id="screen-settings">
+                <div class="settings-page">
+                    <div class="settings-section">
+                        <h3>Integrations</h3>
+                        <div class="sec-sub">Connect Reg Mitra to your data sources and regulator portals. Each integration powers a different part of the product.</div>
+                        <div class="settings-item" onclick="navTo('tally')">
+                            <div class="settings-item-icon">T</div>
+                            <div class="settings-item-body">
+                                <div class="settings-item-title">Tally</div>
+                                <div class="settings-item-sub">Live company data, ITC reconciliation, HSN rate validation</div>
+                            </div>
+                            <span class="settings-item-status">Connected</span>
+                        </div>
+                        <div class="settings-item" onclick="navTo('gst')">
+                            <div class="settings-item-icon">G</div>
+                            <div class="settings-item-body">
+                                <div class="settings-item-title">GST Portal</div>
+                                <div class="settings-item-sub">GSTR-2B fetch, ITC matching, return-status tracking</div>
+                            </div>
+                            <span class="settings-item-status">Connected</span>
+                        </div>
+                        <div class="settings-item" onclick="navTo('incometax')">
+                            <div class="settings-item-icon">I</div>
+                            <div class="settings-item-body">
+                                <div class="settings-item-title">Income Tax &amp; TDS</div>
+                                <div class="settings-item-sub">Form 26AS, TDS challan, return filing status</div>
+                            </div>
+                            <span class="settings-item-status">Connected</span>
+                        </div>
+                        <div class="settings-item" onclick="navTo('mca')">
+                            <div class="settings-item-icon">M</div>
+                            <div class="settings-item-body">
+                                <div class="settings-item-title">MCA Portal</div>
+                                <div class="settings-item-sub">Director KYC tracking, annual filings, SRN status</div>
+                            </div>
+                            <span class="settings-item-status">Connected</span>
+                        </div>
+                        <div class="settings-item" onclick="navTo('comms')">
+                            <div class="settings-item-icon">C</div>
+                            <div class="settings-item-body">
+                                <div class="settings-item-title">Communication Hub</div>
+                                <div class="settings-item-sub">WhatsApp Business + email delivery for briefings and reminders</div>
+                            </div>
+                            <span class="settings-item-status">Connected</span>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Firm</h3>
+                        <div class="sec-sub">Branding, team members, and notification defaults.</div>
+                        <div class="settings-item">
+                            <div class="settings-item-icon">F</div>
+                            <div class="settings-item-body">
+                                <div class="settings-item-title">Mehta Shah &amp; Associates</div>
+                                <div class="settings-item-sub">Bangalore · 6 clients · 4 partners</div>
+                            </div>
+                            <span class="settings-item-status">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 </div>
@@ -5541,6 +5692,25 @@ function toggleReasoning(el) {
 }
 
 // Navigation
+// "assistant" is a virtual nav target that resolves to #screen-chat (Answer mode) or #screen-agent (Act mode)
+// based on the user's persisted preference. Both screens render the mode toggle at top so the user can swap.
+function getAssistantMode() {
+    try { return localStorage.getItem('regmitra_assistant_mode') === 'act' ? 'act' : 'answer'; }
+    catch (e) { return 'answer'; }
+}
+function setAssistantMode(mode) {
+    try { localStorage.setItem('regmitra_assistant_mode', mode); } catch (e) {}
+}
+function switchAssistantMode(mode) {
+    setAssistantMode(mode);
+    const target = mode === 'act' ? 'agent' : 'chat';
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + target).classList.add('active');
+    document.querySelectorAll('.assistant-mode-toggle .mode-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === mode);
+    });
+}
+
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const screen = btn.dataset.screen;
@@ -5548,10 +5718,26 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('screen-' + screen).classList.add('active');
-        const titles = { dashboard:'Dashboard', feed:'Regulatory Feed', clients:'My Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', chat:'Ask Reg Mitra', agent:'AI Agent', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub' };
-        document.getElementById('page-title').textContent = titles[screen] || '';
-        document.querySelector('.header-search').style.display = (screen === 'chat' || screen === 'agent' || screen === 'tally' || screen === 'gst' || screen === 'incometax' || screen === 'mca' || screen === 'comms') ? 'none' : '';
+
+        let resolved = screen;
+        if (screen === 'assistant') {
+            resolved = getAssistantMode() === 'act' ? 'agent' : 'chat';
+        }
+        const target = document.getElementById('screen-' + resolved);
+        if (target) target.classList.add('active');
+
+        const titles = { dashboard:'Today', feed:'Regulations', clients:'Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', assistant:'Assistant', chat:'Assistant', agent:'Assistant', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub', settings:'Settings' };
+        document.getElementById('page-title').textContent = titles[screen] || titles[resolved] || '';
+        const hideSearch = ['assistant','chat','agent','tally','gst','incometax','mca','comms','settings'];
+        document.querySelector('.header-search').style.display = hideSearch.includes(screen) ? 'none' : '';
+
+        // Sync the mode toggle visual when entering assistant
+        if (screen === 'assistant') {
+            const mode = getAssistantMode();
+            document.querySelectorAll('.assistant-mode-toggle .mode-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.mode === mode);
+            });
+        }
     });
 });
 
@@ -5809,15 +5995,33 @@ function closeCalPopup() {
 
 // Navigate to screen
 function navTo(screen) {
+    // Map removed-nav screens back to their nearest visible nav button
+    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', calendar:'dashboard' };
+    var navTarget = navMap[screen] || screen;
     document.querySelectorAll('.nav-btn').forEach(b => {
         b.classList.remove('active');
-        if (b.dataset.screen === screen) b.classList.add('active');
+        if (b.dataset.screen === navTarget) b.classList.add('active');
     });
+
+    var resolved = screen;
+    if (screen === 'assistant') {
+        resolved = getAssistantMode() === 'act' ? 'agent' : 'chat';
+    }
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-' + screen).classList.add('active');
-    const titles = { dashboard:'Dashboard', feed:'Regulatory Feed', clients:'My Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', chat:'Ask Reg Mitra', agent:'AI Agent', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub' };
-    document.getElementById('page-title').textContent = titles[screen] || '';
-    document.querySelector('.header-search').style.display = (screen === 'chat' || screen === 'agent' || screen === 'tally' || screen === 'gst' || screen === 'incometax' || screen === 'mca' || screen === 'comms') ? 'none' : '';
+    var target = document.getElementById('screen-' + resolved);
+    if (target) target.classList.add('active');
+
+    const titles = { dashboard:'Today', feed:'Regulations', clients:'Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', assistant:'Assistant', chat:'Assistant', agent:'Assistant', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub', settings:'Settings' };
+    document.getElementById('page-title').textContent = titles[screen] || titles[resolved] || '';
+    const hideSearch = ['assistant','chat','agent','tally','gst','incometax','mca','comms','settings'];
+    document.querySelector('.header-search').style.display = hideSearch.includes(screen) ? 'none' : '';
+
+    if (screen === 'assistant' || screen === 'chat' || screen === 'agent') {
+        var mode = (screen === 'agent') ? 'act' : (screen === 'chat') ? 'answer' : getAssistantMode();
+        document.querySelectorAll('.assistant-mode-toggle .mode-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.mode === mode);
+        });
+    }
 }
 
 // ===== SCREEN FILTER FUNCTIONS =====
