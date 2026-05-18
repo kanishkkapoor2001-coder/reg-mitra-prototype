@@ -425,6 +425,54 @@
             border-radius: 12px;
         }
 
+        /* Phase 3a — strip AI brag/time-saved UI */
+        .ai-stats-bar { display: none !important; }
+        .ai-time-saved { display: none !important; }
+        .roi-time-saved-tsb { display: none !important; }
+        .agent-result-box em { display: none; }
+        .ai-processing-stat { display: none !important; }
+        .agent-capabilities { display: none; }
+
+        /* Phase 3b — client card ROI line */
+        .client-roi-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 8px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-light);
+        }
+        .client-roi-line .roi-pill {
+            font-size: 9px;
+            font-weight: 700;
+            background: var(--success-bg);
+            color: var(--success);
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        /* Phase 3c — channel hint + suggested button */
+        .bm-channel-hint {
+            font-size: 11px;
+            color: var(--text-mid);
+            margin: 0 12px 0 0;
+            font-weight: 500;
+        }
+        .bm-channel-hint strong { color: var(--text-dark); }
+        .btn-whatsapp.suggested,
+        .btn-email.suggested {
+            box-shadow: 0 0 0 2px var(--accent), 0 4px 12px -2px rgba(22,163,74,0.3);
+        }
+        .btn-whatsapp.dim,
+        .btn-email.dim {
+            opacity: 0.7;
+        }
+
         .sidebar-footer {
             padding: 18px 20px;
             border-top: 1px solid rgba(255,255,255,0.06);
@@ -3112,6 +3160,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">12</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 14 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;24K of partner time this month</div>
                     </div>
                     <div class="client-card" data-sector="it" data-risk="5.2" onclick="openClient('nexgen')">
                         <div class="client-card-top">
@@ -3125,6 +3174,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">18</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 8 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;9K of partner time this month</div>
                     </div>
                     <div class="client-card" data-sector="auto" data-risk="8.1" onclick="openClient('gupta')">
                         <div class="client-card-top">
@@ -3138,6 +3188,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">9</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 11 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;32K of partner time this month</div>
                     </div>
                     <div class="client-card" data-sector="fnb" data-risk="7.4" onclick="openClient('royal')">
                         <div class="client-card-top">
@@ -3151,6 +3202,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">7</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 9 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;14K of partner time this month</div>
                     </div>
                     <div class="client-card" data-sector="nbfc" data-risk="6.1" onclick="openClient('lakshmi')">
                         <div class="client-card-top">
@@ -3164,6 +3216,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">22</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 16 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;18K of partner time this month</div>
                     </div>
                     <div class="client-card" data-sector="realestate" data-risk="3.2" onclick="openClient('greenfield')">
                         <div class="client-card-top">
@@ -3177,6 +3230,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">14</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 7 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;6K of partner time this month</div>
                     </div>
                 </div>
             </div>
@@ -4672,7 +4726,7 @@
                     <div class="tsb-sep"></div>
                     <div class="tsb-metric"><div class="tsb-val" style="color:var(--warning)">8</div><div class="tsb-lbl">HSN Changed</div></div>
                     <div class="tsb-sep"></div>
-                    <div class="tsb-metric"><div class="tsb-val" style="color:var(--success)">~3.5 hrs</div><div class="tsb-lbl">Time Saved</div></div>
+                    <div class="tsb-metric roi-time-saved-tsb"><div class="tsb-val" style="color:var(--success)">~3.5 hrs</div><div class="tsb-lbl">Time Saved</div></div>
                     <div class="tsb-sep"></div>
                     <div class="tsb-ai-note"><span style="font-size:10px;font-weight:700;color:var(--accent)">AI</span> Cross-referenced <strong>847</strong> entries vs GSTR-2B, validated <strong>15</strong> stock items, flagged <strong>8</strong> rate changes &amp; <strong>2</strong> mismatches in <strong>12.4s</strong></div>
                 </div>
@@ -4913,7 +4967,7 @@
                     <div class="tsb-sep"></div>
                     <div class="tsb-metric"><div class="tsb-val" style="color:var(--warning)">3</div><div class="tsb-lbl">Alerts</div></div>
                     <div class="tsb-sep"></div>
-                    <div class="tsb-metric"><div class="tsb-val" style="color:var(--success)">~6 hrs</div><div class="tsb-lbl">Time Saved</div></div>
+                    <div class="tsb-metric roi-time-saved-tsb"><div class="tsb-val" style="color:var(--success)">~6 hrs</div><div class="tsb-lbl">Time Saved</div></div>
                     <div class="tsb-sep"></div>
                     <div class="tsb-ai-note"><span style="font-size:10px;font-weight:700;color:var(--accent)">AI</span> Reconciled GSTR-1 vs 3B for all 6 clients, validated ITC against GSTR-2B, identified 3 risks in <strong>18.2s</strong></div>
                 </div>
@@ -5026,7 +5080,7 @@
                     <div class="tsb-sep"></div>
                     <div class="tsb-metric"><div class="tsb-val" style="color:var(--warning)">&#8377;12.4K</div><div class="tsb-lbl">Refund Pending</div></div>
                     <div class="tsb-sep"></div>
-                    <div class="tsb-metric"><div class="tsb-val" style="color:var(--success)">~4 hrs</div><div class="tsb-lbl">Time Saved</div></div>
+                    <div class="tsb-metric roi-time-saved-tsb"><div class="tsb-val" style="color:var(--success)">~4 hrs</div><div class="tsb-lbl">Time Saved</div></div>
                     <div class="tsb-sep"></div>
                     <div class="tsb-ai-note"><span style="font-size:10px;font-weight:700;color:var(--accent)">AI</span> Matched Tally TDS vs Form 26AS for 6 clients, found 2 mismatches, validated rates in <strong>14.6s</strong></div>
                 </div>
@@ -5133,7 +5187,7 @@
                     <div class="tsb-sep"></div>
                     <div class="tsb-metric"><div class="tsb-val" style="color:var(--danger)">2</div><div class="tsb-lbl">Returns Pending</div></div>
                     <div class="tsb-sep"></div>
-                    <div class="tsb-metric"><div class="tsb-val" style="color:var(--success)">~2 hrs</div><div class="tsb-lbl">Time Saved</div></div>
+                    <div class="tsb-metric roi-time-saved-tsb"><div class="tsb-val" style="color:var(--success)">~2 hrs</div><div class="tsb-lbl">Time Saved</div></div>
                     <div class="tsb-sep"></div>
                     <div class="tsb-ai-note"><span style="font-size:10px;font-weight:700;color:var(--accent)">AI</span> Checked MCA filings for 6 entities, validated 14 DINs, pre-populated DIR-3 KYC forms in <strong>8.4s</strong></div>
                 </div>
@@ -5243,7 +5297,7 @@
                     <div class="tsb-sep"></div>
                     <div class="tsb-metric"><div class="tsb-val">2</div><div class="tsb-lbl">Auto-Reminders</div></div>
                     <div class="tsb-sep"></div>
-                    <div class="tsb-metric"><div class="tsb-val" style="color:var(--success)">~1.5 hrs</div><div class="tsb-lbl">Time Saved</div></div>
+                    <div class="tsb-metric roi-time-saved-tsb"><div class="tsb-val" style="color:var(--success)">~1.5 hrs</div><div class="tsb-lbl">Time Saved</div></div>
                     <div class="tsb-sep"></div>
                     <div class="tsb-ai-note"><span style="font-size:10px;font-weight:700;color:var(--accent)">AI</span> Drafted 3 briefings, auto-sent 2 WhatsApp reminders, tracked 8 read receipts this week</div>
                 </div>
@@ -6084,13 +6138,25 @@ function navTo(screen) {
 // ===== SCREEN FILTER FUNCTIONS =====
 
 var CLIENT_MAP = {
-    sharma: { name:'Sharma Pharmaceuticals', short:'Sharma Pharma', sector:'Pharma', city:'Mumbai' },
-    gupta: { name:'Gupta Auto Components', short:'Gupta Auto', sector:'Auto', city:'Gurgaon' },
-    royal: { name:'Royal Spice Kitchen', short:'Royal Spice', sector:'F&B', city:'Delhi' },
-    lakshmi: { name:'Lakshmi FinServ', short:'Lakshmi FinServ', sector:'NBFC', city:'Chennai' },
-    nexgen: { name:'NexGen Software', short:'NexGen IT', sector:'IT', city:'Bangalore' },
-    greenfield: { name:'Greenfield Realty', short:'Greenfield Realty', sector:'Real Estate', city:'Pune' }
+    sharma: { name:'Sharma Pharmaceuticals', short:'Sharma Pharma', sector:'Pharma', city:'Mumbai', size:'enterprise' },
+    gupta: { name:'Gupta Auto Components', short:'Gupta Auto', sector:'Auto', city:'Gurgaon', size:'enterprise' },
+    royal: { name:'Royal Spice Kitchen', short:'Royal Spice', sector:'F&B', city:'Delhi', size:'sme' },
+    lakshmi: { name:'Lakshmi FinServ', short:'Lakshmi FinServ', sector:'NBFC', city:'Chennai', size:'enterprise' },
+    nexgen: { name:'NexGen Software', short:'NexGen IT', sector:'IT', city:'Bangalore', size:'sme' },
+    greenfield: { name:'Greenfield Realty', short:'Greenfield Realty', sector:'Real Estate', city:'Pune', size:'sme' }
 };
+
+function clientIdFromRecipient(recipient) {
+    if (!recipient) return null;
+    var r = recipient.toLowerCase();
+    if (r.indexOf('sharma') !== -1) return 'sharma';
+    if (r.indexOf('gupta') !== -1) return 'gupta';
+    if (r.indexOf('royal') !== -1) return 'royal';
+    if (r.indexOf('lakshmi') !== -1) return 'lakshmi';
+    if (r.indexOf('nexgen') !== -1) return 'nexgen';
+    if (r.indexOf('greenfield') !== -1) return 'greenfield';
+    return null;
+}
 
 function _filterRows(screen, filterVal, alertClass) {
     var scr = document.getElementById('screen-' + screen);
@@ -6424,6 +6490,26 @@ function openBriefingModal(card) {
     document.getElementById('bm-recipient').textContent = recipient;
     document.getElementById('briefing-editor').value = bodyText;
     document.getElementById('bm-provenance').textContent = provenance;
+
+    // Default channel per client size: SME → WhatsApp, enterprise → Email
+    var clientId = clientIdFromRecipient(recipient);
+    var size = (clientId && CLIENT_MAP[clientId]) ? CLIENT_MAP[clientId].size : 'sme';
+    var preferred = size === 'enterprise' ? 'email' : 'whatsapp';
+    var hint = document.getElementById('bm-channel-hint');
+    var btnWA = document.getElementById('bm-btn-whatsapp');
+    var btnEmail = document.getElementById('bm-btn-email');
+    btnWA.classList.remove('suggested', 'dim');
+    btnEmail.classList.remove('suggested', 'dim');
+    if (preferred === 'whatsapp') {
+        hint.innerHTML = '<strong>Suggested: WhatsApp</strong> (SME client &mdash; better read rate)';
+        btnWA.classList.add('suggested');
+        btnEmail.classList.add('dim');
+    } else {
+        hint.innerHTML = '<strong>Suggested: Email</strong> (enterprise client &mdash; formal channel)';
+        btnEmail.classList.add('suggested');
+        btnWA.classList.add('dim');
+    }
+
     document.getElementById('briefing-modal-bg').classList.add('open');
 }
 
@@ -6676,11 +6762,12 @@ function startNewAgentTask() {
         </div>
         <div class="briefing-modal-footer">
             <div class="ai-provenance" style="margin:0;font-size:10px" id="bm-provenance"></div>
+            <div class="bm-channel-hint" id="bm-channel-hint"></div>
             <div class="bm-spacer"></div>
             <button class="btn-ghost" onclick="closeBriefingModal()">Cancel</button>
             <button class="btn-ghost" onclick="downloadBriefingPDF()">Download PDF</button>
-            <button class="btn-whatsapp" onclick="sendBriefing('whatsapp')">Send via WhatsApp</button>
-            <button class="btn-email" onclick="sendBriefing('email')">Send via Email</button>
+            <button class="btn-whatsapp" id="bm-btn-whatsapp" onclick="sendBriefing('whatsapp')">Send via WhatsApp</button>
+            <button class="btn-email" id="bm-btn-email" onclick="sendBriefing('email')">Send via Email</button>
         </div>
     </div>
 </div>
