@@ -268,6 +268,163 @@
             color: var(--text-light);
         }
 
+        /* Today worklist */
+        .today-page { max-width: 760px; }
+        .today-greeting { margin-bottom: 24px; }
+        .today-greeting h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: -0.3px;
+        }
+        .today-greeting .today-sub {
+            font-size: 13px;
+            color: var(--text-mid);
+            margin-top: 4px;
+        }
+        .ws-section { margin-bottom: 28px; }
+        .ws-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .ws-header h3 {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-mid);
+        }
+        .ws-header .ws-count {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-light);
+            background: var(--border-light);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .ws-section.overdue .ws-header h3 { color: var(--danger); }
+        .ws-section.overdue .ws-count { background: var(--danger-bg); color: var(--danger); }
+        .ws-section.overdue .ws-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--danger);
+            box-shadow: 0 0 0 4px var(--danger-bg);
+        }
+        .wi {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .wi:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+        .wi.overdue {
+            border-left: 3px solid var(--danger);
+        }
+        .wi-body { flex: 1; min-width: 0; }
+        .wi-meta {
+            display: flex;
+            gap: 10px;
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 600;
+        }
+        .wi-meta .wi-client { color: var(--text-mid); }
+        .wi.overdue .wi-meta .wi-due { color: var(--danger); }
+        .wi-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.45;
+        }
+        .wi-sub {
+            font-size: 12px;
+            color: var(--text-mid);
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+        .wi-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .wi-btn {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 7px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-mid);
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .wi-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .wi-btn.primary:hover { background: var(--accent-light); border-color: var(--accent-light); }
+        .wi-btn:hover { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+
+        .ws-section.ai-summary .ws-collapsed {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .ws-section.ai-summary .ws-collapsed:hover { border-color: var(--accent); }
+        .ws-section.ai-summary .collapse-arrow {
+            transition: transform 0.2s;
+            color: var(--text-light);
+            font-size: 11px;
+        }
+        .ws-section.ai-summary.open .collapse-arrow { transform: rotate(90deg); }
+        .ws-section.ai-summary .ws-collapsed .col-text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        .ws-section.ai-summary .ws-collapsed .col-text strong { color: var(--text-dark); }
+        .ws-section.ai-summary .ws-expanded {
+            display: none;
+            padding: 14px 18px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            margin-top: -1px;
+        }
+        .ws-section.ai-summary.open .ws-expanded { display: block; }
+        .ws-section.ai-summary.open .ws-collapsed { border-radius: 12px 12px 0 0; }
+
+        .ws-empty {
+            font-size: 13px;
+            color: var(--text-light);
+            padding: 24px;
+            text-align: center;
+            background: var(--accent-bg);
+            border-radius: 12px;
+        }
+
         .sidebar-footer {
             padding: 18px 20px;
             border-top: 1px solid rgba(255,255,255,0.06);
@@ -2582,7 +2739,7 @@
             <div class="nav-btn" data-screen="briefings">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Briefings
-                <span class="nav-badge" style="background: var(--warning); color: #fff;">3</span>
+                <span class="nav-badge" style="background: var(--warning); color: #fff;">4</span>
             </div>
             <div class="nav-divider"></div>
             <div class="nav-btn" data-screen="assistant" id="nav-assistant">
@@ -2612,226 +2769,126 @@
         <div class="content">
             <!-- DASHBOARD -->
             <div class="screen active" id="screen-dashboard">
-                <div class="hero-welcome" id="hero-welcome">
-                    <button class="hero-close" onclick="document.getElementById('hero-welcome').classList.add('hidden')" title="Dismiss">&times;</button>
-                    <h2>Welcome to Reg Mitra</h2>
-                    <div class="hero-tagline">AI-powered regulatory intelligence for CA firms</div>
-                    <div class="hero-desc">
-                        Reg Mitra <strong>automatically crawls 142+ government gazette portals</strong> (FSSAI, MCA, CBIC, RBI, CBDT, state gazettes), <strong>detects new regulations</strong>, and <strong>matches them to your clients</strong> in real time. It drafts client-specific advisory briefings in seconds, connects to Tally to reconcile ITC and validate HSN rates, and tracks every compliance deadline so nothing slips through.
-                        <br><br>
-                        This dashboard shows a live demo for <strong>Mehta Shah &amp; Associates</strong>, a Bangalore-based CA firm managing 6 clients across pharma, auto, F&amp;B, NBFC, IT, and real estate sectors.
+                <div class="today-page">
+                    <div class="today-greeting">
+                        <h2>Good morning, Mehta Shah &amp; Associates</h2>
+                        <div class="today-sub" id="today-sub">Thursday, 7 May 2026</div>
                     </div>
-                    <div class="hero-pills">
-                        <span>142+ Gazette Sources</span>
-                        <span>Auto Client-Matching</span>
-                        <span>AI-Drafted Briefings</span>
-                        <span>Tally Integration</span>
-                        <span>Compliance Calendar</span>
-                        <span>AI Agent Actions</span>
-                    </div>
-                </div>
-                <div class="ai-stats-bar">
-                    <span class="ai-stats-icon">AI</span>
-                    <strong>23</strong> gazettes crawled today
-                    <span class="ai-stats-sep"></span>
-                    Last scan: <strong>Today 9:15 AM</strong>
-                    <span class="ai-stats-sep"></span>
-                    <strong>7</strong> new regulations auto-matched
-                    <span class="ai-stats-sep"></span>
-                    <strong style="color:var(--danger)">1</strong> overdue action flagged
-                </div>
 
-                <div class="ai-roi-card">
-                    <div class="roi-header">
-                        <span style="font-size:12px;font-weight:700;color:#86efac">AI</span>
-                        <h3>What AI Did For You This Week</h3>
-                        <span class="roi-period">28 Apr — 6 May 2026</span>
-                    </div>
-                    <p class="roi-subtitle">Without Reg Mitra, a CA firm would manually check gazette websites, read each notification, figure out which clients are affected, and draft advisories from scratch.</p>
-                    <div class="ai-roi-metrics">
-                        <div class="ai-roi-metric">
-                            <div class="roi-val">142</div>
-                            <div class="roi-lbl">Sources Scanned</div>
+                    <!-- Overdue (hidden if empty) -->
+                    <section class="ws-section overdue" id="ws-overdue">
+                        <div class="ws-header">
+                            <span class="ws-dot"></span>
+                            <h3>Overdue</h3>
+                            <span class="ws-count">1</span>
                         </div>
-                        <div class="ai-roi-metric">
-                            <div class="roi-val">7</div>
-                            <div class="roi-lbl">Regulations Detected</div>
+                        <div class="wi overdue" onclick="navTo('briefings')">
+                            <div class="wi-body">
+                                <div class="wi-meta"><span class="wi-due">Was due 2 May &middot; 5 days ago</span><span class="wi-client">Royal Spice Kitchen</span></div>
+                                <div class="wi-title">FSSAI licence transition &mdash; confirm perpetual opt-in with Delhi &amp; Karnataka FSO</div>
+                                <div class="wi-sub">AI drafted a confirmation letter and the client briefing 5 days ago. One click sends both.</div>
+                            </div>
+                            <div class="wi-actions">
+                                <button class="wi-btn primary" onclick="event.stopPropagation(); navTo('briefings');">Open briefing</button>
+                                <button class="wi-btn" onclick="event.stopPropagation();">Snooze</button>
+                            </div>
                         </div>
-                        <div class="ai-roi-metric">
-                            <div class="roi-val">7</div>
-                            <div class="roi-lbl">Briefings Drafted</div>
-                        </div>
-                        <div class="ai-roi-metric">
-                            <div class="roi-val green">~12 hrs</div>
-                            <div class="roi-lbl">Time Saved</div>
-                        </div>
-                    </div>
-                    <div class="ai-roi-footer">
-                        <span>✦</span>
-                        Manual equivalent: <strong>~2 full working days</strong> of gazette reading, client matching, and briefing drafting · AI completed in <strong>47 seconds</strong>
-                    </div>
-                </div>
+                    </section>
 
-                <div class="stats">
-                    <div class="stat-box clickable" onclick="navTo('feed')">
-                        <div class="label">New This Week</div>
-                        <div class="value">7</div>
-                        <div class="sub">+3 from last week</div>
-                        <div class="ai-sub">AI-detected from 142 sources</div>
-                    </div>
-                    <div class="stat-box clickable" onclick="navTo('clients')">
-                        <div class="label">Clients Affected</div>
-                        <div class="value">5 / 6</div>
-                        <div class="sub">across 4 regulatory bodies</div>
-                        <div class="ai-sub">AI-matched across 6 client profiles</div>
-                    </div>
-                    <div class="stat-box clickable" onclick="navTo('calendar')">
-                        <div class="label">Deadlines (7 days)</div>
-                        <div class="value">3</div>
-                        <div class="sub warn">1 overdue</div>
-                        <div class="ai-sub">AI-tracked from gazette dates</div>
-                    </div>
-                    <div class="stat-box clickable" onclick="navTo('briefings')">
-                        <div class="label">Briefings Ready</div>
-                        <div class="value">3</div>
-                        <div class="sub">Pending your review</div>
-                        <div class="ai-sub">AI-drafted in &lt;10 sec each</div>
-                    </div>
-                </div>
+                    <!-- Next 24 hours -->
+                    <section class="ws-section" id="ws-soon">
+                        <div class="ws-header">
+                            <h3>Next 24 hours</h3>
+                            <span class="ws-count">2</span>
+                        </div>
+                        <div class="wi" onclick="navTo('clients')">
+                            <div class="wi-body">
+                                <div class="wi-meta"><span class="wi-due">Due today &middot; 7 May</span><span class="wi-client">All 6 clients</span></div>
+                                <div class="wi-title">TDS Deposit &mdash; Q4 FY26</div>
+                                <div class="wi-sub">Challan 281 amounts ready in Tally for each client. Approve to dispatch.</div>
+                            </div>
+                            <div class="wi-actions">
+                                <button class="wi-btn primary" onclick="event.stopPropagation(); navTo('assistant');">Review &amp; file</button>
+                            </div>
+                        </div>
+                        <div class="wi" onclick="navTo('clients')">
+                            <div class="wi-body">
+                                <div class="wi-meta"><span class="wi-due">Tomorrow &middot; 8 May</span><span class="wi-client">Sharma Pharma</span></div>
+                                <div class="wi-title">IGST rate change &mdash; HSN codes for pharma intermediates 18%&rarr;12%</div>
+                                <div class="wi-sub">AI reconciled 47 invoices in Tally. 3 need partner sign-off before re-billing.</div>
+                            </div>
+                            <div class="wi-actions">
+                                <button class="wi-btn primary" onclick="event.stopPropagation(); openClient('sharma');">Review</button>
+                            </div>
+                        </div>
+                    </section>
 
-                <div class="ai-activity-log" id="ai-activity-log">
-                    <div class="ai-log-header" onclick="document.getElementById('ai-activity-log').classList.toggle('open')">
-                        <span class="log-arrow">▶</span>
-                        <span>AI Activity Log</span>
-                        <span class="log-count">12 actions</span>
-                    </div>
-                    <div class="ai-log-body">
-                        <div class="ai-log-item"><span class="ai-log-time">9:15 AM</span><span class="ai-log-dot scan"></span><span>Crawled <strong>23 gazette portals</strong> — FSSAI, MCA, CBIC, RBI, CBDT, 18 state gazettes</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:16 AM</span><span class="ai-log-dot match"></span><span>Detected <strong>RBI CRAR circular</strong> (6 pages) — new regulation, not seen before</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:16 AM</span><span class="ai-log-dot match"></span><span>Matched RBI circular to <strong>Lakshmi FinServ</strong> — CRAR 15.8% < new 16% threshold</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:17 AM</span><span class="ai-log-dot draft"></span><span>Drafted strategic briefing for Lakshmi FinServ — capital planning advisory (10 sec)</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:17 AM</span><span class="ai-log-dot alert"></span><span>Detected <strong>cross-regulation conflict</strong>: IGST rate change + Gupta Auto existing OEM contracts</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:18 AM</span><span class="ai-log-dot scan"></span><span>Re-scanned <strong>CBIC notification</strong> — confirmed HSN 8708 reclassification affects 4 clients</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:18 AM</span><span class="ai-log-dot draft"></span><span>Drafted urgent briefing for Gupta Auto — IGST brake assemblies 18%→28% (11 sec)</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:19 AM</span><span class="ai-log-dot flag"></span><span>Auto-flagged <strong>FSSAI opt-in overdue</strong> for Royal Spice Kitchen — deadline was 2 May</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:19 AM</span><span class="ai-log-dot match"></span><span>Updated risk scores for all 6 clients based on this week's regulatory changes</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:20 AM</span><span class="ai-log-dot scan"></span><span>Scanned <strong>Karnataka Gazette</strong> — no new amendments since 22 Apr (NexGen S&E still latest)</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:20 AM</span><span class="ai-log-dot draft"></span><span>Predicted upcoming: GST Council meeting ~22 Jun, RBI policy review ~15 Jun</span></div>
-                        <div class="ai-log-item"><span class="ai-log-time">9:21 AM</span><span class="ai-log-dot"></span><span>Scan complete. <strong>7 regulations active</strong>, <strong>5/6 clients affected</strong>, <strong>1 overdue action</strong>. Ready for your review.</span></div>
-                    </div>
-                </div>
+                    <!-- AI briefings awaiting review -->
+                    <section class="ws-section" id="ws-briefings">
+                        <div class="ws-header">
+                            <h3>Briefings awaiting your review</h3>
+                            <span class="ws-count">4</span>
+                        </div>
+                        <div class="wi" onclick="navTo('briefings')">
+                            <div class="wi-body">
+                                <div class="wi-meta"><span class="wi-due">FSSAI Amendment</span><span class="wi-client">Royal Spice Kitchen</span></div>
+                                <div class="wi-title">Your FSSAI licence is now perpetual &mdash; here is what changes</div>
+                            </div>
+                            <div class="wi-actions">
+                                <button class="wi-btn primary" onclick="event.stopPropagation(); navTo('briefings');">Review</button>
+                            </div>
+                        </div>
+                        <div class="wi" onclick="navTo('briefings')">
+                            <div class="wi-body">
+                                <div class="wi-meta"><span class="wi-due">MCA &middot; Director KYC</span><span class="wi-client">Gupta Auto Components</span></div>
+                                <div class="wi-title">New 3-year KYC cycle &mdash; 4 directors must file by 30 Sep</div>
+                            </div>
+                            <div class="wi-actions">
+                                <button class="wi-btn primary" onclick="event.stopPropagation(); navTo('briefings');">Review</button>
+                            </div>
+                        </div>
+                        <div class="wi" onclick="navTo('briefings')">
+                            <div class="wi-body">
+                                <div class="wi-meta"><span class="wi-due">Karnataka S&amp;E Amendment</span><span class="wi-client">NexGen Software</span></div>
+                                <div class="wi-title">Overtime cap 50 hrs/qtr &mdash; policy revision needed before 1 Jul</div>
+                            </div>
+                            <div class="wi-actions">
+                                <button class="wi-btn primary" onclick="event.stopPropagation(); navTo('briefings');">Review</button>
+                            </div>
+                        </div>
+                        <div class="wi" onclick="navTo('briefings')">
+                            <div class="wi-body">
+                                <div class="wi-meta"><span class="wi-due">CBDT &middot; TDS 194J</span><span class="wi-client">NexGen Software</span></div>
+                                <div class="wi-title">194J flat 10% from FY27 &mdash; vendor onboarding checklist</div>
+                            </div>
+                            <div class="wi-actions">
+                                <button class="wi-btn primary" onclick="event.stopPropagation(); navTo('briefings');">Review</button>
+                            </div>
+                        </div>
+                    </section>
 
-                <div class="screen-filter-bar">
-                    <span class="filter-label">Client</span>
-                    <span class="filter-sep"></span>
-                    <select class="company-select" id="dash-client-filter" onchange="filterDashboard()">
-                        <option value="all" selected>All Clients</option>
-                        <option value="sharma">Sharma Pharmaceuticals</option>
-                        <option value="gupta">Gupta Auto Components</option>
-                        <option value="royal">Royal Spice Kitchen</option>
-                        <option value="lakshmi">Lakshmi FinServ</option>
-                        <option value="nexgen">NexGen Software</option>
-                        <option value="greenfield">Greenfield Realty</option>
-                    </select>
-                    <span class="filter-sep"></span>
-                    <span class="filter-label">Regulation</span>
-                    <span class="filter-sep"></span>
-                    <select class="company-select" id="dash-reg-filter" onchange="filterDashboard()" style="min-width:160px">
-                        <option value="all" selected>All Types</option>
-                        <option value="gst">GST / CBIC</option>
-                        <option value="mca">MCA</option>
-                        <option value="fssai">FSSAI</option>
-                        <option value="rbi">RBI</option>
-                        <option value="cbdt">CBDT</option>
-                        <option value="labour">Labour</option>
-                    </select>
-                </div>
-
-                <div class="two-col">
-                    <div>
-                        <div class="section-heading-row">
-                            <span class="section-heading" style="margin-bottom:0">Priority Regulations</span>
-                            <div class="dash-filters" id="dash-filter-bar">
-                                <span class="dash-filter active" data-df="all">All</span>
-                                <span class="dash-filter" data-df="high">High</span>
-                                <span class="dash-filter" data-df="action">Action Req.</span>
-                                <span class="dash-filter" data-df="review">Review</span>
+                    <!-- What AI did today (collapsed by default) -->
+                    <section class="ws-section ai-summary" id="ws-aitoday">
+                        <div class="ws-collapsed" onclick="document.getElementById('ws-aitoday').classList.toggle('open')">
+                            <span class="collapse-arrow">&#9656;</span>
+                            <div class="col-text"><strong>AI handled 12 tasks across 4 clients today.</strong> Scanned 23 gazette portals, drafted 3 briefings, flagged 1 overdue item.</div>
+                        </div>
+                        <div class="ws-expanded">
+                            <div class="ai-log-body">
+                                <div class="ai-log-item"><span class="ai-log-time">9:15 AM</span><span class="ai-log-dot scan"></span><span>Crawled <strong>23 gazette portals</strong> &mdash; FSSAI, MCA, CBIC, RBI, CBDT, 18 state gazettes</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:16 AM</span><span class="ai-log-dot match"></span><span>Detected <strong>RBI CRAR circular</strong> &mdash; matched to Lakshmi FinServ (CRAR 15.8% &lt; new 16% threshold)</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:17 AM</span><span class="ai-log-dot draft"></span><span>Drafted strategic briefing for Lakshmi FinServ &mdash; capital planning advisory</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:17 AM</span><span class="ai-log-dot alert"></span><span>Detected <strong>cross-regulation conflict</strong>: IGST rate change + Gupta Auto OEM contracts</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:18 AM</span><span class="ai-log-dot scan"></span><span>Re-scanned <strong>CBIC notification</strong> &mdash; confirmed HSN 8708 reclassification affects 4 clients</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:18 AM</span><span class="ai-log-dot draft"></span><span>Drafted urgent briefing for Gupta Auto &mdash; IGST brake assemblies 18%&rarr;28%</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:19 AM</span><span class="ai-log-dot flag"></span><span>Auto-flagged <strong>FSSAI opt-in overdue</strong> for Royal Spice Kitchen &mdash; deadline was 2 May</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:19 AM</span><span class="ai-log-dot match"></span><span>Updated risk scores for all 6 clients based on this week&rsquo;s regulatory changes</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:20 AM</span><span class="ai-log-dot scan"></span><span>Scanned <strong>Karnataka Gazette</strong> &mdash; no new amendments since 22 Apr</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:20 AM</span><span class="ai-log-dot draft"></span><span>Predicted upcoming: GST Council meeting ~22 Jun, RBI policy review ~15 Jun</span></div>
+                                <div class="ai-log-item"><span class="ai-log-time">9:21 AM</span><span class="ai-log-dot"></span><span>Scan complete &mdash; <strong>7 regulations active</strong>, <strong>5/6 clients affected</strong>, <strong>1 overdue action</strong></span></div>
                             </div>
                         </div>
-                        <div class="reg-card dash-reg" data-dp="high" data-client="royal" data-regtype="fssai" onclick="openModal('fssai')">
-                            <div class="reg-card-top">
-                                <span class="tag tag-fssai">FSSAI</span>
-                                <span class="ai-badge">AI detected</span>
-                                <span class="priority priority-high">High</span>
-                            </div>
-                            <div class="reg-card-title">FSSAI Licensing Amendment 2026 — Perpetual Validity & Risk-Based Inspections</div>
-                            <div class="reg-card-meta"><span>10 Mar 2026</span><span>Effective immediately</span></div>
-                            <div class="reg-card-bottom">
-                                <span class="affected-text">✦ AI matched to 1 client</span>
-                                <div class="client-pills"><span class="client-pill">Royal Spice</span></div>
-                            </div>
-                        </div>
-                        <div class="reg-card dash-reg" data-dp="action" data-client="sharma gupta royal lakshmi nexgen greenfield" data-regtype="mca" onclick="openModal('mca')">
-                            <div class="reg-card-top">
-                                <span class="tag tag-mca">MCA</span>
-                                <span class="ai-badge">AI detected</span>
-                                <span class="priority priority-high">Action Required</span>
-                            </div>
-                            <div class="reg-card-title">Director KYC — 3-Year Cycle Effective 31 March 2026</div>
-                            <div class="reg-card-meta"><span>31 Dec 2025</span><span>Deadline: 30 Sep 2026</span></div>
-                            <div class="reg-card-bottom">
-                                <span class="affected-text">✦ AI matched to all 6 clients</span>
-                                <div class="client-pills"><span class="client-pill">14 directors</span></div>
-                            </div>
-                        </div>
-                        <div class="reg-card dash-reg" data-dp="review" data-client="sharma gupta royal lakshmi" data-regtype="gst" onclick="openModal('cbic')">
-                            <div class="reg-card-top">
-                                <span class="tag tag-gst">CBIC / GST</span>
-                                <span class="ai-badge">AI detected</span>
-                                <span class="priority priority-med">Review</span>
-                            </div>
-                            <div class="reg-card-title">IGST Rate Schedule Revised — Finance Act 2026</div>
-                            <div class="reg-card-meta"><span>28 Apr 2026</span><span>Effective: 1 May 2026</span></div>
-                            <div class="reg-card-bottom">
-                                <span class="affected-text">✦ AI matched to 4 clients</span>
-                                <div class="client-pills">
-                                    <span class="client-pill">Sharma Pharma</span>
-                                    <span class="client-pill">Gupta Auto</span>
-                                    <span class="client-pill">+2</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="section-heading">Upcoming Deadlines</div>
-                        <div class="deadlines">
-                            <div class="dl-item overdue" data-client="royal">
-                                <div class="dl-date"><div class="day" style="color:var(--danger)">2</div><div class="mon">May</div></div>
-                                <div class="dl-info"><div class="title">FSSAI License Transition — Royal Spice Kitchen</div><div class="sub">Perpetual license opt-in</div></div>
-                                <span class="dl-status dl-overdue">Overdue</span>
-                            </div>
-                            <div class="dl-item" data-client="sharma gupta royal lakshmi nexgen greenfield">
-                                <div class="dl-date"><div class="day">7</div><div class="mon">May</div></div>
-                                <div class="dl-info"><div class="title">TDS Deposit — Q4 FY26</div><div class="sub">All clients</div></div>
-                                <span class="dl-status dl-pending">2 days</span>
-                            </div>
-                            <div class="dl-item" data-client="sharma gupta royal lakshmi nexgen greenfield">
-                                <div class="dl-date"><div class="day">9</div><div class="mon">May</div></div>
-                                <div class="dl-info"><div class="title">MCA Incorporation Rules — Public Comments</div><div class="sub">Submit feedback on amendments</div></div>
-                                <span class="dl-status dl-pending">4 days</span>
-                            </div>
-                            <div class="dl-item" data-client="sharma gupta royal lakshmi nexgen greenfield">
-                                <div class="dl-date"><div class="day">15</div><div class="mon">May</div></div>
-                                <div class="dl-info"><div class="title">TDS Return Filing — Form 24Q/26Q</div><div class="sub">All clients — Q4 FY26</div></div>
-                                <span class="dl-status dl-pending">10 days</span>
-                            </div>
-                            <div class="dl-item" data-client="sharma gupta royal lakshmi nexgen greenfield">
-                                <div class="dl-date"><div class="day">20</div><div class="mon">May</div></div>
-                                <div class="dl-info"><div class="title">GSTR-3B Filing — April 2026</div><div class="sub">Monthly return all GSTINs</div></div>
-                                <span class="dl-status dl-pending">15 days</span>
-                            </div>
-                        </div>
-                    </div>
+                    </section>
                 </div>
             </div>
 
