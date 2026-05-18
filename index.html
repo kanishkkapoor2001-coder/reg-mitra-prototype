@@ -473,6 +473,254 @@
             opacity: 0.7;
         }
 
+        /* Phase 4 — onboarding overlay */
+        .ob-overlay {
+            position: fixed; inset: 0; z-index: 10000;
+            background: linear-gradient(135deg, #0b1f1a 0%, #122a23 100%);
+            display: none;
+            align-items: center; justify-content: center;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+        .ob-overlay.open { display: flex; }
+        .ob-card {
+            background: #fff;
+            width: 100%;
+            max-width: 680px;
+            border-radius: 20px;
+            padding: 40px 44px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .ob-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 32px;
+        }
+        .ob-dot {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: var(--border);
+            color: var(--text-light);
+            font-size: 11px;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ob-dot.done { background: var(--accent); color: #fff; }
+        .ob-dot.active { background: var(--accent); color: #fff; box-shadow: 0 0 0 4px var(--accent-bg); }
+        .ob-bar {
+            width: 36px; height: 2px;
+            background: var(--border);
+        }
+        .ob-bar.done { background: var(--accent); }
+        .ob-step { display: none; }
+        .ob-step.active { display: block; }
+        .ob-step h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .ob-step .ob-sub {
+            font-size: 14px;
+            color: var(--text-mid);
+            margin-bottom: 28px;
+            line-height: 1.55;
+        }
+        .ob-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+            align-items: center;
+        }
+        .ob-btn {
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-mid);
+        }
+        .ob-btn.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .ob-btn.primary:hover { background: var(--accent-light); }
+        .ob-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .ob-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .ob-tally-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 16px 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .ob-tally-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            background: var(--accent-bg);
+            color: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .ob-tally-body { flex: 1; }
+        .ob-tally-title { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+        .ob-tally-sub { font-size: 12px; color: var(--text-mid); margin-top: 2px; }
+        .ob-tally-result {
+            display: none;
+            margin-top: 12px;
+            padding: 14px;
+            background: var(--success-bg);
+            border: 1px solid var(--success);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-dark);
+        }
+        .ob-tally-result.show { display: block; }
+        .ob-tally-result strong { color: var(--success); }
+
+        .ob-client-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .ob-client-tile {
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ob-client-tile:hover { border-color: var(--accent); background: var(--accent-bg); }
+        .ob-client-tile.selected {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+        }
+        .ob-client-tile .ob-ct-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: var(--bg-main);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--text-mid);
+        }
+        .ob-client-tile.selected .ob-ct-icon {
+            background: var(--accent);
+            color: #fff;
+        }
+        .ob-client-tile .ob-ct-name { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+        .ob-client-tile .ob-ct-sector { font-size: 11px; color: var(--text-mid); }
+        .ob-client-tile .ob-ct-tag {
+            margin-left: auto;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--accent);
+            background: var(--accent-bg);
+            padding: 3px 7px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .ob-scan-trace {
+            background: #0e2822;
+            border-radius: 12px;
+            padding: 22px 24px;
+            font-family: 'SF Mono', Menlo, Monaco, monospace;
+            font-size: 12px;
+            color: #d4d4d8;
+            min-height: 280px;
+            max-height: 360px;
+            overflow-y: auto;
+        }
+        .ob-scan-line {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: obScanIn 0.3s ease forwards;
+        }
+        @keyframes obScanIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ob-scan-time {
+            color: #6b7280;
+            min-width: 50px;
+            font-variant-numeric: tabular-nums;
+        }
+        .ob-scan-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        .ob-scan-text { color: #e4e4e7; flex: 1; line-height: 1.5; }
+        .ob-scan-text strong { color: var(--accent-light); }
+
+        .ob-briefing-preview {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px 24px;
+            max-height: 320px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+        }
+        .ob-briefing-preview h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+        .ob-briefing-preview p { font-size: 13px; line-height: 1.6; color: var(--text-mid); margin-bottom: 10px; }
+        .ob-briefing-preview p strong { color: var(--text-dark); }
+        .ob-briefing-meta {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 4px;
+            display: flex;
+            gap: 14px;
+        }
+
+        .ob-finish-pill {
+            background: var(--success-bg);
+            border: 1px solid var(--success);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 12px 0 24px;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+        .ob-finish-pill .pill-check {
+            display: inline-flex;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--success);
+            color: #fff;
+            font-size: 18px;
+            align-items: center; justify-content: center;
+            margin-bottom: 10px;
+        }
+
         .sidebar-footer {
             padding: 18px 20px;
             border-top: 1px solid rgba(255,255,255,0.06);
@@ -5399,6 +5647,17 @@
                             <span class="settings-item-status">Active</span>
                         </div>
                     </div>
+                    <div class="settings-section">
+                        <h3>Product tour</h3>
+                        <div class="sec-sub">Replay the 5-step first-regulation flow you saw on signup.</div>
+                        <div class="settings-item" onclick="obReplay()">
+                            <div class="settings-item-icon">&#9656;</div>
+                            <div class="settings-item-body">
+                                <div class="settings-item-title">Replay onboarding</div>
+                                <div class="settings-item-sub">Useful for demoing the product to a partner or client</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -6898,6 +7157,287 @@ function qaSimSend() {
         body.appendChild(resp);
         body.scrollTop = body.scrollHeight;
     }, 1500);
+}
+</script>
+
+<!-- Phase 4: Onboarding overlay -->
+<div class="ob-overlay" id="ob-overlay">
+    <div class="ob-card">
+        <div class="ob-progress" id="ob-progress">
+            <span class="ob-dot active" data-pos="1">1</span>
+            <span class="ob-bar"></span>
+            <span class="ob-dot" data-pos="2">2</span>
+            <span class="ob-bar"></span>
+            <span class="ob-dot" data-pos="3">3</span>
+            <span class="ob-bar"></span>
+            <span class="ob-dot" data-pos="4">4</span>
+            <span class="ob-bar"></span>
+            <span class="ob-dot" data-pos="5">5</span>
+        </div>
+
+        <!-- Step 1: Connect Tally -->
+        <div class="ob-step active" data-step="1">
+            <h2>Connect your Tally</h2>
+            <div class="ob-sub">Reg Mitra reads your books to scan each new regulation against your clients automatically. We never write to Tally — read-only.</div>
+            <div class="ob-tally-card">
+                <div class="ob-tally-icon">T</div>
+                <div class="ob-tally-body">
+                    <div class="ob-tally-title">TallyPrime 4.1</div>
+                    <div class="ob-tally-sub">Connects to your local Tally instance via the ODBC port</div>
+                </div>
+            </div>
+            <div class="ob-tally-result" id="ob-tally-result"></div>
+            <div class="ob-actions">
+                <button class="ob-btn primary" id="ob-connect-btn" onclick="obConnectTally()">Connect Tally</button>
+                <button class="ob-btn" onclick="obSkipTally()">Skip &mdash; use demo data</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Pick client -->
+        <div class="ob-step" data-step="2">
+            <h2>Pick a client to start</h2>
+            <div class="ob-sub">We pre-selected Royal Spice Kitchen &mdash; they have the most pending regulatory activity in your data right now (1 overdue, 2 due this week).</div>
+            <div class="ob-client-grid" id="ob-client-grid">
+                <div class="ob-client-tile selected" data-client="royal" onclick="obSelectClient('royal')">
+                    <div class="ob-ct-icon">RS</div>
+                    <div>
+                        <div class="ob-ct-name">Royal Spice Kitchen</div>
+                        <div class="ob-ct-sector">F&amp;B &middot; 4 outlets &middot; Delhi</div>
+                    </div>
+                    <span class="ob-ct-tag">Most active</span>
+                </div>
+                <div class="ob-client-tile" data-client="gupta" onclick="obSelectClient('gupta')">
+                    <div class="ob-ct-icon">GA</div>
+                    <div>
+                        <div class="ob-ct-name">Gupta Auto Components</div>
+                        <div class="ob-ct-sector">Auto Ancillary &middot; Gurgaon</div>
+                    </div>
+                </div>
+                <div class="ob-client-tile" data-client="sharma" onclick="obSelectClient('sharma')">
+                    <div class="ob-ct-icon">SP</div>
+                    <div>
+                        <div class="ob-ct-name">Sharma Pharmaceuticals</div>
+                        <div class="ob-ct-sector">Pharma &middot; Mumbai</div>
+                    </div>
+                </div>
+                <div class="ob-client-tile" data-client="lakshmi" onclick="obSelectClient('lakshmi')">
+                    <div class="ob-ct-icon">LF</div>
+                    <div>
+                        <div class="ob-ct-name">Lakshmi FinServ</div>
+                        <div class="ob-ct-sector">NBFC &middot; Chennai</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ob-actions">
+                <button class="ob-btn primary" onclick="obStartScan()">Start scan</button>
+                <button class="ob-btn" onclick="obGoto(1)">Back</button>
+            </div>
+        </div>
+
+        <!-- Step 3: AI scan -->
+        <div class="ob-step" data-step="3">
+            <h2>Scanning <span id="ob-scan-client-name">Royal Spice Kitchen</span></h2>
+            <div class="ob-sub">Live reasoning trace &mdash; this is the same engine that monitors all your clients in the background.</div>
+            <div class="ob-scan-trace" id="ob-scan-trace"></div>
+            <div class="ob-actions">
+                <button class="ob-btn primary" id="ob-scan-continue" disabled onclick="obGoto(4)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Briefing draft -->
+        <div class="ob-step" data-step="4">
+            <h2>Your first briefing is ready</h2>
+            <div class="ob-sub">Drafted from the FSSAI Amendment + Royal Spice client profile. Edit before sending or send as-is.</div>
+            <div class="ob-briefing-preview" id="ob-briefing-preview">
+                <h4>FSSAI Licensing Amendment 2026 &mdash; Your Licence is Now Perpetual</h4>
+                <p><strong>Dear Mr. Rajesh,</strong></p>
+                <p>We write to inform you of a significant development in food safety compliance that directly benefits Royal Spice Kitchen.</p>
+                <p>The FSSAI has issued the Food Safety and Standards (Licensing &amp; Registration) Amendment Regulations, 2026. Here is what it means for you:</p>
+                <p><strong>1. Your FSSAI licence is now perpetual</strong> &mdash; no renewal required. Your current licence (exp. Nov 2027) remains valid indefinitely unless cancelled.<br>
+                <strong>2. Inspections shift to risk-based</strong> &mdash; with your category and 4 outlets, expect inspections once every 2 years instead of annually.<br>
+                <strong>3. All 4 outlets (Delhi &amp; Karnataka) now under state food safety jurisdiction</strong> &mdash; individual outlet registrations no longer need separate renewal.</p>
+                <p><strong>What you need to do:</strong> Confirm with Delhi and Karnataka FSO that your registrations are auto-migrated. Keep Food Safety Supervisor appointed at each outlet.</p>
+                <p><em>Regards,<br>Mehta Shah &amp; Associates, Bangalore</em></p>
+                <div class="ob-briefing-meta">
+                    <span>Generated from FSSAI Amendment + Royal Spice profile</span>
+                </div>
+            </div>
+            <div class="ob-actions">
+                <button class="ob-btn primary" onclick="obSend()">Send via WhatsApp <span style="opacity:0.7;font-weight:500;font-size:11px">&middot; suggested for SME clients</span></button>
+                <button class="ob-btn" onclick="obSendAlt()">Send via email</button>
+            </div>
+        </div>
+
+        <!-- Step 5: Done -->
+        <div class="ob-step" data-step="5">
+            <h2>You&rsquo;re set up.</h2>
+            <div class="ob-sub">From now on, Reg Mitra runs this same flow continuously for all your clients in the background. You only see what needs you.</div>
+            <div class="ob-finish-pill">
+                <div class="pill-check">&#10003;</div>
+                <div><strong id="ob-finish-text">Briefing sent via WhatsApp to Rajesh, Royal Spice Kitchen</strong></div>
+                <div style="font-size:12px;color:var(--text-mid);margin-top:6px">Read receipt will show in the Today view when seen.</div>
+            </div>
+            <div class="ob-actions">
+                <button class="ob-btn primary" onclick="obFinish()">Go to Today</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== Onboarding =====
+var OB_CURRENT = 1;
+var OB_SELECTED_CLIENT = 'royal';
+var OB_FINAL_CHANNEL = 'whatsapp';
+
+function obShow() {
+    document.getElementById('ob-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    obGoto(1);
+}
+function obHide() {
+    document.getElementById('ob-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+function obGoto(step) {
+    OB_CURRENT = step;
+    document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
+    var target = document.querySelector('.ob-step[data-step="' + step + '"]');
+    if (target) target.classList.add('active');
+    document.querySelectorAll('#ob-progress .ob-dot').forEach(d => {
+        var pos = parseInt(d.dataset.pos, 10);
+        d.classList.remove('active', 'done');
+        if (pos < step) d.classList.add('done');
+        else if (pos === step) d.classList.add('active');
+    });
+    document.querySelectorAll('#ob-progress .ob-bar').forEach((b, i) => {
+        b.classList.toggle('done', i + 1 < step);
+    });
+}
+
+function obConnectTally() {
+    var btn = document.getElementById('ob-connect-btn');
+    var result = document.getElementById('ob-tally-result');
+    btn.disabled = true;
+    btn.textContent = 'Connecting…';
+    fetch('/api/tally/company')
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(data => {
+            // API returns { success: true, data: [companies...] }
+            var c = (data && data.data && data.data[0]) ? data.data[0] : null;
+            if (!c) c = { name: 'Sharma Pharmaceuticals Pvt. Ltd.', tallyVersion: 'TallyPrime 4.1', ledgerCount: 347, voucherCount: 8412 };
+            result.innerHTML = '<strong>&#10003; Connected to ' + c.name + '</strong><br>' +
+                c.tallyVersion + ' &middot; ' + c.ledgerCount + ' ledgers &middot; ' + Number(c.voucherCount || 0).toLocaleString() + ' vouchers indexed';
+            result.classList.add('show');
+            btn.textContent = 'Continue';
+            btn.disabled = false;
+            btn.onclick = function() { obGoto(2); };
+        })
+        .catch(() => {
+            // API unavailable — fall through with demo-style success
+            result.innerHTML = '<strong>&#10003; Connected to demo data</strong><br>TallyPrime 4.1 &middot; 347 ledgers &middot; 8,412 vouchers indexed';
+            result.classList.add('show');
+            btn.textContent = 'Continue';
+            btn.disabled = false;
+            btn.onclick = function() { obGoto(2); };
+        });
+}
+function obSkipTally() {
+    var result = document.getElementById('ob-tally-result');
+    result.innerHTML = '<strong>Using demo data</strong><br>6 sample clients across pharma, auto, F&amp;B, NBFC, IT, real estate';
+    result.classList.add('show');
+    setTimeout(function() { obGoto(2); }, 500);
+}
+
+function obSelectClient(id) {
+    OB_SELECTED_CLIENT = id;
+    document.querySelectorAll('.ob-client-tile').forEach(t => t.classList.remove('selected'));
+    var tile = document.querySelector('.ob-client-tile[data-client="' + id + '"]');
+    if (tile) tile.classList.add('selected');
+    var nameMap = { royal:'Royal Spice Kitchen', gupta:'Gupta Auto Components', sharma:'Sharma Pharmaceuticals', lakshmi:'Lakshmi FinServ' };
+    document.getElementById('ob-scan-client-name').textContent = nameMap[id] || nameMap.royal;
+}
+
+var OB_SCAN_LINES = [
+    [400,  'Connecting to client books via Tally ODBC…'],
+    [2200, 'Pulled <strong>4 outlet records</strong>, <strong>3 active FSSAI licences</strong>'],
+    [4000, 'Crawling FSSAI gazette portal for changes since last scan…'],
+    [6500, 'Found: <strong>FSSAI Licensing Amendment 2026</strong> (gazette dt. 10 March)'],
+    [9000, 'Reading 14-page notification to extract operative changes'],
+    [12500,'Identified change: licence renewal cycle removed &mdash; <strong>perpetual validity</strong>'],
+    [15500,'Identified change: inspections shift from annual to <strong>risk-based (2-year)</strong>'],
+    [18500,'Cross-checking your data: current licence valid till Nov 2027'],
+    [21500,'Cross-checking: 4 outlets across Delhi &amp; Karnataka jurisdictions'],
+    [24500,'Matched: regulation applies to <strong>all 4 outlets</strong>'],
+    [27500,'No conflict with existing contracts or vendor agreements'],
+    [30500,'Drafting client briefing in plain language…'],
+    [33000,'<strong>Done.</strong> 1 briefing ready for your review.']
+];
+
+function obStartScan() {
+    obGoto(3);
+    var trace = document.getElementById('ob-scan-trace');
+    trace.innerHTML = '';
+    var startTs = Date.now();
+    var continueBtn = document.getElementById('ob-scan-continue');
+    continueBtn.disabled = true;
+    continueBtn.textContent = 'Scanning…';
+
+    OB_SCAN_LINES.forEach(function(item) {
+        var delay = item[0];
+        var text = item[1];
+        setTimeout(function() {
+            if (!document.querySelector('.ob-step[data-step="3"].active')) return; // user navigated away
+            var elapsedMs = Date.now() - startTs;
+            var sec = (elapsedMs / 1000).toFixed(1);
+            var line = document.createElement('div');
+            line.className = 'ob-scan-line';
+            line.innerHTML = '<span class="ob-scan-time">' + sec + 's</span><span class="ob-scan-dot"></span><span class="ob-scan-text">' + text + '</span>';
+            trace.appendChild(line);
+            trace.scrollTop = trace.scrollHeight;
+        }, delay);
+    });
+
+    var totalMs = OB_SCAN_LINES[OB_SCAN_LINES.length - 1][0] + 800;
+    setTimeout(function() {
+        continueBtn.disabled = false;
+        continueBtn.textContent = 'Open briefing →';
+    }, totalMs);
+}
+
+function obSend() {
+    OB_FINAL_CHANNEL = 'whatsapp';
+    document.getElementById('ob-finish-text').textContent = 'Briefing sent via WhatsApp to Rajesh, Royal Spice Kitchen';
+    obGoto(5);
+}
+function obSendAlt() {
+    OB_FINAL_CHANNEL = 'email';
+    document.getElementById('ob-finish-text').textContent = 'Briefing sent via Email to rajesh@royalspice.in';
+    obGoto(5);
+}
+function obFinish() {
+    try { localStorage.setItem('regmitra_onboarded', 'true'); } catch (e) {}
+    obHide();
+    // Land in Today (already default-active screen), nothing more to do.
+}
+
+// Trigger on load if user hasn't onboarded. Also honour ?onboard=1 to force replay.
+(function() {
+    var force = false;
+    try { force = window.location.search.indexOf('onboard=1') !== -1; } catch (e) {}
+    var done = false;
+    try { done = localStorage.getItem('regmitra_onboarded') === 'true'; } catch (e) {}
+    if (force || !done) {
+        // Defer until DOM idle so the rest of the app paints first underneath
+        document.addEventListener('DOMContentLoaded', function() { setTimeout(obShow, 200); });
+        if (document.readyState !== 'loading') setTimeout(obShow, 200);
+    }
+})();
+
+// Replay entrypoint usable from Settings or console
+function obReplay() {
+    try { localStorage.removeItem('regmitra_onboarded'); } catch (e) {}
+    obShow();
 }
 </script>
 
