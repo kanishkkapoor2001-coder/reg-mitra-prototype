@@ -514,7 +514,25 @@
             border-radius: 20px;
             padding: 40px 44px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
         }
+        .ob-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            width: 32px; height: 32px;
+            border: none;
+            background: var(--bg-main);
+            color: var(--text-mid);
+            font-size: 22px;
+            line-height: 1;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: inherit;
+        }
+        .ob-close:hover { background: var(--border); color: var(--text-dark); }
         .ob-progress {
             display: flex;
             align-items: center;
@@ -3095,7 +3113,7 @@
                             <h2>Good morning, Mehta Shah &amp; Associates</h2>
                             <div class="today-sub" id="today-sub">Thursday, 7 May 2026 &middot; 6 clients monitored</div>
                         </div>
-                        <span class="today-pill">3 items need you</span>
+                        <span class="today-pill">1 overdue &middot; 6 to review</span>
                     </div>
 
                     <!-- Overdue (hidden if empty) -->
@@ -3113,7 +3131,7 @@
                             </div>
                             <div class="wi-actions">
                                 <button class="wi-btn primary" onclick="event.stopPropagation(); navTo('briefings');">Open briefing</button>
-                                <button class="wi-btn" onclick="event.stopPropagation();">Snooze</button>
+                                <button class="wi-btn" onclick="event.stopPropagation(); snoozeWorklistItem(this);">Snooze</button>
                             </div>
                         </div>
                     </section>
@@ -3131,7 +3149,7 @@
                                 <div class="wi-sub">Challan 281 amounts ready in Tally for each client. Approve to dispatch.</div>
                             </div>
                             <div class="wi-actions">
-                                <button class="wi-btn primary" onclick="event.stopPropagation(); navTo('assistant');">Review &amp; file</button>
+                                <button class="wi-btn primary" onclick="event.stopPropagation(); setAssistantMode('act'); navTo('assistant');">Review &amp; file</button>
                             </div>
                         </div>
                         <div class="wi" onclick="navTo('clients')">
@@ -3818,7 +3836,7 @@
                     </div>
                     <div class="action-btns">
                         <button class="btn btn-primary" onclick="openBriefingModal(this.closest('.briefing-card'))">Review & Send</button>
-                        <button class="btn btn-outline">Skip — Don't Send</button>
+                        <button class="btn btn-outline" onclick="openBriefingModal(this.closest('.briefing-card'))">Edit</button>
                     </div>
                 </div>
 
@@ -6945,17 +6963,23 @@ function showRowDetail(title, details) {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeClient(); closeBriefingModal(); closeAlertDetail(); } });
 
 // New Chat — Ask Reg Mitra
+// FIX: previous version wiped chat-msgs innerHTML, destroying all 24 threads.
+// Now appends/reuses a placeholder thread; existing threads stay intact and the
+// sidebar items still navigate to them via showThread().
 function startNewChat() {
-    // Deselect all sidebar items
     document.querySelectorAll('.chat-sidebar-item').forEach(item => item.classList.remove('active'));
-    // Hide all threads
     document.querySelectorAll('.chat-thread').forEach(t => t.classList.remove('active'));
-    // Show the chat area with empty state
-    var chatArea = document.querySelector('#screen-chat .chat-main-area .chat-msgs');
-    if (chatArea) {
-        chatArea.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-light);text-align:center;padding:40px"><div style="width:48px;height:48px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:18px;color:var(--accent)">?</div><div style="font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px">New Conversation</div><div style="font-size:12px;max-width:280px;line-height:1.6">Ask anything about regulations, client compliance, gazette updates, or Tally data.</div></div>';
+    var msgs = document.getElementById('chat-messages');
+    if (!msgs) return;
+    var ph = document.getElementById('thread-new-chat-placeholder');
+    if (!ph) {
+        ph = document.createElement('div');
+        ph.className = 'chat-thread';
+        ph.id = 'thread-new-chat-placeholder';
+        ph.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-light);text-align:center;padding:40px"><div style="width:48px;height:48px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:18px;color:var(--accent)">?</div><div style="font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px">New conversation</div><div style="font-size:12px;max-width:280px;line-height:1.6">Ask anything about regulations, client compliance, gazette updates, or Tally data.</div></div>';
+        msgs.appendChild(ph);
     }
-    // Focus the input
+    ph.classList.add('active');
     var input = document.querySelector('#screen-chat .chat-main-area .chat-input-bar input');
     if (input) { input.value = ''; input.focus(); }
 }
@@ -7029,8 +7053,8 @@ function startNewAgentTask() {
         <div class="cm-section"><div class="cm-section-title">Applicable Regulations This Month</div><div id="cm-regs"></div></div>
         <div class="cm-section"><div class="cm-section-title">Upcoming Deadlines</div><div id="cm-deadlines"></div></div>
         <div class="action-btns" style="margin-top:20px">
-            <button class="btn btn-primary" onclick="closeClient()">Generate Briefing</button>
-            <button class="btn btn-outline" onclick="closeClient()">View History</button>
+            <button class="btn btn-primary" onclick="closeClient(); navTo('briefings');">Generate Briefing</button>
+            <button class="btn btn-outline" onclick="closeClient(); navTo('feed');">View History</button>
         </div>
     </div>
 </div>
@@ -7188,8 +7212,9 @@ function qaSimSend() {
 </script>
 
 <!-- Phase 4: Onboarding overlay -->
-<div class="ob-overlay" id="ob-overlay">
+<div class="ob-overlay" id="ob-overlay" onclick="if(event.target===this)obDismiss()">
     <div class="ob-card">
+        <button class="ob-close" onclick="obDismiss()" aria-label="Skip onboarding" title="Skip for now (Esc)">&times;</button>
         <div class="ob-progress" id="ob-progress">
             <span class="ob-dot active" data-pos="1">1</span>
             <span class="ob-bar"></span>
@@ -7446,6 +7471,36 @@ function obFinish() {
     try { localStorage.setItem('regmitra_onboarded', 'true'); } catch (e) {}
     obHide();
     // Land in Today (already default-active screen), nothing more to do.
+}
+function obDismiss() {
+    // User exited without completing — still mark onboarded so they don't get re-trapped.
+    // They can replay from Settings.
+    try { localStorage.setItem('regmitra_onboarded', 'true'); } catch (e) {}
+    obHide();
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && document.getElementById('ob-overlay').classList.contains('open')) {
+        obDismiss();
+    }
+});
+
+// Snooze a worklist item — hides it with a brief toast.
+function snoozeWorklistItem(btn) {
+    var item = btn.closest('.wi');
+    if (!item) return;
+    item.style.transition = 'opacity 0.25s, transform 0.25s';
+    item.style.opacity = '0';
+    item.style.transform = 'translateX(20px)';
+    setTimeout(function() {
+        item.style.display = 'none';
+        var toast = document.getElementById('bm-sent-toast');
+        if (toast) {
+            toast.innerHTML = '&#9203; Snoozed until tomorrow';
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 2400);
+        }
+    }, 250);
 }
 
 // Trigger on load if user hasn't onboarded. Also honour ?onboard=1 to force replay.
