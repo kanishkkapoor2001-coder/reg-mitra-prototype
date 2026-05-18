@@ -269,18 +269,42 @@
         }
 
         /* Today worklist */
-        .today-page { max-width: 760px; }
-        .today-greeting { margin-bottom: 24px; }
+        .today-page {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 8px 0 40px;
+        }
+        .today-greeting {
+            margin-bottom: 28px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
         .today-greeting h2 {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 700;
             color: var(--text-dark);
-            letter-spacing: -0.3px;
+            letter-spacing: -0.4px;
+            line-height: 1.2;
         }
         .today-greeting .today-sub {
             font-size: 13px;
             color: var(--text-mid);
-            margin-top: 4px;
+            font-weight: 500;
+        }
+        .today-greeting .today-pill {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            background: var(--accent-bg);
+            padding: 5px 11px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .ws-section { margin-bottom: 28px; }
         .ws-header {
@@ -3067,8 +3091,11 @@
             <div class="screen active" id="screen-dashboard">
                 <div class="today-page">
                     <div class="today-greeting">
-                        <h2>Good morning, Mehta Shah &amp; Associates</h2>
-                        <div class="today-sub" id="today-sub">Thursday, 7 May 2026</div>
+                        <div>
+                            <h2>Good morning, Mehta Shah &amp; Associates</h2>
+                            <div class="today-sub" id="today-sub">Thursday, 7 May 2026 &middot; 6 clients monitored</div>
+                        </div>
+                        <span class="today-pill">3 items need you</span>
                     </div>
 
                     <!-- Overdue (hidden if empty) -->
