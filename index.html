@@ -87,26 +87,38 @@
         }
 
         .sidebar-brand {
-            padding: 26px 20px 22px;
+            padding: 22px 20px 20px;
             border-bottom: 1px solid rgba(255,255,255,0.06);
         }
-
-        .sidebar-brand h1 {
-            font-size: 21px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff 30%, #86efac);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
+        .sidebar-brand .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-
+        .brand-mark {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px -2px rgba(22,163,74,0.4);
+        }
+        .sidebar-brand h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.4px;
+            line-height: 1;
+        }
         .sidebar-brand p {
-            font-size: 10.5px;
-            color: rgba(155,191,172,0.75);
-            margin-top: 5px;
+            font-size: 11px;
+            color: rgba(155,191,172,0.7);
+            margin-top: 3px;
             font-weight: 400;
-            letter-spacing: 0.2px;
+            letter-spacing: 0.1px;
         }
 
         .sidebar-nav {
@@ -163,8 +175,8 @@
         }
         .nav-divider {
             height: 1px;
-            background: rgba(255,255,255,0.08);
-            margin: 14px 16px;
+            background: rgba(255,255,255,0.1);
+            margin: 16px 18px 12px;
         }
         .assistant-mode-toggle {
             display: flex;
@@ -272,14 +284,14 @@
         .today-page {
             max-width: 880px;
             margin: 0 auto;
-            padding: 8px 0 40px;
+            padding: 8px 0 60px;
         }
         .today-greeting {
-            margin-bottom: 28px;
-            padding-bottom: 22px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
             border-bottom: 1px solid var(--border-light);
             display: flex;
-            align-items: baseline;
+            align-items: center;
             gap: 14px;
             flex-wrap: wrap;
         }
@@ -294,6 +306,7 @@
             font-size: 13px;
             color: var(--text-mid);
             font-weight: 500;
+            margin-top: 4px;
         }
         .today-greeting .today-pill {
             margin-left: auto;
@@ -301,10 +314,19 @@
             font-weight: 700;
             color: var(--accent);
             background: var(--accent-bg);
-            padding: 5px 11px;
+            padding: 6px 12px;
             border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .today-greeting .today-pill::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.18);
         }
         .ws-section { margin-bottom: 28px; }
         .ws-header {
@@ -447,6 +469,27 @@
             text-align: center;
             background: var(--accent-bg);
             border-radius: 12px;
+        }
+
+        /* Empty state (filters) */
+        .empty-state {
+            text-align: center;
+            padding: 60px 32px;
+            background: #fff;
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+            margin-top: 18px;
+        }
+        .empty-state-icon { font-size: 28px; margin-bottom: 12px; }
+        .empty-state-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+        .empty-state-sub {
+            font-size: 12px;
+            color: var(--text-mid);
         }
 
         /* Phase 3a — strip AI brag/time-saved UI */
@@ -793,7 +836,8 @@
         .header {
             display: flex;
             align-items: center;
-            padding: 16px 32px;
+            gap: 14px;
+            padding: 12px 28px;
             background: rgba(255,255,255,0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -803,7 +847,7 @@
         }
 
         .header-title {
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-dark);
             letter-spacing: -0.2px;
@@ -812,6 +856,59 @@
         .header-search {
             margin-left: auto;
             position: relative;
+        }
+
+        .header-bell {
+            position: relative;
+            width: 36px; height: 36px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-mid);
+            display: flex; align-items: center; justify-content: center;
+            font-family: inherit;
+        }
+        .header-bell svg { width: 16px; height: 16px; }
+        .header-bell:hover { border-color: var(--accent); color: var(--accent); }
+        .header-bell-dot {
+            position: absolute;
+            top: 9px; right: 10px;
+            width: 7px; height: 7px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 1.5px solid #fff;
+        }
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #fff;
+            cursor: pointer;
+        }
+        .header-user:hover { border-color: var(--accent); }
+        .header-user-av {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .header-user-meta { line-height: 1.15; }
+        .header-user-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .header-user-sub {
+            font-size: 10px;
+            color: var(--text-light);
+            font-weight: 500;
         }
 
         .header-search input {
@@ -3057,8 +3154,13 @@
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <h1>Reg Mitra</h1>
-            <p>AI Regulatory Intelligence for CA Firms</p>
+            <div class="brand-row">
+                <div class="brand-mark">RM</div>
+                <div>
+                    <h1>Reg Mitra</h1>
+                    <p>Regulatory intelligence</p>
+                </div>
+            </div>
         </div>
         <nav class="sidebar-nav">
             <div class="nav-btn active" data-screen="dashboard">
@@ -3101,6 +3203,17 @@
             <div class="header-search">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <input type="text" placeholder="Search regulations, clients, circulars..." id="global-search">
+            </div>
+            <button class="header-bell" title="Notifications" onclick="event.stopPropagation();">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="header-bell-dot"></span>
+            </button>
+            <div class="header-user" title="Mehta Shah &amp; Associates">
+                <div class="header-user-av">MS</div>
+                <div class="header-user-meta">
+                    <div class="header-user-name">Mehta Shah</div>
+                    <div class="header-user-sub">Partner</div>
+                </div>
             </div>
         </header>
 
@@ -6625,6 +6738,20 @@ function filterBriefings() {
     });
     var badge = document.getElementById('brief-filter-count');
     if (badge) badge.textContent = 'Showing ' + count + ' briefing' + (count !== 1 ? 's' : '');
+    renderEmptyState('screen-briefings', count, 'briefings');
+}
+
+// Generic empty state for filtered screens.
+function renderEmptyState(screenId, count, label) {
+    var scr = document.getElementById(screenId);
+    if (!scr) return;
+    var existing = scr.querySelector('.empty-state');
+    if (count > 0) { if (existing) existing.remove(); return; }
+    if (existing) return;
+    var el = document.createElement('div');
+    el.className = 'empty-state';
+    el.innerHTML = '<div class="empty-state-icon">&#128269;</div><div class="empty-state-title">No ' + label + ' match these filters</div><div class="empty-state-sub">Try removing one of the filters above, or clear them all.</div>';
+    scr.appendChild(el);
 }
 
 // Dashboard priority filters — now calls filterDashboard() to integrate with dropdowns
@@ -7484,6 +7611,25 @@ document.addEventListener('keydown', function(e) {
         obDismiss();
     }
 });
+
+// Dynamic greeting + date on Today.
+(function() {
+    function setTodayGreeting() {
+        var h2 = document.querySelector('.today-greeting h2');
+        var sub = document.getElementById('today-sub');
+        if (!h2 || !sub) return;
+        var now = new Date();
+        var hour = now.getHours();
+        var part = hour < 12 ? 'morning' : (hour < 17 ? 'afternoon' : 'evening');
+        h2.textContent = 'Good ' + part + ', Mehta Shah & Associates';
+        var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var dateStr = days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+        sub.innerHTML = dateStr + ' &middot; 6 clients monitored';
+    }
+    if (document.readyState !== 'loading') setTodayGreeting();
+    else document.addEventListener('DOMContentLoaded', setTodayGreeting);
+})();
 
 // Snooze a worklist item — hides it with a brief toast.
 function snoozeWorklistItem(btn) {
