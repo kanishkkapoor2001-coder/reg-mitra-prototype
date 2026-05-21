@@ -293,12 +293,12 @@
 
         /* Today worklist */
         .today-page {
-            max-width: 880px;
-            margin: 0 auto;
+            max-width: 780px;
+            margin: 0;
             padding: 8px 0 96px;
         }
         .today-greeting {
-            margin-bottom: 36px;
+            margin-bottom: 32px;
         }
         .today-overline {
             display: inline-flex;
@@ -320,15 +320,15 @@
             animation: pulseDot 2.4s ease-in-out infinite;
         }
         .today-greeting h2 {
-            font-size: 36px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--text-dark);
-            letter-spacing: -1px;
-            line-height: 1.08;
-            margin-bottom: 10px;
+            letter-spacing: -0.7px;
+            line-height: 1.15;
+            margin-bottom: 6px;
         }
         .today-greeting .today-sub {
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--text-mid);
             font-weight: 400;
             line-height: 1.5;
@@ -336,49 +336,6 @@
         @keyframes pulseDot {
             0%, 100% { box-shadow: 0 0 0 3px rgba(22,163,74,0.14); }
             50% { box-shadow: 0 0 0 5px rgba(22,163,74,0.04); }
-        }
-        /* Hero stat strip */
-        .today-stat-strip {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            margin-top: 28px;
-            box-shadow: var(--shadow-sm);
-        }
-        .today-stat {
-            background: #fff;
-            padding: 18px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            transition: background 0.18s ease;
-        }
-        .today-stat:hover { background: #fafdfb; cursor: pointer; }
-        .today-stat .ts-label {
-            font-size: 10.5px;
-            font-weight: 600;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.7px;
-        }
-        .today-stat .ts-value {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--text-dark);
-            letter-spacing: -0.6px;
-            line-height: 1;
-            font-variant-numeric: tabular-nums;
-        }
-        .today-stat.urgent .ts-value { color: var(--danger); }
-        .today-stat.urgent .ts-label { color: var(--danger); }
-        .today-stat .ts-hint {
-            font-size: 11px;
-            color: var(--text-light);
-            font-weight: 500;
         }
         .ws-section { margin-bottom: 40px; }
         .ws-header {
@@ -634,6 +591,11 @@
         .agent-result-box em { display: none; }
         .ai-processing-stat { display: none !important; }
         .agent-capabilities { display: none; }
+        /* Phase 4 — kill the "AI did X" badge spam (feature catalog, not product) */
+        /* Keep .ai-confidence (trust signal) and the conflict-card flag */
+        .ai-badge { display: none !important; }
+        .ai-conflict-header .ai-badge,
+        .agent-header-banner h3 .ai-badge { display: inline-flex !important; }
 
         /* Phase 3b — client card ROI line */
         .client-roi-line {
@@ -3377,29 +3339,7 @@
                     <div class="today-greeting">
                         <div class="today-overline" id="today-overline">Thursday, 7 May 2026</div>
                         <h2>Good morning, Mehta Shah &amp; Associates</h2>
-                        <div class="today-sub">Here&rsquo;s what needs your attention across <strong>6 monitored clients</strong>.</div>
-                        <div class="today-stat-strip">
-                            <div class="today-stat urgent" onclick="document.getElementById('ws-overdue')?.scrollIntoView({behavior:'smooth',block:'start'})">
-                                <span class="ts-label">Overdue</span>
-                                <span class="ts-value">1</span>
-                                <span class="ts-hint">FSSAI opt-in</span>
-                            </div>
-                            <div class="today-stat" onclick="document.getElementById('ws-soon')?.scrollIntoView({behavior:'smooth',block:'start'})">
-                                <span class="ts-label">Next 24h</span>
-                                <span class="ts-value">2</span>
-                                <span class="ts-hint">TDS &middot; IGST review</span>
-                            </div>
-                            <div class="today-stat" onclick="document.getElementById('ws-briefings')?.scrollIntoView({behavior:'smooth',block:'start'})">
-                                <span class="ts-label">Briefings ready</span>
-                                <span class="ts-value">4</span>
-                                <span class="ts-hint">Awaiting review</span>
-                            </div>
-                            <div class="today-stat" onclick="navTo('clients')">
-                                <span class="ts-label">Clients monitored</span>
-                                <span class="ts-value">6</span>
-                                <span class="ts-hint">All up to date</span>
-                            </div>
-                        </div>
+                        <div class="today-sub">7 things need you today across 6 clients. Start at the top.</div>
                     </div>
 
                     <!-- Overdue (hidden if empty) -->
