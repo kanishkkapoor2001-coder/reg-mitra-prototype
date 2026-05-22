@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reg Mitra — Regulatory Intelligence for CA Firms</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23122a23'/><path d='M 25.5 8.4 A 12 12 0 1 0 27 19' stroke='%2322c55e' stroke-width='3' fill='none' stroke-linecap='round'/><path d='M 10 16.2 L 14.5 20.8 L 24.5 9.5' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -96,29 +97,42 @@
             gap: 12px;
         }
         .brand-mark {
-            width: 36px; height: 36px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            width: 38px; height: 38px;
+            border-radius: 11px;
+            background: linear-gradient(160deg, #1a3f35 0%, #122a23 100%);
             color: #fff;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0.3px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px -2px rgba(22,163,74,0.4);
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.06) inset,
+                0 0 0 1px rgba(255,255,255,0.04),
+                0 8px 20px -6px rgba(22,163,74,0.5);
+            position: relative;
+        }
+        .brand-mark svg { width: 22px; height: 22px; }
+        .brand-mark::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 11px;
+            background: radial-gradient(80% 60% at 50% 0%, rgba(34,197,94,0.18), transparent 70%);
+            pointer-events: none;
         }
         .sidebar-brand h1 {
-            font-size: 18px;
-            font-weight: 700;
+            font-family: 'Fraunces', 'Inter', serif;
+            font-size: 20px;
+            font-weight: 600;
             color: #fff;
-            letter-spacing: -0.4px;
+            letter-spacing: -0.5px;
             line-height: 1;
+            font-feature-settings: "ss01" on, "ss02" on;
         }
         .sidebar-brand p {
-            font-size: 11px;
-            color: rgba(155,191,172,0.7);
-            margin-top: 3px;
-            font-weight: 400;
-            letter-spacing: 0.1px;
+            font-size: 10.5px;
+            color: rgba(155,191,172,0.65);
+            margin-top: 5px;
+            font-weight: 500;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
         }
 
         .sidebar-nav {
@@ -3282,18 +3296,350 @@
         .ai-ctx-dot.urgent { background: var(--danger); }
         .ai-ctx-dot.warning { background: var(--warning); }
         .ai-ctx-dot.info { background: var(--info); }
+
+        /* ===== Welcome / Home page ===== */
+        .wc-screen {
+            position: fixed; inset: 0;
+            z-index: 9000;
+            display: none;
+            flex-direction: column;
+            background:
+                radial-gradient(60% 50% at 80% 0%, rgba(34,197,94,0.10), transparent 60%),
+                radial-gradient(50% 40% at 10% 100%, rgba(22,163,74,0.08), transparent 60%),
+                #0b1f1a;
+            color: #e8efe9;
+            overflow-y: auto;
+        }
+        .wc-screen.open { display: flex; animation: fadeUp 0.4s ease; }
+        .wc-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 56px;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .wc-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .wc-brand-mark {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(160deg, #1a3f35 0%, #122a23 100%);
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 8px 20px -6px rgba(22,163,74,0.4);
+        }
+        .wc-brand-mark svg { width: 24px; height: 24px; }
+        .wc-brand-name {
+            font-family: 'Fraunces', serif;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+        .wc-nav-btn {
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .wc-nav-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+        .wc-hero {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 60px 56px 80px;
+            width: 100%;
+        }
+        .wc-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: rgba(134,239,172,0.9);
+            background: rgba(34,197,94,0.08);
+            border: 1px solid rgba(34,197,94,0.2);
+            padding: 7px 14px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 28px;
+        }
+        .wc-eyebrow::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            box-shadow: 0 0 8px var(--accent-light);
+        }
+        .wc-headline {
+            font-family: 'Fraunces', serif;
+            font-size: 64px;
+            font-weight: 600;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            color: #fff;
+            max-width: 880px;
+            margin-bottom: 24px;
+        }
+        .wc-headline em {
+            font-style: italic;
+            color: #86efac;
+            font-weight: 600;
+        }
+        .wc-subhead {
+            font-size: 18px;
+            line-height: 1.55;
+            color: rgba(232,239,233,0.72);
+            max-width: 640px;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+        .wc-cta-row {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .wc-cta {
+            font-family: inherit;
+            font-size: 14.5px;
+            font-weight: 600;
+            padding: 15px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.1px;
+        }
+        .wc-cta.primary {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #0b1f1a;
+            box-shadow: 0 8px 24px -6px rgba(34,197,94,0.55), inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+        .wc-cta.primary:hover { transform: translateY(-1px); box-shadow: 0 14px 32px -8px rgba(34,197,94,0.7), inset 0 1px 0 rgba(255,255,255,0.3); }
+        .wc-cta.ghost {
+            background: transparent;
+            color: rgba(255,255,255,0.9);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 14px 26px;
+        }
+        .wc-cta.ghost:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.32); }
+        .wc-cta-hint {
+            font-size: 12px;
+            color: rgba(232,239,233,0.45);
+            margin-left: 4px;
+        }
+
+        .wc-meta-row {
+            display: flex;
+            gap: 40px;
+            margin-top: 56px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            flex-wrap: wrap;
+        }
+        .wc-meta-item .num {
+            font-family: 'Fraunces', serif;
+            font-size: 30px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.8px;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .wc-meta-item .label {
+            font-size: 11.5px;
+            color: rgba(232,239,233,0.55);
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            font-weight: 500;
+        }
+
+        .wc-grid {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 56px 80px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+        .wc-card {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 28px;
+            transition: all 0.2s ease;
+        }
+        .wc-card:hover { border-color: rgba(34,197,94,0.3); background: rgba(255,255,255,0.04); }
+        .wc-card-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            background: rgba(34,197,94,0.12);
+            color: var(--accent-light);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 18px;
+        }
+        .wc-card-icon svg { width: 20px; height: 20px; }
+        .wc-card h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 19px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .wc-card p {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: rgba(232,239,233,0.6);
+        }
+
+        .wc-footer {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 28px 56px 36px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: rgba(232,239,233,0.4);
+            width: 100%;
+        }
+        .wc-footer .wc-foot-mitra {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            color: rgba(232,239,233,0.55);
+        }
+
+        @media (max-width: 900px) {
+            .wc-headline { font-size: 44px; letter-spacing: -1.4px; }
+            .wc-hero, .wc-grid, .wc-footer, .wc-nav { padding-left: 28px; padding-right: 28px; }
+            .wc-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
+
+<!-- Welcome / Home -->
+<div class="wc-screen" id="wc-screen">
+    <nav class="wc-nav">
+        <div class="wc-brand">
+            <div class="wc-brand-mark">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="wcStroke" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#86efac"/>
+                            <stop offset="1" stop-color="#22c55e"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 19.2 6.4 A 9 9 0 1 0 20.4 14.6" stroke="url(#wcStroke)" stroke-width="2.4" stroke-linecap="round"/>
+                    <path d="M 7.5 12.2 L 11 15.8 L 18.5 7.2" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <span class="wc-brand-name">Reg Mitra</span>
+        </div>
+        <button class="wc-nav-btn" onclick="wcEnter()">Open demo &rarr;</button>
+    </nav>
+
+    <section class="wc-hero">
+        <div class="wc-eyebrow">Built for Indian CA firms</div>
+        <h1 class="wc-headline">Your regulatory <em>mitra</em> &mdash; always reading, never sleeping.</h1>
+        <p class="wc-subhead">Reg Mitra watches every gazette &mdash; FSSAI, MCA, GST, RBI, CBDT, ICAI and 18 state portals &mdash; and tells you exactly which of your clients are affected. Then it drafts the briefing you&rsquo;d send anyway.</p>
+        <div class="wc-cta-row">
+            <button class="wc-cta primary" onclick="wcEnter(true)">
+                See it on your data
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+            <button class="wc-cta ghost" onclick="wcEnter(false)">Skip to dashboard</button>
+            <span class="wc-cta-hint">No signup &middot; runs on demo books</span>
+        </div>
+
+        <div class="wc-meta-row">
+            <div class="wc-meta-item">
+                <div class="num">142+</div>
+                <div class="label">Government sources</div>
+            </div>
+            <div class="wc-meta-item">
+                <div class="num">~16 hrs</div>
+                <div class="label">Partner time saved / client / month</div>
+            </div>
+            <div class="wc-meta-item">
+                <div class="num">2.5 min</div>
+                <div class="label">From signup to your first sent briefing</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="wc-grid">
+        <div class="wc-card">
+            <div class="wc-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </div>
+            <h3>Reads while you sleep</h3>
+            <p>Crawls 142+ government portals every hour. Notifications, circulars, amendments, gazette uploads &mdash; nothing slips past.</p>
+        </div>
+        <div class="wc-card">
+            <div class="wc-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M7 20H2v-2a3 3 0 015.356-1.857"/><path d="M12 14a4 4 0 100-8 4 4 0 000 8z"/><path d="M7 20a5 5 0 0110 0"/></svg>
+            </div>
+            <h3>Maps it to your clients</h3>
+            <p>Pulls from your Tally books to know each client&rsquo;s sector, turnover, jurisdictions &mdash; so you only see the changes that actually touch them.</p>
+        </div>
+        <div class="wc-card">
+            <div class="wc-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            </div>
+            <h3>Drafts the client briefing</h3>
+            <p>Plain-language note explaining what changed, what they need to do, and by when. WhatsApp for SME clients, email for enterprise &mdash; one click each.</p>
+        </div>
+    </div>
+
+    <footer class="wc-footer">
+        <span>&copy; 2026 Reg Mitra &middot; Bangalore</span>
+        <span class="wc-foot-mitra">mitra &mdash; the Sanskrit word for friend</span>
+    </footer>
+</div>
+
 <div class="app">
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-brand">
             <div class="brand-row">
-                <div class="brand-mark">RM</div>
+                <div class="brand-mark" aria-label="Reg Mitra">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="rmStroke" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                                <stop offset="0" stop-color="#86efac"/>
+                                <stop offset="1" stop-color="#22c55e"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Outer arc: continuous monitoring (open at top-right to let the check break out) -->
+                        <path d="M 19.2 6.4 A 9 9 0 1 0 20.4 14.6" stroke="url(#rmStroke)" stroke-width="2.4" stroke-linecap="round"/>
+                        <!-- Verified check: breaks through the arc's opening -->
+                        <path d="M 7.5 12.2 L 11 15.8 L 18.5 7.2" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
                 <div>
                     <h1>Reg Mitra</h1>
-                    <p>Regulatory intelligence</p>
+                    <p>For Indian CAs</p>
                 </div>
             </div>
         </div>
@@ -5940,12 +6286,19 @@
                     </div>
                     <div class="settings-section">
                         <h3>Product tour</h3>
-                        <div class="sec-sub">Replay the 5-step first-regulation flow you saw on signup.</div>
+                        <div class="sec-sub">Replay the welcome page or the 5-step first-regulation flow.</div>
+                        <div class="settings-item" onclick="wcReplay()">
+                            <div class="settings-item-icon">&#9733;</div>
+                            <div class="settings-item-body">
+                                <div class="settings-item-title">Replay welcome page</div>
+                                <div class="settings-item-sub">The first impression visitors land on</div>
+                            </div>
+                        </div>
                         <div class="settings-item" onclick="obReplay()">
                             <div class="settings-item-icon">&#9656;</div>
                             <div class="settings-item-body">
                                 <div class="settings-item-title">Replay onboarding</div>
-                                <div class="settings-item-sub">Useful for demoing the product to a partner or client</div>
+                                <div class="settings-item-sub">5-step first-regulation flow</div>
                             </div>
                         </div>
                     </div>
@@ -7907,17 +8260,53 @@ function snoozeWorklistItem(btn) {
     }, 250);
 }
 
-// Trigger on load if user hasn't onboarded. Also honour ?onboard=1 to force replay.
+// ===== Welcome / Home page =====
+function wcShow() {
+    document.getElementById('wc-screen').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function wcEnter(triggerOnboarding) {
+    var wc = document.getElementById('wc-screen');
+    wc.style.transition = 'opacity 0.32s ease';
+    wc.style.opacity = '0';
+    setTimeout(function() {
+        wc.classList.remove('open');
+        wc.style.opacity = '';
+        wc.style.transition = '';
+        document.body.style.overflow = '';
+        try { localStorage.setItem('regmitra_welcomed', 'true'); } catch (e) {}
+        if (triggerOnboarding) {
+            setTimeout(obShow, 120);
+        } else {
+            // Skip onboarding too if they explicitly bypass — they want the dashboard
+            try { localStorage.setItem('regmitra_onboarded', 'true'); } catch (e) {}
+        }
+    }, 320);
+}
+function wcReplay() {
+    try {
+        localStorage.removeItem('regmitra_welcomed');
+        localStorage.removeItem('regmitra_onboarded');
+    } catch (e) {}
+    wcShow();
+}
+
+// Trigger on load — welcome first, then onboarding. Query params can force either.
 (function() {
-    var force = false;
-    try { force = window.location.search.indexOf('onboard=1') !== -1; } catch (e) {}
-    var done = false;
-    try { done = localStorage.getItem('regmitra_onboarded') === 'true'; } catch (e) {}
-    if (force || !done) {
-        // Defer until DOM idle so the rest of the app paints first underneath
-        document.addEventListener('DOMContentLoaded', function() { setTimeout(obShow, 200); });
-        if (document.readyState !== 'loading') setTimeout(obShow, 200);
+    var qs = '';
+    try { qs = window.location.search || ''; } catch (e) {}
+    var forceWelcome  = qs.indexOf('welcome=1')  !== -1;
+    var forceOnboard  = qs.indexOf('onboard=1')  !== -1;
+    var welcomed = false, onboarded = false;
+    try { welcomed  = localStorage.getItem('regmitra_welcomed')  === 'true'; } catch (e) {}
+    try { onboarded = localStorage.getItem('regmitra_onboarded') === 'true'; } catch (e) {}
+
+    function trigger() {
+        if (forceWelcome || (!welcomed && !onboarded)) { wcShow(); return; }
+        if (forceOnboard || !onboarded) { setTimeout(obShow, 200); }
     }
+    if (document.readyState !== 'loading') trigger();
+    else document.addEventListener('DOMContentLoaded', trigger);
 })();
 
 // Replay entrypoint usable from Settings or console
