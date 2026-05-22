@@ -3297,327 +3297,369 @@
         .ai-ctx-dot.warning { background: var(--warning); }
         .ai-ctx-dot.info { background: var(--info); }
 
-        /* ===== Welcome / Home page ===== */
-        .wc-screen {
-            position: fixed; inset: 0;
-            z-index: 9000;
-            display: none;
-            flex-direction: column;
-            background:
-                radial-gradient(60% 50% at 80% 0%, rgba(34,197,94,0.10), transparent 60%),
-                radial-gradient(50% 40% at 10% 100%, rgba(22,163,74,0.08), transparent 60%),
-                #0b1f1a;
-            color: #e8efe9;
-            overflow-y: auto;
-        }
-        .wc-screen.open { display: flex; animation: fadeUp 0.4s ease; }
-        .wc-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 22px 56px;
-            max-width: 1280px;
+        /* ===== Home page (in-app dashboard overview) ===== */
+        .home-page {
+            max-width: 1240px;
             margin: 0 auto;
-            width: 100%;
+            padding: 0 0 64px;
         }
-        .wc-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .wc-brand-mark {
-            width: 40px; height: 40px;
-            border-radius: 12px;
-            background: linear-gradient(160deg, #1a3f35 0%, #122a23 100%);
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 8px 20px -6px rgba(22,163,74,0.4);
-        }
-        .wc-brand-mark svg { width: 24px; height: 24px; }
-        .wc-brand-name {
-            font-family: 'Fraunces', serif;
-            font-size: 22px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            color: #fff;
-        }
-        .wc-nav-btn {
-            font-family: inherit;
-            font-size: 13.5px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.85);
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px 20px;
-            border-radius: 999px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .wc-nav-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
 
-        .wc-hero {
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 60px 56px 80px;
-            width: 100%;
+        /* Brand hero card */
+        .home-hero {
+            position: relative;
+            border-radius: 22px;
+            overflow: hidden;
+            background:
+                radial-gradient(120% 80% at 100% 0%, rgba(34,197,94,0.20), transparent 55%),
+                radial-gradient(60% 80% at 0% 100%, rgba(22,163,74,0.12), transparent 60%),
+                linear-gradient(135deg, #0b1f1a 0%, #122a23 50%, #0e2822 100%);
+            color: #e8efe9;
+            padding: 40px 44px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            box-shadow: 0 24px 48px -16px rgba(11, 31, 26, 0.4), 0 0 0 1px rgba(255,255,255,0.04);
         }
-        .wc-eyebrow {
+        .home-hero-pattern {
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 320px;
+            background-image:
+                radial-gradient(circle at 60% 30%, rgba(34,197,94,0.08) 0, transparent 50%),
+                radial-gradient(circle at 30% 80%, rgba(134,239,172,0.06) 0, transparent 50%);
+            pointer-events: none;
+        }
+        .home-hero-content {
+            flex: 1;
+            min-width: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .home-hero-eyebrow {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            font-size: 11.5px;
+            gap: 9px;
+            font-size: 11px;
             font-weight: 600;
-            color: rgba(134,239,172,0.9);
+            color: rgba(134,239,172,0.85);
             background: rgba(34,197,94,0.08);
-            border: 1px solid rgba(34,197,94,0.2);
-            padding: 7px 14px;
+            border: 1px solid rgba(34,197,94,0.18);
+            padding: 7px 13px;
             border-radius: 999px;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 28px;
+            letter-spacing: 0.7px;
+            margin-bottom: 20px;
         }
-        .wc-eyebrow::before {
-            content: '';
+        .home-hero-dot {
             width: 6px; height: 6px;
             border-radius: 50%;
             background: var(--accent-light);
             box-shadow: 0 0 8px var(--accent-light);
+            animation: pulseDot 2.4s ease-in-out infinite;
         }
-        .wc-headline {
+        .home-hero-title {
             font-family: 'Fraunces', serif;
-            font-size: 64px;
+            font-size: 44px;
             font-weight: 600;
-            line-height: 1.05;
-            letter-spacing: -2px;
+            line-height: 1.08;
+            letter-spacing: -1.2px;
             color: #fff;
-            max-width: 880px;
-            margin-bottom: 24px;
+            margin-bottom: 12px;
         }
-        .wc-headline em {
+        .home-hero-title em {
             font-style: italic;
             color: #86efac;
             font-weight: 600;
         }
-        .wc-subhead {
-            font-size: 18px;
+        .home-hero-sub {
+            font-size: 15px;
             line-height: 1.55;
             color: rgba(232,239,233,0.72);
-            max-width: 640px;
-            margin-bottom: 40px;
-            font-weight: 400;
+            max-width: 540px;
+            margin-bottom: 28px;
         }
-        .wc-cta-row {
+        .home-hero-sub strong { color: #fca5a5; font-weight: 600; }
+        .home-hero-cta {
             display: flex;
-            gap: 14px;
+            gap: 12px;
             align-items: center;
             flex-wrap: wrap;
         }
-        .wc-cta {
+        .home-hero-btn {
             font-family: inherit;
-            font-size: 14.5px;
+            font-size: 13px;
             font-weight: 600;
-            padding: 15px 28px;
-            border-radius: 12px;
+            padding: 11px 20px;
+            border-radius: 10px;
             cursor: pointer;
             border: none;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            letter-spacing: -0.1px;
+            gap: 8px;
+            letter-spacing: -0.05px;
         }
-        .wc-cta.primary {
+        .home-hero-btn.primary {
             background: linear-gradient(135deg, #22c55e, #16a34a);
             color: #0b1f1a;
-            box-shadow: 0 8px 24px -6px rgba(34,197,94,0.55), inset 0 1px 0 rgba(255,255,255,0.3);
+            box-shadow: 0 6px 18px -4px rgba(34,197,94,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
         }
-        .wc-cta.primary:hover { transform: translateY(-1px); box-shadow: 0 14px 32px -8px rgba(34,197,94,0.7), inset 0 1px 0 rgba(255,255,255,0.3); }
-        .wc-cta.ghost {
+        .home-hero-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -6px rgba(34,197,94,0.65), inset 0 1px 0 rgba(255,255,255,0.3); }
+        .home-hero-btn.ghost {
             background: transparent;
-            color: rgba(255,255,255,0.9);
-            border: 1px solid rgba(255,255,255,0.18);
-            padding: 14px 26px;
+            color: rgba(255,255,255,0.85);
+            border: 1px solid rgba(255,255,255,0.16);
         }
-        .wc-cta.ghost:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.32); }
-        .wc-cta-hint {
-            font-size: 12px;
-            color: rgba(232,239,233,0.45);
-            margin-left: 4px;
+        .home-hero-btn.ghost:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.28); }
+        .home-hero-mark {
+            flex-shrink: 0;
+            width: 140px;
+            height: 140px;
+            position: relative;
+            z-index: 1;
+            opacity: 0.92;
+        }
+        .home-hero-mark svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 8px 24px rgba(22,163,74,0.35));
         }
 
-        .wc-meta-row {
-            display: flex;
-            gap: 40px;
-            margin-top: 56px;
-            padding-top: 32px;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            flex-wrap: wrap;
+        /* KPI strip */
+        .home-kpi-strip {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+            margin-bottom: 32px;
         }
-        .wc-meta-item .num {
+        .home-kpi {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.18s ease;
+        }
+        .home-kpi:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+        .home-kpi.urgent {
+            background: linear-gradient(135deg, #fff5f5, #fff 70%);
+            border-color: rgba(220, 38, 38, 0.2);
+        }
+        .home-kpi.urgent .home-kpi-value { color: var(--danger); }
+        .home-kpi.urgent .home-kpi-label { color: var(--danger); }
+        .home-kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+        .home-kpi-value {
             font-family: 'Fraunces', serif;
             font-size: 30px;
             font-weight: 600;
-            color: #fff;
-            letter-spacing: -0.8px;
+            color: var(--text-dark);
+            letter-spacing: -0.7px;
             line-height: 1;
+            margin-top: 10px;
             font-variant-numeric: tabular-nums;
         }
-        .wc-meta-item .label {
+        .home-kpi-hint {
             font-size: 11.5px;
-            color: rgba(232,239,233,0.55);
-            margin-top: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
+            color: var(--text-light);
+            margin-top: 8px;
             font-weight: 500;
         }
 
-        .wc-grid {
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 0 56px 80px;
+        /* Quick-look grid */
+        .home-quick-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            width: 100%;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 32px;
         }
-        .wc-card {
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 18px;
-            padding: 28px;
-            transition: all 0.2s ease;
+        .home-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
         }
-        .wc-card:hover { border-color: rgba(34,197,94,0.3); background: rgba(255,255,255,0.04); }
-        .wc-card-icon {
-            width: 38px; height: 38px;
-            border-radius: 10px;
-            background: rgba(34,197,94,0.12);
-            color: var(--accent-light);
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 18px;
+        .home-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border-light);
         }
-        .wc-card-icon svg { width: 20px; height: 20px; }
-        .wc-card h3 {
-            font-family: 'Fraunces', serif;
-            font-size: 19px;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 8px;
-            letter-spacing: -0.3px;
-        }
-        .wc-card p {
+        .home-card-head h3 {
             font-size: 13.5px;
-            line-height: 1.6;
-            color: rgba(232,239,233,0.6);
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: -0.1px;
+        }
+        .home-card-link {
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-mid);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px 0;
+            transition: color 0.15s ease;
+        }
+        .home-card-link:hover { color: var(--accent); }
+        .home-card-body { padding: 8px 0; }
+
+        .home-line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 22px;
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.15s ease;
+        }
+        .home-line:last-child { border-bottom: none; }
+        .home-line:hover { background: #fafdfb; }
+        .home-line-tag {
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+            min-width: 64px;
+            text-align: center;
+            background: var(--bg-main);
+            color: var(--text-mid);
+        }
+        .home-line.urgent .home-line-tag {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+        .home-line-tag.soon { background: var(--info-bg); color: var(--info); }
+        .home-line-tag.fssai { background: var(--success-bg); color: var(--success); }
+        .home-line-tag.mca { background: var(--purple-bg); color: var(--purple); }
+        .home-line-tag.gst { background: var(--info-bg); color: var(--info); }
+        .home-line-text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-mid);
+            line-height: 1.45;
+        }
+        .home-line-text strong { color: var(--text-dark); font-weight: 600; }
+        .home-line-meta {
+            font-size: 11px;
+            color: var(--text-light);
+            font-weight: 500;
+            flex-shrink: 0;
         }
 
-        .wc-footer {
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 28px 56px 36px;
-            border-top: 1px solid rgba(255,255,255,0.06);
+        .home-client-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            font-size: 12px;
-            color: rgba(232,239,233,0.4);
-            width: 100%;
+            gap: 12px;
+            padding: 13px 22px;
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.15s ease;
         }
-        .wc-footer .wc-foot-mitra {
+        .home-client-row:last-child { border-bottom: none; }
+        .home-client-row:hover { background: #fafdfb; }
+        .home-client-av {
+            width: 36px; height: 36px;
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .home-client-info { flex: 1; min-width: 0; }
+        .home-client-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            letter-spacing: -0.1px;
+        }
+        .home-client-sector {
+            font-size: 11.5px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+        .home-client-risk {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 7px;
+            letter-spacing: 0.2px;
+            font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
+        }
+        .home-client-risk.high { background: var(--danger-bg); color: var(--danger); }
+        .home-client-risk.med { background: var(--warning-bg); color: var(--warning); }
+        .home-client-risk.low { background: var(--success-bg); color: var(--success); }
+
+        .home-activity {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 22px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 12.5px;
+            color: var(--text-mid);
+            line-height: 1.55;
+        }
+        .home-activity:last-child { border-bottom: none; }
+        .home-activity-time {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-light);
+            white-space: nowrap;
+            min-width: 56px;
+            padding-top: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+        .home-activity-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin-top: 6px;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.08);
+        }
+        .home-activity-dot.scan { background: var(--info); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+        .home-activity-dot.draft { background: var(--success); box-shadow: 0 0 0 3px rgba(5,150,105,0.1); }
+        .home-activity-dot.alert { background: var(--danger); box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
+        .home-activity-dot.flag { background: var(--warning); box-shadow: 0 0 0 3px rgba(217,119,6,0.1); }
+        .home-activity-text { flex: 1; }
+        .home-activity-text strong { color: var(--text-dark); font-weight: 600; }
+
+        .home-foot {
+            text-align: center;
+            font-size: 12.5px;
+            color: var(--text-light);
+            padding: 8px 32px 0;
+            line-height: 1.6;
+        }
+        .home-foot em {
             font-family: 'Fraunces', serif;
             font-style: italic;
-            color: rgba(232,239,233,0.55);
+            color: var(--text-mid);
+            font-weight: 600;
         }
 
-        @media (max-width: 900px) {
-            .wc-headline { font-size: 44px; letter-spacing: -1.4px; }
-            .wc-hero, .wc-grid, .wc-footer, .wc-nav { padding-left: 28px; padding-right: 28px; }
-            .wc-grid { grid-template-columns: 1fr; }
+        @media (max-width: 1100px) {
+            .home-kpi-strip { grid-template-columns: repeat(3, 1fr); }
+            .home-quick-grid { grid-template-columns: 1fr; }
+            .home-hero { flex-direction: column; align-items: flex-start; }
+            .home-hero-mark { display: none; }
         }
+
     </style>
 </head>
 <body>
-
-<!-- Welcome / Home -->
-<div class="wc-screen" id="wc-screen">
-    <nav class="wc-nav">
-        <div class="wc-brand">
-            <div class="wc-brand-mark">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <defs>
-                        <linearGradient id="wcStroke" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-                            <stop offset="0" stop-color="#86efac"/>
-                            <stop offset="1" stop-color="#22c55e"/>
-                        </linearGradient>
-                    </defs>
-                    <path d="M 19.2 6.4 A 9 9 0 1 0 20.4 14.6" stroke="url(#wcStroke)" stroke-width="2.4" stroke-linecap="round"/>
-                    <path d="M 7.5 12.2 L 11 15.8 L 18.5 7.2" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <span class="wc-brand-name">Reg Mitra</span>
-        </div>
-        <button class="wc-nav-btn" onclick="wcEnter()">Open demo &rarr;</button>
-    </nav>
-
-    <section class="wc-hero">
-        <div class="wc-eyebrow">Built for Indian CA firms</div>
-        <h1 class="wc-headline">Your regulatory <em>mitra</em> &mdash; always reading, never sleeping.</h1>
-        <p class="wc-subhead">Reg Mitra watches every gazette &mdash; FSSAI, MCA, GST, RBI, CBDT, ICAI and 18 state portals &mdash; and tells you exactly which of your clients are affected. Then it drafts the briefing you&rsquo;d send anyway.</p>
-        <div class="wc-cta-row">
-            <button class="wc-cta primary" onclick="wcEnter(true)">
-                See it on your data
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-            </button>
-            <button class="wc-cta ghost" onclick="wcEnter(false)">Skip to dashboard</button>
-            <span class="wc-cta-hint">No signup &middot; runs on demo books</span>
-        </div>
-
-        <div class="wc-meta-row">
-            <div class="wc-meta-item">
-                <div class="num">142+</div>
-                <div class="label">Government sources</div>
-            </div>
-            <div class="wc-meta-item">
-                <div class="num">~16 hrs</div>
-                <div class="label">Partner time saved / client / month</div>
-            </div>
-            <div class="wc-meta-item">
-                <div class="num">2.5 min</div>
-                <div class="label">From signup to your first sent briefing</div>
-            </div>
-        </div>
-    </section>
-
-    <div class="wc-grid">
-        <div class="wc-card">
-            <div class="wc-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-            </div>
-            <h3>Reads while you sleep</h3>
-            <p>Crawls 142+ government portals every hour. Notifications, circulars, amendments, gazette uploads &mdash; nothing slips past.</p>
-        </div>
-        <div class="wc-card">
-            <div class="wc-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M7 20H2v-2a3 3 0 015.356-1.857"/><path d="M12 14a4 4 0 100-8 4 4 0 000 8z"/><path d="M7 20a5 5 0 0110 0"/></svg>
-            </div>
-            <h3>Maps it to your clients</h3>
-            <p>Pulls from your Tally books to know each client&rsquo;s sector, turnover, jurisdictions &mdash; so you only see the changes that actually touch them.</p>
-        </div>
-        <div class="wc-card">
-            <div class="wc-card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-            </div>
-            <h3>Drafts the client briefing</h3>
-            <p>Plain-language note explaining what changed, what they need to do, and by when. WhatsApp for SME clients, email for enterprise &mdash; one click each.</p>
-        </div>
-    </div>
-
-    <footer class="wc-footer">
-        <span>&copy; 2026 Reg Mitra &middot; Bangalore</span>
-        <span class="wc-foot-mitra">mitra &mdash; the Sanskrit word for friend</span>
-    </footer>
-</div>
-
 <div class="app">
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -3644,7 +3686,11 @@
             </div>
         </div>
         <nav class="sidebar-nav">
-            <div class="nav-btn active" data-screen="dashboard">
+            <div class="nav-btn active" data-screen="home">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"/></svg>
+                Home
+            </div>
+            <div class="nav-btn" data-screen="dashboard">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 Today
             </div>
@@ -3680,7 +3726,7 @@
 
     <main class="main">
         <header class="header">
-            <span class="header-title" id="page-title">Today</span>
+            <span class="header-title" id="page-title">Home</span>
             <div class="header-search">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <input type="text" placeholder="Search regulations, clients, circulars..." id="global-search">
@@ -3699,8 +3745,196 @@
         </header>
 
         <div class="content">
+            <!-- HOME -->
+            <div class="screen active" id="screen-home">
+                <div class="home-page">
+                    <!-- Brand hero card -->
+                    <section class="home-hero">
+                        <div class="home-hero-pattern" aria-hidden="true"></div>
+                        <div class="home-hero-content">
+                            <div class="home-hero-eyebrow">
+                                <span class="home-hero-dot"></span>
+                                Live &middot; monitoring 6 clients across 142+ government sources
+                            </div>
+                            <h1 class="home-hero-title">Welcome back, <em>Mehta Shah</em>.</h1>
+                            <p class="home-hero-sub">7 things need your attention. <strong>1 is overdue.</strong> The rest is calm.</p>
+                            <div class="home-hero-cta">
+                                <button class="home-hero-btn primary" onclick="navTo('dashboard')">
+                                    Open Today
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                                </button>
+                                <button class="home-hero-btn ghost" onclick="obReplay()">Replay product tour</button>
+                            </div>
+                        </div>
+                        <div class="home-hero-mark">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <defs>
+                                    <linearGradient id="homeMarkStroke" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+                                        <stop offset="0" stop-color="#86efac"/>
+                                        <stop offset="1" stop-color="#22c55e"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M 64 21 A 30 30 0 1 0 68 48" stroke="url(#homeMarkStroke)" stroke-width="3.5" stroke-linecap="round"/>
+                                <path d="M 25 40 L 36.6 51.7 L 61.7 24" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </section>
+
+                    <!-- KPI strip -->
+                    <section class="home-kpi-strip">
+                        <div class="home-kpi urgent">
+                            <div class="home-kpi-label">Overdue</div>
+                            <div class="home-kpi-value">1</div>
+                            <div class="home-kpi-hint">FSSAI opt-in &middot; Royal Spice</div>
+                        </div>
+                        <div class="home-kpi">
+                            <div class="home-kpi-label">Due in 24h</div>
+                            <div class="home-kpi-value">2</div>
+                            <div class="home-kpi-hint">TDS dispatch, IGST review</div>
+                        </div>
+                        <div class="home-kpi">
+                            <div class="home-kpi-label">Briefings ready</div>
+                            <div class="home-kpi-value">4</div>
+                            <div class="home-kpi-hint">Drafted, awaiting send</div>
+                        </div>
+                        <div class="home-kpi">
+                            <div class="home-kpi-label">Time saved &middot; May</div>
+                            <div class="home-kpi-value">~51 hrs</div>
+                            <div class="home-kpi-hint">~&#8377;1.0L of partner time</div>
+                        </div>
+                        <div class="home-kpi">
+                            <div class="home-kpi-label">Clients monitored</div>
+                            <div class="home-kpi-value">6</div>
+                            <div class="home-kpi-hint">All books fresh today</div>
+                        </div>
+                    </section>
+
+                    <!-- Quick looks -->
+                    <div class="home-quick-grid">
+                        <!-- Today's worklist preview -->
+                        <section class="home-card">
+                            <div class="home-card-head">
+                                <h3>Today&rsquo;s worklist</h3>
+                                <button class="home-card-link" onclick="navTo('dashboard')">Open Today &rarr;</button>
+                            </div>
+                            <div class="home-card-body">
+                                <div class="home-line urgent">
+                                    <span class="home-line-tag">Overdue</span>
+                                    <div class="home-line-text"><strong>FSSAI licence transition</strong> &mdash; confirm perpetual opt-in</div>
+                                    <span class="home-line-meta">Royal Spice</span>
+                                </div>
+                                <div class="home-line">
+                                    <span class="home-line-tag soon">Today</span>
+                                    <div class="home-line-text"><strong>TDS Deposit</strong> &mdash; Q4 challan 281 ready</div>
+                                    <span class="home-line-meta">All clients</span>
+                                </div>
+                                <div class="home-line">
+                                    <span class="home-line-tag soon">Tomorrow</span>
+                                    <div class="home-line-text"><strong>IGST rate change</strong> &mdash; 3 invoices need sign-off</div>
+                                    <span class="home-line-meta">Sharma Pharma</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Recent regulations -->
+                        <section class="home-card">
+                            <div class="home-card-head">
+                                <h3>Latest regulations</h3>
+                                <button class="home-card-link" onclick="navTo('feed')">All regulations &rarr;</button>
+                            </div>
+                            <div class="home-card-body">
+                                <div class="home-line">
+                                    <span class="home-line-tag fssai">FSSAI</span>
+                                    <div class="home-line-text"><strong>Food Safety Licensing Amendment</strong> &mdash; perpetual validity</div>
+                                    <span class="home-line-meta">10 Mar</span>
+                                </div>
+                                <div class="home-line">
+                                    <span class="home-line-tag mca">MCA</span>
+                                    <div class="home-line-text"><strong>Director KYC</strong> &mdash; new 3-year cycle, DIR-3</div>
+                                    <span class="home-line-meta">28 Apr</span>
+                                </div>
+                                <div class="home-line">
+                                    <span class="home-line-tag gst">CBIC</span>
+                                    <div class="home-line-text"><strong>IGST on pharma intermediates</strong> &mdash; 18% &rarr; 12%</div>
+                                    <span class="home-line-meta">2 May</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Client health -->
+                        <section class="home-card">
+                            <div class="home-card-head">
+                                <h3>Client health</h3>
+                                <button class="home-card-link" onclick="navTo('clients')">All clients &rarr;</button>
+                            </div>
+                            <div class="home-card-body">
+                                <div class="home-client-row">
+                                    <div class="home-client-av" style="background:#fef2f2; color:#dc2626;">GA</div>
+                                    <div class="home-client-info">
+                                        <div class="home-client-name">Gupta Auto Components</div>
+                                        <div class="home-client-sector">Auto Ancillary &middot; Gurgaon</div>
+                                    </div>
+                                    <div class="home-client-risk high">Risk 8.1</div>
+                                </div>
+                                <div class="home-client-row">
+                                    <div class="home-client-av" style="background:#fffbeb; color:#d97706;">RS</div>
+                                    <div class="home-client-info">
+                                        <div class="home-client-name">Royal Spice Kitchen</div>
+                                        <div class="home-client-sector">F&amp;B &middot; Delhi</div>
+                                    </div>
+                                    <div class="home-client-risk med">Risk 7.4</div>
+                                </div>
+                                <div class="home-client-row">
+                                    <div class="home-client-av" style="background:#f0fdf4; color:#16a34a;">SP</div>
+                                    <div class="home-client-info">
+                                        <div class="home-client-name">Sharma Pharmaceuticals</div>
+                                        <div class="home-client-sector">Pharma &middot; Mumbai</div>
+                                    </div>
+                                    <div class="home-client-risk low">Risk 6.8</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- AI activity -->
+                        <section class="home-card">
+                            <div class="home-card-head">
+                                <h3>What Reg Mitra did today</h3>
+                                <button class="home-card-link" onclick="navTo('dashboard')">Full log &rarr;</button>
+                            </div>
+                            <div class="home-card-body">
+                                <div class="home-activity">
+                                    <span class="home-activity-time">9:15&nbsp;AM</span>
+                                    <span class="home-activity-dot scan"></span>
+                                    <span class="home-activity-text">Crawled <strong>23 gazette portals</strong></span>
+                                </div>
+                                <div class="home-activity">
+                                    <span class="home-activity-time">9:17&nbsp;AM</span>
+                                    <span class="home-activity-dot draft"></span>
+                                    <span class="home-activity-text">Drafted briefing for <strong>Lakshmi FinServ</strong> &mdash; capital planning</span>
+                                </div>
+                                <div class="home-activity">
+                                    <span class="home-activity-time">9:18&nbsp;AM</span>
+                                    <span class="home-activity-dot alert"></span>
+                                    <span class="home-activity-text">Flagged <strong>cross-regulation conflict</strong> &mdash; Gupta Auto OEM contracts</span>
+                                </div>
+                                <div class="home-activity">
+                                    <span class="home-activity-time">9:19&nbsp;AM</span>
+                                    <span class="home-activity-dot flag"></span>
+                                    <span class="home-activity-text">Flagged <strong>FSSAI opt-in overdue</strong> &mdash; Royal Spice Kitchen</span>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Foot tagline -->
+                    <div class="home-foot">
+                        <em>mitra</em> &mdash; the Sanskrit word for friend. Reg Mitra is the friend who reads the gazettes so your team doesn&rsquo;t have to.
+                    </div>
+                </div>
+            </div>
+
             <!-- DASHBOARD -->
-            <div class="screen active" id="screen-dashboard">
+            <div class="screen" id="screen-dashboard">
                 <div class="today-page">
                     <div class="today-greeting">
                         <div class="today-overline" id="today-overline">Thursday, 7 May 2026</div>
@@ -7025,9 +7259,9 @@ function navTo(screen) {
     var target = document.getElementById('screen-' + resolved);
     if (target) target.classList.add('active');
 
-    const titles = { dashboard:'Today', feed:'Regulations', clients:'Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', assistant:'Assistant', chat:'Assistant', agent:'Assistant', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub', settings:'Settings' };
+    const titles = { home:'Home', dashboard:'Today', feed:'Regulations', clients:'Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', assistant:'Assistant', chat:'Assistant', agent:'Assistant', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub', settings:'Settings' };
     document.getElementById('page-title').textContent = titles[screen] || titles[resolved] || '';
-    const hideSearch = ['assistant','chat','agent','tally','gst','incometax','mca','comms','settings'];
+    const hideSearch = ['home','assistant','chat','agent','tally','gst','incometax','mca','comms','settings'];
     document.querySelector('.header-search').style.display = hideSearch.includes(screen) ? 'none' : '';
 
     if (screen === 'assistant' || screen === 'chat' || screen === 'agent') {
@@ -8083,7 +8317,7 @@ function obSendAlt() {
 function obFinish() {
     try { localStorage.setItem('regmitra_onboarded', 'true'); } catch (e) {}
     obHide();
-    // Land in Today (already default-active screen), nothing more to do.
+    if (typeof navTo === 'function') navTo('dashboard');
 }
 function obDismiss() {
     // User exited without completing — still mark onboarded so they don't get re-trapped.
@@ -8260,50 +8494,22 @@ function snoozeWorklistItem(btn) {
     }, 250);
 }
 
-// ===== Welcome / Home page =====
-function wcShow() {
-    document.getElementById('wc-screen').classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
-function wcEnter(triggerOnboarding) {
-    var wc = document.getElementById('wc-screen');
-    wc.style.transition = 'opacity 0.32s ease';
-    wc.style.opacity = '0';
-    setTimeout(function() {
-        wc.classList.remove('open');
-        wc.style.opacity = '';
-        wc.style.transition = '';
-        document.body.style.overflow = '';
-        try { localStorage.setItem('regmitra_welcomed', 'true'); } catch (e) {}
-        if (triggerOnboarding) {
-            setTimeout(obShow, 120);
-        } else {
-            // Skip onboarding too if they explicitly bypass — they want the dashboard
-            try { localStorage.setItem('regmitra_onboarded', 'true'); } catch (e) {}
-        }
-    }, 320);
-}
+// ===== Home page nav =====
 function wcReplay() {
-    try {
-        localStorage.removeItem('regmitra_welcomed');
-        localStorage.removeItem('regmitra_onboarded');
-    } catch (e) {}
-    wcShow();
+    if (typeof navTo === 'function') navTo('home');
 }
 
-// Trigger on load — welcome first, then onboarding. Query params can force either.
+// First-load: trigger onboarding overlay on Home (existing screen). The Home
+// screen itself is the default-active so nothing to switch to.
 (function() {
     var qs = '';
     try { qs = window.location.search || ''; } catch (e) {}
-    var forceWelcome  = qs.indexOf('welcome=1')  !== -1;
-    var forceOnboard  = qs.indexOf('onboard=1')  !== -1;
-    var welcomed = false, onboarded = false;
-    try { welcomed  = localStorage.getItem('regmitra_welcomed')  === 'true'; } catch (e) {}
+    var forceOnboard = qs.indexOf('onboard=1') !== -1;
+    var onboarded = false;
     try { onboarded = localStorage.getItem('regmitra_onboarded') === 'true'; } catch (e) {}
 
     function trigger() {
-        if (forceWelcome || (!welcomed && !onboarded)) { wcShow(); return; }
-        if (forceOnboard || !onboarded) { setTimeout(obShow, 200); }
+        if (forceOnboard || !onboarded) setTimeout(obShow, 400);
     }
     if (document.readyState !== 'loading') trigger();
     else document.addEventListener('DOMContentLoaded', trigger);
