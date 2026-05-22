@@ -601,24 +601,27 @@
         .client-roi-line {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--success);
+            gap: 8px;
+            font-size: 12.5px;
+            color: var(--text-dark);
             font-weight: 600;
-            margin-top: 8px;
-            padding-top: 10px;
-            border-top: 1px dashed var(--border-light);
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-light);
+            letter-spacing: -0.05px;
         }
         .client-roi-line .roi-pill {
-            font-size: 9px;
+            font-size: 9.5px;
             font-weight: 700;
             background: var(--success-bg);
             color: var(--success);
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 3px 7px;
+            border-radius: 5px;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
         }
+        .client-roi-line strong { color: var(--success); font-weight: 700; }
 
         /* Phase 3c — channel hint + suggested button */
         .bm-channel-hint {
@@ -640,76 +643,87 @@
         /* Phase 4 — onboarding overlay */
         .ob-overlay {
             position: fixed; inset: 0; z-index: 10000;
-            background: linear-gradient(135deg, #0b1f1a 0%, #122a23 100%);
+            background: radial-gradient(120% 80% at 50% 0%, rgba(22,163,74,0.18), transparent 60%),
+                        linear-gradient(135deg, #0b1f1a 0%, #0e2822 60%, #122a23 100%);
             display: none;
             align-items: center; justify-content: center;
             overflow-y: auto;
-            padding: 40px 20px;
+            padding: 48px 24px;
+            backdrop-filter: blur(2px);
         }
-        .ob-overlay.open { display: flex; }
+        .ob-overlay.open { display: flex; animation: fadeUp 0.3s ease; }
         .ob-card {
             background: #fff;
             width: 100%;
-            max-width: 680px;
-            border-radius: 20px;
-            padding: 40px 44px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 720px;
+            border-radius: 24px;
+            padding: 44px 48px;
+            box-shadow: 0 40px 80px -16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
             position: relative;
         }
         .ob-close {
             position: absolute;
-            top: 16px; right: 16px;
-            width: 32px; height: 32px;
+            top: 20px; right: 20px;
+            width: 34px; height: 34px;
             border: none;
             background: var(--bg-main);
             color: var(--text-mid);
             font-size: 22px;
             line-height: 1;
-            border-radius: 50%;
+            border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: inherit;
+            transition: all 0.15s ease;
         }
-        .ob-close:hover { background: var(--border); color: var(--text-dark); }
+        .ob-close:hover { background: var(--border); color: var(--text-dark); transform: scale(1.05); }
         .ob-progress {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            margin-bottom: 32px;
+            gap: 8px;
+            margin-bottom: 40px;
         }
         .ob-dot {
-            width: 26px; height: 26px;
+            width: 28px; height: 28px;
             border-radius: 50%;
-            background: var(--border);
+            background: var(--border-light);
             color: var(--text-light);
             font-size: 11px;
             font-weight: 700;
             display: flex; align-items: center; justify-content: center;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .ob-dot.done { background: var(--accent); color: #fff; }
-        .ob-dot.active { background: var(--accent); color: #fff; box-shadow: 0 0 0 4px var(--accent-bg); }
+        .ob-dot.active {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 0 5px rgba(22,163,74,0.14), 0 4px 12px -2px rgba(22,163,74,0.3);
+            transform: scale(1.08);
+        }
         .ob-bar {
-            width: 36px; height: 2px;
-            background: var(--border);
+            width: 44px; height: 2px;
+            background: var(--border-light);
+            transition: background 0.25s ease;
         }
         .ob-bar.done { background: var(--accent); }
         .ob-step { display: none; }
-        .ob-step.active { display: block; }
+        .ob-step.active { display: block; animation: fadeUp 0.3s ease; }
         .ob-step h2 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 8px;
-            letter-spacing: -0.3px;
+            margin-bottom: 10px;
+            letter-spacing: -0.6px;
+            line-height: 1.15;
         }
         .ob-step .ob-sub {
-            font-size: 14px;
+            font-size: 14.5px;
             color: var(--text-mid);
-            margin-bottom: 28px;
-            line-height: 1.55;
+            margin-bottom: 32px;
+            line-height: 1.6;
         }
         .ob-actions {
             display: flex;
@@ -719,41 +733,46 @@
         }
         .ob-btn {
             font-family: inherit;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 600;
-            padding: 12px 22px;
-            border-radius: 10px;
+            padding: 13px 22px;
+            border-radius: 11px;
             cursor: pointer;
             border: 1px solid var(--border);
             background: #fff;
             color: var(--text-mid);
+            transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: -0.05px;
         }
         .ob-btn.primary {
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
             color: #fff;
             border-color: var(--accent);
+            box-shadow: 0 4px 12px -2px rgba(22, 163, 74, 0.32), inset 0 1px 0 rgba(255,255,255,0.16);
         }
-        .ob-btn.primary:hover { background: var(--accent-light); }
+        .ob-btn.primary:hover { box-shadow: 0 8px 20px -4px rgba(22, 163, 74, 0.42), inset 0 1px 0 rgba(255,255,255,0.16); transform: translateY(-1px); }
         .ob-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .ob-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .ob-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .ob-tally-card {
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 18px;
+            border-radius: 14px;
+            padding: 20px;
             margin: 16px 0 8px;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
+            background: linear-gradient(180deg, #fff, #fafdfb);
         }
         .ob-tally-icon {
-            width: 48px; height: 48px;
-            border-radius: 12px;
-            background: var(--accent-bg);
-            color: var(--accent);
+            width: 52px; height: 52px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: #fff;
             display: flex; align-items: center; justify-content: center;
             font-weight: 800;
-            font-size: 18px;
+            font-size: 20px;
+            box-shadow: 0 4px 12px -2px rgba(22, 163, 74, 0.3);
         }
         .ob-tally-body { flex: 1; }
         .ob-tally-title { font-size: 14px; font-weight: 600; color: var(--text-dark); }
@@ -774,17 +793,18 @@
         .ob-client-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 24px;
         }
         .ob-client-tile {
             border: 1.5px solid var(--border);
-            border-radius: 10px;
-            padding: 14px;
+            border-radius: 12px;
+            padding: 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .ob-client-tile:hover { border-color: var(--accent); background: var(--accent-bg); }
         .ob-client-tile.selected {
@@ -3679,7 +3699,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">12</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 14 active regulations · Last updated: Today, 9:15 AM</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;24K of partner time this month</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~12 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;24K</span></div>
                     </div>
                     <div class="client-card" data-sector="it" data-risk="5.2" onclick="openClient('nexgen')">
                         <div class="client-card-top">
@@ -3693,7 +3713,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">18</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 8 active regulations · Last updated: Today, 9:15 AM</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;9K of partner time this month</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~4 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;9K</span></div>
                     </div>
                     <div class="client-card" data-sector="auto" data-risk="8.1" onclick="openClient('gupta')">
                         <div class="client-card-top">
@@ -3707,7 +3727,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">9</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 11 active regulations · Last updated: Today, 9:15 AM</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;32K of partner time this month</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~16 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;32K</span></div>
                     </div>
                     <div class="client-card" data-sector="fnb" data-risk="7.4" onclick="openClient('royal')">
                         <div class="client-card-top">
@@ -3721,7 +3741,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">7</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 9 active regulations · Last updated: Today, 9:15 AM</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;14K of partner time this month</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~7 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;14K</span></div>
                     </div>
                     <div class="client-card" data-sector="nbfc" data-risk="6.1" onclick="openClient('lakshmi')">
                         <div class="client-card-top">
@@ -3735,7 +3755,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">22</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 16 active regulations · Last updated: Today, 9:15 AM</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;18K of partner time this month</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~9 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;18K</span></div>
                     </div>
                     <div class="client-card" data-sector="realestate" data-risk="3.2" onclick="openClient('greenfield')">
                         <div class="client-card-top">
@@ -3749,7 +3769,7 @@
                             <div class="metric"><div class="num" style="color:var(--success)">14</div><div class="lbl">Compliant</div></div>
                         </div>
                         <div class="ai-monitoring-line">AI monitoring 7 active regulations · Last updated: Today, 9:15 AM</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span>Saved ~&#8377;6K of partner time this month</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~3 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;6K</span></div>
                     </div>
                 </div>
             </div>
