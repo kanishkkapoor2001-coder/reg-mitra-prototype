@@ -1730,37 +1730,101 @@
             margin-left: auto; font-size: 11px; color: var(--text-light); font-weight: 500; white-space: nowrap;
         }
 
-        /* Client detail modal */
-        .client-modal-bg {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-            z-index: 1000; align-items: center; justify-content: center;
+        /* Client detail page */
+        .client-detail-page { max-width: 1080px; }
+        .client-detail-back {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 500; color: var(--text-mid);
+            background: none; border: none; cursor: pointer; padding: 4px 0;
+            margin-bottom: 14px;
         }
-        .client-modal-bg.open { display: flex; animation: fadeUp 0.15s ease; }
-        .client-modal {
-            background: var(--bg-white); border-radius: 20px; padding: 28px;
-            width: 600px; max-height: 85vh; overflow-y: auto; position: relative;
-            box-shadow: 0 32px 64px -12px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.04);
+        .client-detail-back:hover { color: var(--accent); }
+        .client-detail-back svg { width: 14px; height: 14px; }
+        .client-detail-header {
+            display: flex; align-items: center; gap: 16px;
+            padding: 18px 22px; background: var(--bg-white);
+            border: 1px solid var(--border); border-radius: 14px;
+            margin-bottom: 18px;
         }
-        .client-modal .popup-close {
-            position: absolute; top: 16px; right: 16px;
-            width: 28px; height: 28px; border-radius: 6px;
-            border: 1px solid var(--border); background: var(--bg-main);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 16px; color: var(--text-mid); z-index: 2;
+        .client-detail-header .av {
+            width: 52px; height: 52px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 700;
         }
-        .client-modal .popup-close:hover { background: var(--border); }
-        .client-modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
-        .client-modal .cm-sector { font-size: 12px; color: var(--text-light); margin-bottom: 18px; }
-        .client-modal .cm-section { margin-bottom: 18px; }
-        .client-modal .cm-section-title { font-size: 12px; font-weight: 600; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border-light); }
-        .cm-reg-item { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; }
-        .cm-reg-item .cm-title { font-size: 13px; font-weight: 500; color: var(--text-dark); }
-        .cm-reg-item .cm-meta { font-size: 11px; color: var(--text-light); margin-top: 3px; display: flex; gap: 12px; }
-        .cm-stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 18px; }
-        .cm-stat { text-align: center; padding: 10px; background: var(--bg-main); border-radius: 8px; }
-        .cm-stat .num { font-size: 20px; font-weight: 700; }
-        .cm-stat .lbl { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+        .client-detail-header h2 { font-size: 18px; font-weight: 700; margin-bottom: 2px; color: var(--text-dark); }
+        .client-detail-header .cdh-sub { font-size: 12px; color: var(--text-light); }
+        .client-detail-header .cdh-actions { margin-left: auto; display: flex; gap: 8px; }
+        .client-detail-header .cdh-actions .btn { padding: 8px 14px; font-size: 12px; }
+        .cd-section { background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 16px; }
+        .cd-section-title {
+            font-size: 12px; font-weight: 600; color: var(--text-mid);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 12px; padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .cd-sync-meta {
+            margin-left: auto; font-size: 10px; font-weight: 500;
+            color: var(--text-light); text-transform: none; letter-spacing: 0;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .cd-sync-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--success); box-shadow: 0 0 0 3px rgba(34,197,94,0.18);
+            animation: pulse-subtle 2s ease infinite;
+        }
+        /* Live status grid (auto-fetched from govt portals) */
+        .cd-status-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+        }
+        .cd-status-card {
+            padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px;
+            background: var(--bg-main); position: relative;
+        }
+        .cd-status-card .cds-top {
+            display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+        }
+        .cd-status-card .cds-label { font-size: 11px; font-weight: 600; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.4px; }
+        .cd-status-card .cds-value { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
+        .cd-status-card .cds-source {
+            font-size: 10px; color: var(--text-light);
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .cd-status-card .cds-source::before {
+            content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--success);
+        }
+        .cd-status-card.warn { background: #fffbeb; border-color: #fde68a; }
+        .cd-status-card.warn .cds-source::before { background: var(--warning); }
+        .cd-status-card.danger { background: #fef2f2; border-color: #fecaca; }
+        .cd-status-card.danger .cds-source::before { background: var(--danger); }
+        .cd-status-card .cds-tick {
+            position: absolute; top: 10px; right: 12px;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--success); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700;
+        }
+        .cd-status-card.warn .cds-tick { background: var(--warning); }
+        .cd-status-card.danger .cds-tick { background: var(--danger); }
+        .cd-stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+        .cd-stat { text-align: center; padding: 12px; background: var(--bg-main); border-radius: 10px; border: 1px solid var(--border-light); }
+        .cd-stat .num { font-size: 22px; font-weight: 700; }
+        .cd-stat .lbl { font-size: 10px; color: var(--text-light); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+        .cd-reg-item { padding: 11px 14px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; }
+        .cd-reg-item:last-child { margin-bottom: 0; }
+        .cd-reg-item .cd-title { font-size: 13px; font-weight: 500; color: var(--text-dark); }
+        .cd-reg-item .cd-meta { font-size: 11px; color: var(--text-light); margin-top: 3px; display: flex; gap: 12px; }
+        .cd-portal-bar {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+        }
+        .cd-portal-chip {
+            font-size: 10px; font-weight: 600; padding: 4px 9px;
+            background: var(--accent-bg); color: var(--accent);
+            border: 1px solid rgba(34,197,94,0.2); border-radius: 20px;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .cd-portal-chip::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--success); }
 
         /* Chat */
         .chat-wrap {
@@ -3567,7 +3631,27 @@
             transition: background 0.15s ease;
         }
         .home-client-row:last-child { border-bottom: none; }
-        .home-client-row:hover { background: #fafdfb; }
+        .home-client-row:hover { background: #fafdfb; cursor: pointer; }
+        .home-client-status {
+            display: flex; align-items: center; gap: 7px;
+            font-size: 11.5px; color: var(--text-mid);
+            flex-shrink: 0; padding: 6px 11px;
+            background: var(--bg-main); border-radius: 7px;
+            border: 1px solid var(--border-light);
+        }
+        .home-client-status .hcs-text { font-weight: 500; }
+        .home-client-status .hcs-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--success); box-shadow: 0 0 0 3px rgba(34,197,94,0.18);
+            flex-shrink: 0;
+        }
+        .home-client-status .hcs-dot.warn { background: var(--warning); box-shadow: 0 0 0 3px rgba(217,119,6,0.18); }
+        .home-client-status .hcs-dot.danger { background: var(--danger); box-shadow: 0 0 0 3px rgba(220,38,38,0.2); }
+        .home-clients-card { margin-bottom: 16px; }
+        .home-clients-list .home-client-row { padding: 14px 22px; }
+        @media (max-width: 900px) {
+            .home-client-status { display: none; }
+        }
         .home-client-av {
             width: 36px; height: 36px;
             border-radius: 9px;
@@ -3754,13 +3838,13 @@
                         <div class="home-hero-content">
                             <div class="home-hero-eyebrow">
                                 <span class="home-hero-dot"></span>
-                                Live &middot; 6 clients monitored across 142+ sources
+                                Live compliance dashboard &middot; auto-synced with GSTN, MCA21, CBDT, FSSAI, RBI CIMS
                             </div>
                             <h1 class="home-hero-title">Welcome back, Mehta Shah &amp; Associates</h1>
-                            <p class="home-hero-sub"><strong>1 item is overdue.</strong> 6 more need your review today.</p>
+                            <p class="home-hero-sub">Real-time compliance status across all <strong>6 clients</strong>. Pick a client to drill in.</p>
                             <div class="home-hero-cta">
-                                <button class="home-hero-btn primary" onclick="navTo('dashboard')">
-                                    Open Today
+                                <button class="home-hero-btn primary" onclick="navTo('clients')">
+                                    View all clients
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                                 </button>
                                 <button class="home-hero-btn ghost" onclick="obReplay()">Replay product tour</button>
@@ -3780,63 +3864,120 @@
                         </div>
                     </section>
 
-                    <!-- KPI strip -->
+                    <!-- KPI strip: portal sync status (live dashboard framing) -->
                     <section class="home-kpi-strip">
-                        <div class="home-kpi urgent">
-                            <div class="home-kpi-label">Overdue</div>
-                            <div class="home-kpi-value">1</div>
-                            <div class="home-kpi-hint">FSSAI opt-in &middot; Royal Spice</div>
+                        <div class="home-kpi">
+                            <div class="home-kpi-label">Portals connected</div>
+                            <div class="home-kpi-value">6</div>
+                            <div class="home-kpi-hint">GSTN, MCA21, CBDT, FSSAI, RBI, FOSCOS</div>
                         </div>
                         <div class="home-kpi">
-                            <div class="home-kpi-label">Due in 24h</div>
-                            <div class="home-kpi-value">2</div>
-                            <div class="home-kpi-hint">TDS dispatch, IGST review</div>
+                            <div class="home-kpi-label">Live filings tracked</div>
+                            <div class="home-kpi-value">142</div>
+                            <div class="home-kpi-hint">across all 6 clients</div>
                         </div>
                         <div class="home-kpi">
-                            <div class="home-kpi-label">Briefings ready</div>
-                            <div class="home-kpi-value">4</div>
-                            <div class="home-kpi-hint">Drafted, awaiting send</div>
-                        </div>
-                        <div class="home-kpi">
-                            <div class="home-kpi-label">Time saved &middot; May</div>
-                            <div class="home-kpi-value">~51 hrs</div>
-                            <div class="home-kpi-hint">~&#8377;1.0L of partner time</div>
+                            <div class="home-kpi-label">Auto-fetched today</div>
+                            <div class="home-kpi-value">38</div>
+                            <div class="home-kpi-hint">filings &amp; status updates</div>
                         </div>
                         <div class="home-kpi">
                             <div class="home-kpi-label">Clients monitored</div>
                             <div class="home-kpi-value">6</div>
-                            <div class="home-kpi-hint">All books fresh today</div>
+                            <div class="home-kpi-hint">all portal feeds healthy</div>
+                        </div>
+                        <div class="home-kpi">
+                            <div class="home-kpi-label">Last sync</div>
+                            <div class="home-kpi-value">2 min</div>
+                            <div class="home-kpi-hint">auto-refresh every 5 min</div>
                         </div>
                     </section>
 
-                    <!-- Quick looks -->
-                    <div class="home-quick-grid">
-                        <!-- Today's worklist preview -->
-                        <section class="home-card">
-                            <div class="home-card-head">
-                                <h3>Today&rsquo;s worklist</h3>
-                                <button class="home-card-link" onclick="navTo('dashboard')">Open Today &rarr;</button>
+                    <!-- Primary surface: clients (full-width) -->
+                    <section class="home-card home-clients-card">
+                        <div class="home-card-head">
+                            <h3>Your clients</h3>
+                            <button class="home-card-link" onclick="navTo('clients')">Open client portfolio &rarr;</button>
+                        </div>
+                        <div class="home-card-body home-clients-list">
+                            <div class="home-client-row" onclick="openClient('sharma')">
+                                <div class="home-client-av" style="background:var(--info-bg); color:var(--info);">SP</div>
+                                <div class="home-client-info">
+                                    <div class="home-client-name">Sharma Pharmaceuticals</div>
+                                    <div class="home-client-sector">Pharma &middot; Mumbai</div>
+                                </div>
+                                <div class="home-client-status">
+                                    <span class="hcs-dot warn"></span>
+                                    <span class="hcs-text">DIN-KYC 2/4 &middot; IGST update pending</span>
+                                </div>
+                                <div class="home-client-risk med">Risk 6.8</div>
                             </div>
-                            <div class="home-card-body">
-                                <div class="home-line urgent">
-                                    <span class="home-line-tag">Overdue</span>
-                                    <div class="home-line-text"><strong>FSSAI licence transition</strong> &mdash; confirm perpetual opt-in</div>
-                                    <span class="home-line-meta">Royal Spice</span>
+                            <div class="home-client-row" onclick="openClient('nexgen')">
+                                <div class="home-client-av" style="background:var(--purple-bg); color:var(--purple);">NG</div>
+                                <div class="home-client-info">
+                                    <div class="home-client-name">NexGen Software Solutions</div>
+                                    <div class="home-client-sector">IT &middot; Bangalore</div>
                                 </div>
-                                <div class="home-line">
-                                    <span class="home-line-tag soon">Today</span>
-                                    <div class="home-line-text"><strong>TDS Deposit</strong> &mdash; Q4 challan 281 ready</div>
-                                    <span class="home-line-meta">All clients</span>
+                                <div class="home-client-status">
+                                    <span class="hcs-dot warn"></span>
+                                    <span class="hcs-text">Karnataka S&amp;E OT policy revision</span>
                                 </div>
-                                <div class="home-line">
-                                    <span class="home-line-tag soon">Tomorrow</span>
-                                    <div class="home-line-text"><strong>IGST rate change</strong> &mdash; 3 invoices need sign-off</div>
-                                    <span class="home-line-meta">Sharma Pharma</span>
-                                </div>
+                                <div class="home-client-risk med">Risk 5.2</div>
                             </div>
-                        </section>
+                            <div class="home-client-row" onclick="openClient('gupta')">
+                                <div class="home-client-av" style="background:var(--danger-bg); color:var(--danger);">GA</div>
+                                <div class="home-client-info">
+                                    <div class="home-client-name">Gupta Auto Components</div>
+                                    <div class="home-client-sector">Auto Ancillary &middot; Gurgaon</div>
+                                </div>
+                                <div class="home-client-status">
+                                    <span class="hcs-dot danger"></span>
+                                    <span class="hcs-text">DIN-KYC 0/4 &middot; GSTR-3B unfiled</span>
+                                </div>
+                                <div class="home-client-risk high">Risk 8.1</div>
+                            </div>
+                            <div class="home-client-row" onclick="openClient('royal')">
+                                <div class="home-client-av" style="background:var(--success-bg); color:var(--success);">RS</div>
+                                <div class="home-client-info">
+                                    <div class="home-client-name">Royal Spice Kitchen</div>
+                                    <div class="home-client-sector">F&amp;B &middot; Delhi</div>
+                                </div>
+                                <div class="home-client-status">
+                                    <span class="hcs-dot danger"></span>
+                                    <span class="hcs-text">FSSAI perpetual opt-in OVERDUE</span>
+                                </div>
+                                <div class="home-client-risk high">Risk 7.4</div>
+                            </div>
+                            <div class="home-client-row" onclick="openClient('lakshmi')">
+                                <div class="home-client-av" style="background:var(--warning-bg); color:var(--warning);">LF</div>
+                                <div class="home-client-info">
+                                    <div class="home-client-name">Lakshmi FinServ</div>
+                                    <div class="home-client-sector">NBFC &middot; Chennai</div>
+                                </div>
+                                <div class="home-client-status">
+                                    <span class="hcs-dot warn"></span>
+                                    <span class="hcs-text">RBI capital plan due 31 May</span>
+                                </div>
+                                <div class="home-client-risk med">Risk 6.1</div>
+                            </div>
+                            <div class="home-client-row" onclick="openClient('greenfield')">
+                                <div class="home-client-av" style="background:#fdf2f8; color:#be185d;">GR</div>
+                                <div class="home-client-info">
+                                    <div class="home-client-name">Greenfield Realty LLP</div>
+                                    <div class="home-client-sector">Real Estate &middot; Pune</div>
+                                </div>
+                                <div class="home-client-status">
+                                    <span class="hcs-dot warn"></span>
+                                    <span class="hcs-text">LLP Form 11 due 30 May</span>
+                                </div>
+                                <div class="home-client-risk low">Risk 3.2</div>
+                            </div>
+                        </div>
+                    </section>
 
-                        <!-- Recent regulations -->
+                    <!-- Secondary surfaces -->
+                    <div class="home-quick-grid">
+                        <!-- Latest regulations -->
                         <section class="home-card">
                             <div class="home-card-head">
                                 <h3>Latest regulations</h3>
@@ -3861,66 +4002,27 @@
                             </div>
                         </section>
 
-                        <!-- Client health -->
+                        <!-- Today's checklist (deprioritized) -->
                         <section class="home-card">
                             <div class="home-card-head">
-                                <h3>Client health</h3>
-                                <button class="home-card-link" onclick="navTo('clients')">All clients &rarr;</button>
+                                <h3>Today&rsquo;s checklist</h3>
+                                <button class="home-card-link" onclick="navTo('dashboard')">Open Today &rarr;</button>
                             </div>
                             <div class="home-card-body">
-                                <div class="home-client-row">
-                                    <div class="home-client-av" style="background:#fef2f2; color:#dc2626;">GA</div>
-                                    <div class="home-client-info">
-                                        <div class="home-client-name">Gupta Auto Components</div>
-                                        <div class="home-client-sector">Auto Ancillary &middot; Gurgaon</div>
-                                    </div>
-                                    <div class="home-client-risk high">Risk 8.1</div>
+                                <div class="home-line urgent">
+                                    <span class="home-line-tag">Overdue</span>
+                                    <div class="home-line-text"><strong>FSSAI licence transition</strong> &mdash; confirm perpetual opt-in</div>
+                                    <span class="home-line-meta">Royal Spice</span>
                                 </div>
-                                <div class="home-client-row">
-                                    <div class="home-client-av" style="background:#fffbeb; color:#d97706;">RS</div>
-                                    <div class="home-client-info">
-                                        <div class="home-client-name">Royal Spice Kitchen</div>
-                                        <div class="home-client-sector">F&amp;B &middot; Delhi</div>
-                                    </div>
-                                    <div class="home-client-risk med">Risk 7.4</div>
+                                <div class="home-line">
+                                    <span class="home-line-tag soon">Today</span>
+                                    <div class="home-line-text"><strong>TDS Deposit</strong> &mdash; Q4 challan 281 ready</div>
+                                    <span class="home-line-meta">All clients</span>
                                 </div>
-                                <div class="home-client-row">
-                                    <div class="home-client-av" style="background:#f0fdf4; color:#16a34a;">SP</div>
-                                    <div class="home-client-info">
-                                        <div class="home-client-name">Sharma Pharmaceuticals</div>
-                                        <div class="home-client-sector">Pharma &middot; Mumbai</div>
-                                    </div>
-                                    <div class="home-client-risk low">Risk 6.8</div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- AI activity -->
-                        <section class="home-card">
-                            <div class="home-card-head">
-                                <h3>What Reg Mitra did today</h3>
-                                <button class="home-card-link" onclick="navTo('dashboard')">Full log &rarr;</button>
-                            </div>
-                            <div class="home-card-body">
-                                <div class="home-activity">
-                                    <span class="home-activity-time">9:15&nbsp;AM</span>
-                                    <span class="home-activity-dot scan"></span>
-                                    <span class="home-activity-text">Crawled <strong>23 gazette portals</strong></span>
-                                </div>
-                                <div class="home-activity">
-                                    <span class="home-activity-time">9:17&nbsp;AM</span>
-                                    <span class="home-activity-dot draft"></span>
-                                    <span class="home-activity-text">Drafted briefing for <strong>Lakshmi FinServ</strong> &mdash; capital planning</span>
-                                </div>
-                                <div class="home-activity">
-                                    <span class="home-activity-time">9:18&nbsp;AM</span>
-                                    <span class="home-activity-dot alert"></span>
-                                    <span class="home-activity-text">Flagged <strong>cross-regulation conflict</strong> &mdash; Gupta Auto OEM contracts</span>
-                                </div>
-                                <div class="home-activity">
-                                    <span class="home-activity-time">9:19&nbsp;AM</span>
-                                    <span class="home-activity-dot flag"></span>
-                                    <span class="home-activity-text">Flagged <strong>FSSAI opt-in overdue</strong> &mdash; Royal Spice Kitchen</span>
+                                <div class="home-line">
+                                    <span class="home-line-tag soon">Tomorrow</span>
+                                    <div class="home-line-text"><strong>IGST rate change</strong> &mdash; 3 invoices need sign-off</div>
+                                    <span class="home-line-meta">Sharma Pharma</span>
                                 </div>
                             </div>
                         </section>
@@ -4238,7 +4340,7 @@
             <!-- CLIENTS -->
             <div class="screen" id="screen-clients">
                 <div class="section-heading" style="margin-bottom:4px">Client Portfolio</div>
-                <p class="screen-desc">Your firm's clients with AI-calculated <strong>regulatory risk scores</strong>. Each score reflects pending compliance, upcoming deadlines, and exposure to new regulations.</p>
+                <p class="screen-desc">Live compliance status for every client &mdash; <strong>auto-fetched from govt portals</strong> (GSTN, MCA21, CBDT, FSSAI, RBI CIMS). Click a client to open their full dashboard.</p>
                 <div class="screen-filter-bar">
                     <span class="filter-label">Sector</span>
                     <span class="filter-sep"></span>
@@ -4274,7 +4376,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">12</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">AI monitoring 14 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="ai-monitoring-line">Live-synced with 14 portal feeds (GSTN, MCA21, CBDT, CDSCO) · 2 min ago</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~12 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;24K</span></div>
                     </div>
                     <div class="client-card" data-sector="it" data-risk="5.2" onclick="openClient('nexgen')">
@@ -4288,7 +4390,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">18</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">AI monitoring 8 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="ai-monitoring-line">Live-synced with 8 portal feeds (GSTN, MCA21, CBDT, Kar. S&E) · 2 min ago</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~4 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;9K</span></div>
                     </div>
                     <div class="client-card" data-sector="auto" data-risk="8.1" onclick="openClient('gupta')">
@@ -4302,7 +4404,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">9</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">AI monitoring 11 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="ai-monitoring-line">Live-synced with 11 portal feeds (GSTN, MCA21, CBDT, Haryana DISH) · 2 min ago</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~16 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;32K</span></div>
                     </div>
                     <div class="client-card" data-sector="fnb" data-risk="7.4" onclick="openClient('royal')">
@@ -4316,7 +4418,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">3</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">7</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">AI monitoring 9 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="ai-monitoring-line">Live-synced with 9 portal feeds (GSTN, MCA21, FOSCOS, Delhi Labour) · 2 min ago</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~7 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;14K</span></div>
                     </div>
                     <div class="client-card" data-sector="nbfc" data-risk="6.1" onclick="openClient('lakshmi')">
@@ -4330,7 +4432,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">22</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">AI monitoring 16 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="ai-monitoring-line">Live-synced with 16 portal feeds (GSTN, MCA21, CBDT, RBI CIMS) · 2 min ago</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~9 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;18K</span></div>
                     </div>
                     <div class="client-card" data-sector="realestate" data-risk="3.2" onclick="openClient('greenfield')">
@@ -4344,8 +4446,59 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">0</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">14</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">AI monitoring 7 active regulations · Last updated: Today, 9:15 AM</div>
+                        <div class="ai-monitoring-line">Live-synced with 7 portal feeds (GSTN, MCA21, MahaRERA) · 2 min ago</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~3 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;6K</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLIENT DETAIL -->
+            <div class="screen" id="screen-client-detail">
+                <div class="client-detail-page">
+                    <button class="client-detail-back" onclick="navTo('clients')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        All clients
+                    </button>
+                    <div class="client-detail-header">
+                        <div class="av" id="cd-avatar"></div>
+                        <div>
+                            <h2 id="cd-name"></h2>
+                            <div class="cdh-sub" id="cd-sector"></div>
+                        </div>
+                        <div class="cdh-actions">
+                            <button class="btn btn-primary" onclick="navTo('briefings')">Generate Briefing</button>
+                            <button class="btn btn-outline" onclick="navTo('feed')">View History</button>
+                        </div>
+                    </div>
+
+                    <div class="cd-portal-bar" id="cd-portal-bar"></div>
+
+                    <div class="cd-section">
+                        <div class="cd-section-title">
+                            Live compliance status
+                            <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span id="cd-sync-time">Synced 2 min ago · auto-fetched from govt portals</span></span>
+                        </div>
+                        <div class="cd-status-grid" id="cd-status-grid"></div>
+                    </div>
+
+                    <div class="cd-section">
+                        <div class="cd-section-title">Portfolio snapshot</div>
+                        <div class="cd-stat-row" id="cd-stats"></div>
+                    </div>
+
+                    <div class="cd-section">
+                        <div class="cd-section-title">Pending action items</div>
+                        <div id="cd-pending"></div>
+                    </div>
+
+                    <div class="cd-section">
+                        <div class="cd-section-title">Applicable regulations this month</div>
+                        <div id="cd-regs"></div>
+                    </div>
+
+                    <div class="cd-section">
+                        <div class="cd-section-title">Upcoming deadlines</div>
+                        <div id="cd-deadlines"></div>
                     </div>
                 </div>
             </div>
@@ -7240,7 +7393,7 @@ function closeCalPopup() {
 // Navigate to screen
 function navTo(screen) {
     // Map removed-nav screens back to their nearest visible nav button
-    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', calendar:'dashboard' };
+    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', calendar:'dashboard', 'client-detail':'clients' };
     var navTarget = navMap[screen] || screen;
     document.querySelectorAll('.nav-btn').forEach(b => {
         b.classList.remove('active');
@@ -7255,7 +7408,7 @@ function navTo(screen) {
     var target = document.getElementById('screen-' + resolved);
     if (target) target.classList.add('active');
 
-    const titles = { home:'Home', dashboard:'Today', feed:'Regulations', clients:'Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', assistant:'Assistant', chat:'Assistant', agent:'Assistant', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub', settings:'Settings' };
+    const titles = { home:'Home', dashboard:'Today', feed:'Regulations', clients:'Clients', 'client-detail':'Client', calendar:'Compliance Calendar', briefings:'Client Briefings', assistant:'Assistant', chat:'Assistant', agent:'Assistant', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub', settings:'Settings' };
     document.getElementById('page-title').textContent = titles[screen] || titles[resolved] || '';
     const hideSearch = ['home','assistant','chat','agent','tally','gst','incometax','mca','comms','settings'];
     document.querySelector('.header-search').style.display = hideSearch.includes(screen) ? 'none' : '';
@@ -7610,21 +7763,105 @@ const clientData = {
     }
 };
 
+// Live portal status (auto-fetched from govt portals; mocked for demo)
+const CLIENT_AVATAR = {
+    sharma:    { txt:'SP', bg:'var(--info-bg)',   fg:'var(--info)' },
+    nexgen:    { txt:'NG', bg:'var(--purple-bg)', fg:'var(--purple)' },
+    gupta:     { txt:'GA', bg:'var(--danger-bg)', fg:'var(--danger)' },
+    royal:     { txt:'RS', bg:'var(--success-bg)',fg:'var(--success)' },
+    lakshmi:   { txt:'LF', bg:'var(--warning-bg)',fg:'var(--warning)' },
+    greenfield:{ txt:'GR', bg:'#fdf2f8',          fg:'#be185d' }
+};
+const COMMON_PORTAL_BAR = [
+    'GSTN','CBDT (incometax.gov.in)','MCA21','RBI CIMS','FSSAI','Tally Cloud'
+];
+const PORTAL_STATUS = {
+    sharma: [
+        { label:'TDS Q4 deposit',   value:'Filed 5 May',          src:'incometax.gov.in', state:'ok' },
+        { label:'GSTR-3B Apr 2026', value:'Filed 19 May',         src:'gst.gov.in',       state:'ok' },
+        { label:'GSTR-1 Apr 2026',  value:'Filed 10 May',         src:'gst.gov.in',       state:'ok' },
+        { label:'DIN-KYC (4 dir.)', value:'2 of 4 verified',      src:'mca.gov.in',       state:'warn' },
+        { label:'CDSCO mfg. licence',value:'Valid · expires 2028', src:'cdscoonline.gov.in', state:'ok' },
+        { label:'IGST HSN update',  value:'3 invoices pending',   src:'gst.gov.in',       state:'warn' }
+    ],
+    nexgen: [
+        { label:'TDS Q4 deposit',   value:'Filed 4 May',          src:'incometax.gov.in', state:'ok' },
+        { label:'GSTR-3B Apr 2026', value:'Filed 18 May',         src:'gst.gov.in',       state:'ok' },
+        { label:'GSTR-1 Apr 2026',  value:'Filed 9 May',          src:'gst.gov.in',       state:'ok' },
+        { label:'DIN-KYC',          value:'1 of 2 verified',      src:'mca.gov.in',       state:'warn' },
+        { label:'Karnataka S&E',    value:'OT policy revision due',src:'kar.eshram.gov.in', state:'warn' },
+        { label:'STPI return',      value:'Filed Q4 FY26',        src:'stpi.in',          state:'ok' }
+    ],
+    gupta: [
+        { label:'TDS Q4 deposit',   value:'Filed 6 May',          src:'incometax.gov.in', state:'ok' },
+        { label:'GSTR-3B Apr 2026', value:'Not filed · due 20 May',src:'gst.gov.in',       state:'warn' },
+        { label:'GSTR-1 Apr 2026',  value:'Filed 10 May',         src:'gst.gov.in',       state:'ok' },
+        { label:'DIN-KYC (4 dir.)', value:'0 of 4 verified',      src:'mca.gov.in',       state:'danger' },
+        { label:'Factory licence',  value:'Renewal due 30 Jun',   src:'haryanadish.gov.in', state:'warn' },
+        { label:'OEM contract scan',value:'3 IGST conflicts',     src:'gst.gov.in',       state:'danger' }
+    ],
+    royal: [
+        { label:'FSSAI licence',    value:'Perpetual opt-in OVERDUE',src:'foscos.fssai.gov.in', state:'danger' },
+        { label:'TDS Q4 deposit',   value:'Filed 5 May',          src:'incometax.gov.in', state:'ok' },
+        { label:'GSTR-3B Apr 2026', value:'Filed 19 May',         src:'gst.gov.in',       state:'ok' },
+        { label:'GSTR-1 Apr 2026',  value:'Filed 11 May',         src:'gst.gov.in',       state:'ok' },
+        { label:'Shops & Estab.',   value:'Active · 4 outlets',   src:'labour.delhi.gov.in', state:'ok' },
+        { label:'F&B packaging',    value:'Rate review pending',  src:'cbic.gov.in',      state:'warn' }
+    ],
+    lakshmi: [
+        { label:'TDS Q4 deposit',   value:'Filed 4 May',          src:'incometax.gov.in', state:'ok' },
+        { label:'GSTR-3B Apr 2026', value:'Filed 18 May',         src:'gst.gov.in',       state:'ok' },
+        { label:'GSTR-1 Apr 2026',  value:'Filed 9 May',          src:'gst.gov.in',       state:'ok' },
+        { label:'DIN-KYC',          value:'All 3 verified',       src:'mca.gov.in',       state:'ok' },
+        { label:'RBI CIMS return',  value:'Filed monthly · Apr',  src:'cims.rbi.org.in',  state:'ok' },
+        { label:'NBFC capital plan',value:'Q1 review due 31 May', src:'cims.rbi.org.in',  state:'warn' }
+    ],
+    greenfield: [
+        { label:'TDS Q4 deposit',   value:'Filed 5 May',          src:'incometax.gov.in', state:'ok' },
+        { label:'GSTR-3B Apr 2026', value:'Filed 19 May',         src:'gst.gov.in',       state:'ok' },
+        { label:'LLP Form 11',      value:'Due 30 May',           src:'mca.gov.in',       state:'warn' },
+        { label:'RERA filings',     value:'Up to date',           src:'maharerait.maharashtra.gov.in', state:'ok' },
+        { label:'DIN-KYC (DPs)',    value:'All 2 verified',       src:'mca.gov.in',       state:'ok' },
+        { label:'GST Annual',       value:'Prep started',         src:'gst.gov.in',       state:'ok' }
+    ]
+};
+
 function openClient(id) {
     const c = clientData[id];
     if (!c) return;
-    document.getElementById('cm-name').textContent = c.name;
-    document.getElementById('cm-sector').textContent = c.sector;
-    document.getElementById('cm-stats').innerHTML = c.stats.map(s => `<div class="cm-stat"><div class="num" style="color:${s.c}">${s.n}</div><div class="lbl">${s.l}</div></div>`).join('');
-    document.getElementById('cm-ai-stat').textContent = c.aiStat || '';
-    document.getElementById('cm-pending').innerHTML = c.pending.map(p => `<div class="cm-reg-item"><div class="cm-title">${p.title}</div><div class="cm-meta"><span>${p.meta}</span></div></div>`).join('');
-    document.getElementById('cm-regs').innerHTML = c.regs.map(r => `<div class="cm-reg-item"><div class="cm-title">${r.title}</div><div class="cm-meta"><span>${r.meta}</span></div></div>`).join('');
-    document.getElementById('cm-deadlines').innerHTML = c.deadlines.map(d => `<div class="cm-reg-item"><div class="cm-title">${d.title}</div><div class="cm-meta"><span>${d.meta}</span></div></div>`).join('');
-    document.getElementById('client-modal-bg').classList.add('open');
-}
+    const av = CLIENT_AVATAR[id] || { txt:'··', bg:'var(--bg-main)', fg:'var(--text-mid)' };
+    const avEl = document.getElementById('cd-avatar');
+    avEl.textContent = av.txt;
+    avEl.style.background = av.bg;
+    avEl.style.color = av.fg;
+    document.getElementById('cd-name').textContent = c.name;
+    document.getElementById('cd-sector').textContent = c.sector;
 
-function closeClient() {
-    document.getElementById('client-modal-bg').classList.remove('open');
+    // Portal source chips (fixed shortlist; visually communicates "this is a live dashboard")
+    document.getElementById('cd-portal-bar').innerHTML = COMMON_PORTAL_BAR
+        .map(p => `<span class="cd-portal-chip">${p}</span>`).join('');
+
+    // Live status grid
+    const status = PORTAL_STATUS[id] || [];
+    const tickFor = { ok:'&#10003;', warn:'!', danger:'!' };
+    document.getElementById('cd-status-grid').innerHTML = status.map(s =>
+        `<div class="cd-status-card ${s.state === 'ok' ? '' : s.state}">
+            <div class="cds-tick">${tickFor[s.state] || ''}</div>
+            <div class="cds-top"><span class="cds-label">${s.label}</span></div>
+            <div class="cds-value">${s.value}</div>
+            <div class="cds-source">${s.src}</div>
+        </div>`).join('');
+
+    document.getElementById('cd-stats').innerHTML = c.stats.map(s =>
+        `<div class="cd-stat"><div class="num" style="color:${s.c}">${s.n}</div><div class="lbl">${s.l}</div></div>`).join('');
+    document.getElementById('cd-pending').innerHTML = c.pending.map(p =>
+        `<div class="cd-reg-item"><div class="cd-title">${p.title}</div><div class="cd-meta"><span>${p.meta}</span></div></div>`).join('');
+    document.getElementById('cd-regs').innerHTML = c.regs.map(r =>
+        `<div class="cd-reg-item"><div class="cd-title">${r.title}</div><div class="cd-meta"><span>${r.meta}</span></div></div>`).join('');
+    document.getElementById('cd-deadlines').innerHTML = c.deadlines.map(d =>
+        `<div class="cd-reg-item"><div class="cd-title">${d.title}</div><div class="cd-meta"><span>${d.meta}</span></div></div>`).join('');
+
+    navTo('client-detail');
 }
 
 // Briefing editor modal
@@ -7803,7 +8040,7 @@ function showRowDetail(title, details) {
 }
 
 // Close client modal on Escape
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeClient(); closeBriefingModal(); closeAlertDetail(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeBriefingModal(); closeAlertDetail(); } });
 
 // New Chat — Ask Reg Mitra
 // FIX: previous version wiped chat-msgs innerHTML, destroying all 24 threads.
@@ -7885,22 +8122,6 @@ function startNewAgentTask() {
     </div>
 </div>
 
-<!-- Client Detail Modal -->
-<div class="client-modal-bg" id="client-modal-bg" onclick="if(event.target===this)closeClient()">
-    <div class="client-modal">
-        <button class="popup-close" onclick="closeClient()">&times;</button>
-        <h3 id="cm-name"></h3>
-        <div class="cm-sector" id="cm-sector"></div>
-        <div class="cm-stat-row" id="cm-stats"></div>
-        <div class="cm-section"><div class="cm-section-title">AI Risk Assessment <span class="ai-badge">AI analyzed</span></div><div id="cm-ai-stat" class="ai-processing-stat"></div><div id="cm-pending"></div></div>
-        <div class="cm-section"><div class="cm-section-title">Applicable Regulations This Month</div><div id="cm-regs"></div></div>
-        <div class="cm-section"><div class="cm-section-title">Upcoming Deadlines</div><div id="cm-deadlines"></div></div>
-        <div class="action-btns" style="margin-top:20px">
-            <button class="btn btn-primary" onclick="closeClient(); navTo('briefings');">Generate Briefing</button>
-            <button class="btn btn-outline" onclick="closeClient(); navTo('feed');">View History</button>
-        </div>
-    </div>
-</div>
 
 <!-- Briefing Editor Modal -->
 <div class="briefing-modal-bg" id="briefing-modal-bg" onclick="if(event.target===this)closeBriefingModal()">
