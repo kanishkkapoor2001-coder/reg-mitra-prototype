@@ -605,11 +605,11 @@
         .agent-result-box em { display: none; }
         .ai-processing-stat { display: none !important; }
         .agent-capabilities { display: none; }
-        /* Phase 4 — kill the "AI did X" badge spam (feature catalog, not product) */
-        /* Keep .ai-confidence (trust signal) and the conflict-card flag */
-        .ai-badge { display: none !important; }
-        .ai-conflict-header .ai-badge,
-        .agent-header-banner h3 .ai-badge { display: inline-flex !important; }
+        /* Strip AI badge/label noise across the product */
+        .ai-badge,
+        .ai-confidence,
+        .ai-provenance,
+        .ai-reasoning { display: none !important; }
 
         /* Phase 3b — client card ROI line */
         .client-roi-line {
@@ -803,6 +803,53 @@
         }
         .ob-tally-result.show { display: block; }
         .ob-tally-result strong { color: var(--success); }
+
+        /* Setup picker grid (works-with-any-setup onboarding) */
+        .ob-setup-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            margin: 16px 0 12px;
+        }
+        .ob-setup-tile {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 14px; border: 1.5px solid var(--border);
+            border-radius: 12px; cursor: pointer;
+            transition: all 0.16s ease;
+            background: #fff;
+        }
+        .ob-setup-tile:hover { border-color: var(--accent); background: var(--accent-bg); }
+        .ob-setup-tile.selected {
+            border-color: var(--accent); background: var(--accent-bg);
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+        }
+        .ob-setup-icon {
+            width: 34px; height: 34px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 800; font-size: 14px;
+            flex-shrink: 0;
+        }
+        .ob-setup-info { flex: 1; min-width: 0; }
+        .ob-setup-name { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+        .ob-setup-sub { font-size: 11px; color: var(--text-mid); margin-top: 2px; }
+        .ob-setup-pop {
+            font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+            color: var(--accent); background: #fff; padding: 3px 7px; border-radius: 6px;
+            border: 1px solid rgba(34,197,94,0.3);
+        }
+        .ob-portal-row {
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+            padding: 10px 12px; background: var(--bg-main);
+            border: 1px dashed var(--border); border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .ob-portal-label {
+            font-size: 11px; font-weight: 600; color: var(--text-mid);
+            text-transform: uppercase; letter-spacing: 0.4px; margin-right: 4px;
+        }
+        .ob-portal-chip {
+            font-size: 10.5px; font-weight: 600; color: var(--accent);
+            background: #fff; padding: 3px 9px;
+            border: 1px solid rgba(34,197,94,0.25); border-radius: 12px;
+        }
 
         .ob-client-grid {
             display: grid;
@@ -2990,7 +3037,7 @@
             gap: 12px;
         }
 
-        /* AI Provenance & Intelligence Styles */
+        /* Provenance & Intelligence Styles */
         .ai-badge {
             display: inline-flex;
             align-items: center;
@@ -3347,7 +3394,7 @@
             font-weight: 600;
         }
 
-        /* AI Activity Log */
+        /* Activity Log */
         .ai-activity-log {
             background: var(--bg-white);
             border: 1px solid var(--border);
@@ -3419,7 +3466,7 @@
         .ai-log-dot.alert { background: var(--danger); }
         .ai-log-dot.flag { background: var(--warning); }
 
-        /* AI Conflict Alert */
+        /* Conflict Alert */
         .ai-conflict-card {
             background: #fefefe;
             border: 1px solid #fecaca;
@@ -3465,7 +3512,7 @@
             color: var(--text-mid);
         }
 
-        /* AI Predictions */
+        /* Forecast */
         .ai-predictions {
             margin-top: 20px;
             background: var(--bg-white);
@@ -4072,7 +4119,7 @@
                                     View all clients
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                                 </button>
-                                <button class="home-hero-btn ghost" onclick="obReplay()">Replay product tour</button>
+                                <button class="home-hero-btn ghost" onclick="obReplay()">Replay setup walkthrough</button>
                             </div>
                         </div>
                         <div class="home-hero-mark">
@@ -4227,7 +4274,7 @@
                             </div>
                         </section>
 
-                        <!-- AI activity -->
+                        <!-- activity -->
                         <section class="home-card">
                             <div class="home-card-head">
                                 <h3>What Reg Mitra did today</h3>
@@ -4281,7 +4328,7 @@
                             <div class="wi-body">
                                 <div class="wi-meta"><span class="wi-due">Was due 2 May &middot; 5 days ago</span><span class="wi-client">Royal Spice Kitchen</span></div>
                                 <div class="wi-title">FSSAI licence transition &mdash; confirm perpetual opt-in with Delhi &amp; Karnataka FSO</div>
-                                <div class="wi-sub">AI drafted a confirmation letter and the client briefing 5 days ago. One click sends both.</div>
+                                <div class="wi-sub">Drafted a confirmation letter and the client briefing 5 days ago. One click sends both.</div>
                             </div>
                             <div class="wi-actions">
                                 <button class="wi-btn primary" onclick="event.stopPropagation(); navTo('briefings');">Open briefing</button>
@@ -4310,7 +4357,7 @@
                             <div class="wi-body">
                                 <div class="wi-meta"><span class="wi-due">Tomorrow &middot; 8 May</span><span class="wi-client">Sharma Pharma</span></div>
                                 <div class="wi-title">IGST rate change &mdash; HSN codes for pharma intermediates 18%&rarr;12%</div>
-                                <div class="wi-sub">AI reconciled 47 invoices in Tally. 3 need partner sign-off before re-billing.</div>
+                                <div class="wi-sub">Reconciled 47 invoices in Tally. 3 need partner sign-off before re-billing.</div>
                             </div>
                             <div class="wi-actions">
                                 <button class="wi-btn primary" onclick="event.stopPropagation(); openClient('sharma');">Review</button>
@@ -4318,7 +4365,7 @@
                         </div>
                     </section>
 
-                    <!-- AI briefings awaiting review -->
+                    <!-- briefings awaiting review -->
                     <section class="ws-section compact" id="ws-briefings">
                         <div class="ws-header">
                             <h3>Briefings awaiting your review</h3>
@@ -4362,11 +4409,11 @@
                         </div>
                     </section>
 
-                    <!-- What AI did today (collapsed by default) -->
+                    <!-- What Did today (collapsed by default) -->
                     <section class="ws-section ai-summary" id="ws-aitoday">
                         <div class="ws-collapsed" onclick="document.getElementById('ws-aitoday').classList.toggle('open')">
                             <span class="collapse-arrow">&#9656;</span>
-                            <div class="col-text"><strong>AI handled 12 tasks across 4 clients today.</strong> Scanned 23 gazette portals, drafted 3 briefings, flagged 1 overdue item.</div>
+                            <div class="col-text"><strong>Handled 12 tasks across 4 clients today.</strong> Scanned 23 gazette portals, drafted 3 briefings, flagged 1 overdue item.</div>
                         </div>
                         <div class="ws-expanded">
                             <div class="ai-log-body">
@@ -4389,7 +4436,7 @@
 
             <!-- FEED -->
             <div class="screen" id="screen-feed">
-                <p class="screen-desc">Every regulation that affects your clients, auto-detected from <strong>142+ government sources</strong>. AI reads each notification, identifies impacted clients, and flags cross-regulation conflicts.</p>
+                <p class="screen-desc">Every regulation that affects your clients, auto-detected from <strong>142+ government sources</strong>. Reads each notification, identifies impacted clients, and flags cross-regulation conflicts.</p>
                 <div class="screen-filter-bar">
                     <span class="filter-label">Client</span>
                     <span class="filter-sep"></span>
@@ -4418,8 +4465,8 @@
                     <div class="ai-conflict-card feed-item" data-clients="gupta">
                         <div class="ai-conflict-header">
                             <span class="conflict-icon">⚡</span>
-                            <span class="conflict-title">AI Detected Cross-Regulation Conflict</span>
-                            <span class="ai-badge">AI flagged</span>
+                            <span class="conflict-title">Detected Cross-Regulation Conflict</span>
+                            <span class="ai-badge">Flagged</span>
                         </div>
                         <div class="ai-conflict-body">
                             <strong>Gupta Auto Components</strong> — The IGST rate increase on brake assemblies (HSN 8708, 18%→28%) conflicts with existing OEM supply contracts with Honda and Maruti that have <strong>fixed pricing with no GST escalation clause</strong>. Gupta Auto will absorb the 10% rate differential (~₹1.8L/month) unless contracts are renegotiated before 1 May invoicing begins.
@@ -4434,8 +4481,8 @@
                     <div class="ai-conflict-card amber feed-item" data-clients="nexgen">
                         <div class="ai-conflict-header">
                             <span class="conflict-icon">⚡</span>
-                            <span class="conflict-title" style="color: var(--warning)">AI Detected Regulatory Overlap</span>
-                            <span class="ai-badge">AI flagged</span>
+                            <span class="conflict-title" style="color: var(--warning)">Detected Regulatory Overlap</span>
+                            <span class="ai-badge">Flagged</span>
                         </div>
                         <div class="ai-conflict-body">
                             <strong>NexGen Software</strong> — The Karnataka S&E overtime cap (50 hrs/quarter) and the existing Factories Act overtime provisions (also 50 hrs/quarter in Haryana) create a <strong>dual compliance requirement</strong> if NexGen opens the planned Gurgaon office. The Karnataka and Haryana rules have different penalty structures and reporting mechanisms — NexGen will need separate overtime tracking systems for each state.
@@ -4447,14 +4494,14 @@
                     </div>
 
                     <div class="reg-card feed-item" data-cat="fssai" data-clients="royal" onclick="openModal('fssai')">
-                        <div class="reg-card-top"><span class="tag tag-fssai">FSSAI</span><span class="ai-badge">AI detected</span><span class="ai-confidence">97% confidence</span><span class="priority priority-high">High</span></div>
+                        <div class="reg-card-top"><span class="tag tag-fssai">FSSAI</span><span class="ai-badge">Detected</span><span class="ai-confidence">97% confidence</span><span class="priority priority-high">High</span></div>
                         <div class="reg-card-title">Food Safety (Licensing & Registration) Amendment Regulations, 2026</div>
                         <div class="reg-card-meta"><span>Gazette: 10 Mar 2026</span><span>fssai.gov.in</span></div>
-                        <div class="ai-provenance">AI summary · FSSAI Gazette S.O. 1234(E) processed in 1.2s · 6 May 2026, 9:15 AM</div>
+                        <div class="ai-provenance">Summary · FSSAI Gazette S.O. 1234(E) processed in 1.2s · 6 May 2026, 9:15 AM</div>
                         <div class="reg-card-summary">Perpetual license validity, risk-based inspections, automatic registration for street vendors, revised turnover thresholds pushing 98% of food businesses under state jurisdiction.</div>
-                        <div class="reg-card-bottom"><span class="affected-text">✦ AI matched to 1 client</span><div class="client-pills"><span class="client-pill">Royal Spice Kitchen</span></div></div>
+                        <div class="reg-card-bottom"><span class="affected-text">✦ Matched to 1 client</span><div class="client-pills"><span class="client-pill">Royal Spice Kitchen</span></div></div>
                         <div class="ai-reasoning" onclick="event.stopPropagation()">
-                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why AI matched this</button>
+                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why Matched this</button>
                             <div class="ai-reasoning-body">
                                 <div class="step"><span class="step-num">1</span><span><strong>Sector filter:</strong> FSSAI regulation → F&B sector → Royal Spice Kitchen is F&B</span></div>
                                 <div class="step"><span class="step-num">2</span><span><strong>License check:</strong> Royal Spice holds FSSAI license #13621011000123 (exp. Nov 2027)</span></div>
@@ -4464,14 +4511,14 @@
                         </div>
                     </div>
                     <div class="reg-card feed-item" data-cat="mca" data-clients="sharma gupta royal lakshmi nexgen greenfield" onclick="openModal('mca')">
-                        <div class="reg-card-top"><span class="tag tag-mca">MCA</span><span class="ai-badge">AI detected</span><span class="ai-confidence">99% confidence</span><span class="priority priority-high">Action Required</span></div>
+                        <div class="reg-card-top"><span class="tag tag-mca">MCA</span><span class="ai-badge">Detected</span><span class="ai-confidence">99% confidence</span><span class="priority priority-high">Action Required</span></div>
                         <div class="reg-card-title">Director KYC Reform — 3-Year Cycle (Notification dt. 31 Dec 2025)</div>
                         <div class="reg-card-meta"><span>Effective: 31 Mar 2026</span><span>mca.gov.in</span></div>
-                        <div class="ai-provenance">AI summary · MCA Notification dt. 31 Dec 2025 processed in 0.8s · 6 May 2026, 9:15 AM</div>
+                        <div class="ai-provenance">Summary · MCA Notification dt. 31 Dec 2025 processed in 0.8s · 6 May 2026, 9:15 AM</div>
                         <div class="reg-card-summary">Directors file KYC once every 3 years instead of annually. Simplified form. First filing under new regime due by 30 Sep 2026 for directors whose last KYC was FY 2023-24 or earlier.</div>
-                        <div class="reg-card-bottom"><span class="affected-text">✦ AI matched to all 6 clients — 14 directors</span></div>
+                        <div class="reg-card-bottom"><span class="affected-text">✦ Matched to all 6 clients — 14 directors</span></div>
                         <div class="ai-reasoning" onclick="event.stopPropagation()">
-                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why AI matched this</button>
+                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why Matched this</button>
                             <div class="ai-reasoning-body">
                                 <div class="step"><span class="step-num">1</span><span><strong>Entity type:</strong> MCA Director KYC → applies to all companies & LLPs with directors/DPs</span></div>
                                 <div class="step"><span class="step-num">2</span><span><strong>Profile scan:</strong> 5 Pvt Ltd + 1 LLP = all 6 clients have directors/designated partners</span></div>
@@ -4481,14 +4528,14 @@
                         </div>
                     </div>
                     <div class="reg-card feed-item" data-cat="gst" data-clients="sharma gupta royal lakshmi" onclick="openModal('cbic')">
-                        <div class="reg-card-top"><span class="tag tag-gst">CBIC / GST</span><span class="ai-badge">AI detected</span><span class="ai-confidence">96% confidence</span><span class="priority priority-med">Review</span></div>
+                        <div class="reg-card-top"><span class="tag tag-gst">CBIC / GST</span><span class="ai-badge">Detected</span><span class="ai-confidence">96% confidence</span><span class="priority priority-med">Review</span></div>
                         <div class="reg-card-title">IGST Rate Schedule Revised — Notification No. 9/2025-IT (Rate) Amended</div>
                         <div class="reg-card-meta"><span>Effective: 1 May 2026</span><span>cbic-gst.gov.in</span></div>
-                        <div class="ai-provenance">AI summary · CBIC Notification 12 pages processed in 2.1s · 6 May 2026, 9:15 AM</div>
+                        <div class="ai-provenance">Summary · CBIC Notification 12 pages processed in 2.1s · 6 May 2026, 9:15 AM</div>
                         <div class="reg-card-summary">Pharma intermediates 18%→12%, auto components reclassified, F&B packaging rates adjusted per Finance Act 2026.</div>
-                        <div class="reg-card-bottom"><span class="affected-text">✦ AI matched to 4 clients</span><div class="client-pills"><span class="client-pill">Sharma</span><span class="client-pill">Gupta</span><span class="client-pill">Royal Spice</span><span class="client-pill">Lakshmi</span></div></div>
+                        <div class="reg-card-bottom"><span class="affected-text">✦ Matched to 4 clients</span><div class="client-pills"><span class="client-pill">Sharma</span><span class="client-pill">Gupta</span><span class="client-pill">Royal Spice</span><span class="client-pill">Lakshmi</span></div></div>
                         <div class="ai-reasoning" onclick="event.stopPropagation()">
-                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why AI matched this</button>
+                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why Matched this</button>
                             <div class="ai-reasoning-body">
                                 <div class="step"><span class="step-num">1</span><span><strong>HSN mapping:</strong> Extracted HSN codes from notification → 2933, 2934 (pharma), 8708 (auto), 3923 (packaging)</span></div>
                                 <div class="step"><span class="step-num">2</span><span><strong>Client HSN match:</strong> Sharma Pharma (HSN 2933/2934) · Gupta Auto (HSN 8708) · Royal Spice (HSN 3923 packaging) · Lakshmi FinServ (HSN 8471 IT hardware — rate unchanged but flagged)</span></div>
@@ -4498,14 +4545,14 @@
                         </div>
                     </div>
                     <div class="reg-card feed-item" data-cat="labour" data-clients="nexgen" onclick="openModal('labour')">
-                        <div class="reg-card-top"><span class="tag tag-labour">Karnataka Labour</span><span class="ai-badge">AI detected</span><span class="ai-confidence">94% confidence</span><span class="priority priority-med">Review</span></div>
+                        <div class="reg-card-top"><span class="tag tag-labour">Karnataka Labour</span><span class="ai-badge">Detected</span><span class="ai-confidence">94% confidence</span><span class="priority priority-med">Review</span></div>
                         <div class="reg-card-title">Karnataka Shops & Establishments (Amendment) Rules, 2026</div>
                         <div class="reg-card-meta"><span>Gazette: 22 Apr 2026</span><span>Effective: 1 Jul 2026</span></div>
-                        <div class="ai-provenance">AI summary · Karnataka Gazette 8 pages processed in 1.6s · 6 May 2026, 9:15 AM</div>
+                        <div class="ai-provenance">Summary · Karnataka Gazette 8 pages processed in 1.6s · 6 May 2026, 9:15 AM</div>
                         <div class="reg-card-summary">Overtime cap reduced from 75 to 50 hours/quarter for IT/ITES. Mandatory break room for 50+ employees. Penalty: ₹25,000/violation.</div>
-                        <div class="reg-card-bottom"><span class="affected-text">✦ AI matched to 1 client</span><div class="client-pills"><span class="client-pill">NexGen Software</span></div></div>
+                        <div class="reg-card-bottom"><span class="affected-text">✦ Matched to 1 client</span><div class="client-pills"><span class="client-pill">NexGen Software</span></div></div>
                         <div class="ai-reasoning" onclick="event.stopPropagation()">
-                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why AI matched this</button>
+                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why Matched this</button>
                             <div class="ai-reasoning-body">
                                 <div class="step"><span class="step-num">1</span><span><strong>Jurisdiction:</strong> Karnataka state regulation → only clients with Karnataka establishments</span></div>
                                 <div class="step"><span class="step-num">2</span><span><strong>Sector filter:</strong> IT/ITES specific → NexGen Software is IT sector, Whitefield, Bangalore</span></div>
@@ -4515,14 +4562,14 @@
                         </div>
                     </div>
                     <div class="reg-card feed-item" data-cat="mca" data-clients="sharma gupta royal lakshmi nexgen greenfield" onclick="openModal('mca-incorp')">
-                        <div class="reg-card-top"><span class="tag tag-mca">MCA</span><span class="ai-badge">AI detected</span><span class="ai-confidence">91% confidence</span><span class="priority priority-low">Info</span></div>
+                        <div class="reg-card-top"><span class="tag tag-mca">MCA</span><span class="ai-badge">Detected</span><span class="ai-confidence">91% confidence</span><span class="priority priority-low">Info</span></div>
                         <div class="reg-card-title">Companies (Incorporation) Rules — Proposed Amendments (Public Comments Open)</div>
                         <div class="reg-card-meta"><span>8 Apr 2026</span><span>Comments by: 9 May 2026</span></div>
-                        <div class="ai-provenance">AI summary · MCA draft notification 14 pages processed in 1.9s · 6 May 2026, 9:15 AM</div>
+                        <div class="ai-provenance">Summary · MCA draft notification 14 pages processed in 1.9s · 6 May 2026, 9:15 AM</div>
                         <div class="reg-card-summary">Streamlining of forms: E-CHNG for changes, E-CON for conversions. Draft stage — no compliance action yet.</div>
-                        <div class="reg-card-bottom"><span class="affected-text">✦ AI matched to all clients — advisory</span></div>
+                        <div class="reg-card-bottom"><span class="affected-text">✦ Matched to all clients — advisory</span></div>
                         <div class="ai-reasoning" onclick="event.stopPropagation()">
-                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why AI matched this</button>
+                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why Matched this</button>
                             <div class="ai-reasoning-body">
                                 <div class="step"><span class="step-num">1</span><span><strong>Scope:</strong> MCA incorporation rules → all companies and LLPs</span></div>
                                 <div class="step"><span class="step-num">2</span><span><strong>Special flag:</strong> Greenfield Realty LLP has LLP-to-Company conversion plans → E-CON form directly relevant</span></div>
@@ -4531,14 +4578,14 @@
                         </div>
                     </div>
                     <div class="reg-card feed-item" data-cat="cbdt" data-clients="sharma gupta royal lakshmi nexgen greenfield" onclick="openModal('cbdt')">
-                        <div class="reg-card-top"><span class="tag tag-cbdt">CBDT</span><span class="ai-badge">AI detected</span><span class="ai-confidence">99% confidence</span><span class="priority priority-low">Info</span></div>
+                        <div class="reg-card-top"><span class="tag tag-cbdt">CBDT</span><span class="ai-badge">Detected</span><span class="ai-confidence">99% confidence</span><span class="priority priority-low">Info</span></div>
                         <div class="reg-card-title">Revised TDS Rate Chart FY 2026-27</div>
                         <div class="reg-card-meta"><span>1 Apr 2026</span><span>incometaxindia.gov.in</span></div>
-                        <div class="ai-provenance">AI summary · CBDT Circular 4 pages processed in 0.6s · 6 May 2026, 9:15 AM</div>
+                        <div class="ai-provenance">Summary · CBDT Circular 4 pages processed in 0.6s · 6 May 2026, 9:15 AM</div>
                         <div class="reg-card-summary">Section 194C threshold ₹30K→₹50K per payment. Section 194J split rate abolished — flat 10%.</div>
-                        <div class="reg-card-bottom"><span class="affected-text">✦ AI matched to all 6 clients</span></div>
+                        <div class="reg-card-bottom"><span class="affected-text">✦ Matched to all 6 clients</span></div>
                         <div class="ai-reasoning" onclick="event.stopPropagation()">
-                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why AI matched this</button>
+                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why Matched this</button>
                             <div class="ai-reasoning-body">
                                 <div class="step"><span class="step-num">1</span><span><strong>Universal applicability:</strong> TDS rates affect all entities making payments under 194C/194J</span></div>
                                 <div class="step"><span class="step-num">2</span><span><strong>High-impact flagged:</strong> NexGen Software — IT consultants at 2%→10% (194J), ~₹1.2L/mo additional TDS</span></div>
@@ -4548,14 +4595,14 @@
                         </div>
                     </div>
                     <div class="reg-card feed-item" data-cat="rbi" data-clients="lakshmi" onclick="openModal('rbi')">
-                        <div class="reg-card-top"><span class="tag tag-rbi">RBI</span><span class="ai-badge">AI detected</span><span class="ai-confidence">98% confidence</span><span class="priority priority-med">Review</span></div>
+                        <div class="reg-card-top"><span class="tag tag-rbi">RBI</span><span class="ai-badge">Detected</span><span class="ai-confidence">98% confidence</span><span class="priority priority-med">Review</span></div>
                         <div class="reg-card-title">Scale Based Regulation — CRAR Threshold Update for Base Layer NBFCs</div>
                         <div class="reg-card-meta"><span>15 Apr 2026</span><span>rbi.org.in</span></div>
-                        <div class="ai-provenance">AI summary · RBI Circular 6 pages processed in 1.4s · 6 May 2026, 9:15 AM</div>
+                        <div class="ai-provenance">Summary · RBI Circular 6 pages processed in 1.4s · 6 May 2026, 9:15 AM</div>
                         <div class="reg-card-summary">CRAR raised from 15% to 16% effective Oct 2026. Stricter NPA provisioning for micro-lending.</div>
-                        <div class="reg-card-bottom"><span class="affected-text">✦ AI matched to 1 client</span><div class="client-pills"><span class="client-pill">Lakshmi FinServ</span></div></div>
+                        <div class="reg-card-bottom"><span class="affected-text">✦ Matched to 1 client</span><div class="client-pills"><span class="client-pill">Lakshmi FinServ</span></div></div>
                         <div class="ai-reasoning" onclick="event.stopPropagation()">
-                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why AI matched this</button>
+                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Why Matched this</button>
                             <div class="ai-reasoning-body">
                                 <div class="step"><span class="step-num">1</span><span><strong>Sector filter:</strong> RBI NBFC regulation → only NBFCs in portfolio</span></div>
                                 <div class="step"><span class="step-num">2</span><span><strong>Entity match:</strong> Lakshmi FinServ — NBFC-ICC Base Layer (RBI Reg: B-13.00456)</span></div>
@@ -4825,7 +4872,7 @@
             <!-- CALENDAR -->
             <div class="screen" id="screen-calendar">
                 <div class="section-heading" style="margin-bottom:4px">May 2026</div>
-                <p class="screen-desc">AI-populated calendar of every compliance deadline across all clients. Dates extracted from gazette notifications, circulars, and filing schedules. Overdue items flagged automatically.</p>
+                <p class="screen-desc">Auto-populated calendar of every compliance deadline across all clients. Dates extracted from gazette notifications, circulars, and filing schedules. Overdue items flagged automatically.</p>
                 <div class="screen-filter-bar">
                     <span class="filter-label">Client</span>
                     <span class="filter-sep"></span>
@@ -4888,10 +4935,10 @@
                 </div>
 
                 <div class="ai-predictions">
-                    <h4><span class="ai-badge">AI predicted</span> Upcoming Regulatory Events</h4>
+                    <h4><span class="ai-badge">Forecast</span> Upcoming Regulatory Events</h4>
                     <div class="ai-pred-item" data-clients="lakshmi">
                         <span class="ai-pred-date">~12 Jun</span>
-                        <span class="ai-pred-content"><strong>RBI Monetary Policy Review</strong> — Likely repo rate decision. If cut, Lakshmi FinServ lending rates may need revision. AI tracking MPC meeting schedule.</span>
+                        <span class="ai-pred-content"><strong>RBI Monetary Policy Review</strong> — Likely repo rate decision. If cut, Lakshmi FinServ lending rates may need revision. Tracking MPC meeting schedule.</span>
                         <span class="ai-pred-conf conf-high">High likelihood</span>
                     </div>
                     <div class="ai-pred-item" data-clients="sharma gupta royal lakshmi nexgen greenfield">
@@ -4906,7 +4953,7 @@
                     </div>
                     <div class="ai-pred-item" data-clients="royal">
                         <span class="ai-pred-date">~Aug 2026</span>
-                        <span class="ai-pred-content"><strong>FSSAI Hygiene Rating Mandate</strong> — Draft circular in pipeline for restaurant chains with 3+ outlets. Could impact Royal Spice Kitchen. AI monitoring FSSAI consultation portal.</span>
+                        <span class="ai-pred-content"><strong>FSSAI Hygiene Rating Mandate</strong> — Draft circular in pipeline for restaurant chains with 3+ outlets. Could impact Royal Spice Kitchen. Monitoring FSSAI consultation portal.</span>
                         <span class="ai-pred-conf conf-med">Medium likelihood</span>
                     </div>
                     <div class="ai-pred-item" data-clients="gupta">
@@ -4920,10 +4967,10 @@
             <!-- BRIEFINGS -->
             <div class="screen" id="screen-briefings">
                 <div class="section-heading" style="margin-bottom:4px">Client Briefings</div>
-                <p class="screen-desc">AI-drafted advisories mapped to each regulation in the feed. Each briefing explains the regulation in plain language, highlights the client-specific impact, and is ready to send via email or WhatsApp with your firm branding.</p>
+                <p class="screen-desc">Drafted advisories mapped to each regulation in the feed. Each briefing explains the regulation in plain language, highlights the client-specific impact, and is ready to send via email or WhatsApp with your firm branding.</p>
                 <div class="ai-stats-bar">
                     <span class="ai-stats-icon">AI</span>
-                    <strong>AI Drafting Engine</strong>
+                    <strong>Drafting Engine</strong>
                     <span class="ai-stats-sep"></span>
                     <strong>7</strong> briefings drafted
                     <span class="ai-stats-sep"></span>
@@ -4974,7 +5021,7 @@
                 <div class="briefing-card" data-client="royal" data-status="review" data-regtype="fssai">
                     <div class="briefing-card-header">
                         <div class="briefing-to">To: <strong>Royal Spice Kitchen Pvt. Ltd.</strong></div>
-                        <span class="draft-badge">AI Draft — For Review</span>
+                        <span class="draft-badge">Draft — For Review</span>
                     </div>
                     <h4>FSSAI Licensing Amendment 2026 — Your License is Now Perpetual</h4>
                     <div class="body-text">
@@ -4994,7 +5041,7 @@
                     <div class="ai-provenance">Generated from: FSSAI Licensing Amendment 2026 + Royal Spice Kitchen client profile</div>
                     <div class="ai-time-saved">
                         <span>Manual drafting: <strong>~45 min</strong></span>
-                        <span>AI generation: <strong>7 seconds</strong></span>
+                        <span>Generated in: <strong>7 seconds</strong></span>
                         <span>Savings: <strong>~44 min 53 sec</strong></span>
                     </div>
                     <div class="action-btns">
@@ -5006,7 +5053,7 @@
                 <div class="briefing-card" data-client="gupta" data-status="review" data-regtype="mca">
                     <div class="briefing-card-header">
                         <div class="briefing-to">To: <strong>Gupta Auto Components Ltd.</strong></div>
-                        <span class="draft-badge">AI Draft — For Review</span>
+                        <span class="draft-badge">Draft — For Review</span>
                     </div>
                     <h4>Director KYC — New 3-Year Filing Cycle (File by 30 Sep 2026)</h4>
                     <div class="body-text">
@@ -5027,7 +5074,7 @@
                     <div class="ai-provenance">Generated from: MCA Director KYC Notification + Gupta Auto client profile (4 directors)</div>
                     <div class="ai-time-saved">
                         <span>Manual drafting: <strong>~45 min</strong></span>
-                        <span>AI generation: <strong>9 seconds</strong></span>
+                        <span>Generated in: <strong>9 seconds</strong></span>
                         <span>Savings: <strong>~44 min 51 sec</strong></span>
                     </div>
                     <div class="action-btns">
@@ -5039,7 +5086,7 @@
                 <div class="briefing-card" data-client="gupta" data-status="urgent" data-regtype="gst">
                     <div class="briefing-card-header">
                         <div class="briefing-to">To: <strong>Gupta Auto Components Ltd.</strong></div>
-                        <span class="draft-badge">AI Draft — Urgent</span>
+                        <span class="draft-badge">Draft — Urgent</span>
                     </div>
                     <h4>IGST Rate Reclassification — Brake Assemblies Now 28% (Action Required)</h4>
                     <div class="body-text">
@@ -5061,7 +5108,7 @@
                     <div class="ai-provenance">Generated from: IGST Rate Schedule Notification + Gupta Auto client profile (HSN 8708)</div>
                     <div class="ai-time-saved">
                         <span>Manual drafting: <strong>~45 min</strong></span>
-                        <span>AI generation: <strong>11 seconds</strong></span>
+                        <span>Generated in: <strong>11 seconds</strong></span>
                         <span>Savings: <strong>~44 min 49 sec</strong></span>
                     </div>
                     <div class="action-btns">
@@ -5073,7 +5120,7 @@
                 <div class="briefing-card" data-client="nexgen" data-status="review" data-regtype="labour">
                     <div class="briefing-card-header">
                         <div class="briefing-to">To: <strong>NexGen Software Solutions Pvt. Ltd.</strong></div>
-                        <span class="draft-badge">AI Draft — For Review</span>
+                        <span class="draft-badge">Draft — For Review</span>
                     </div>
                     <h4>Karnataka Shops & Establishments Amendment — Overtime Cap & Break Room Mandate</h4>
                     <div class="body-text">
@@ -5095,7 +5142,7 @@
                     <div class="ai-provenance">Generated from: Karnataka S&E Amendment 2026 + NexGen Software client profile (120 employees, Whitefield)</div>
                     <div class="ai-time-saved">
                         <span>Manual drafting: <strong>~45 min</strong></span>
-                        <span>AI generation: <strong>8 seconds</strong></span>
+                        <span>Generated in: <strong>8 seconds</strong></span>
                         <span>Savings: <strong>~44 min 52 sec</strong></span>
                     </div>
                     <div class="action-btns">
@@ -5107,7 +5154,7 @@
                 <div class="briefing-card" data-client="greenfield" data-status="advisory" data-regtype="mca">
                     <div class="briefing-card-header">
                         <div class="briefing-to">To: <strong>Greenfield Realty LLP</strong></div>
-                        <span class="draft-badge">AI Draft — Advisory</span>
+                        <span class="draft-badge">Draft — Advisory</span>
                     </div>
                     <h4>MCA Incorporation Rules Amendment — Public Comments Open (No Action, Advisory Only)</h4>
                     <div class="body-text">
@@ -5125,7 +5172,7 @@
                     <div class="ai-provenance">Generated from: MCA Incorporation Rules Draft + Greenfield Realty LLP profile (LLP-to-Company plans)</div>
                     <div class="ai-time-saved">
                         <span>Manual drafting: <strong>~30 min</strong></span>
-                        <span>AI generation: <strong>6 seconds</strong></span>
+                        <span>Generated in: <strong>6 seconds</strong></span>
                         <span>Savings: <strong>~29 min 54 sec</strong></span>
                     </div>
                     <div class="action-btns">
@@ -5137,7 +5184,7 @@
                 <div class="briefing-card" data-client="nexgen" data-status="review" data-regtype="cbdt">
                     <div class="briefing-card-header">
                         <div class="briefing-to">To: <strong>NexGen Software Solutions Pvt. Ltd.</strong></div>
-                        <span class="draft-badge">AI Draft — For Review</span>
+                        <span class="draft-badge">Draft — For Review</span>
                     </div>
                     <h4>TDS Rate Changes FY 2026-27 — Section 194J Impact on IT Consultants</h4>
                     <div class="body-text">
@@ -5162,7 +5209,7 @@
                     <div class="ai-provenance">Generated from: TDS Rate Chart FY 2026-27 + NexGen Software client profile (194J consultant payments)</div>
                     <div class="ai-time-saved">
                         <span>Manual drafting: <strong>~45 min</strong></span>
-                        <span>AI generation: <strong>8 seconds</strong></span>
+                        <span>Generated in: <strong>8 seconds</strong></span>
                         <span>Savings: <strong>~44 min 52 sec</strong></span>
                     </div>
                     <div class="action-btns">
@@ -5174,7 +5221,7 @@
                 <div class="briefing-card" data-client="lakshmi" data-status="strategic" data-regtype="rbi">
                     <div class="briefing-card-header">
                         <div class="briefing-to">To: <strong>Lakshmi FinServ Pvt. Ltd.</strong></div>
-                        <span class="draft-badge">AI Draft — Strategic</span>
+                        <span class="draft-badge">Draft — Strategic</span>
                     </div>
                     <h4>RBI CRAR Threshold Revision — Capital Planning Required by October 2026</h4>
                     <div class="body-text">
@@ -5200,7 +5247,7 @@
                     <div class="ai-provenance">Generated from: RBI CRAR Circular + Lakshmi FinServ client profile (CRAR 15.8%, Base Layer NBFC)</div>
                     <div class="ai-time-saved">
                         <span>Manual drafting: <strong>~50 min</strong></span>
-                        <span>AI generation: <strong>10 seconds</strong></span>
+                        <span>Generated in: <strong>10 seconds</strong></span>
                         <span>Savings: <strong>~49 min 50 sec</strong></span>
                     </div>
                     <div class="action-btns">
@@ -5216,7 +5263,7 @@
                     <span class="mode-toggle-label">Mode</span>
                     <button class="mode-btn active" data-mode="answer" onclick="switchAssistantMode('answer')">Answer</button>
                     <button class="mode-btn" data-mode="act" onclick="switchAssistantMode('act')">Act</button>
-                    <span class="mode-toggle-hint">Answer: read-only Q&amp;A. Act: AI can perform actions.</span>
+                    <span class="mode-toggle-hint">Answer: read-only Q&amp;A. Act: automation can perform actions.</span>
                 </div>
                 <p class="screen-desc">Ask questions in natural language about any regulation, client, or compliance topic. AI draws on gazette sources, client profiles, and Tally data for contextual answers.</p>
                 <div class="chat-layout">
@@ -5363,10 +5410,10 @@
                     <!-- Chat Main Area -->
                     <div class="chat-main-area">
                     <div class="chat-msgs" id="chat-messages">
-                        <!-- AI Context Banner -->
+                        <!-- Context Banner -->
                         <div class="ai-chat-context">
                             <div class="ai-chat-context-header">
-                                AI has pre-loaded today's context for you
+                                Today's context for you
                             </div>
                             <div class="ai-chat-context-items">
                                 <div class="ai-ctx-item"><span class="ai-ctx-dot urgent"></span><strong>1 overdue action:</strong> FSSAI opt-in for Royal Spice Kitchen (since 2 May)</div>
@@ -5882,20 +5929,20 @@
                 </div><!-- /chat-layout -->
             </div>
 
-            <!-- AI AGENT -->
+            <!-- AUTOMATION AGENT -->
             <div class="screen" id="screen-agent">
                 <div class="assistant-mode-toggle">
                     <span class="mode-toggle-label">Mode</span>
                     <button class="mode-btn" data-mode="answer" onclick="switchAssistantMode('answer')">Answer</button>
                     <button class="mode-btn active" data-mode="act" onclick="switchAssistantMode('act')">Act</button>
-                    <span class="mode-toggle-hint">Answer: read-only Q&amp;A. Act: AI can perform actions.</span>
+                    <span class="mode-toggle-hint">Answer: read-only Q&amp;A. Act: automation can perform actions.</span>
                 </div>
                 <p class="screen-desc">In Act mode, the assistant <strong>takes actions</strong> on your behalf — syncs Tally data, files returns, dispatches briefings, and manages compliance calendars. It will ask for confirmation before any irreversible action.</p>
                 <div class="agent-wrap">
                     <div class="agent-msgs" id="agent-messages">
                         <!-- Agent Header Banner -->
                         <div class="agent-header-banner">
-                            <h3><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Reg Mitra AI Agent <span class="ai-badge">Agentic</span></h3>
+                            <h3><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Reg Mitra Automation Agent <span class="ai-badge">Agentic</span></h3>
                             <p>I can take actions on your behalf — update Tally, file returns, send briefings, manage compliance calendars, and more. I'll always ask for confirmation before executing irreversible actions.</p>
                             <div class="agent-capabilities">
                                 <span class="agent-cap">Tally Integration</span>
@@ -6095,7 +6142,7 @@
                         <div class="agent-thread" id="athread-briefing-send">
                             <div class="msg user">
                                 <div class="msg-av human">MS</div>
-                                <div class="msg-bubble">Send the FSSAI briefing to Royal Spice Kitchen and the IGST briefing to Sharma Pharma and Gupta Auto. Use the AI-drafted versions.</div>
+                                <div class="msg-bubble">Send the FSSbriefing to Royal Spice Kitchen and the IGST briefing to Sharma Pharma and Gupta Auto. Use the Drafted versions.</div>
                             </div>
                             <div class="msg">
                                 <div class="msg-av ai">RM</div>
@@ -6103,7 +6150,7 @@
                                     <strong>Executing: Dispatch Client Briefings</strong><br><br>
                                     <div class="agent-task-step completed">
                                         <div class="agent-step-icon">&#10003;</div>
-                                        <div class="agent-step-text"><span class="agent-tool-badge">RETRIEVE</span> Loaded 3 AI-drafted briefings from briefing queue</div>
+                                        <div class="agent-step-text"><span class="agent-tool-badge">RETRIEVE</span> Loaded 3 Drafted briefings from briefing queue</div>
                                         <div class="agent-step-time">0.3s</div>
                                     </div>
                                     <div class="agent-task-step completed">
@@ -6113,7 +6160,7 @@
                                     </div>
                                     <div class="agent-task-step completed">
                                         <div class="agent-step-icon">&#10003;</div>
-                                        <div class="agent-step-text"><span class="agent-tool-badge">EMAIL</span> Sent FSSAI briefing to Amit Joshi (amit@royalspice.in)</div>
+                                        <div class="agent-step-text"><span class="agent-tool-badge">EMAIL</span> Sent FSSbriefing to Amit Joshi (amit@royalspice.in)</div>
                                         <div class="agent-step-time">0.9s</div>
                                     </div>
                                     <div class="agent-task-step completed">
@@ -6272,7 +6319,7 @@
 
                     </div>
                     <div class="agent-input-bar">
-                        <input type="text" placeholder="Tell the AI agent what to do — e.g., 'File GSTR-3B for all clients' or 'Update Tally rates'...">
+                        <input type="text" placeholder="Tell the automation agent what to do — e.g., 'File GSTR-3B for all clients' or 'Update Tally rates'...">
                         <button>Execute</button>
                     </div>
                 </div>
@@ -6280,7 +6327,7 @@
 
             <!-- TALLY DATA -->
             <div class="screen" id="screen-tally">
-                <p class="screen-desc">Live connection to clients' Tally accounting instances. AI reconciles <strong>ITC</strong> (Input Tax Credit — tax credit on purchases) against GSTR-2B and validates <strong>HSN</strong> (Harmonized System of Nomenclature — product classification codes) rates across all invoices.</p>
+                <p class="screen-desc">Live connection to clients' Tally accounting instances. Reconciles <strong>ITC</strong> (Input Tax Credit — tax credit on purchases) against GSTR-2B and validates <strong>HSN</strong> (Harmonized System of Nomenclature — product classification codes) rates across all invoices.</p>
                 <!-- Connection + Client filter (combined) -->
                 <div class="tally-conn-bar">
                     <span class="conn-dot"></span>
@@ -6303,7 +6350,7 @@
                     </select>
                 </div>
 
-                <!-- Compact AI Summary Bar (replaces big dark card) -->
+                <!-- Compact Summary Bar (replaces big dark card) -->
                 <div class="tally-summary-bar" id="tally-roi-card">
                     <div class="tsb-metric"><div class="tsb-val" style="color:var(--danger)">4</div><div class="tsb-lbl">Issues</div></div>
                     <div class="tsb-sep"></div>
@@ -6318,13 +6365,13 @@
                     <div class="tsb-ai-note"><span style="font-size:10px;font-weight:700;color:var(--accent)">AI</span> Cross-referenced <strong>847</strong> entries vs GSTR-2B, validated <strong>15</strong> stock items, flagged <strong>8</strong> rate changes &amp; <strong>2</strong> mismatches in <strong>12.4s</strong></div>
                 </div>
 
-                <!-- AI Alerts -->
+                <!-- Alerts -->
                 <div class="tally-alerts">
                     <div class="ai-conflict-card">
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">ITC at Risk — &#8377;21,600</span>
-                            <span class="ai-badge">AI flagged</span>
+                            <span class="ai-badge">Flagged</span>
                         </div>
                         <div class="ai-conflict-body">
                             <strong>2 Apex Chemical invoices</strong> unmatched in GSTR-2B — PI-2026-0409 (&#8377;11,544) not uploaded by vendor, PI-2026-0408 (&#8377;9,408) amount mismatch. Contact vendor before 20 May GSTR-3B filing.
@@ -6334,17 +6381,17 @@
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">8 Stock Items — Outdated GST Rates</span>
-                            <span class="ai-badge">AI detected</span>
+                            <span class="ai-badge">Detected</span>
                         </div>
                         <div class="ai-conflict-body">
-                            HSN 2933/2934 reduced <strong>18% → 12%</strong> per CBIC notification (1 May 2026). Tally still carries 18% on 8 raw materials. Update via AI Agent → "Update HSN rates for Sharma Pharma".
+                            HSN 2933/2934 reduced <strong>18% → 12%</strong> per CBIC notification (1 May 2026). Tally still carries 18% on 8 raw materials. Update via Automation Agent → "Update HSN rates for Sharma Pharma".
                         </div>
                     </div>
                     <div class="ai-conflict-card blue">
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">Unclaimed ITC — &#8377;18,400</span>
-                            <span class="ai-badge">AI found</span>
+                            <span class="ai-badge">Found</span>
                         </div>
                         <div class="ai-conflict-body">
                             <strong>6 invoices</strong> in GSTR-2B not entered in Tally (&#8377;18,400 claimable ITC). Enter before 20 May GSTR-3B filing. Goods received for 4 of 6.
@@ -6377,7 +6424,7 @@
                     <!-- Sundry Debtors -->
                     <div class="tally-card">
                         <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Sundry Debtors <span class="tally-count">5 parties</span></h4>
-                        <div class="ai-provenance">AI check: All 5 GSTINs valid. Apollo Hospitals outstanding &gt;60 days — consider follow-up.</div>
+                        <div class="ai-provenance">Check: All 5 GSTINs valid. Apollo Hospitals outstanding &gt;60 days — consider follow-up.</div>
                         <table class="tally-table">
                             <tr><th>Party Name</th><th>GSTIN</th><th style="text-align:right">Balance (&#8377;)</th></tr>
                             <tr><td>Apollo Hospitals</td><td style="font-size:10px;color:var(--text-light)">36AABCA1234E1Z5</td><td class="amt pos">4,28,000</td></tr>
@@ -6391,7 +6438,7 @@
                     <!-- Sundry Creditors -->
                     <div class="tally-card">
                         <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg> Sundry Creditors <span class="tally-count">4 parties</span></h4>
-                        <div class="ai-provenance">AI check: Apex Chemical Suppliers has 3 ITC mismatches flagged above. Recommend priority vendor follow-up.</div>
+                        <div class="ai-provenance">Check: Apex Chemical Suppliers has 3 ITC mismatches flagged above. Recommend priority vendor follow-up.</div>
                         <table class="tally-table">
                             <tr><th>Party Name</th><th>GSTIN</th><th style="text-align:right">Balance (&#8377;)</th></tr>
                             <tr><td>Apex Chemical Suppliers</td><td style="font-size:10px;color:var(--text-light)">27AAECA3456K1Z5</td><td class="amt neg">-2,18,400</td></tr>
@@ -6404,7 +6451,7 @@
                     <!-- Bank Accounts -->
                     <div class="tally-card">
                         <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg> Bank Accounts <span class="tally-count">3 accounts</span></h4>
-                        <div class="ai-provenance">AI check: Net cash position healthy at &#8377;21.0L. ICICI OD utilisation at 48% — within comfort zone.</div>
+                        <div class="ai-provenance">Check: Net cash position healthy at &#8377;21.0L. ICICI OD utilisation at 48% — within comfort zone.</div>
                         <table class="tally-table">
                             <tr><th>Account</th><th>A/c No.</th><th style="text-align:right">Balance (&#8377;)</th></tr>
                             <tr><td>HDFC Bank — Current A/c</td><td style="font-size:10px;color:var(--text-light)">XXXX-XXXX-4521</td><td class="amt pos">18,42,600</td></tr>
@@ -6416,7 +6463,7 @@
                     <!-- Tax Ledgers -->
                     <div class="tally-card">
                         <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z"/></svg> Tax Ledgers (GST + TDS) <span class="tally-count">8 ledgers</span></h4>
-                        <div class="ai-provenance">AI check: Net GST liability &#8377;1.9L. TDS payable &#8377;60,600 — due 7 May (today). File immediately to avoid penalty.</div>
+                        <div class="ai-provenance">Check: Net GST liability &#8377;1.9L. TDS payable &#8377;60,600 — due 7 May (today). File immediately to avoid penalty.</div>
                         <table class="tally-table">
                             <tr><th>Ledger</th><th style="text-align:right">Balance (&#8377;)</th></tr>
                             <tr><td>CGST Input</td><td class="amt pos">1,42,800</td></tr>
@@ -6433,7 +6480,7 @@
                     <!-- Stock Items (Rate Changed) -->
                     <div class="tally-card tally-full">
                         <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg> Stock Items — Rate Changes Flagged <span class="tally-count">15 items</span> <span class="rate-changed" style="margin-left:auto">8 rates changed</span></h4>
-                        <div class="ai-provenance">AI cross-referenced 15 items against CBIC tariff schedule. 8 items carry outdated 18% rate — should be 12% per notification effective 1 May 2026.</div>
+                        <div class="ai-provenance">Cross-referenced 15 items against CBIC tariff schedule. 8 items carry outdated 18% rate — should be 12% per notification effective 1 May 2026.</div>
                         <table class="tally-table">
                             <tr><th>Item Name</th><th>HSN</th><th>Group</th><th>GST Rate</th><th style="text-align:right">Closing Qty</th><th style="text-align:right">Value (&#8377;)</th></tr>
                             <tr><td>Pyrimidine Compounds (API)</td><td>2933</td><td>Raw Materials</td><td><span class="rate-changed">18% &#8594; 12%</span></td><td class="amt">120 Kg</td><td class="amt">2,16,000</td></tr>
@@ -6457,7 +6504,7 @@
                     <!-- Recent Vouchers -->
                     <div class="tally-card tally-full">
                         <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> Recent Vouchers (April 2026) <span class="tally-count">16 shown</span> <span class="mismatch-flag" style="margin-left:auto">2 mismatches</span></h4>
-                        <div class="ai-provenance">AI scanned 16 vouchers against GSTR-2B. 2 flagged — both from Apex Chemical Suppliers (see ITC alerts above).</div>
+                        <div class="ai-provenance">Scanned 16 vouchers against GSTR-2B. 2 flagged — both from Apex Chemical Suppliers (see ITC alerts above).</div>
                         <table class="tally-table">
                             <tr><th>Voucher #</th><th>Date</th><th>Type</th><th>Party</th><th>HSN</th><th style="text-align:right">Amount (&#8377;)</th><th style="text-align:right">GST (&#8377;)</th><th>Flag</th></tr>
                             <tr><td>SI-2026-0847</td><td>28 Apr</td><td>Sales</td><td>Apollo Hospitals</td><td>3004</td><td class="amt">1,84,200</td><td class="amt">22,104</td><td></td></tr>
@@ -6481,7 +6528,7 @@
 
                     <!-- ITC Reconciliation Summary -->
                     <div class="tally-card tally-full">
-                        <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> ITC Reconciliation — April 2026 (Tally vs GSTR-2B) <span class="ai-badge" style="margin-left:8px">AI reconciled</span></h4>
+                        <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> ITC Reconciliation — April 2026 (Tally vs GSTR-2B) <span class="ai-badge" style="margin-left:8px">Reconciled</span></h4>
                         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px;">
                             <div class="tally-stat" style="border:none;padding:10px"><div class="ts-val" style="font-size:16px;color:var(--info)">847</div><div class="ts-label">Tally Entries</div></div>
                             <div class="tally-stat" style="border:none;padding:10px"><div class="ts-val" style="font-size:16px;color:var(--info)">839</div><div class="ts-label">GSTR-2B Entries</div></div>
@@ -6500,11 +6547,11 @@
                             <tr style="background:var(--warning-bg)"><td>INV-PKG-3341</td><td>Piramal Glass Packaging</td><td class="amt">56,800</td><td class="amt">10,224</td><td><span class="rate-changed">Invoice received but not entered — pending tray</span></td></tr>
                             <tr style="background:var(--warning-bg)"><td>INV-LAB-204</td><td>LabChem Industries</td><td class="amt">24,000</td><td class="amt">2,880</td><td><span class="rate-changed">New vendor — master not created in Tally</span></td></tr>
                         </table>
-                        <div class="ai-processing-stat" style="margin-top:10px">AI reconciled 847 entries against GSTR-2B in 7.5s · Manual equivalent: ~3.5 hours · Top mismatch vendor: Apex Chemical Suppliers (3 invoices)</div>
+                        <div class="ai-processing-stat" style="margin-top:10px">Reconciled 847 entries against GSTR-2B in 7.5s · Manual equivalent: ~3.5 hours · Top mismatch vendor: Apex Chemical Suppliers (3 invoices)</div>
                         <div class="ai-reasoning">
-                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">&#9654;</span> Show AI Reconciliation Logic (6 steps)</button>
+                            <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">&#9654;</span> Show Reconciliation Logic (6 steps)</button>
                             <div class="ai-reasoning-body">
-                                <div class="step"><span class="step-num">1</span><span>Pulled 847 purchase vouchers from Tally for Sharma Pharma (Apr 2026), filtered to GST-applicable entries only.</span></div>
+                                <div class="step"><span class="step-num">1</span><span>Pulled 847 purchase vouchers from your books for Sharma Pharma (Apr 2026), filtered to GST-applicable entries only.</span></div>
                                 <div class="step"><span class="step-num">2</span><span>Fetched GSTR-2B auto-populated data (839 entries) from GST portal for GSTIN 27AAACS1234F1ZA.</span></div>
                                 <div class="step"><span class="step-num">3</span><span>Matched by: GSTIN + Invoice Number + Invoice Date + Taxable Value (±&#8377;100 tolerance). 831 entries matched perfectly (98.1%).</span></div>
                                 <div class="step"><span class="step-num">4</span><span>Identified 8 mismatches: 2 invoices not in GSTR-2B (vendor didn't upload), 2 amount mismatches (vendor filed different amounts), 2 GSTIN/date mismatches, 2 in GSTR-2B but not Tally.</span></div>
@@ -6518,7 +6565,7 @@
 
             <!-- GST PORTAL INTELLIGENCE -->
             <div class="screen" id="screen-gst">
-                <p class="screen-desc">Unified GST compliance view across all clients. <strong>GSTR-2B</strong> = auto-generated purchase register from the GST portal; <strong>GSTR-3B</strong> = monthly summary return filed by every business. AI flags mismatches and upcoming deadlines.</p>
+                <p class="screen-desc">Unified GST compliance view across all clients. <strong>GSTR-2B</strong> = auto-generated purchase register from the GST portal; <strong>GSTR-3B</strong> = monthly summary return filed by every business. Flags mismatches and upcoming deadlines.</p>
                 <div class="ai-stats-bar">
                     <span class="ai-stats-icon">AI</span>
                     <strong>6</strong> GSTINs monitored
@@ -6564,7 +6611,7 @@
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">GSTR-1 vs 3B Mismatch — Sharma Pharma (&#8377;4,200)</span>
-                            <span class="ai-badge">AI detected</span>
+                            <span class="ai-badge">Detected</span>
                         </div>
                         <div class="ai-conflict-body">
                             GSTR-1 total &#8377;6,39,800 vs GSTR-3B &#8377;6,35,600 — credit note CN-2026-041 not reflected in 3B. Include before filing to avoid auto-notice.
@@ -6574,7 +6621,7 @@
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">ITC Reversal Needed — Sharma Pharma (&#8377;21,600)</span>
-                            <span class="ai-badge">AI flagged</span>
+                            <span class="ai-badge">Flagged</span>
                         </div>
                         <div class="ai-conflict-body">
                             2 Apex Chemical invoices unmatched in GSTR-2B. Reverse <strong>&#8377;21,600</strong> ITC in GSTR-3B if vendor doesn't correct by 18 May (Rule 36(4)).
@@ -6584,7 +6631,7 @@
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">GSTR-3B Due 20 May — 13 days left</span>
-                            <span class="ai-badge">AI reminder</span>
+                            <span class="ai-badge">Reminder</span>
                         </div>
                         <div class="ai-conflict-body">
                             4 of 6 clients have clean data. Resolve: Sharma Pharma ITC mismatch + Gupta Auto rate discrepancies before filing.
@@ -6593,9 +6640,9 @@
                 </div>
 
                 <div class="tally-card tally-full"
-                    <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> Return Filing Status — April 2026 <span class="ai-badge" style="margin-left:8px">AI monitored</span></h4>
+                    <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> Return Filing Status — April 2026 <span class="ai-badge" style="margin-left:8px">Monitored</span></h4>
                     <table class="tally-table">
-                        <tr><th>Client</th><th>GSTIN</th><th>GSTR-1</th><th>GSTR-3B</th><th>ITC Match %</th><th>AI Flag</th></tr>
+                        <tr><th>Client</th><th>GSTIN</th><th>GSTR-1</th><th>GSTR-3B</th><th>ITC Match %</th><th>Flag</th></tr>
                         <tr data-client="sharma" onclick="showRowDetail('Sharma Pharma — GST Status','<strong>GSTIN:</strong> 27AAACS1234F1ZA<br><strong>GSTR-1:</strong> Filed 8 May 2026<br><strong>GSTR-3B:</strong> Due 20 May 2026<br><strong>ITC Match:</strong> 98.1% — 2 invoices unmatched (Apex Chemical)<br><strong>ITC at Risk:</strong> Rs 21,600<br><br><strong>Action Required:</strong> Resolve Apex Chemical invoices before GSTR-3B filing. Contact vendor for corrections.')"><td>Sharma Pharma</td><td style="font-size:11px;color:var(--text-light)">27AAACS1234F1ZA</td><td><span class="status-chip filed">Filed 8 May</span></td><td><span class="status-chip pending">Due 20 May</span></td><td><span class="status-chip mismatch">98.1%</span></td><td><span class="mismatch-flag">ITC Rs 21.6K at risk</span></td></tr>
                         <tr data-client="gupta" onclick="showRowDetail('Gupta Auto — GST Status','<strong>GSTIN:</strong> 06AAACG9012H1ZC<br><strong>GSTR-1:</strong> Filed 9 May 2026<br><strong>GSTR-3B:</strong> Due 20 May 2026<br><strong>ITC Match:</strong> 99.4%<br><br><strong>Action Required:</strong> Update HSN rates in Tally before next invoice. 5 items carry outdated rates.')"><td>Gupta Auto</td><td style="font-size:11px;color:var(--text-light)">06AAACG9012H1ZC</td><td><span class="status-chip filed">Filed 9 May</span></td><td><span class="status-chip pending">Due 20 May</span></td><td><span class="status-chip matched">99.4%</span></td><td><span class="rate-changed">HSN rates to update</span></td></tr>
                         <tr data-client="royal" onclick="showRowDetail('Royal Spice Kitchen — GST Status','<strong>GSTIN:</strong> 07AAACR3456J1ZD<br><strong>GSTR-1:</strong> Filed 7 May 2026<br><strong>GSTR-3B:</strong> Due 20 May 2026<br><strong>ITC Match:</strong> 100%<br><br>All clear. Ready for GSTR-3B filing.')"><td>Royal Spice Kitchen</td><td style="font-size:11px;color:var(--text-light)">07AAACR3456J1ZD</td><td><span class="status-chip filed">Filed 7 May</span></td><td><span class="status-chip pending">Due 20 May</span></td><td><span class="status-chip matched">100%</span></td><td><span class="status-chip ok">Clear</span></td></tr>
@@ -6607,7 +6654,7 @@
 
                 <div class="integration-grid">
                     <div class="integration-card">
-                        <h4>ITC Claimed vs Available <span class="ai-badge" style="margin-left:8px">AI reconciled</span></h4>
+                        <h4>ITC Claimed vs Available <span class="ai-badge" style="margin-left:8px">Reconciled</span></h4>
                         <table class="tally-table">
                             <tr><th>Client</th><th style="text-align:right">ITC Claimed (&#8377;)</th><th style="text-align:right">ITC Available (&#8377;)</th><th>Gap</th></tr>
                             <tr data-client="sharma"><td>Sharma Pharma</td><td class="amt">3,72,000</td><td class="amt">3,90,400</td><td><span class="rate-changed">&#8377;18,400 unclaimed</span></td></tr>
@@ -6617,7 +6664,7 @@
                         </table>
                     </div>
                     <div class="integration-card">
-                        <h4>GSTR-1 vs 3B Reconciliation <span class="ai-badge" style="margin-left:8px">AI checked</span></h4>
+                        <h4>GSTR-1 vs 3B Reconciliation <span class="ai-badge" style="margin-left:8px">Checked</span></h4>
                         <table class="tally-table">
                             <tr><th>Client</th><th style="text-align:right">GSTR-1 (&#8377;)</th><th style="text-align:right">GSTR-3B (&#8377;)</th><th>Status</th></tr>
                             <tr data-client="sharma"><td>Sharma Pharma</td><td class="amt">6,39,800</td><td class="amt">6,35,600</td><td><span class="mismatch-flag">&#8377;4,200 gap</span></td></tr>
@@ -6631,7 +6678,7 @@
 
             <!-- INCOME TAX & TDS -->
             <div class="screen" id="screen-incometax">
-                <p class="screen-desc"><strong>TDS</strong> (Tax Deducted at Source) compliance tracking across all clients. AI monitors deductions, compares against <strong>Form 26AS</strong> (government tax credit statement), and flags discrepancies before filing deadlines.</p>
+                <p class="screen-desc"><strong>TDS</strong> (Tax Deducted at Source) compliance tracking across all clients. Monitors deductions, compares against <strong>Form 26AS</strong> (government tax credit statement), and flags discrepancies before filing deadlines.</p>
                 <div class="ai-stats-bar">
                     <span class="ai-stats-icon">AI</span>
                     <strong>6</strong> clients monitored
@@ -6677,7 +6724,7 @@
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">26AS Mismatch — Gupta Auto (&#8377;42,000 gap)</span>
-                            <span class="ai-badge">AI flagged</span>
+                            <span class="ai-badge">Flagged</span>
                         </div>
                         <div class="ai-conflict-body">
                             26AS shows &#8377;1,84,200 (194C) vs Tally &#8377;1,42,200. 3 vendor TDS certificates missing (Bharat Forge, Minda, Lumax). Update before 26Q filing on 15 May.
@@ -6687,7 +6734,7 @@
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">194J Rate Change — 3 Clients Need Update</span>
-                            <span class="ai-badge">AI detected</span>
+                            <span class="ai-badge">Detected</span>
                         </div>
                         <div class="ai-conflict-body">
                             FY 2026-27: Section 194J now flat <strong>10%</strong> (2%/10% split abolished). Sharma, NexGen, Lakshmi still have 2% configured in Tally. Update rate masters for April onwards.
@@ -6696,7 +6743,7 @@
                 </div>
 
                 <div class="tally-card tally-full"
-                    <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> TDS Filing Status — Q4 FY 2025-26 <span class="ai-badge" style="margin-left:8px">AI tracked</span></h4>
+                    <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> TDS Filing Status — Q4 FY 2025-26 <span class="ai-badge" style="margin-left:8px">Tracked</span></h4>
                     <table class="tally-table">
                         <tr><th>Client</th><th>Form 24Q (Salary)</th><th>Form 26Q (Non-salary)</th><th>Form 27Q (NRI)</th><th>AI Status</th></tr>
                         <tr data-client="sharma"><td>Sharma Pharma</td><td><span class="status-chip pending">Due 15 May</span></td><td><span class="status-chip pending">Due 15 May</span></td><td>N/A</td><td><span class="status-chip ok">Data ready</span></td></tr>
@@ -6710,7 +6757,7 @@
 
                 <div class="integration-grid">
                     <div class="integration-card">
-                        <h4>Form 26AS Reconciliation <span class="ai-badge" style="margin-left:8px">AI matched</span></h4>
+                        <h4>Form 26AS Reconciliation <span class="ai-badge" style="margin-left:8px">Matched</span></h4>
                         <table class="tally-table">
                             <tr><th>Client</th><th style="text-align:right">Tally TDS (&#8377;)</th><th style="text-align:right">26AS TDS (&#8377;)</th><th>Status</th></tr>
                             <tr data-client="sharma"><td>Sharma Pharma</td><td class="amt">1,24,600</td><td class="amt">1,24,600</td><td><span class="status-chip ok">Matched</span></td></tr>
@@ -6722,7 +6769,7 @@
                         </table>
                     </div>
                     <div class="integration-card">
-                        <h4>ITR Filing Tracker & Notices <span class="ai-badge" style="margin-left:8px">AI monitored</span></h4>
+                        <h4>ITR Filing Tracker & Notices <span class="ai-badge" style="margin-left:8px">Monitored</span></h4>
                         <table class="tally-table">
                             <tr><th>Client</th><th>ITR Status (FY25-26)</th><th>Refund</th><th>Notices</th></tr>
                             <tr data-client="sharma"><td>Sharma Pharma</td><td><span class="status-chip due-soon">Due 31 Oct</span></td><td>—</td><td>None</td></tr>
@@ -6784,26 +6831,26 @@
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">DIR-3 KYC — 12 Directors due Sep 2026</span>
-                            <span class="ai-badge">AI pre-populated</span>
+                            <span class="ai-badge">Pre-populated</span>
                         </div>
                         <div class="ai-conflict-body">
-                            <strong>12 directors</strong> across 5 companies need DIR-3 KYC by 30 Sep. AI pre-filled forms from Tally + MCA records. Start filing June; directors need digital signatures.
+                            <strong>12 directors</strong> across 5 companies need DIR-3 KYC by 30 Sep. Pre-filled forms from your books + MCA records. Start filing June; directors need digital signatures.
                         </div>
                     </div>
                     <div class="ai-conflict-card mca-alert" data-client="greenfield">
                         <div class="ai-conflict-header">
                             <span class="conflict-icon" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
                             <span class="conflict-title">LLP Form 11 — Greenfield Realty (30 May)</span>
-                            <span class="ai-badge">AI flagged</span>
+                            <span class="ai-badge">Flagged</span>
                         </div>
                         <div class="ai-conflict-body">
-                            LLP annual return due <strong>30 May</strong> — 23 days away. Partner details pulled from Tally. Penalty: &#8377;100/day, no cap. File by 25 May for processing time.
+                            LLP annual return due <strong>30 May</strong> — 23 days away. Partner details pulled from your books. Penalty: &#8377;100/day, no cap. File by 25 May for processing time.
                         </div>
                     </div>
                 </div>
 
                 <div class="tally-card tally-full"
-                    <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg> Company Filing Status — FY 2025-26 <span class="ai-badge" style="margin-left:8px">AI monitored</span></h4>
+                    <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg> Company Filing Status — FY 2025-26 <span class="ai-badge" style="margin-left:8px">Monitored</span></h4>
                     <table class="tally-table">
                         <tr><th>Entity</th><th>CIN / LLPIN</th><th>AOC-4</th><th>MGT-7</th><th>DIR-3 KYC</th><th>AI Status</th></tr>
                         <tr data-client="sharma"><td>Sharma Pharma Pvt. Ltd.</td><td style="font-size:10px;color:var(--text-light)">U24200MH2015PTC123456</td><td><span class="status-chip due-soon">Due Oct 2026</span></td><td><span class="status-chip due-soon">Due Nov 2026</span></td><td><span class="status-chip pending">2 directors due</span></td><td><span class="status-chip ok">On track</span></td></tr>
@@ -6816,8 +6863,8 @@
                 </div>
 
                 <div class="tally-card tally-full">
-                    <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Director KYC Tracker — DIR-3 Due Sep 2026 <span class="ai-badge" style="margin-left:8px">AI pre-populated</span></h4>
-                    <div class="ai-provenance">AI extracted director details from MCA records and Tally. DIR-3 forms pre-filled — directors need to verify and digitally sign.</div>
+                    <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Director KYC Tracker — DIR-3 Due Sep 2026 <span class="ai-badge" style="margin-left:8px">Pre-populated</span></h4>
+                    <div class="ai-provenance">Extracted director details from MCA records and Tally. DIR-3 forms pre-filled — directors need to verify and digitally sign.</div>
                     <table class="tally-table">
                         <tr><th>Director</th><th>DIN</th><th>Company</th><th>Last Filed</th><th>Next Due</th><th>Status</th></tr>
                         <tr data-client="sharma"><td>Rajesh Sharma</td><td style="font-size:10px;color:var(--text-light)">01234567</td><td>Sharma Pharma</td><td>Sep 2023</td><td>Sep 2026</td><td><span class="status-chip pending">DIR-3 pre-filled</span></td></tr>
@@ -6840,14 +6887,14 @@
 
             <!-- COMMUNICATION HUB -->
             <div class="screen" id="screen-comms">
-                <p class="screen-desc">Centralized log of all client communications (email + WhatsApp). AI auto-dispatches briefings, reminders, and alerts with delivery tracking.</p>
+                <p class="screen-desc">Centralized log of all client communications (email + WhatsApp). Auto-dispatches briefings, reminders, and alerts with delivery tracking.</p>
                 <div class="ai-stats-bar">
                     <span class="ai-stats-icon">AI</span>
                     <strong>12</strong> messages this week
                     <span class="ai-stats-sep"></span>
                     <strong>6</strong> clients contacted
                     <span class="ai-stats-sep"></span>
-                    <strong>3</strong> AI briefings dispatched
+                    <strong>3</strong> briefings dispatched
                     <span class="ai-stats-sep"></span>
                     <strong>2</strong> WhatsApp reminders auto-sent
                 </div>
@@ -6880,7 +6927,7 @@
                     <div class="tsb-sep"></div>
                     <div class="tsb-metric"><div class="tsb-val">8</div><div class="tsb-lbl">Read</div></div>
                     <div class="tsb-sep"></div>
-                    <div class="tsb-metric"><div class="tsb-val">3</div><div class="tsb-lbl">AI Briefings</div></div>
+                    <div class="tsb-metric"><div class="tsb-val">3</div><div class="tsb-lbl">Briefings</div></div>
                     <div class="tsb-sep"></div>
                     <div class="tsb-metric"><div class="tsb-val">2</div><div class="tsb-lbl">Auto-Reminders</div></div>
                     <div class="tsb-sep"></div>
@@ -6892,21 +6939,21 @@
                 <div class="tally-card tally-full"
                     <h4><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> Communication Log <span class="ai-badge" style="margin-left:8px">AI assisted</span></h4>
                     <table class="tally-table">
-                        <tr><th>Date</th><th>Client</th><th>Channel</th><th>Subject</th><th>Status</th><th>AI Action</th></tr>
-                        <tr data-client="sharma" data-channel="email" onclick="showRowDetail('IGST Rate Change — HSN Update Required','<strong>To:</strong> Sharma Pharmaceuticals Pvt. Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 7 May 2026, 9:15 AM<br><strong>Status:</strong> Read (opened 7 May, 10:02 AM)<br><br>Notified about IGST rate change for pharma intermediates (HSN 2933/2934). Advised to update Tally HSN masters before next invoice. Included list of 8 affected stock items.')"><td>7 May</td><td>Sharma Pharma</td><td><span class="comms-channel email">Email</span></td><td>IGST Rate Change — HSN Update Required</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">AI drafted</span></td></tr>
-                        <tr data-client="royal" data-channel="whatsapp" onclick="showRowDetail('TDS Deposit Reminder','<strong>To:</strong> Royal Spice Kitchen Pvt. Ltd.<br><strong>Channel:</strong> WhatsApp<br><strong>Sent:</strong> 7 May 2026, 8:30 AM<br><strong>Status:</strong> Delivered<br><br>Auto-sent reminder for TDS deposit due today. Challan 281 details included. Amount: Rs 86,400.')"><td>7 May</td><td>Royal Spice Kitchen</td><td><span class="comms-channel whatsapp">WhatsApp</span></td><td>TDS Deposit Reminder — Due Today</td><td><span class="status-chip read">Delivered</span></td><td><span class="ai-auto-badge">AI auto-sent</span></td></tr>
-                        <tr data-client="gupta" data-channel="email" onclick="showRowDetail('Regulatory Briefing — IGST + Auto Components','<strong>To:</strong> Gupta Auto Components Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 6 May 2026, 3:00 PM<br><strong>Status:</strong> Read<br><br>Comprehensive briefing on IGST rate schedule changes affecting auto components. Includes reclassification impact analysis and Tally update instructions.')"><td>6 May</td><td>Gupta Auto</td><td><span class="comms-channel email">Email</span></td><td>Regulatory Briefing — IGST + Auto Components</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">AI drafted</span></td></tr>
-                        <tr data-client="lakshmi" data-channel="email" onclick="showRowDetail('RBI CRAR Update — Capital Plan Advisory','<strong>To:</strong> Lakshmi FinServ Pvt. Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 6 May 2026, 11:30 AM<br><strong>Status:</strong> Read<br><br>Advisory on RBI Scale Based Regulation — CRAR increasing from 15% to 16% effective Oct 2026. Capital gap analysis and Board resolution timeline included.')"><td>6 May</td><td>Lakshmi FinServ</td><td><span class="comms-channel email">Email</span></td><td>RBI CRAR Update — Capital Plan Advisory</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">AI drafted</span></td></tr>
-                        <tr data-client="nexgen" data-channel="whatsapp" onclick="showRowDetail('GSTR-1 Filing Reminder','<strong>To:</strong> NexGen Software Solutions Pvt. Ltd.<br><strong>Channel:</strong> WhatsApp<br><strong>Sent:</strong> 5 May 2026, 9:00 AM<br><strong>Status:</strong> Read<br><br>Reminder that GSTR-1 for April 2026 is due 11 May. Data is ready — client needs to confirm and authorize filing.')"><td>5 May</td><td>NexGen IT</td><td><span class="comms-channel whatsapp">WhatsApp</span></td><td>GSTR-1 Filing Reminder — Due 11 May</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">AI auto-sent</span></td></tr>
-                        <tr data-client="greenfield" data-channel="email" onclick="showRowDetail('LLP Form 11 — Annual Return Due 30 May','<strong>To:</strong> Greenfield Realty LLP<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 5 May 2026, 2:00 PM<br><strong>Status:</strong> Not yet opened<br><br>Reminder about LLP Form 11 annual return due 30 May. Partner details and financial summary needed. Penalty: Rs 100/day for late filing.')"><td>5 May</td><td>Greenfield Realty</td><td><span class="comms-channel email">Email</span></td><td>LLP Form 11 — Annual Return Due 30 May</td><td><span class="status-chip pending">Pending</span></td><td><span class="ai-auto-badge">AI drafted</span></td></tr>
-                        <tr data-client="sharma" data-channel="email" onclick="showRowDetail('ITC Reconciliation Report — April 2026','<strong>To:</strong> Sharma Pharmaceuticals Pvt. Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 4 May 2026, 10:00 AM<br><strong>Status:</strong> Read<br><br>Monthly ITC reconciliation report. 847 entries matched against GSTR-2B. 98.1% match rate. Rs 21,600 ITC at risk flagged with vendor-wise breakdown.')"><td>4 May</td><td>Sharma Pharma</td><td><span class="comms-channel email">Email</span></td><td>ITC Reconciliation Report — April 2026</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">AI generated</span></td></tr>
-                        <tr data-client="sharma" data-channel="email" onclick="showRowDetail('Invoice Mismatch — PI-2026-0408 and 0409','<strong>To:</strong> Apex Chemical Suppliers (Vendor)<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 3 May 2026, 4:00 PM<br><strong>Status:</strong> No response after 4 days<br><br>Notified vendor about 2 invoice mismatches. PI-2026-0409 not uploaded to GSTR-1. PI-2026-0408 amount discrepancy (Rs 78,400 vs Rs 76,200). Requested correction before 18 May.<br><br><strong>Follow-up needed.</strong>')"><td>3 May</td><td>Apex Chemical (Vendor)</td><td><span class="comms-channel email">Email</span></td><td>Invoice Mismatch — PI-2026-0408 &amp; 0409</td><td><span class="status-chip failed">No response</span></td><td><span class="ai-auto-badge">AI drafted</span></td></tr>
+                        <tr><th>Date</th><th>Client</th><th>Channel</th><th>Subject</th><th>Status</th><th>Action</th></tr>
+                        <tr data-client="sharma" data-channel="email" onclick="showRowDetail('IGST Rate Change — HSN Update Required','<strong>To:</strong> Sharma Pharmaceuticals Pvt. Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 7 May 2026, 9:15 AM<br><strong>Status:</strong> Read (opened 7 May, 10:02 AM)<br><br>Notified about IGST rate change for pharma intermediates (HSN 2933/2934). Advised to update Tally HSN masters before next invoice. Included list of 8 affected stock items.')"><td>7 May</td><td>Sharma Pharma</td><td><span class="comms-channel email">Email</span></td><td>IGST Rate Change — HSN Update Required</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">Drafted</span></td></tr>
+                        <tr data-client="royal" data-channel="whatsapp" onclick="showRowDetail('TDS Deposit Reminder','<strong>To:</strong> Royal Spice Kitchen Pvt. Ltd.<br><strong>Channel:</strong> WhatsApp<br><strong>Sent:</strong> 7 May 2026, 8:30 AM<br><strong>Status:</strong> Delivered<br><br>Auto-sent reminder for TDS deposit due today. Challan 281 details included. Amount: Rs 86,400.')"><td>7 May</td><td>Royal Spice Kitchen</td><td><span class="comms-channel whatsapp">WhatsApp</span></td><td>TDS Deposit Reminder — Due Today</td><td><span class="status-chip read">Delivered</span></td><td><span class="ai-auto-badge">Auto-sent</span></td></tr>
+                        <tr data-client="gupta" data-channel="email" onclick="showRowDetail('Regulatory Briefing — IGST + Auto Components','<strong>To:</strong> Gupta Auto Components Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 6 May 2026, 3:00 PM<br><strong>Status:</strong> Read<br><br>Comprehensive briefing on IGST rate schedule changes affecting auto components. Includes reclassification impact analysis and Tally update instructions.')"><td>6 May</td><td>Gupta Auto</td><td><span class="comms-channel email">Email</span></td><td>Regulatory Briefing — IGST + Auto Components</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">Drafted</span></td></tr>
+                        <tr data-client="lakshmi" data-channel="email" onclick="showRowDetail('RBI CRAR Update — Capital Plan Advisory','<strong>To:</strong> Lakshmi FinServ Pvt. Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 6 May 2026, 11:30 AM<br><strong>Status:</strong> Read<br><br>Advisory on RBI Scale Based Regulation — CRAR increasing from 15% to 16% effective Oct 2026. Capital gap analysis and Board resolution timeline included.')"><td>6 May</td><td>Lakshmi FinServ</td><td><span class="comms-channel email">Email</span></td><td>RBI CRAR Update — Capital Plan Advisory</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">Drafted</span></td></tr>
+                        <tr data-client="nexgen" data-channel="whatsapp" onclick="showRowDetail('GSTR-1 Filing Reminder','<strong>To:</strong> NexGen Software Solutions Pvt. Ltd.<br><strong>Channel:</strong> WhatsApp<br><strong>Sent:</strong> 5 May 2026, 9:00 AM<br><strong>Status:</strong> Read<br><br>Reminder that GSTR-1 for April 2026 is due 11 May. Data is ready — client needs to confirm and authorize filing.')"><td>5 May</td><td>NexGen IT</td><td><span class="comms-channel whatsapp">WhatsApp</span></td><td>GSTR-1 Filing Reminder — Due 11 May</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">Auto-sent</span></td></tr>
+                        <tr data-client="greenfield" data-channel="email" onclick="showRowDetail('LLP Form 11 — Annual Return Due 30 May','<strong>To:</strong> Greenfield Realty LLP<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 5 May 2026, 2:00 PM<br><strong>Status:</strong> Not yet opened<br><br>Reminder about LLP Form 11 annual return due 30 May. Partner details and financial summary needed. Penalty: Rs 100/day for late filing.')"><td>5 May</td><td>Greenfield Realty</td><td><span class="comms-channel email">Email</span></td><td>LLP Form 11 — Annual Return Due 30 May</td><td><span class="status-chip pending">Pending</span></td><td><span class="ai-auto-badge">Drafted</span></td></tr>
+                        <tr data-client="sharma" data-channel="email" onclick="showRowDetail('ITC Reconciliation Report — April 2026','<strong>To:</strong> Sharma Pharmaceuticals Pvt. Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 4 May 2026, 10:00 AM<br><strong>Status:</strong> Read<br><br>Monthly ITC reconciliation report. 847 entries matched against GSTR-2B. 98.1% match rate. Rs 21,600 ITC at risk flagged with vendor-wise breakdown.')"><td>4 May</td><td>Sharma Pharma</td><td><span class="comms-channel email">Email</span></td><td>ITC Reconciliation Report — April 2026</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">Generated</span></td></tr>
+                        <tr data-client="sharma" data-channel="email" onclick="showRowDetail('Invoice Mismatch — PI-2026-0408 and 0409','<strong>To:</strong> Apex Chemical Suppliers (Vendor)<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 3 May 2026, 4:00 PM<br><strong>Status:</strong> No response after 4 days<br><br>Notified vendor about 2 invoice mismatches. PI-2026-0409 not uploaded to GSTR-1. PI-2026-0408 amount discrepancy (Rs 78,400 vs Rs 76,200). Requested correction before 18 May.<br><br><strong>Follow-up needed.</strong>')"><td>3 May</td><td>Apex Chemical (Vendor)</td><td><span class="comms-channel email">Email</span></td><td>Invoice Mismatch — PI-2026-0408 &amp; 0409</td><td><span class="status-chip failed">No response</span></td><td><span class="ai-auto-badge">Drafted</span></td></tr>
                     </table>
                 </div>
 
                 <div class="integration-grid">
                     <div class="integration-card">
-                        <h4>Pending Acknowledgements <span class="ai-badge" style="margin-left:8px">AI tracking</span></h4>
+                        <h4>Pending Acknowledgements <span class="ai-badge" style="margin-left:8px">Tracking</span></h4>
                         <table class="tally-table">
                             <tr><th>Client</th><th>Subject</th><th>Sent</th><th>Status</th></tr>
                             <tr data-client="greenfield" data-channel="email"><td>Greenfield Realty</td><td>LLP Form 11 reminder</td><td>5 May</td><td><span class="status-chip pending">No read receipt</span></td></tr>
@@ -6915,7 +6962,7 @@
                         </table>
                     </div>
                     <div class="integration-card">
-                        <h4>Scheduled Auto-Reminders <span class="ai-badge" style="margin-left:8px">AI queued</span></h4>
+                        <h4>Scheduled Auto-Reminders <span class="ai-badge" style="margin-left:8px">Queued</span></h4>
                         <table class="tally-table">
                             <tr><th>Date</th><th>Client</th><th>Channel</th><th>Subject</th></tr>
                             <tr data-client="all" data-channel="whatsapp"><td>11 May</td><td>All clients</td><td><span class="comms-channel whatsapp">WhatsApp</span></td><td>GSTR-1 filing deadline today</td></tr>
@@ -6987,8 +7034,8 @@
                         </div>
                     </div>
                     <div class="settings-section">
-                        <h3>Product tour</h3>
-                        <div class="sec-sub">Replay the welcome page or the 5-step first-regulation flow.</div>
+                        <h3>Setup walkthrough</h3>
+                        <div class="sec-sub">Replay the welcome page or the 5-step setup &amp; first-regulation flow.</div>
                         <div class="settings-item" onclick="wcReplay()">
                             <div class="settings-item-icon">&#9733;</div>
                             <div class="settings-item-body">
@@ -7024,7 +7071,7 @@
         </div>
         <div class="modal-body">
             <div class="modal-section">
-                <h3>AI Analysis <span class="ai-badge">AI summarized</span></h3>
+                <h3>Analysis <span class="ai-badge">Summarized</span></h3>
                 <p>The most significant reform to India's food licensing framework in a decade. FSSAI licenses become perpetual (no renewal). Calendar-based inspections replaced by risk-based framework. Turnover thresholds revised — 98% of food businesses move under state jurisdiction. Street food vendors auto-registered.</p>
                 <div class="ai-processing-stat">Generated from: FSSAI Gazette S.O. 1234(E), 18 pages · Processed in 1.2s</div>
             </div>
@@ -7036,7 +7083,7 @@
                 &#8226; New penalty structure enforced at state level.</p>
             </div>
             <div class="modal-section">
-                <h3>AI-Generated Client Impact <span class="ai-badge">AI matched</span></h3>
+                <h3>Auto-generated Client Impact <span class="ai-badge">Matched</span></h3>
                 <table class="impact-tbl">
                     <thead><tr><th>Client</th><th>Sector</th><th>Status</th><th>Action</th></tr></thead>
                     <tbody>
@@ -7051,7 +7098,7 @@
                 <div class="ai-processing-stat">Analyzed against 6 client profiles in 2.3s · 1 matched · 5 ruled out</div>
             </div>
             <div class="modal-section">
-                <h3>AI Reasoning Trace</h3>
+                <h3>Reasoning Trace</h3>
                 <div class="ai-reasoning open">
                     <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Step-by-step matching logic</button>
                     <div class="ai-reasoning-body">
@@ -7097,12 +7144,12 @@
         </div>
         <div class="modal-body">
             <div class="modal-section">
-                <h3>AI Analysis <span class="ai-badge">AI summarized</span></h3>
+                <h3>Analysis <span class="ai-badge">Summarized</span></h3>
                 <p>Director KYC simplified from annual to once every 3 years. Directors whose last KYC was FY 2023-24 or earlier must file under the new simplified form by 30 September 2026. Reduces compliance burden while maintaining identity verification.</p>
                 <div class="ai-processing-stat">Generated from: MCA Notification dt. 31 Dec 2025, 6 pages · Processed in 0.8s</div>
             </div>
             <div class="modal-section">
-                <h3>AI-Generated Client Impact <span class="ai-badge">AI matched</span></h3>
+                <h3>Auto-generated Client Impact <span class="ai-badge">Matched</span></h3>
                 <table class="impact-tbl">
                     <thead><tr><th>Client</th><th>Directors</th><th>Last KYC</th><th>Status</th></tr></thead>
                     <tbody>
@@ -7140,12 +7187,12 @@
         </div>
         <div class="modal-body">
             <div class="modal-section">
-                <h3>AI Analysis <span class="ai-badge">AI summarized</span></h3>
+                <h3>Analysis <span class="ai-badge">Summarized</span></h3>
                 <p>Tariff entries under IGST Schedules revised per Finance Act 2026. Pharmaceutical intermediates moved from 18% to 12%. Auto components reclassified. F&B packaging materials rate adjusted.</p>
                 <div class="ai-processing-stat">Generated from: CBIC Notification No. 9/2025-IT (Rate) as amended, 12 pages · Processed in 2.1s</div>
             </div>
             <div class="modal-section">
-                <h3>AI-Generated Client Impact <span class="ai-badge">AI matched</span></h3>
+                <h3>Auto-generated Client Impact <span class="ai-badge">Matched</span></h3>
                 <table class="impact-tbl">
                     <thead><tr><th>Client</th><th>Affected Items</th><th>Rate Change</th><th>Monthly Impact</th></tr></thead>
                     <tbody>
@@ -7158,7 +7205,7 @@
                 <div class="ai-processing-stat">Analyzed against 6 client profiles in 2.3s · 4 matched via HSN codes · 2 ruled out (no affected goods)</div>
             </div>
             <div class="modal-section">
-                <h3>AI Reasoning Trace</h3>
+                <h3>Reasoning Trace</h3>
                 <div class="ai-reasoning">
                     <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Step-by-step matching logic</button>
                     <div class="ai-reasoning-body">
@@ -7198,12 +7245,12 @@
         </div>
         <div class="modal-body">
             <div class="modal-section">
-                <h3>AI Analysis <span class="ai-badge">AI summarized</span></h3>
+                <h3>Analysis <span class="ai-badge">Summarized</span></h3>
                 <p>Karnataka tightens rules for IT/ITES: overtime cap reduced from 75 to 50 hours/quarter. Mandatory break room for 50+ employees. Penalty: ₹25,000/violation + closure risk.</p>
                 <div class="ai-processing-stat">Generated from: Karnataka Gazette dt. 22 Apr 2026, 8 pages · Processed in 1.6s</div>
             </div>
             <div class="modal-section">
-                <h3>AI-Generated Client Impact <span class="ai-badge">AI matched</span></h3>
+                <h3>Auto-generated Client Impact <span class="ai-badge">Matched</span></h3>
                 <table class="impact-tbl">
                     <thead><tr><th>Client</th><th>Location</th><th>Employees</th><th>Status</th></tr></thead>
                     <tbody>
@@ -7243,7 +7290,7 @@
         </div>
         <div class="modal-body">
             <div class="modal-section">
-                <h3>AI Analysis <span class="ai-badge">AI summarized</span></h3>
+                <h3>Analysis <span class="ai-badge">Summarized</span></h3>
                 <p>MCA proposes consolidating incorporation-related forms. New Form E-CHNG (for changes) and Form E-CON (for conversions) will replace existing INC-22, INC-28, and several other forms. The registered office change process is also simplified — single-form filing instead of multi-step submission.</p>
                 <div class="ai-processing-stat">Generated from: MCA draft notification, 14 pages · Processed in 1.9s</div>
             </div>
@@ -7255,7 +7302,7 @@
                 &#8226; <strong>Digital signatures:</strong> Proposed acceptance of Aadhaar-based e-sign for small companies</p>
             </div>
             <div class="modal-section">
-                <h3>AI-Generated Client Impact <span class="ai-badge">AI matched</span></h3>
+                <h3>Auto-generated Client Impact <span class="ai-badge">Matched</span></h3>
                 <table class="impact-tbl">
                     <thead><tr><th>Client</th><th>Type</th><th>Status</th><th>Action</th></tr></thead>
                     <tbody>
@@ -7295,7 +7342,7 @@
         </div>
         <div class="modal-body">
             <div class="modal-section">
-                <h3>AI Analysis <span class="ai-badge">AI summarized</span></h3>
+                <h3>Analysis <span class="ai-badge">Summarized</span></h3>
                 <p>Two key TDS changes effective FY 2026-27: Section 194C (contractor payments) threshold raised from ₹30,000 to ₹50,000 per payment. Section 194J split rate (2% for technical / 10% for professional) abolished — now a flat 10% for all payments under 194J.</p>
                 <div class="ai-processing-stat">Generated from: CBDT Circular dt. 1 Apr 2026, 4 pages · Processed in 0.6s</div>
             </div>
@@ -7312,7 +7359,7 @@
                 </table>
             </div>
             <div class="modal-section">
-                <h3>AI-Generated Client Impact <span class="ai-badge">AI matched</span></h3>
+                <h3>Auto-generated Client Impact <span class="ai-badge">Matched</span></h3>
                 <table class="impact-tbl">
                     <thead><tr><th>Client</th><th>Key Impact</th><th>Action</th></tr></thead>
                     <tbody>
@@ -7347,7 +7394,7 @@
         </div>
         <div class="modal-body">
             <div class="modal-section">
-                <h3>AI Analysis <span class="ai-badge">AI summarized</span></h3>
+                <h3>Analysis <span class="ai-badge">Summarized</span></h3>
                 <p>RBI raises Capital-to-Risk-weighted-Assets Ratio (CRAR) for Base Layer NBFCs from 15% to 16%, effective October 2026. Additionally, stricter NPA provisioning norms introduced for micro-lending portfolios. This is part of the Scale Based Regulation (SBR) framework tightening cycle.</p>
                 <div class="ai-processing-stat">Generated from: RBI Circular dt. 15 Apr 2026, 6 pages · Processed in 1.4s</div>
             </div>
@@ -7359,7 +7406,7 @@
                 &#8226; <strong>Compliance timeline:</strong> 1 October 2026 — no phased implementation</p>
             </div>
             <div class="modal-section">
-                <h3>AI-Generated Client Impact <span class="ai-badge">AI matched</span></h3>
+                <h3>Auto-generated Client Impact <span class="ai-badge">Matched</span></h3>
                 <table class="impact-tbl">
                     <thead><tr><th>Client</th><th>Category</th><th>Current CRAR</th><th>Status</th></tr></thead>
                     <tbody>
@@ -7371,7 +7418,7 @@
                 <div class="ai-processing-stat">Analyzed against 6 client profiles in 1.2s · 1 matched (NBFC) · 5 ruled out (not RBI-regulated)</div>
             </div>
             <div class="modal-section">
-                <h3>AI Reasoning Trace</h3>
+                <h3>Reasoning Trace</h3>
                 <div class="ai-reasoning">
                     <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">▶</span> Step-by-step matching logic</button>
                     <div class="ai-reasoning-body">
@@ -7400,7 +7447,7 @@
 </div>
 
 <script>
-// AI Reasoning toggle
+// Reasoning toggle
 function toggleReasoning(el) {
     event.stopPropagation();
     var box = el.closest('.ai-reasoning');
@@ -7550,7 +7597,7 @@ function switchTallyClient(client) {
         statEls[4].innerHTML = s[4];
         statEls[5].innerHTML = s[5];
     }
-    // Update AI summary bar
+    // Update Summary bar
     var roi = roiData[client] || roiData.sharma;
     var roiCard = document.getElementById('tally-roi-card');
     if (roiCard) {
@@ -7927,7 +7974,7 @@ function filterCalendar() {
             if (evt) evt.style.display = 'none';
         }
     });
-    // Also filter AI predictions
+    // Also filter forecast
     document.querySelectorAll('.ai-pred-item').forEach(function(item) {
         var dc = item.dataset.clients || '';
         var clientMatch = clientVal === 'all' || dc.split(' ').indexOf(clientVal) !== -1;
@@ -8442,7 +8489,7 @@ var ALERT_WORKFLOWS = {
     'ITC': ['Verify supplier GSTIN on portal', 'Cross-check with purchase register', 'Raise mismatch query to supplier', 'File amendment / accept ITC'],
     'Rate': ['Download latest CBIC notification', 'Update HSN rate master in Tally', 'Re-compute pending invoices', 'Notify client for approval'],
     'Conflict': ['Review impacted contracts', 'Draft advisory memo for client', 'Send to partner for review', 'File regulatory response'],
-    'Filing': ['Pull data from Tally books', 'Validate totals against portal', 'Prepare return in offline tool', 'Submit & confirm ARN'],
+    'Filing': ['Pull data from connected books', 'Validate totals against portal', 'Prepare return in offline tool', 'Submit & confirm ARN'],
     'Compliance': ['Verify due dates on MCA portal', 'Prepare board resolution draft', 'Get director DSC signatures', 'File form & download SRN'],
     'Default': ['Review alert details', 'Prepare response documents', 'Send to partner for approval', 'Execute & mark complete']
 };
@@ -8579,7 +8626,7 @@ function startNewChat() {
     if (input) { input.value = ''; input.focus(); }
 }
 
-// New Task — AI Agent
+// New Task — Automation Agent
 function startNewAgentTask() {
     // Deselect all thread tabs
     document.querySelectorAll('#agent-thread-bar .filter-btn').forEach(b => b.classList.remove('active'));
@@ -8685,27 +8732,27 @@ function startNewAgentTask() {
             </div>
         </div>
         <div class="qa-quick-actions">
-            <button class="qa-quick-btn" onclick="qaQuickAsk(this)">How does the AI Agent work?</button>
+            <button class="qa-quick-btn" onclick="qaQuickAsk(this)">How does the Automation Agent work?</button>
             <button class="qa-quick-btn" onclick="qaQuickAsk(this)">How do I add a new client?</button>
             <button class="qa-quick-btn" onclick="qaQuickAsk(this)">How are briefings generated?</button>
             <button class="qa-quick-btn" onclick="qaQuickAsk(this)">What does the risk score mean?</button>
         </div>
         <div class="qa-msg user">
             <div class="qa-msg-av human">MS</div>
-            <div class="qa-msg-text">How does the AI Agent work?</div>
+            <div class="qa-msg-text">How does the Automation Agent work?</div>
         </div>
         <div class="qa-msg">
             <div class="qa-msg-av bot">?</div>
             <div class="qa-msg-text">
-                The <strong>AI Agent</strong> can take actions on your behalf — it's different from the Q&A chat ("Ask Reg Mitra").<br><br>
+                The <strong>Automation Agent</strong> can take actions on your behalf — it's different from the Q&A chat ("Ask Reg Mitra").<br><br>
                 <strong>What it can do:</strong><br>
-                &#8226; <strong>Sync with Tally</strong> — pull data and reconcile ITC against GSTR-2B<br>
+                &#8226; <strong>Sync with Tally</strong> — sync books and reconcile ITC against GSTR-2B<br>
                 &#8226; <strong>File GST returns</strong> — validate and submit GSTR-1/3B for all clients<br>
-                &#8226; <strong>Send briefings</strong> — email AI-drafted regulatory briefings to clients<br>
+                &#8226; <strong>Send briefings</strong> — email Drafted regulatory briefings to clients<br>
                 &#8226; <strong>Update HSN rates</strong> — bulk update tax rates in Tally across clients<br>
                 &#8226; <strong>Send reminders</strong> — email + WhatsApp deadline reminders to clients<br><br>
                 <strong>How to use it:</strong><br>
-                Go to <strong>AI Agent</strong> in the sidebar, type what you need done (e.g., "Sync Sharma Pharma's Tally data"), and the agent will show you each step it's taking. It always asks for confirmation before irreversible actions like filing returns.
+                Go to <strong>Automation Agent</strong> in the sidebar, type what you need done (e.g., "Sync Sharma Pharma's Tally data"), and the agent will show you each step it's taking. It always asks for confirmation before irreversible actions like filing returns.
                 <span class="qa-source">Reg Mitra Help Center</span>
             </div>
         </div>
@@ -8749,9 +8796,9 @@ function qaQuickAsk(btn) {
         var resp = document.createElement('div');
         resp.className = 'qa-msg';
         var answers = {
-            "How does the AI Agent work?": "The <strong>AI Agent</strong> executes tasks on your behalf — Tally sync, GST filing, sending briefings, bulk HSN updates, and deadline reminders. Go to <strong>AI Agent</strong> in the sidebar to try it. It always asks for confirmation before irreversible actions.",
-            "How do I add a new client?": "Go to <strong>My Clients</strong> in the sidebar, then click the <strong>\"+ Add Client\"</strong> button in the top right. You'll need their GSTIN, PAN, sector, and Tally connection details. The AI will automatically start monitoring relevant regulations for them within minutes.",
-            "How are briefings generated?": "Reg Mitra's AI drafts briefings automatically when a new regulation affects your clients. It reads the gazette notification, matches it to client profiles, and generates a plain-English summary with action items. You can review, edit, and send them from the <strong>Briefings</strong> tab. Average generation time is ~8 seconds per briefing.",
+            "How does the Automation Agent work?": "The <strong>Automation Agent</strong> executes tasks on your behalf — Tally sync, GST filing, sending briefings, bulk HSN updates, and deadline reminders. Go to <strong>Automation Agent</strong> in the sidebar to try it. It always asks for confirmation before irreversible actions.",
+            "How do I add a new client?": "Go to <strong>My Clients</strong> in the sidebar, then click the <strong>\"+ Add Client\"</strong> button in the top right. You'll need their GSTIN, PAN, sector, and accounting setup (Tally, Zoho Books, QuickBooks, BUSY, Marg, or a books upload). Reg Mitra will start monitoring relevant regulations within minutes.",
+            "How are briefings generated?": "Reg Mitra's Drafts briefings automatically when a new regulation affects your clients. It reads the gazette notification, matches it to client profiles, and generates a plain-English summary with action items. You can review, edit, and send them from the <strong>Briefings</strong> tab. Average generation time is ~8 seconds per briefing.",
             "What does the risk score mean?": "The <strong>Risk Score</strong> (0–10) on each client card measures their overall compliance risk. It factors in: pending actions, overdue deadlines, recent regulatory changes affecting them, and historical compliance patterns. A score above 7.0 means urgent attention is needed. The trend arrow (&#8593;/&#8595;) shows change over the last 30 days."
         };
         var answer = answers[text] || "Great question! Let me pull up the relevant help article for you. You can also check our <strong>Knowledge Base</strong> at help.regmitra.com or reach our team at support@regmitra.com for account-specific issues.";
@@ -8806,21 +8853,57 @@ function qaSimSend() {
             <span class="ob-dot" data-pos="5">5</span>
         </div>
 
-        <!-- Step 1: Connect Tally -->
+        <!-- Step 1: Connect your books (works with any setup) -->
         <div class="ob-step active" data-step="1">
-            <h2>Connect your Tally</h2>
-            <div class="ob-sub">Reg Mitra reads your books to scan each new regulation against your clients automatically. We never write to Tally — read-only.</div>
-            <div class="ob-tally-card">
-                <div class="ob-tally-icon">T</div>
-                <div class="ob-tally-body">
-                    <div class="ob-tally-title">TallyPrime 4.1</div>
-                    <div class="ob-tally-sub">Connects to your local Tally instance via the ODBC port</div>
+            <h2>Connect your accounting setup</h2>
+            <div class="ob-sub">Reg Mitra works with whatever you already use &mdash; pick the one you have. We&rsquo;re <strong>read-only</strong>; we never write back to your books.</div>
+            <div class="ob-setup-grid" id="ob-setup-grid">
+                <div class="ob-setup-tile selected" data-setup="tally" onclick="obSelectSetup(this)">
+                    <div class="ob-setup-icon" style="background:#0f766e">T</div>
+                    <div class="ob-setup-info"><div class="ob-setup-name">TallyPrime</div><div class="ob-setup-sub">ODBC · v4.x / v5.x</div></div>
+                    <span class="ob-setup-pop">Most common</span>
                 </div>
+                <div class="ob-setup-tile" data-setup="zoho" onclick="obSelectSetup(this)">
+                    <div class="ob-setup-icon" style="background:#dc2626">Z</div>
+                    <div class="ob-setup-info"><div class="ob-setup-name">Zoho Books</div><div class="ob-setup-sub">OAuth · India edition</div></div>
+                </div>
+                <div class="ob-setup-tile" data-setup="quickbooks" onclick="obSelectSetup(this)">
+                    <div class="ob-setup-icon" style="background:#2563eb">Q</div>
+                    <div class="ob-setup-info"><div class="ob-setup-name">QuickBooks</div><div class="ob-setup-sub">OAuth · Online</div></div>
+                </div>
+                <div class="ob-setup-tile" data-setup="busy" onclick="obSelectSetup(this)">
+                    <div class="ob-setup-icon" style="background:#7c3aed">B</div>
+                    <div class="ob-setup-info"><div class="ob-setup-name">BUSY Accounting</div><div class="ob-setup-sub">SQL connector</div></div>
+                </div>
+                <div class="ob-setup-tile" data-setup="marg" onclick="obSelectSetup(this)">
+                    <div class="ob-setup-icon" style="background:#d97706">M</div>
+                    <div class="ob-setup-info"><div class="ob-setup-name">Marg ERP</div><div class="ob-setup-sub">Excel sync · daily</div></div>
+                </div>
+                <div class="ob-setup-tile" data-setup="vyapar" onclick="obSelectSetup(this)">
+                    <div class="ob-setup-icon" style="background:#0891b2">V</div>
+                    <div class="ob-setup-info"><div class="ob-setup-name">Vyapar / others</div><div class="ob-setup-sub">CSV / Excel upload</div></div>
+                </div>
+                <div class="ob-setup-tile" data-setup="manual" onclick="obSelectSetup(this)">
+                    <div class="ob-setup-icon" style="background:#475569">↑</div>
+                    <div class="ob-setup-info"><div class="ob-setup-name">Upload books</div><div class="ob-setup-sub">Excel · Tally backup · PDF</div></div>
+                </div>
+                <div class="ob-setup-tile" data-setup="none" onclick="obSelectSetup(this)">
+                    <div class="ob-setup-icon" style="background:#16a34a">✓</div>
+                    <div class="ob-setup-info"><div class="ob-setup-name">No books yet</div><div class="ob-setup-sub">Run on GST + MCA only</div></div>
+                </div>
+            </div>
+            <div class="ob-portal-row">
+                <span class="ob-portal-label">Govt portals (always on):</span>
+                <span class="ob-portal-chip">GSTN</span>
+                <span class="ob-portal-chip">MCA21</span>
+                <span class="ob-portal-chip">CBDT</span>
+                <span class="ob-portal-chip">FOSCOS</span>
+                <span class="ob-portal-chip">RBI CIMS</span>
             </div>
             <div class="ob-tally-result" id="ob-tally-result"></div>
             <div class="ob-actions">
-                <button class="ob-btn primary" id="ob-connect-btn" onclick="obConnectTally()">Connect Tally</button>
-                <button class="ob-btn" onclick="obSkipTally()">Skip &mdash; use demo data</button>
+                <button class="ob-btn primary" id="ob-connect-btn" onclick="obConnectSetup()">Connect</button>
+                <button class="ob-btn" onclick="obSkipTally()">Skip &mdash; explore with demo data</button>
             </div>
         </div>
 
@@ -8865,7 +8948,7 @@ function qaSimSend() {
             </div>
         </div>
 
-        <!-- Step 3: AI scan -->
+        <!-- Step 3: Scan -->
         <div class="ob-step" data-step="3">
             <h2>Scanning <span id="ob-scan-client-name">Royal Spice Kitchen</span></h2>
             <div class="ob-sub">Live reasoning trace &mdash; this is the same engine that monitors all your clients in the background.</div>
@@ -8946,33 +9029,64 @@ function obGoto(step) {
     });
 }
 
-function obConnectTally() {
+var OB_SELECTED_SETUP = 'tally';
+var OB_SETUP_META = {
+    tally:      { name:'TallyPrime',     desc:'TallyPrime 4.1 · 347 ledgers · 8,412 vouchers indexed',     api:'/api/tally/company' },
+    zoho:       { name:'Zoho Books',     desc:'Zoho OAuth · 5 organisations · 6,210 invoices pulled',     api:null },
+    quickbooks: { name:'QuickBooks',     desc:'QuickBooks Online · 312 ledgers · 4,890 transactions',    api:null },
+    busy:       { name:'BUSY Accounting',desc:'BUSY 21 · SQL connector · 412 ledgers · 9,140 vouchers',   api:null },
+    marg:       { name:'Marg ERP',       desc:'Marg 9.x · daily Excel sync configured',                   api:null },
+    vyapar:     { name:'Vyapar / others',desc:'CSV/Excel upload bridge · drop your books anytime',        api:null },
+    manual:     { name:'Uploaded books', desc:'Excel + Tally backup file received · indexed',             api:null },
+    none:       { name:'GST + MCA only', desc:'No books connected · running on portal feeds + filings',   api:null }
+};
+
+function obSelectSetup(tile) {
+    OB_SELECTED_SETUP = tile.dataset.setup || 'tally';
+    document.querySelectorAll('.ob-setup-tile').forEach(t => t.classList.remove('selected'));
+    tile.classList.add('selected');
+    var btn = document.getElementById('ob-connect-btn');
+    var m = OB_SETUP_META[OB_SELECTED_SETUP];
+    btn.textContent = (OB_SELECTED_SETUP === 'manual') ? 'Upload books' :
+        (OB_SELECTED_SETUP === 'none') ? 'Continue without books' : 'Connect ' + m.name;
+}
+
+function obConnectSetup() {
     var btn = document.getElementById('ob-connect-btn');
     var result = document.getElementById('ob-tally-result');
+    var meta = OB_SETUP_META[OB_SELECTED_SETUP] || OB_SETUP_META.tally;
     btn.disabled = true;
-    btn.textContent = 'Connecting…';
-    fetch('/api/tally/company')
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(data => {
-            // API returns { success: true, data: [companies...] }
-            var c = (data && data.data && data.data[0]) ? data.data[0] : null;
-            if (!c) c = { name: 'Sharma Pharmaceuticals Pvt. Ltd.', tallyVersion: 'TallyPrime 4.1', ledgerCount: 347, voucherCount: 8412 };
-            result.innerHTML = '<strong>&#10003; Connected to ' + c.name + '</strong><br>' +
-                c.tallyVersion + ' &middot; ' + c.ledgerCount + ' ledgers &middot; ' + Number(c.voucherCount || 0).toLocaleString() + ' vouchers indexed';
-            result.classList.add('show');
-            btn.textContent = 'Continue';
-            btn.disabled = false;
-            btn.onclick = function() { obGoto(2); };
-        })
-        .catch(() => {
-            // API unavailable — fall through with demo-style success
-            result.innerHTML = '<strong>&#10003; Connected to demo data</strong><br>TallyPrime 4.1 &middot; 347 ledgers &middot; 8,412 vouchers indexed';
-            result.classList.add('show');
-            btn.textContent = 'Continue';
-            btn.disabled = false;
-            btn.onclick = function() { obGoto(2); };
-        });
+    btn.textContent = OB_SELECTED_SETUP === 'none' ? 'Setting up…' : 'Connecting…';
+
+    var done = function(text) {
+        result.innerHTML = text;
+        result.classList.add('show');
+        btn.textContent = 'Continue';
+        btn.disabled = false;
+        btn.onclick = function() { obGoto(2); };
+    };
+
+    if (meta.api) {
+        fetch(meta.api)
+            .then(r => r.ok ? r.json() : Promise.reject())
+            .then(data => {
+                var c = (data && data.data && data.data[0]) ? data.data[0] : null;
+                if (c) done('<strong>&#10003; Connected to ' + c.name + '</strong><br>' +
+                    (c.tallyVersion || meta.name) + ' &middot; ' + (c.ledgerCount || 0) + ' ledgers &middot; ' +
+                    Number(c.voucherCount || 0).toLocaleString() + ' vouchers indexed');
+                else done('<strong>&#10003; Connected to ' + meta.name + '</strong><br>' + meta.desc);
+            })
+            .catch(() => done('<strong>&#10003; Connected to ' + meta.name + '</strong><br>' + meta.desc));
+    } else {
+        setTimeout(function() {
+            done('<strong>&#10003; Connected to ' + meta.name + '</strong><br>' + meta.desc);
+        }, 700);
+    }
 }
+
+// Legacy alias (kept for any old call sites)
+function obConnectTally() { obConnectSetup(); }
+
 function obSkipTally() {
     var result = document.getElementById('ob-tally-result');
     result.innerHTML = '<strong>Using demo data</strong><br>6 sample clients across pharma, auto, F&amp;B, NBFC, IT, real estate';
@@ -8990,7 +9104,7 @@ function obSelectClient(id) {
 }
 
 var OB_SCAN_LINES = [
-    [400,  'Connecting to client books via Tally ODBC…'],
+    [400,  'Reading client books from connected accounting setup…'],
     [2200, 'Pulled <strong>4 outlet records</strong>, <strong>3 active FSSAI licences</strong>'],
     [4000, 'Crawling FSSAI gazette portal for changes since last scan…'],
     [6500, 'Found: <strong>FSSAI Licensing Amendment 2026</strong> (gazette dt. 10 March)'],
@@ -9127,7 +9241,7 @@ function confirmBoxModify(btn) {
     if (input) input.focus();
 }
 
-// Chat / agent send button: append a user bubble + faked AI placeholder.
+// Chat / agent send button: append a user bubble + faked response placeholder.
 function chatSendFromInput(scope) {
     var sel = scope === 'agent' ? '#screen-agent' : '#screen-chat';
     var input = document.querySelector(sel + ' ' + (scope === 'agent' ? '.agent-input-bar' : '.chat-input-bar') + ' input');
