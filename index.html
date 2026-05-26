@@ -989,6 +989,25 @@
             position: relative;
         }
 
+        .header-today {
+            position: relative;
+            height: 38px; padding: 0 14px 0 12px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text-mid);
+            display: inline-flex; align-items: center; gap: 7px;
+            font-family: inherit; font-size: 12.5px; font-weight: 600;
+        }
+        .header-today svg { width: 15px; height: 15px; }
+        .header-today:hover { border-color: var(--accent); color: var(--accent); }
+        .header-today .header-today-badge {
+            min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+            background: var(--danger); color: #fff; font-size: 10px; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-left: 2px;
+        }
         .header-bell {
             position: relative;
             width: 38px; height: 38px;
@@ -1729,6 +1748,67 @@
         .filter-count-badge {
             margin-left: auto; font-size: 11px; color: var(--text-light); font-weight: 500; white-space: nowrap;
         }
+        .clients-search {
+            position: relative; flex: 1 1 240px; max-width: 320px;
+            display: flex; align-items: center;
+        }
+        .clients-search svg { position: absolute; left: 10px; width: 14px; height: 14px; color: var(--text-light); pointer-events: none; }
+        .clients-search input {
+            width: 100%; padding: 7px 12px 7px 32px; font: inherit; font-size: 12px;
+            border: 1px solid var(--border); border-radius: 8px;
+            background: var(--bg-main); color: var(--text-dark); outline: none;
+        }
+        .clients-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(22,163,74,0.08); }
+        .clients-add-btn {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 7px 14px; font-size: 12px; font-weight: 600;
+            white-space: nowrap;
+        }
+        .clients-add-btn svg { stroke-width: 2.4; }
+
+        /* Live portal sync bar (home + clients) */
+        .live-sync-bar {
+            display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+            padding: 12px 18px; margin-bottom: 18px;
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+            border: 1px solid rgba(34,197,94,0.32);
+            border-radius: 14px;
+            box-shadow: 0 1px 0 rgba(34,197,94,0.06);
+        }
+        .live-sync-bar .lsb-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; flex-wrap: wrap; }
+        .live-sync-bar .lsb-live {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 10px; font-weight: 800; letter-spacing: 1px;
+            color: #15803d; padding: 4px 9px; background: #fff;
+            border: 1px solid rgba(34,197,94,0.45); border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .live-sync-bar .lsb-live-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #16a34a;
+            box-shadow: 0 0 0 0 rgba(22,163,74,0.7);
+            animation: lsb-pulse 1.6s ease-out infinite;
+        }
+        @keyframes lsb-pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(22,163,74,0.6); }
+            70%  { box-shadow: 0 0 0 8px rgba(22,163,74,0); }
+            100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); }
+        }
+        .live-sync-bar .lsb-title { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+        .live-sync-bar .lsb-title strong { color: #15803d; }
+        .live-sync-bar .lsb-sync { font-size: 11px; color: var(--text-light); margin-left: auto; }
+        .live-sync-bar .lsb-portals { display: flex; gap: 6px; flex-wrap: wrap; }
+        .live-sync-bar .lsb-portal {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 10.5px; font-weight: 600;
+            padding: 4px 9px; background: #fff;
+            border: 1px solid rgba(34,197,94,0.25); border-radius: 20px;
+            color: #15803d;
+        }
+        .live-sync-bar .lsb-pd {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #16a34a;
+        }
 
         /* Client detail page */
         .client-detail-page { max-width: 1080px; }
@@ -1825,6 +1905,133 @@
             display: inline-flex; align-items: center; gap: 5px;
         }
         .cd-portal-chip::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--success); }
+
+        /* Detail page: header action icons + dashboard row */
+        .client-detail-header .cdh-id { min-width: 0; }
+        .cdh-iconbtn {
+            width: 34px; height: 34px; padding: 0; border-radius: 9px;
+            border: 1px solid var(--border); background: #fff;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: var(--text-mid); cursor: pointer;
+        }
+        .cdh-iconbtn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-bg); }
+        .cdh-iconbtn svg { width: 15px; height: 15px; }
+
+        .cd-dash-row {
+            display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr;
+            gap: 12px; margin-bottom: 16px;
+        }
+        .cd-dash-card {
+            background: var(--bg-white); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px 18px; position: relative;
+        }
+        .cd-card-label {
+            font-size: 11px; font-weight: 600; color: var(--text-mid);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+        }
+        .cd-card-value {
+            font-size: 22px; font-weight: 700; color: var(--text-dark);
+            letter-spacing: -0.4px; line-height: 1.1; margin-bottom: 4px;
+        }
+        .cd-card-sub { font-size: 11px; color: var(--text-light); margin-bottom: 8px; }
+        .cd-trend { font-size: 11px; font-weight: 600; }
+        .cd-trend.up { color: var(--success); }
+        .cd-trend.down { color: var(--danger); }
+        .cd-bar {
+            height: 6px; background: var(--border-light); border-radius: 3px;
+            overflow: hidden; margin-top: 6px;
+        }
+        .cd-bar-fill {
+            display: block; height: 100%; background: linear-gradient(90deg, #22c55e, #16a34a);
+            border-radius: 3px;
+        }
+
+        /* Score ring */
+        .cd-score-card { display: flex; align-items: center; gap: 16px; padding: 14px 18px; }
+        .cd-score-ring {
+            position: relative; width: 96px; height: 96px; flex-shrink: 0;
+        }
+        .cd-score-ring svg { width: 100%; height: 100%; }
+        .cd-score-inner {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .cd-score-num { font-size: 24px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.8px; }
+        .cd-score-label { font-size: 10px; color: var(--text-light); font-weight: 600; margin-top: -2px; }
+        .cd-score-title { font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+        .cd-score-sub { font-size: 11px; color: var(--text-light); line-height: 1.5; }
+
+        /* Two-col layout for client detail */
+        .cd-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .cd-two-col .cd-section { margin-bottom: 16px; }
+        @media (max-width: 980px) {
+            .cd-two-col { grid-template-columns: 1fr; }
+            .cd-dash-row { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* Filing timeline */
+        .cd-timeline { display: flex; flex-direction: column; gap: 8px; }
+        .ctl-row {
+            display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 10px;
+            padding: 8px 0; border-bottom: 1px dashed var(--border-light);
+        }
+        .ctl-row:last-child { border-bottom: none; }
+        .ctl-month { font-size: 11px; font-weight: 700; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.4px; }
+        .ctl-bar { position: relative; height: 24px; background: var(--bg-main); border-radius: 6px; overflow: hidden; }
+        .ctl-pip {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 16px; height: 16px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 9px; font-weight: 800; color: #fff;
+            border: 2px solid #fff;
+        }
+        .ctl-pip.ok { background: var(--success); }
+        .ctl-pip.warn { background: var(--warning); }
+        .ctl-pip.danger { background: var(--danger); }
+        .ctl-pip.upcoming { background: var(--text-light); }
+        .ctl-count { font-size: 11px; font-weight: 600; color: var(--text-mid); white-space: nowrap; }
+        .cd-timeline-legend {
+            display: flex; gap: 14px; margin-top: 10px; padding-top: 10px;
+            border-top: 1px solid var(--border-light);
+            font-size: 11px; color: var(--text-mid);
+        }
+        .cd-timeline-legend span { display: inline-flex; align-items: center; gap: 5px; }
+        .ctl-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .ctl-dot.ok { background: var(--success); }
+        .ctl-dot.warn { background: var(--warning); }
+        .ctl-dot.danger { background: var(--danger); }
+        .ctl-dot.upcoming { background: var(--text-light); }
+
+        /* Portal sync rows */
+        .cd-portal-rows { display: flex; flex-direction: column; gap: 10px; }
+        .cdpr-row {
+            display: grid; grid-template-columns: 130px 1fr auto; gap: 12px; align-items: center;
+            padding: 10px 12px; background: var(--bg-main); border-radius: 8px;
+            border: 1px solid var(--border-light);
+        }
+        .cdpr-name { font-size: 12px; font-weight: 600; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
+        .cdpr-name::before {
+            content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--success);
+            box-shadow: 0 0 0 3px rgba(34,197,94,0.18);
+        }
+        .cdpr-row.warn .cdpr-name::before { background: var(--warning); box-shadow: 0 0 0 3px rgba(217,119,6,0.18); }
+        .cdpr-row.down .cdpr-name::before { background: var(--danger); box-shadow: 0 0 0 3px rgba(220,38,38,0.2); }
+        .cdpr-meta { font-size: 11px; color: var(--text-light); }
+        .cdpr-time { font-size: 11px; font-weight: 600; color: var(--text-mid); white-space: nowrap; }
+
+        /* Activity feed */
+        .cd-activity { display: flex; flex-direction: column; gap: 0; }
+        .cda-row {
+            display: flex; gap: 12px; padding: 10px 0;
+            border-bottom: 1px solid var(--border-light); font-size: 12px;
+        }
+        .cda-row:last-child { border-bottom: none; }
+        .cda-time { width: 64px; flex-shrink: 0; font-size: 11px; color: var(--text-light); font-weight: 600; }
+        .cda-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-top: 6px; flex-shrink: 0; }
+        .cda-dot.warn { background: var(--warning); }
+        .cda-dot.danger { background: var(--danger); }
+        .cda-text { flex: 1; color: var(--text-mid); line-height: 1.5; }
+        .cda-text strong { color: var(--text-dark); font-weight: 600; }
 
         /* Chat */
         .chat-wrap {
@@ -3774,10 +3981,6 @@
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"/></svg>
                 Home
             </div>
-            <div class="nav-btn" data-screen="dashboard">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Today
-            </div>
             <div class="nav-btn" data-screen="clients">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 Clients
@@ -3815,6 +4018,11 @@
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <input type="text" placeholder="Search regulations, clients, circulars..." id="global-search">
             </div>
+            <button class="header-today" title="Today's checklist" onclick="navTo('dashboard')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="header-today-label">Today</span>
+                <span class="header-today-badge">7</span>
+            </button>
             <button class="header-bell" title="Notifications">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                 <span class="header-bell-dot"></span>
@@ -3833,6 +4041,23 @@
             <div class="screen active" id="screen-home">
                 <div class="home-page">
                     <!-- Brand hero card -->
+                    <!-- Live portal sync bar -->
+                    <section class="live-sync-bar">
+                        <div class="lsb-left">
+                            <span class="lsb-live"><span class="lsb-live-dot"></span>LIVE</span>
+                            <span class="lsb-title">Compliance dashboard &middot; auto-fetched from govt portals</span>
+                            <span class="lsb-sync">Synced 2 min ago &middot; next refresh in 3 min</span>
+                        </div>
+                        <div class="lsb-portals" id="lsb-portals">
+                            <span class="lsb-portal" data-portal="GSTN"><span class="lsb-pd"></span>GSTN</span>
+                            <span class="lsb-portal" data-portal="MCA21"><span class="lsb-pd"></span>MCA21</span>
+                            <span class="lsb-portal" data-portal="CBDT"><span class="lsb-pd"></span>CBDT</span>
+                            <span class="lsb-portal" data-portal="FOSCOS"><span class="lsb-pd"></span>FOSCOS</span>
+                            <span class="lsb-portal" data-portal="RBI"><span class="lsb-pd"></span>RBI CIMS</span>
+                            <span class="lsb-portal" data-portal="MahaRERA"><span class="lsb-pd"></span>MahaRERA</span>
+                        </div>
+                    </section>
+
                     <section class="home-hero">
                         <div class="home-hero-pattern" aria-hidden="true"></div>
                         <div class="home-hero-content">
@@ -4002,27 +4227,32 @@
                             </div>
                         </section>
 
-                        <!-- Today's checklist (deprioritized) -->
+                        <!-- AI activity -->
                         <section class="home-card">
                             <div class="home-card-head">
-                                <h3>Today&rsquo;s checklist</h3>
-                                <button class="home-card-link" onclick="navTo('dashboard')">Open Today &rarr;</button>
+                                <h3>What Reg Mitra did today</h3>
+                                <button class="home-card-link" onclick="navTo('dashboard')">Full log &rarr;</button>
                             </div>
                             <div class="home-card-body">
-                                <div class="home-line urgent">
-                                    <span class="home-line-tag">Overdue</span>
-                                    <div class="home-line-text"><strong>FSSAI licence transition</strong> &mdash; confirm perpetual opt-in</div>
-                                    <span class="home-line-meta">Royal Spice</span>
+                                <div class="home-activity">
+                                    <span class="home-activity-time">9:15&nbsp;AM</span>
+                                    <span class="home-activity-dot scan"></span>
+                                    <span class="home-activity-text">Auto-fetched <strong>38 filings</strong> across portals</span>
                                 </div>
-                                <div class="home-line">
-                                    <span class="home-line-tag soon">Today</span>
-                                    <div class="home-line-text"><strong>TDS Deposit</strong> &mdash; Q4 challan 281 ready</div>
-                                    <span class="home-line-meta">All clients</span>
+                                <div class="home-activity">
+                                    <span class="home-activity-time">9:17&nbsp;AM</span>
+                                    <span class="home-activity-dot draft"></span>
+                                    <span class="home-activity-text">Drafted briefing for <strong>Lakshmi FinServ</strong> &mdash; capital planning</span>
                                 </div>
-                                <div class="home-line">
-                                    <span class="home-line-tag soon">Tomorrow</span>
-                                    <div class="home-line-text"><strong>IGST rate change</strong> &mdash; 3 invoices need sign-off</div>
-                                    <span class="home-line-meta">Sharma Pharma</span>
+                                <div class="home-activity">
+                                    <span class="home-activity-time">9:18&nbsp;AM</span>
+                                    <span class="home-activity-dot alert"></span>
+                                    <span class="home-activity-text">Flagged <strong>cross-regulation conflict</strong> &mdash; Gupta Auto OEM contracts</span>
+                                </div>
+                                <div class="home-activity">
+                                    <span class="home-activity-time">9:19&nbsp;AM</span>
+                                    <span class="home-activity-dot flag"></span>
+                                    <span class="home-activity-text">Detected via FOSCOS portal: <strong>FSSAI opt-in overdue</strong> &mdash; Royal Spice</span>
                                 </div>
                             </div>
                         </section>
@@ -4339,13 +4569,31 @@
 
             <!-- CLIENTS -->
             <div class="screen" id="screen-clients">
+                <section class="live-sync-bar" style="margin-bottom:16px">
+                    <div class="lsb-left">
+                        <span class="lsb-live"><span class="lsb-live-dot"></span>LIVE</span>
+                        <span class="lsb-title">6 clients &middot; <strong>142 filings</strong> auto-tracked from govt portals</span>
+                        <span class="lsb-sync">Synced 2 min ago</span>
+                    </div>
+                    <div class="lsb-portals">
+                        <span class="lsb-portal"><span class="lsb-pd"></span>GSTN</span>
+                        <span class="lsb-portal"><span class="lsb-pd"></span>MCA21</span>
+                        <span class="lsb-portal"><span class="lsb-pd"></span>CBDT</span>
+                        <span class="lsb-portal"><span class="lsb-pd"></span>FOSCOS</span>
+                        <span class="lsb-portal"><span class="lsb-pd"></span>RBI</span>
+                    </div>
+                </section>
                 <div class="section-heading" style="margin-bottom:4px">Client Portfolio</div>
                 <p class="screen-desc">Live compliance status for every client &mdash; <strong>auto-fetched from govt portals</strong> (GSTN, MCA21, CBDT, FSSAI, RBI CIMS). Click a client to open their full dashboard.</p>
                 <div class="screen-filter-bar">
-                    <span class="filter-label">Sector</span>
+                    <div class="clients-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <input type="text" id="clients-search" placeholder="Search clients by name or GSTIN…" oninput="filterClients()">
+                    </div>
                     <span class="filter-sep"></span>
-                    <select class="company-select" id="clients-sector-filter" onchange="filterClients()" style="min-width:160px">
-                        <option value="all" selected>All Sectors</option>
+                    <span class="filter-label">Sector</span>
+                    <select class="company-select" id="clients-sector-filter" onchange="filterClients()" style="min-width:140px">
+                        <option value="all" selected>All</option>
                         <option value="pharma">Pharma</option>
                         <option value="auto">Auto</option>
                         <option value="fnb">F&B</option>
@@ -4353,16 +4601,25 @@
                         <option value="it">IT</option>
                         <option value="realestate">Real Estate</option>
                     </select>
-                    <span class="filter-sep"></span>
                     <span class="filter-label">Risk</span>
-                    <span class="filter-sep"></span>
-                    <select class="company-select" id="clients-risk-filter" onchange="filterClients()" style="min-width:150px">
-                        <option value="all" selected>All Levels</option>
+                    <select class="company-select" id="clients-risk-filter" onchange="filterClients()" style="min-width:130px">
+                        <option value="all" selected>All</option>
                         <option value="high">High (7+)</option>
                         <option value="medium">Medium (4-7)</option>
                         <option value="low">Low (0-4)</option>
                     </select>
+                    <span class="filter-label">Sort</span>
+                    <select class="company-select" id="clients-sort" onchange="filterClients()" style="min-width:150px">
+                        <option value="risk-desc" selected>Highest risk</option>
+                        <option value="risk-asc">Lowest risk</option>
+                        <option value="name-asc">Name (A–Z)</option>
+                        <option value="pending-desc">Most pending</option>
+                    </select>
                     <span class="filter-count-badge" id="clients-filter-count">Showing 6 clients</span>
+                    <button class="btn btn-primary clients-add-btn" onclick="openAddClient()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                        Add client
+                    </button>
                 </div>
                 <div class="client-grid">
                     <div class="client-card" data-sector="pharma" data-risk="6.8" onclick="openClient('sharma')">
@@ -4461,17 +4718,59 @@
                     </button>
                     <div class="client-detail-header">
                         <div class="av" id="cd-avatar"></div>
-                        <div>
+                        <div class="cdh-id">
                             <h2 id="cd-name"></h2>
                             <div class="cdh-sub" id="cd-sector"></div>
                         </div>
                         <div class="cdh-actions">
+                            <button class="cdh-iconbtn" title="WhatsApp" onclick="cdQuick('whatsapp')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0c-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5s-.7-1.7-1-2.3c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-1 1-1.3 2.3-1.3 3.7 0 .2 0 .4.1.6.3 1.3 1 2.5 1.9 3.6 1.3 1.6 3 2.9 4.9 3.7.6.2 1.1.4 1.5.5.7.2 1.3.2 1.8.1.5-.1 1.7-.7 2-1.3.3-.7.3-1.2.2-1.3 0-.1-.2-.2-.5-.4zM12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.5A10 10 0 1012 2z"/></svg></button>
+                            <button class="cdh-iconbtn" title="Email" onclick="cdQuick('email')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></button>
+                            <button class="cdh-iconbtn" title="Schedule call" onclick="cdQuick('schedule')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V3M16 7V3M3 11h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg></button>
+                            <button class="cdh-iconbtn" title="Download report" onclick="cdQuick('download')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg></button>
                             <button class="btn btn-primary" onclick="navTo('briefings')">Generate Briefing</button>
                             <button class="btn btn-outline" onclick="navTo('feed')">View History</button>
                         </div>
                     </div>
 
                     <div class="cd-portal-bar" id="cd-portal-bar"></div>
+
+                    <!-- Top dashboard row: health score + filings YTD + tax paid + ROI -->
+                    <div class="cd-dash-row">
+                        <div class="cd-dash-card cd-score-card">
+                            <div class="cd-score-ring" id="cd-score-ring">
+                                <svg viewBox="0 0 120 120">
+                                    <circle cx="60" cy="60" r="52" stroke="#e5e7eb" stroke-width="10" fill="none"/>
+                                    <circle id="cd-score-arc" cx="60" cy="60" r="52" stroke="#16a34a" stroke-width="10" fill="none" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="326.7" stroke-dashoffset="0"/>
+                                </svg>
+                                <div class="cd-score-inner">
+                                    <div class="cd-score-num" id="cd-score-num">0</div>
+                                    <div class="cd-score-label">/ 100</div>
+                                </div>
+                            </div>
+                            <div class="cd-score-meta">
+                                <div class="cd-score-title">Compliance health</div>
+                                <div class="cd-score-sub" id="cd-score-sub">Across 6 portal feeds</div>
+                            </div>
+                        </div>
+                        <div class="cd-dash-card">
+                            <div class="cd-card-label">Filings YTD</div>
+                            <div class="cd-card-value" id="cd-stat-filings">0</div>
+                            <div class="cd-card-sub" id="cd-stat-filings-sub">Auto-fetched from portals</div>
+                            <div class="cd-trend up"><span>▲ on track</span></div>
+                        </div>
+                        <div class="cd-dash-card">
+                            <div class="cd-card-label">Tax remitted FY26</div>
+                            <div class="cd-card-value" id="cd-stat-tax">₹0</div>
+                            <div class="cd-card-sub">TDS + GST + IT</div>
+                            <div class="cd-bar"><span class="cd-bar-fill" id="cd-tax-bar" style="width:0%"></span></div>
+                        </div>
+                        <div class="cd-dash-card">
+                            <div class="cd-card-label">Partner time saved</div>
+                            <div class="cd-card-value" id="cd-stat-roi">0 hrs</div>
+                            <div class="cd-card-sub" id="cd-stat-roi-sub">vs manual workflow · this month</div>
+                            <div class="cd-trend up"><span>▲ +18% MoM</span></div>
+                        </div>
+                    </div>
 
                     <div class="cd-section">
                         <div class="cd-section-title">
@@ -4481,9 +4780,22 @@
                         <div class="cd-status-grid" id="cd-status-grid"></div>
                     </div>
 
-                    <div class="cd-section">
-                        <div class="cd-section-title">Portfolio snapshot</div>
-                        <div class="cd-stat-row" id="cd-stats"></div>
+                    <!-- Two-col: filing timeline + portal sync health -->
+                    <div class="cd-two-col">
+                        <div class="cd-section">
+                            <div class="cd-section-title">Filing timeline (next 6 months)</div>
+                            <div class="cd-timeline" id="cd-timeline"></div>
+                            <div class="cd-timeline-legend">
+                                <span><span class="ctl-dot ok"></span>Filed</span>
+                                <span><span class="ctl-dot warn"></span>Due soon</span>
+                                <span><span class="ctl-dot danger"></span>Overdue</span>
+                                <span><span class="ctl-dot upcoming"></span>Upcoming</span>
+                            </div>
+                        </div>
+                        <div class="cd-section">
+                            <div class="cd-section-title">Portal sync health</div>
+                            <div class="cd-portal-rows" id="cd-portal-rows"></div>
+                        </div>
                     </div>
 
                     <div class="cd-section">
@@ -4491,9 +4803,16 @@
                         <div id="cd-pending"></div>
                     </div>
 
-                    <div class="cd-section">
-                        <div class="cd-section-title">Applicable regulations this month</div>
-                        <div id="cd-regs"></div>
+                    <!-- Two-col: applicable regs + activity feed -->
+                    <div class="cd-two-col">
+                        <div class="cd-section">
+                            <div class="cd-section-title">Applicable regulations this month</div>
+                            <div id="cd-regs"></div>
+                        </div>
+                        <div class="cd-section">
+                            <div class="cd-section-title">Recent activity (last 7 days)</div>
+                            <div class="cd-activity" id="cd-activity"></div>
+                        </div>
                     </div>
 
                     <div class="cd-section">
@@ -7393,7 +7712,7 @@ function closeCalPopup() {
 // Navigate to screen
 function navTo(screen) {
     // Map removed-nav screens back to their nearest visible nav button
-    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', calendar:'dashboard', 'client-detail':'clients' };
+    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', calendar:'home', dashboard:'home', 'client-detail':'clients' };
     var navTarget = navMap[screen] || screen;
     document.querySelectorAll('.nav-btn').forEach(b => {
         b.classList.remove('active');
@@ -7545,21 +7864,48 @@ function filterFeed() {
 function filterClients() {
     var sectorVal = document.getElementById('clients-sector-filter').value;
     var riskVal = document.getElementById('clients-risk-filter').value;
-    var cards = document.querySelectorAll('.client-card[data-sector]');
+    var sortEl = document.getElementById('clients-sort');
+    var sortVal = sortEl ? sortEl.value : 'risk-desc';
+    var qEl = document.getElementById('clients-search');
+    var q = (qEl ? qEl.value : '').trim().toLowerCase();
+    var grid = document.querySelector('#screen-clients .client-grid');
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.client-card[data-sector]'));
+
+    // Sort in DOM
+    cards.sort(function(a, b) {
+        var ra = parseFloat(a.dataset.risk || '0'), rb = parseFloat(b.dataset.risk || '0');
+        var na = (a.querySelector('.name') || {}).textContent || '';
+        var nb = (b.querySelector('.name') || {}).textContent || '';
+        var pa = parseInt((a.querySelector('.metric .num') || {}).textContent || '0', 10);
+        var pb = parseInt((b.querySelector('.metric .num') || {}).textContent || '0', 10);
+        if (sortVal === 'risk-asc')     return ra - rb;
+        if (sortVal === 'name-asc')     return na.localeCompare(nb);
+        if (sortVal === 'pending-desc') return pb - pa;
+        return rb - ra; // risk-desc default
+    });
+    cards.forEach(function(c) { grid.appendChild(c); });
+
     var count = 0;
     cards.forEach(function(card) {
         var sec = card.dataset.sector || '';
         var risk = parseFloat(card.dataset.risk || '0');
+        var name = ((card.querySelector('.name') || {}).textContent || '').toLowerCase();
         var sectorMatch = sectorVal === 'all' || sec === sectorVal;
         var riskMatch = riskVal === 'all' ||
             (riskVal === 'high' && risk >= 7) ||
             (riskVal === 'medium' && risk >= 4 && risk < 7) ||
             (riskVal === 'low' && risk < 4);
-        if (sectorMatch && riskMatch) { card.style.display = ''; count++; }
+        var qMatch = !q || name.indexOf(q) !== -1;
+        if (sectorMatch && riskMatch && qMatch) { card.style.display = ''; count++; }
         else { card.style.display = 'none'; }
     });
     var badge = document.getElementById('clients-filter-count');
     if (badge) badge.textContent = 'Showing ' + count + ' client' + (count !== 1 ? 's' : '');
+}
+
+function openAddClient() {
+    alert('Add client — demo only. In production: opens a multi-step form to onboard a client and connect their portals (GSTIN auto-detected, MCA + CBDT auth via SSO, Tally Cloud or books upload).');
 }
 
 function filterCalendar() {
@@ -7775,6 +8121,142 @@ const CLIENT_AVATAR = {
 const COMMON_PORTAL_BAR = [
     'GSTN','CBDT (incometax.gov.in)','MCA21','RBI CIMS','FSSAI','Tally Cloud'
 ];
+
+// Per-client meta for visualizations (mocked for demo)
+const CLIENT_META = {
+    sharma:    { score:78, scoreSub:'2 portal items need attention',  filings:32, filingsSub:'GSTR, TDS, MCA · FY26 YTD', tax:'₹4.2 Cr',  taxPct:78, roi:'12 hrs', roiSub:'~₹24K · this month' },
+    nexgen:    { score:88, scoreSub:'All portal feeds healthy',       filings:28, filingsSub:'GSTR, TDS, MCA · FY26 YTD', tax:'₹1.6 Cr',  taxPct:64, roi:'4 hrs',  roiSub:'~₹9K · this month' },
+    gupta:     { score:54, scoreSub:'4 portal items need attention',  filings:36, filingsSub:'GSTR, TDS, MCA, DISH · FY26 YTD', tax:'₹9.7 Cr', taxPct:82, roi:'16 hrs', roiSub:'~₹32K · this month' },
+    royal:     { score:62, scoreSub:'FSSAI opt-in overdue',           filings:24, filingsSub:'GSTR, TDS, FSSAI · FY26 YTD', tax:'₹1.8 Cr', taxPct:70, roi:'7 hrs',  roiSub:'~₹14K · this month' },
+    lakshmi:   { score:84, scoreSub:'RBI capital plan due 31 May',    filings:42, filingsSub:'GSTR, TDS, MCA, RBI · FY26 YTD', tax:'₹2.9 Cr', taxPct:74, roi:'9 hrs',  roiSub:'~₹18K · this month' },
+    greenfield:{ score:92, scoreSub:'LLP Form 11 due 30 May',         filings:18, filingsSub:'GSTR, TDS, MCA, RERA · FY26 YTD', tax:'₹86 L',   taxPct:58, roi:'3 hrs',  roiSub:'~₹6K · this month' }
+};
+
+// Filing timeline: months Mar–Aug with counts per state per client
+const CLIENT_TIMELINE = {
+    sharma:     [{m:'Mar 26',ok:4,warn:0,danger:0,up:0},{m:'Apr 26',ok:4,warn:0,danger:0,up:0},{m:'May 26',ok:2,warn:2,danger:0,up:1},{m:'Jun 26',ok:0,warn:1,danger:0,up:3},{m:'Jul 26',ok:0,warn:0,danger:0,up:4},{m:'Aug 26',ok:0,warn:0,danger:0,up:4}],
+    nexgen:     [{m:'Mar 26',ok:3,warn:0,danger:0,up:0},{m:'Apr 26',ok:3,warn:0,danger:0,up:0},{m:'May 26',ok:2,warn:1,danger:0,up:1},{m:'Jun 26',ok:0,warn:0,danger:0,up:3},{m:'Jul 26',ok:0,warn:1,danger:0,up:3},{m:'Aug 26',ok:0,warn:0,danger:0,up:3}],
+    gupta:      [{m:'Mar 26',ok:4,warn:0,danger:0,up:0},{m:'Apr 26',ok:3,warn:0,danger:1,up:0},{m:'May 26',ok:1,warn:1,danger:2,up:1},{m:'Jun 26',ok:0,warn:2,danger:0,up:3},{m:'Jul 26',ok:0,warn:0,danger:0,up:4},{m:'Aug 26',ok:0,warn:0,danger:0,up:4}],
+    royal:      [{m:'Mar 26',ok:3,warn:0,danger:0,up:0},{m:'Apr 26',ok:2,warn:0,danger:1,up:0},{m:'May 26',ok:2,warn:1,danger:1,up:1},{m:'Jun 26',ok:0,warn:1,danger:0,up:3},{m:'Jul 26',ok:0,warn:0,danger:0,up:3},{m:'Aug 26',ok:0,warn:0,danger:0,up:3}],
+    lakshmi:    [{m:'Mar 26',ok:5,warn:0,danger:0,up:0},{m:'Apr 26',ok:5,warn:0,danger:0,up:0},{m:'May 26',ok:4,warn:1,danger:0,up:1},{m:'Jun 26',ok:0,warn:0,danger:0,up:5},{m:'Jul 26',ok:0,warn:0,danger:0,up:5},{m:'Aug 26',ok:0,warn:0,danger:0,up:5}],
+    greenfield: [{m:'Mar 26',ok:2,warn:0,danger:0,up:0},{m:'Apr 26',ok:2,warn:0,danger:0,up:0},{m:'May 26',ok:1,warn:1,danger:0,up:1},{m:'Jun 26',ok:0,warn:0,danger:0,up:2},{m:'Jul 26',ok:0,warn:0,danger:0,up:2},{m:'Aug 26',ok:0,warn:0,danger:0,up:2}]
+};
+
+// Portal sync health (last successful sync per portal)
+const CLIENT_PORTAL_HEALTH = {
+    sharma: [
+        { name:'GSTN',     state:'ok',   meta:'gst.gov.in · GSTR-1/3B/2B feed',     time:'2 min ago' },
+        { name:'MCA21',    state:'warn', meta:'mca.gov.in · DIN-KYC partial',       time:'4 min ago' },
+        { name:'CBDT',     state:'ok',   meta:'incometax.gov.in · TDS, 26AS, AIS',  time:'3 min ago' },
+        { name:'CDSCO',    state:'ok',   meta:'cdscoonline.gov.in · mfg. licence',  time:'1 hr ago' },
+        { name:'Tally',    state:'ok',   meta:'Tally Cloud · books up to date',     time:'7 min ago' }
+    ],
+    nexgen: [
+        { name:'GSTN',     state:'ok',   meta:'gst.gov.in · GSTR feed',             time:'2 min ago' },
+        { name:'MCA21',    state:'warn', meta:'mca.gov.in · DIN-KYC 1/2',           time:'5 min ago' },
+        { name:'CBDT',     state:'ok',   meta:'incometax.gov.in · TDS feed',        time:'3 min ago' },
+        { name:'Kar. S&E', state:'warn', meta:'kar.eshram.gov.in · OT policy',      time:'30 min ago' },
+        { name:'STPI',     state:'ok',   meta:'stpi.in · quarterly return',         time:'4 hr ago' }
+    ],
+    gupta: [
+        { name:'GSTN',     state:'warn', meta:'gst.gov.in · GSTR-3B unfiled',       time:'2 min ago' },
+        { name:'MCA21',    state:'down', meta:'mca.gov.in · DIN-KYC 0/4 verified',  time:'5 min ago' },
+        { name:'CBDT',     state:'ok',   meta:'incometax.gov.in · TDS feed',        time:'3 min ago' },
+        { name:'DISH',     state:'warn', meta:'haryanadish.gov.in · renewal',       time:'15 min ago' },
+        { name:'Tally',    state:'ok',   meta:'Tally Cloud · books synced',         time:'8 min ago' }
+    ],
+    royal: [
+        { name:'FOSCOS',   state:'down', meta:'foscos.fssai.gov.in · opt-in due',   time:'2 min ago' },
+        { name:'GSTN',     state:'ok',   meta:'gst.gov.in · GSTR feed',             time:'2 min ago' },
+        { name:'CBDT',     state:'ok',   meta:'incometax.gov.in · TDS feed',        time:'3 min ago' },
+        { name:'MCA21',    state:'ok',   meta:'mca.gov.in · DIN-KYC verified',      time:'4 min ago' },
+        { name:'Delhi LBR',state:'ok',   meta:'labour.delhi.gov.in · S&E active',   time:'1 hr ago' }
+    ],
+    lakshmi: [
+        { name:'GSTN',     state:'ok',   meta:'gst.gov.in · GSTR feed',             time:'2 min ago' },
+        { name:'CBDT',     state:'ok',   meta:'incometax.gov.in · TDS feed',        time:'3 min ago' },
+        { name:'MCA21',    state:'ok',   meta:'mca.gov.in · DIN-KYC verified',      time:'4 min ago' },
+        { name:'RBI CIMS', state:'warn', meta:'cims.rbi.org.in · capital plan due', time:'10 min ago' },
+        { name:'Tally',    state:'ok',   meta:'Tally Cloud · books synced',         time:'6 min ago' }
+    ],
+    greenfield: [
+        { name:'GSTN',     state:'ok',   meta:'gst.gov.in · GSTR feed',             time:'2 min ago' },
+        { name:'MCA21',    state:'warn', meta:'mca.gov.in · LLP Form 11 due',       time:'5 min ago' },
+        { name:'CBDT',     state:'ok',   meta:'incometax.gov.in · TDS feed',        time:'3 min ago' },
+        { name:'MahaRERA', state:'ok',   meta:'maharerait.maharashtra.gov.in',      time:'20 min ago' },
+        { name:'Tally',    state:'ok',   meta:'Tally Cloud · books synced',         time:'9 min ago' }
+    ]
+};
+
+// Recent activity (last 7 days)
+const CLIENT_ACTIVITY = {
+    sharma: [
+        { t:'Today',   d:'ok',     x:'Auto-fetched <strong>GSTR-3B Apr 2026</strong> filing receipt from gst.gov.in' },
+        { t:'Today',   d:'warn',   x:'Flagged <strong>IGST HSN update</strong> — 3 invoices need sign-off (CBIC notification)' },
+        { t:'Yesterday',d:'ok',    x:'Briefing sent to <strong>Mr. Sharma</strong> via WhatsApp (IGST rate change)' },
+        { t:'2 d ago', d:'ok',     x:'Tally reconciled · GSTR-2B ITC matched 96.4%' },
+        { t:'4 d ago', d:'warn',   x:'<strong>DIN-KYC reminder</strong> — 2 of 4 directors still pending' }
+    ],
+    nexgen: [
+        { t:'Today',   d:'ok',     x:'Karnataka labour portal scan complete · no new circulars' },
+        { t:'Yesterday',d:'warn',  x:'<strong>S&E OT-policy</strong> revision flagged — draft circulated' },
+        { t:'2 d ago', d:'ok',     x:'STPI quarterly return acknowledged · ARN RC-2026-04' },
+        { t:'5 d ago', d:'ok',     x:'Briefing sent via Email · TDS rate FY26-27 summary' }
+    ],
+    gupta: [
+        { t:'Today',   d:'danger', x:'<strong>GSTR-3B unfiled</strong> — due 20 May, no challan generated' },
+        { t:'Today',   d:'danger', x:'DIN-KYC scan: <strong>0 of 4 directors verified</strong> on MCA21' },
+        { t:'Yesterday',d:'warn',  x:'3 IGST conflicts flagged in OEM contracts (Maruti, Tata, M&M)' },
+        { t:'3 d ago', d:'ok',     x:'TDS Q4 challan filed · ARN TC-2026-04' },
+        { t:'6 d ago', d:'warn',   x:'Haryana DISH portal scan: factory licence renewal due 30 Jun' }
+    ],
+    royal: [
+        { t:'Today',   d:'danger', x:'<strong>FSSAI opt-in OVERDUE</strong> since 2 May (FOSCOS auto-detect)' },
+        { t:'Today',   d:'ok',     x:'Auto-fetched GSTR-1 Apr 2026 from gst.gov.in' },
+        { t:'2 d ago', d:'warn',   x:'F&B packaging rate review queued (CBIC circular)' },
+        { t:'4 d ago', d:'ok',     x:'4-outlet Shops & Establishments status auto-refreshed' }
+    ],
+    lakshmi: [
+        { t:'Today',   d:'warn',   x:'RBI CIMS: <strong>capital plan Q1 due 31 May</strong>' },
+        { t:'Yesterday',d:'ok',    x:'NBFC monthly return filed on CIMS · ack received' },
+        { t:'2 d ago', d:'ok',     x:'Briefing sent via Email · RBI advisory on NBFC ECL framework' },
+        { t:'5 d ago', d:'ok',     x:'GSTR-1 Apr 2026 auto-pulled from gst.gov.in' }
+    ],
+    greenfield: [
+        { t:'Today',   d:'warn',   x:'<strong>LLP Form 11 due 30 May</strong> · partner details collected' },
+        { t:'Yesterday',d:'ok',    x:'MahaRERA quarterly update filed · no exceptions' },
+        { t:'3 d ago', d:'ok',     x:'TDS Q4 challan auto-prepared from books' },
+        { t:'6 d ago', d:'ok',     x:'GSTR Annual prep started · reconciliation in progress' }
+    ]
+};
+
+function renderTimelineRow(t) {
+    var total = t.ok + t.warn + t.danger + t.up;
+    var pips = '';
+    // place pips spaced evenly inside bar; offsets in %
+    var slot = 0; var slots = Math.max(total, 1);
+    var emit = function(n, cls) {
+        for (var i=0;i<n;i++) {
+            var pct = (slot + 0.5) / slots * 100;
+            pips += '<div class="ctl-pip ' + cls + '" style="left:' + pct.toFixed(1) + '%"></div>';
+            slot++;
+        }
+    };
+    emit(t.ok,'ok'); emit(t.warn,'warn'); emit(t.danger,'danger'); emit(t.up,'upcoming');
+    return '<div class="ctl-row"><span class="ctl-month">' + t.m + '</span>'
+        + '<div class="ctl-bar">' + pips + '</div>'
+        + '<span class="ctl-count">' + total + ' filings</span></div>';
+}
+
+function cdQuick(action) {
+    var name = document.getElementById('cd-name').textContent || 'client';
+    var msg = '';
+    if (action === 'whatsapp') msg = 'Opens WhatsApp draft to ' + name + ' (demo).';
+    else if (action === 'email') msg = 'Opens email draft to ' + name + ' (demo).';
+    else if (action === 'schedule') msg = 'Opens calendar to schedule a call with ' + name + ' (demo).';
+    else if (action === 'download') msg = 'Downloads compliance PDF for ' + name + ' (demo).';
+    alert(msg);
+}
 const PORTAL_STATUS = {
     sharma: [
         { label:'TDS Q4 deposit',   value:'Filed 5 May',          src:'incometax.gov.in', state:'ok' },
@@ -7852,14 +8334,47 @@ function openClient(id) {
             <div class="cds-source">${s.src}</div>
         </div>`).join('');
 
-    document.getElementById('cd-stats').innerHTML = c.stats.map(s =>
-        `<div class="cd-stat"><div class="num" style="color:${s.c}">${s.n}</div><div class="lbl">${s.l}</div></div>`).join('');
     document.getElementById('cd-pending').innerHTML = c.pending.map(p =>
         `<div class="cd-reg-item"><div class="cd-title">${p.title}</div><div class="cd-meta"><span>${p.meta}</span></div></div>`).join('');
     document.getElementById('cd-regs').innerHTML = c.regs.map(r =>
         `<div class="cd-reg-item"><div class="cd-title">${r.title}</div><div class="cd-meta"><span>${r.meta}</span></div></div>`).join('');
     document.getElementById('cd-deadlines').innerHTML = c.deadlines.map(d =>
         `<div class="cd-reg-item"><div class="cd-title">${d.title}</div><div class="cd-meta"><span>${d.meta}</span></div></div>`).join('');
+
+    // Compliance health score ring + dashboard row
+    const meta = CLIENT_META[id] || { score:70, scoreSub:'', filings:0, filingsSub:'', tax:'-', taxPct:50, roi:'-', roiSub:'' };
+    const circ = 2 * Math.PI * 52; // 326.7
+    const offset = circ * (1 - meta.score / 100);
+    const arc = document.getElementById('cd-score-arc');
+    arc.setAttribute('stroke-dasharray', circ.toFixed(2));
+    arc.setAttribute('stroke-dashoffset', offset.toFixed(2));
+    arc.setAttribute('stroke', meta.score >= 80 ? '#16a34a' : (meta.score >= 60 ? '#d97706' : '#dc2626'));
+    document.getElementById('cd-score-num').textContent = meta.score;
+    document.getElementById('cd-score-sub').textContent = meta.scoreSub;
+    document.getElementById('cd-stat-filings').textContent = meta.filings;
+    document.getElementById('cd-stat-filings-sub').textContent = meta.filingsSub;
+    document.getElementById('cd-stat-tax').textContent = meta.tax;
+    document.getElementById('cd-tax-bar').style.width = meta.taxPct + '%';
+    document.getElementById('cd-stat-roi').textContent = meta.roi;
+    document.getElementById('cd-stat-roi-sub').textContent = meta.roiSub;
+
+    // Filing timeline
+    const tl = CLIENT_TIMELINE[id] || [];
+    document.getElementById('cd-timeline').innerHTML = tl.map(renderTimelineRow).join('');
+
+    // Portal sync health rows
+    const ph = CLIENT_PORTAL_HEALTH[id] || [];
+    document.getElementById('cd-portal-rows').innerHTML = ph.map(p =>
+        `<div class="cdpr-row ${p.state === 'ok' ? '' : p.state}">
+            <div class="cdpr-name">${p.name}</div>
+            <div class="cdpr-meta">${p.meta}</div>
+            <div class="cdpr-time">${p.time}</div>
+        </div>`).join('');
+
+    // Activity feed
+    const act = CLIENT_ACTIVITY[id] || [];
+    document.getElementById('cd-activity').innerHTML = act.map(a =>
+        `<div class="cda-row"><span class="cda-time">${a.t}</span><span class="cda-dot ${a.d === 'ok' ? '' : a.d}"></span><span class="cda-text">${a.x}</span></div>`).join('');
 
     navTo('client-detail');
 }
