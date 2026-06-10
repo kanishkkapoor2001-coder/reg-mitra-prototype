@@ -4870,7 +4870,7 @@
                         <div class="cdh-actions">
                             <button class="cdh-iconbtn" title="WhatsApp" onclick="cdQuick('whatsapp')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0c-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5s-.7-1.7-1-2.3c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-1 1-1.3 2.3-1.3 3.7 0 .2 0 .4.1.6.3 1.3 1 2.5 1.9 3.6 1.3 1.6 3 2.9 4.9 3.7.6.2 1.1.4 1.5.5.7.2 1.3.2 1.8.1.5-.1 1.7-.7 2-1.3.3-.7.3-1.2.2-1.3 0-.1-.2-.2-.5-.4zM12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.5A10 10 0 1012 2z"/></svg></button>
                             <button class="cdh-iconbtn" title="Email" onclick="cdQuick('email')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></button>
-                            <button class="cdh-iconbtn" title="Schedule call" onclick="cdQuick('schedule')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V3M16 7V3M3 11h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg></button>
+                            <button class="cdh-iconbtn" title="Open calendar (this client)" onclick="cdOpenCalendar()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V3M16 7V3M3 11h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg></button>
                             <button class="cdh-iconbtn" title="Download report" onclick="cdQuick('download')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg></button>
                             <button class="btn btn-primary" onclick="navTo('briefings')">Generate Briefing</button>
                             <button class="btn btn-outline" onclick="scrollToClientRegs()">View regulations</button>
@@ -7805,7 +7805,8 @@ const calEvents = {
 };
 
 function openCalEvent(id) {
-    const evt = calEvents[id];
+    var evt = calEvents[id];
+    if (!evt && typeof CAL_EVENT_FALLBACK !== 'undefined') evt = CAL_EVENT_FALLBACK[id];
     if (!evt) return;
     document.getElementById('cal-popup-title').textContent = evt.title;
     document.getElementById('cal-popup-date').textContent = evt.date + ' • ' + evt.type;
@@ -8198,19 +8199,6 @@ function calGoToday() {
     calRender();
 }
 
-// Override openCalEvent to fall back to CAL_EVENT_FALLBACK when not in calEvents.
-const _origOpenCalEvent = openCalEvent;
-openCalEvent = function(id) {
-    const evt = (typeof calEvents !== 'undefined' && calEvents[id]) ? calEvents[id] : CAL_EVENT_FALLBACK[id];
-    if (!evt) return;
-    document.getElementById('cal-popup-title').textContent = evt.title;
-    document.getElementById('cal-popup-date').textContent = evt.date + ' • ' + evt.type;
-    document.getElementById('cal-popup-clients').textContent = evt.clients;
-    document.getElementById('cal-popup-body').textContent = evt.body;
-    document.getElementById('cal-popup').classList.add('open');
-    document.getElementById('cal-popup-overlay').classList.add('open');
-};
-
 // Render once on load (so navigating to calendar tab shows current month immediately).
 if (document.readyState !== 'loading') calRender();
 else document.addEventListener('DOMContentLoaded', calRender);
@@ -8591,6 +8579,18 @@ function cdQuick(action) {
     else if (action === 'download') msg = 'Downloads compliance PDF for ' + name + ' (demo).';
     alert(msg);
 }
+
+// Open the calendar pre-filtered to the currently viewed client.
+// Uses CURRENT_CLIENT_ID set inside openClient.
+var CURRENT_CLIENT_ID = null;
+function cdOpenCalendar() {
+    if (CURRENT_CLIENT_ID) {
+        var sel = document.getElementById('cal-client-filter');
+        if (sel) sel.value = CURRENT_CLIENT_ID;
+    }
+    if (typeof navTo === 'function') navTo('calendar');
+    if (typeof filterCalendar === 'function') filterCalendar();
+}
 const PORTAL_STATUS = {
     sharma: [
         { label:'TDS Q4 deposit',   value:'Filed 5 May',          src:'incometax.gov.in', state:'ok' },
@@ -8645,6 +8645,7 @@ const PORTAL_STATUS = {
 function openClient(id) {
     const c = clientData[id];
     if (!c) return;
+    CURRENT_CLIENT_ID = id;
     const av = CLIENT_AVATAR[id] || { txt:'··', bg:'var(--bg-main)', fg:'var(--text-mid)' };
     const avEl = document.getElementById('cd-avatar');
     avEl.textContent = av.txt;
