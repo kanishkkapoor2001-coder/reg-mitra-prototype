@@ -4277,38 +4277,10 @@
                 Calendar
             </div>
 
-            <div class="sidebar-section-label">Clients</div>
-            <div class="sidebar-clients">
-                <div class="sb-client demo-anchor" onclick="openClient('sharma')">
-                    <span class="sb-av" style="background:var(--info-bg);color:var(--info)">SP</span>
-                    <span class="sb-name">Sharma Pharma</span>
-                    <span class="sb-pending">3</span>
-                </div>
-                <div class="sb-client" onclick="openClient('nexgen')">
-                    <span class="sb-av" style="background:var(--purple-bg);color:var(--purple)">NG</span>
-                    <span class="sb-name">NexGen Software</span>
-                    <span class="sb-pending">1</span>
-                </div>
-                <div class="sb-client" onclick="openClient('gupta')">
-                    <span class="sb-av" style="background:var(--danger-bg);color:var(--danger)">GA</span>
-                    <span class="sb-name">Gupta Auto</span>
-                    <span class="sb-pending danger">4</span>
-                </div>
-                <div class="sb-client" onclick="openClient('royal')">
-                    <span class="sb-av" style="background:var(--success-bg);color:var(--success)">RS</span>
-                    <span class="sb-name">Royal Spice Kitchen</span>
-                    <span class="sb-pending">2</span>
-                </div>
-                <div class="sb-client" onclick="openClient('lakshmi')">
-                    <span class="sb-av" style="background:var(--warning-bg);color:var(--warning)">LF</span>
-                    <span class="sb-name">Lakshmi FinServ</span>
-                    <span class="sb-pending">2</span>
-                </div>
-                <div class="sb-client" onclick="openClient('greenfield')">
-                    <span class="sb-av" style="background:#fdf2f8;color:#be185d">GR</span>
-                    <span class="sb-name">Greenfield Realty</span>
-                    <span class="sb-pending">1</span>
-                </div>
+            <div class="nav-btn" data-screen="clients" onclick="navTo('home')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-2.13a4 4 0 100-8 4 4 0 000 8zm6 0a3 3 0 100-6 3 3 0 000 6zm-12 0a3 3 0 100-6 3 3 0 000 6z"/></svg>
+                Clients
+                <span class="nav-badge" style="background: rgba(255,255,255,0.12); color: #cbd5e1;">6</span>
             </div>
 
             <div class="nav-divider"></div>
@@ -8716,10 +8688,6 @@ function openClient(id) {
     const c = clientData[id];
     if (!c) return;
     CURRENT_CLIENT_ID = id;
-    // Highlight the active client in the sidebar list
-    document.querySelectorAll('.sb-client').forEach(function(el) { el.classList.remove('active'); });
-    var sbActive = document.querySelector('.sb-client[onclick*="\'' + id + '\'"]');
-    if (sbActive) sbActive.classList.add('active');
     const av = CLIENT_AVATAR[id] || { txt:'··', bg:'var(--bg-main)', fg:'var(--text-mid)' };
     const avEl = document.getElementById('cd-avatar');
     avEl.textContent = av.txt;
