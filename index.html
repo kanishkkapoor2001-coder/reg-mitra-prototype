@@ -1648,8 +1648,8 @@
             letter-spacing: 0.6px; text-transform: uppercase; padding: 4px 9px; border-radius: 20px;
             box-shadow: 0 2px 8px -2px rgba(22,163,74,0.45);
         }
-        .client-card.demo-sample { opacity: 0.78; }
-        .client-card.demo-sample:hover { opacity: 1; }
+        .client-card.demo-sample { opacity: 0.6; cursor: not-allowed; }
+        .client-card.demo-sample:hover { opacity: 0.78; transform: none; box-shadow: none; border-color: var(--border); }
         .client-card.demo-sample::after {
             content: 'Sample'; position: absolute; top: 10px; right: 10px;
             font-size: 9px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
@@ -2129,6 +2129,48 @@
             display: inline-flex; align-items: center; gap: 4px;
         }
         .ai-modal-foot a.ai-portal-link:hover { text-decoration: underline; }
+        /* Upload zone inside action modal */
+        .ai-upload-zone {
+            margin-top: 18px; padding: 14px; border-radius: 12px;
+            background: var(--accent-bg); border: 1px solid #bbf7d0;
+        }
+        .ai-upload-title { font-size: 12px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+        .ai-upload-sub { font-size: 11px; color: var(--text-mid); margin-bottom: 12px; line-height: 1.5; }
+        .ai-upload-drop {
+            display: block; padding: 22px 18px; border: 2px dashed #86efac; border-radius: 10px;
+            background: var(--bg-white); cursor: pointer; text-align: center;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .ai-upload-drop:hover { border-color: var(--accent); background: #f0fdf4; }
+        .ai-upload-drop input[type="file"] { display: none; }
+        .ai-upload-icon { color: var(--accent); margin-bottom: 8px; }
+        .ai-upload-icon svg { width: 28px; height: 28px; }
+        .ai-upload-cta { font-size: 13px; color: var(--text-dark); }
+        .ai-upload-cta strong { color: var(--accent); }
+        .ai-upload-hint { font-size: 10.5px; color: var(--text-light); margin-top: 4px; }
+        .ai-upload-status {
+            margin-top: 12px; font-size: 12px; color: var(--text-mid);
+            display: none; padding: 10px 12px; border-radius: 8px;
+            background: var(--bg-white); border: 1px solid var(--border);
+        }
+        .ai-upload-status.show { display: flex; align-items: center; gap: 10px; }
+        .ai-upload-status .upload-file-icon {
+            width: 28px; height: 28px; border-radius: 6px; background: var(--accent-bg); color: var(--accent);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px;
+        }
+        .ai-upload-status .upload-file-meta { flex: 1; min-width: 0; }
+        .ai-upload-status .upload-file-name { font-size: 12px; font-weight: 600; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ai-upload-status .upload-file-size { font-size: 10px; color: var(--text-light); }
+        .ai-upload-status.submitted { background: var(--accent-bg); border-color: #86efac; }
+        .ai-upload-progress {
+            margin-top: 10px; height: 6px; background: var(--bg-main); border-radius: 4px; overflow: hidden;
+        }
+        .ai-upload-progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+        .ai-srn-pill {
+            display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px;
+            background: var(--accent-bg); color: var(--accent); font-size: 10.5px; font-weight: 700;
+            letter-spacing: 0.4px; text-transform: uppercase;
+        }
         .cd-stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
         .cd-stat { text-align: center; padding: 12px; background: var(--bg-main); border-radius: 10px; border: 1px solid var(--border-light); }
         .cd-stat .num { font-size: 22px; font-weight: 700; }
@@ -4270,7 +4312,7 @@
             <div class="nav-btn" data-screen="briefings">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Briefings
-                <span class="nav-badge" style="background: var(--warning); color: #fff;">4</span>
+                <span class="nav-badge" style="background: var(--warning); color: #fff;">6</span>
             </div>
             <div class="nav-btn" data-screen="calendar">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7V3M16 7V3M3 11h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
@@ -4456,7 +4498,7 @@
                             <div class="ai-monitoring-line">Live-synced with 14 portal feeds (GSTN, MCA21, CBDT, CDSCO) · 2 min ago</div>
                             <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~12 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;24K</span></div>
                         </div>
-                        <div class="client-card demo-sample" data-sector="it" data-risk="5.2" onclick="openClient('nexgen')">
+                        <div class="client-card demo-sample" data-sector="it" data-risk="5.2" onclick="demoSampleNotice()">
                             <div class="client-card-top">
                                 <div class="av" style="background:var(--purple-bg);color:var(--purple)">NG</div>
                                 <div><div class="name">NexGen Software Solutions Pvt. Ltd.</div><div class="sector">IT / Software — Bangalore</div></div>
@@ -4470,7 +4512,7 @@
                             <div class="ai-monitoring-line">Live-synced with 8 portal feeds (GSTN, MCA21, CBDT, Kar. S&E) · 2 min ago</div>
                             <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~4 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;9K</span></div>
                         </div>
-                        <div class="client-card demo-sample" data-sector="auto" data-risk="8.1" onclick="openClient('gupta')">
+                        <div class="client-card demo-sample" data-sector="auto" data-risk="8.1" onclick="demoSampleNotice()">
                             <div class="client-card-top">
                                 <div class="av" style="background:var(--danger-bg);color:var(--danger)">GA</div>
                                 <div><div class="name">Gupta Auto Components Ltd.</div><div class="sector">Auto Ancillary — Gurgaon</div></div>
@@ -4484,7 +4526,7 @@
                             <div class="ai-monitoring-line">Live-synced with 11 portal feeds (GSTN, MCA21, CBDT, Haryana DISH) · 2 min ago</div>
                             <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~16 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;32K</span></div>
                         </div>
-                        <div class="client-card demo-sample" data-sector="fnb" data-risk="7.4" onclick="openClient('royal')">
+                        <div class="client-card demo-sample" data-sector="fnb" data-risk="7.4" onclick="demoSampleNotice()">
                             <div class="client-card-top">
                                 <div class="av" style="background:var(--success-bg);color:var(--success)">RS</div>
                                 <div><div class="name">Royal Spice Kitchen Pvt. Ltd.</div><div class="sector">F&B / Restaurant Chain — Delhi</div></div>
@@ -4498,7 +4540,7 @@
                             <div class="ai-monitoring-line">Live-synced with 9 portal feeds (GSTN, MCA21, FOSCOS, Delhi Labour) · 2 min ago</div>
                             <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~7 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;14K</span></div>
                         </div>
-                        <div class="client-card demo-sample" data-sector="nbfc" data-risk="6.1" onclick="openClient('lakshmi')">
+                        <div class="client-card demo-sample" data-sector="nbfc" data-risk="6.1" onclick="demoSampleNotice()">
                             <div class="client-card-top">
                                 <div class="av" style="background:var(--warning-bg);color:var(--warning)">LF</div>
                                 <div><div class="name">Lakshmi FinServ Pvt. Ltd.</div><div class="sector">NBFC — Chennai</div></div>
@@ -4512,7 +4554,7 @@
                             <div class="ai-monitoring-line">Live-synced with 16 portal feeds (GSTN, MCA21, CBDT, RBI CIMS) · 2 min ago</div>
                             <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~9 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;18K</span></div>
                         </div>
-                        <div class="client-card demo-sample" data-sector="realestate" data-risk="3.2" onclick="openClient('greenfield')">
+                        <div class="client-card demo-sample" data-sector="realestate" data-risk="3.2" onclick="demoSampleNotice()">
                             <div class="client-card-top">
                                 <div class="av" style="background:#fdf2f8;color:#be185d">GR</div>
                                 <div><div class="name">Greenfield Realty LLP</div><div class="sector">Real Estate — Pune</div></div>
@@ -5122,6 +5164,60 @@
                         <option value="labour">Labour</option>
                     </select>
                     <span class="filter-count-badge" id="brief-filter-count">Showing 7 briefings</span>
+                </div>
+
+                <div class="briefing-card" data-client="sharma" data-status="urgent" data-regtype="gst">
+                    <div class="briefing-card-header">
+                        <div class="briefing-to">To: <strong>Sharma Pharmaceuticals Pvt. Ltd.</strong></div>
+                        <span class="draft-badge">Draft — Action needed</span>
+                    </div>
+                    <h4>IGST rate cut on pharma intermediates — 3 invoices to amend, credit notes drafted</h4>
+                    <div class="body-text">
+                        <p><strong>Dear Mr. Sharma,</strong></p>
+                        <p>CBIC has issued Notification 26/2026-IT (gazette dt. 28 April, effective 1 May 2026) revising the IGST rate on pharma intermediates. Here is what it means for Sharma Pharmaceuticals:</p>
+                        <p><strong>1. IGST on HSN 3003 / 3004 has been cut from 18% to 12%</strong> — bulk pharma intermediates are now in the lower slab.<br>
+                        <strong>2. We reviewed 47 of your invoices over the last 30 days.</strong> Three were issued at the old 18% rate after 1 May and need amendment — the largest is Apollo Hospitals Supply Chain (₹8.91L invoice, ₹53.4K credit note).<br>
+                        <strong>3. Your downstream ITC will be auto-adjusted</strong> — we've already booked the reversal in the linked Tally instance. No action needed on your books.</p>
+                        <p><strong>What we need from you:</strong> Approve the 3 credit notes (drafted, ready in the portal). Confirm with your distributor that the new rate is applied prospectively.</p>
+                        <p><em>Regards,<br>Mehta Shah & Associates, Bangalore</em></p>
+                    </div>
+                    <div class="ai-provenance">Generated from: CBIC Notification 26/2026-IT + Sharma Pharma books (47 invoices reviewed)</div>
+                    <div class="ai-time-saved">
+                        <span>Manual drafting: <strong>~55 min</strong></span>
+                        <span>Generated in: <strong>9 seconds</strong></span>
+                        <span>Savings: <strong>~54 min 51 sec</strong></span>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-primary" onclick="openBriefingModal(this.closest('.briefing-card'))">Review &amp; Send</button>
+                        <button class="btn btn-outline" onclick="openBriefingModal(this.closest('.briefing-card'))">Edit</button>
+                    </div>
+                </div>
+
+                <div class="briefing-card" data-client="sharma" data-status="review" data-regtype="mca">
+                    <div class="briefing-card-header">
+                        <div class="briefing-to">To: <strong>Sharma Pharmaceuticals Pvt. Ltd.</strong></div>
+                        <span class="draft-badge">Draft — For Review</span>
+                    </div>
+                    <h4>Director KYC — 2 of 4 DINs still pending (deadline 30 Sep 2026)</h4>
+                    <div class="body-text">
+                        <p><strong>Dear Mr. Sharma,</strong></p>
+                        <p>The new 3-year DIR-3 KYC cycle is open on MCA21. Your company has 4 directors on record; 2 have completed their filing, 2 are still pending.</p>
+                        <p><strong>Directors pending:</strong><br>
+                        &#8226; Mr. Ravi Sharma (DIN: 02345678) — last KYC FY 2022-23 &middot; <strong>filing due 30 Sep 2026</strong><br>
+                        &#8226; Mrs. Meena Sharma (DIN: 02345679) — last KYC FY 2022-23 &middot; <strong>filing due 30 Sep 2026</strong></p>
+                        <p><strong>What we need from you:</strong> A 1-OTP confirmation from each director's mobile (linked Aadhaar). We've pre-filled the forms; everything else is done from our end. Penalty for missing the deadline is ₹5,000/director plus DIN deactivation.</p>
+                        <p><em>Regards,<br>Mehta Shah & Associates, Bangalore</em></p>
+                    </div>
+                    <div class="ai-provenance">Generated from: MCA Director KYC Notification + Sharma Pharma DIN register (4 directors)</div>
+                    <div class="ai-time-saved">
+                        <span>Manual drafting: <strong>~40 min</strong></span>
+                        <span>Generated in: <strong>6 seconds</strong></span>
+                        <span>Savings: <strong>~39 min 54 sec</strong></span>
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-primary" onclick="openBriefingModal(this.closest('.briefing-card'))">Review &amp; Send</button>
+                        <button class="btn btn-outline" onclick="openBriefingModal(this.closest('.briefing-card'))">Edit</button>
+                    </div>
                 </div>
 
                 <div class="briefing-card" data-client="royal" data-status="review" data-regtype="fssai">
@@ -8826,21 +8922,46 @@ function scrollToClientRegs() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// Non-Sharma client tiles on home show a notice and steer the user to Sharma.
+function demoSampleNotice() {
+    if (typeof actionToast === 'function') {
+        actionToast('Sample tile &mdash; the full demo lives on Sharma Pharmaceuticals.', { icon:'&#9881;' });
+    }
+}
+
 // === Action Instructions Modal (live compliance items) ===
 // Heuristically maps a status label to a step-by-step instruction set + portal link.
 const ACTION_PLAYBOOK = {
     'din-kyc': {
         title: 'Director KYC — DIR-3 KYC filing',
-        desc: 'Every director needs to file DIR-3 KYC annually on the MCA portal. This client has directors with pending verification.',
+        desc: 'Every director needs to file DIR-3 KYC annually on the MCA portal. This client has directors with pending verification. We&rsquo;ve pre-filled the form using the director\'s DIN; the only thing missing is the DSC file (.pfx) to attest.',
         portal: { name: 'MCA21 portal', url: 'https://www.mca.gov.in/' },
         steps: [
-            'Log in to <strong>mca.gov.in</strong> with your firm credentials (Practising CA login).',
-            'Go to <strong>MCA Services → e-Filing → Company Forms Download</strong> and select <code>DIR-3 KYC</code>.',
-            'Pre-fill the form using the director\'s DIN — system auto-loads address, mobile, and email on record.',
-            'Complete OTP verification of the director\'s mobile and email.',
-            'Attach DSC of the director and attest with the firm\'s practising CA DSC.',
-            'Submit, pay the ₹0 fee (if on time) and download the SRN confirmation. Save SRN to client folder.'
-        ]
+            'We&rsquo;ve already <strong>pre-filled DIR-3 KYC</strong> using the director&rsquo;s DIN on record — address, mobile and email auto-loaded.',
+            'OTP verification on the director\'s mobile and email is <strong>complete</strong> (sent 2 mins ago).',
+            'Upload the director&rsquo;s <strong>DSC (.pfx)</strong> below — we attest with the firm&rsquo;s practising CA DSC.',
+            'We submit to <strong>mca.gov.in</strong>, pay the ₹0 fee (on time) and return an SRN.',
+            'SRN gets saved to the client folder. The Live Compliance Status card flips to verified.'
+        ],
+        upload: {
+            title: 'Upload the director&rsquo;s DSC',
+            sub: 'We&rsquo;ll file DIR-3 KYC on the MCA portal as soon as you upload &mdash; no other action needed.',
+            hint: '.pfx / .p12 DSC file, ≤ 5 MB',
+            srnPrefix: 'P',
+            successText: 'DIR-3 KYC filed on MCA21 successfully. SRN ',
+            // After-action: status card mutation for the current client
+            statusMutation: function(clientId) {
+                var grid = (PORTAL_STATUS[clientId] || []);
+                for (var i=0;i<grid.length;i++) {
+                    if (/din[-\s]?kyc/i.test(grid[i].label)) {
+                        grid[i].value = 'All directors verified';
+                        grid[i].state = 'ok';
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
     },
     'igst-hsn': {
         title: 'IGST HSN rate update — pending invoices',
@@ -9017,6 +9138,10 @@ function resolveActionKey(label, value) {
 }
 
 let _currentActionKey = null;
+let _currentActionClient = null;
+let _currentActionIdx = null;
+let _uploadedFile = null;
+
 function openActionInstructions(clientId, idx) {
     const status = (PORTAL_STATUS[clientId] || [])[idx];
     if (!status) return;
@@ -9024,6 +9149,9 @@ function openActionInstructions(clientId, idx) {
     const pb = ACTION_PLAYBOOK[key];
     if (!pb) return;
     _currentActionKey = key;
+    _currentActionClient = clientId;
+    _currentActionIdx = idx;
+    _uploadedFile = null;
 
     const head = document.getElementById('action-modal-head');
     head.classList.remove('warn', 'danger');
@@ -9044,11 +9172,99 @@ function openActionInstructions(clientId, idx) {
         portal.style.display = 'none';
     }
 
+    // Upload zone: show only when this playbook supports upload-and-file
+    const zone = document.getElementById('ai-upload-zone');
+    const submitBtn = document.getElementById('ai-modal-submit-btn');
+    const status_ = document.getElementById('ai-upload-status');
+    const input = document.getElementById('ai-upload-input');
+    if (pb.upload) {
+        zone.style.display = '';
+        document.getElementById('ai-upload-title').innerHTML = pb.upload.title;
+        document.getElementById('ai-upload-sub').innerHTML = pb.upload.sub;
+        document.getElementById('ai-upload-hint').innerHTML = pb.upload.hint || '';
+        submitBtn.style.display = '';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submit to portal';
+        status_.classList.remove('show', 'submitted');
+        status_.innerHTML = '';
+        input.value = '';
+    } else {
+        zone.style.display = 'none';
+        submitBtn.style.display = 'none';
+    }
+
     document.getElementById('action-modal-bg').classList.add('open');
 }
 
 function closeActionInstructions() {
     document.getElementById('action-modal-bg').classList.remove('open');
+}
+
+function aiHandleFileChosen() {
+    const input = document.getElementById('ai-upload-input');
+    const file = input.files && input.files[0];
+    if (!file) return;
+    _uploadedFile = file;
+    const status = document.getElementById('ai-upload-status');
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    const sizeKB = Math.max(1, Math.round(file.size / 1024));
+    status.classList.add('show');
+    status.classList.remove('submitted');
+    status.innerHTML =
+        '<div class="upload-file-icon">' + ext.toUpperCase().slice(0,3) + '</div>' +
+        '<div class="upload-file-meta">' +
+            '<div class="upload-file-name">' + file.name + '</div>' +
+            '<div class="upload-file-size">' + sizeKB + ' KB · ready to submit</div>' +
+        '</div>';
+    document.getElementById('ai-modal-submit-btn').disabled = false;
+}
+
+function aiSubmitUpload() {
+    if (!_uploadedFile || !_currentActionKey) return;
+    const pb = ACTION_PLAYBOOK[_currentActionKey];
+    if (!pb || !pb.upload) return;
+
+    const btn = document.getElementById('ai-modal-submit-btn');
+    const status = document.getElementById('ai-upload-status');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    // Show progress bar
+    if (!status.querySelector('.ai-upload-progress')) {
+        status.insertAdjacentHTML('beforeend', '<div class="ai-upload-progress"><div class="ai-upload-progress-bar"></div></div>');
+    }
+    const bar = status.querySelector('.ai-upload-progress-bar');
+    // Animate progress
+    setTimeout(function(){ bar.style.width = '30%'; }, 50);
+    setTimeout(function(){ bar.style.width = '70%'; }, 700);
+    setTimeout(function(){ bar.style.width = '100%'; }, 1500);
+
+    setTimeout(function() {
+        // Generate a plausible SRN: prefix + 9 digits + suffix
+        const prefix = pb.upload.srnPrefix || 'X';
+        const srn = prefix + String(Math.floor(100000000 + Math.random() * 899999999));
+
+        status.classList.add('submitted');
+        status.innerHTML =
+            '<div class="upload-file-icon">&#10003;</div>' +
+            '<div class="upload-file-meta">' +
+                '<div class="upload-file-name">' + pb.upload.successText + '<span class="ai-srn-pill">SRN ' + srn + '</span></div>' +
+                '<div class="upload-file-size">Filed at ' + new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) + ' · saved to client folder</div>' +
+            '</div>';
+
+        // Mutate underlying data + re-render the client view so the status card flips.
+        if (typeof pb.upload.statusMutation === 'function' && _currentActionClient) {
+            pb.upload.statusMutation(_currentActionClient);
+            if (typeof openClient === 'function') {
+                openClient(_currentActionClient); // re-renders the client detail with new state
+            }
+        }
+
+        // Toast
+        actionToast('Filed on portal &mdash; SRN ' + srn, { icon:'&#10003;' });
+
+        btn.style.display = 'none';
+        document.getElementById('ai-modal-mark-btn').textContent = 'Done';
+    }, 2000);
 }
 
 function markActionDone() {
@@ -9322,6 +9538,19 @@ function startNewAgentTask() {
         <div class="ai-modal-body">
             <p id="action-modal-desc"></p>
             <ol class="ai-steps" id="action-modal-steps"></ol>
+
+            <!-- Upload zone (shown only for actions with upload=true) -->
+            <div class="ai-upload-zone" id="ai-upload-zone" style="display:none">
+                <div class="ai-upload-title" id="ai-upload-title">Or upload &amp; we&rsquo;ll file it for you</div>
+                <div class="ai-upload-sub" id="ai-upload-sub">Drop the file below &mdash; we&rsquo;ll handle the rest with your firm&rsquo;s DSC.</div>
+                <label class="ai-upload-drop" id="ai-upload-drop">
+                    <input type="file" id="ai-upload-input" accept=".pfx,.pdf,.p12,.cer,.zip" onchange="aiHandleFileChosen()" />
+                    <div class="ai-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></div>
+                    <div class="ai-upload-cta"><strong>Click to choose</strong> or drop a file here</div>
+                    <div class="ai-upload-hint" id="ai-upload-hint">.pfx / .p12 DSC file, or scanned KYC PDF</div>
+                </label>
+                <div class="ai-upload-status" id="ai-upload-status"></div>
+            </div>
         </div>
         <div class="ai-modal-foot">
             <a class="ai-portal-link" id="action-modal-portal" target="_blank" rel="noopener">
@@ -9330,7 +9559,8 @@ function startNewAgentTask() {
             </a>
             <div class="ai-foot-spacer"></div>
             <button class="btn-ghost" onclick="closeActionInstructions()">Close</button>
-            <button class="btn-email" onclick="markActionDone()">Mark as done</button>
+            <button class="btn-email" id="ai-modal-submit-btn" onclick="aiSubmitUpload()" style="display:none">Submit to portal</button>
+            <button class="btn-email" id="ai-modal-mark-btn" onclick="markActionDone()">Mark as done</button>
         </div>
     </div>
 </div>
