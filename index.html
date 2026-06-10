@@ -1567,6 +1567,24 @@
         }
 
         .client-card:hover { box-shadow: 0 12px 32px -8px rgba(22, 163, 74, 0.14), 0 4px 12px -4px rgba(16,24,40,0.05); border-color: rgba(34,197,94,0.4); transform: translateY(-2px); }
+        /* Demo client signaling — Sharma is the demo target with full data */
+        .client-card.demo-ready { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(34,197,94,0.18), 0 4px 12px -4px rgba(16,24,40,0.05); position: relative; }
+        .client-card.demo-ready:hover { box-shadow: 0 0 0 2px rgba(34,197,94,0.28), 0 16px 36px -10px rgba(22,163,74,0.22); }
+        .client-card .demo-ribbon {
+            position: absolute; top: 10px; right: 10px; z-index: 2;
+            background: var(--accent); color: #fff; font-size: 9px; font-weight: 700;
+            letter-spacing: 0.6px; text-transform: uppercase; padding: 4px 9px; border-radius: 20px;
+            box-shadow: 0 2px 8px -2px rgba(22,163,74,0.45);
+        }
+        .client-card.demo-sample { opacity: 0.78; }
+        .client-card.demo-sample:hover { opacity: 1; }
+        .client-card.demo-sample::after {
+            content: 'Sample'; position: absolute; top: 10px; right: 10px;
+            font-size: 9px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+            padding: 3px 8px; border-radius: 20px; background: var(--bg-main);
+            color: var(--text-light); border: 1px solid var(--border);
+        }
+        .client-card { position: relative; }
 
         .client-card-top {
             display: flex;
@@ -1934,6 +1952,91 @@
         }
         .cd-status-card.warn .cds-tick { background: var(--warning); }
         .cd-status-card.danger .cds-tick { background: var(--danger); }
+        /* Clickable action items inside Live Compliance Status */
+        .cd-status-card.actionable { cursor: pointer; transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease; }
+        .cd-status-card.actionable:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -6px rgba(16,24,40,0.12); }
+        .cd-status-card.actionable.warn:hover { border-color: #f59e0b; }
+        .cd-status-card.actionable.danger:hover { border-color: #ef4444; }
+        .cd-status-card .cds-action {
+            margin-top: 8px; display: inline-flex; align-items: center; gap: 4px;
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--accent);
+        }
+        .cd-status-card.warn .cds-action { color: #b45309; }
+        .cd-status-card.danger .cds-action { color: var(--danger); }
+        .cd-status-card .cds-action svg { width: 11px; height: 11px; }
+        /* Live Compliance Status — outer styling */
+        .cd-section-lcs { background: linear-gradient(180deg, #f8fdf9 0%, var(--bg-white) 60%); border: 1px solid #d1fae5; }
+        .cd-lcs-hint {
+            font-size: 11px; color: var(--text-light); margin: -4px 0 12px 0;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .cd-lcs-hint::before {
+            content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--warning);
+        }
+        .cd-lcs-sub { margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--border); }
+        .cd-lcs-sub-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-mid); margin-bottom: 10px; }
+        .cd-deadlines-inline { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+        .cd-deadlines-inline .cd-dl-pill {
+            display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+            border: 1px solid var(--border); border-radius: 8px; background: var(--bg-white);
+        }
+        .cd-deadlines-inline .cd-dl-pill.overdue { background: #fef2f2; border-color: #fecaca; }
+        .cd-deadlines-inline .cd-dl-pill .dl-when { font-size: 10px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
+        .cd-deadlines-inline .cd-dl-pill.overdue .dl-when { color: var(--danger); }
+        .cd-deadlines-inline .cd-dl-pill .dl-title { font-size: 12px; color: var(--text-dark); font-weight: 500; }
+
+        /* Action instructions modal */
+        .ai-modal-bg {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 1100;
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            align-items: flex-start; justify-content: center; padding: 50px 20px; overflow-y: auto;
+        }
+        .ai-modal-bg.open { display: flex; animation: fadeUp 0.15s ease; }
+        .ai-modal {
+            background: var(--bg-white); border-radius: 18px; width: 640px; max-width: 100%;
+            box-shadow: 0 32px 64px -12px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.04);
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+        .ai-modal-head {
+            padding: 18px 22px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: flex-start; gap: 12px;
+        }
+        .ai-modal-head .ai-modal-icon {
+            width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+            background: var(--accent-bg); color: var(--accent);
+            display: flex; align-items: center; justify-content: center; font-size: 18px;
+        }
+        .ai-modal-head.warn .ai-modal-icon { background: #fef3c7; color: #b45309; }
+        .ai-modal-head.danger .ai-modal-icon { background: #fee2e2; color: var(--danger); }
+        .ai-modal-head h3 { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
+        .ai-modal-head .ai-modal-sub { font-size: 11px; color: var(--text-light); }
+        .ai-modal-head .modal-close { margin-left: auto; }
+        .ai-modal-body { padding: 18px 22px; }
+        .ai-modal-body p { font-size: 12.5px; color: var(--text-mid); line-height: 1.6; margin-bottom: 14px; }
+        .ai-steps { list-style: none; padding: 0; margin: 0; counter-reset: aistep; display: flex; flex-direction: column; gap: 10px; }
+        .ai-steps li {
+            counter-increment: aistep; position: relative; padding: 10px 12px 10px 38px;
+            background: var(--bg-main); border: 1px solid var(--border); border-radius: 10px;
+            font-size: 12.5px; color: var(--text-dark); line-height: 1.5;
+        }
+        .ai-steps li::before {
+            content: counter(aistep); position: absolute; left: 10px; top: 10px;
+            width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff;
+            display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
+        }
+        .ai-steps li strong { color: var(--text-dark); font-weight: 600; }
+        .ai-steps li code { background: var(--bg-white); border: 1px solid var(--border); padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+        .ai-modal-foot {
+            padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center;
+            background: var(--bg-main);
+        }
+        .ai-modal-foot .ai-foot-spacer { flex: 1; }
+        .ai-modal-foot a.ai-portal-link {
+            font-size: 11px; color: var(--accent); font-weight: 600; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .ai-modal-foot a.ai-portal-link:hover { text-decoration: underline; }
         .cd-stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
         .cd-stat { text-align: center; padding: 12px; background: var(--bg-main); border-radius: 10px; border: 1px solid var(--border-light); }
         .cd-stat .num { font-size: 22px; font-weight: 700; }
@@ -1942,6 +2045,43 @@
         .cd-reg-item:last-child { margin-bottom: 0; }
         .cd-reg-item .cd-title { font-size: 13px; font-weight: 500; color: var(--text-dark); }
         .cd-reg-item .cd-meta { font-size: 11px; color: var(--text-light); margin-top: 3px; display: flex; gap: 12px; }
+
+        /* Drafted communications (per-client personalized circulars) */
+        .cd-comms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 900px) { .cd-comms-grid { grid-template-columns: 1fr; } }
+        .cd-comm-card {
+            border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+            background: var(--bg-white); display: flex; flex-direction: column; gap: 8px;
+        }
+        .cd-comm-head { display: flex; align-items: center; gap: 8px; }
+        .cd-comm-channel {
+            display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.4px; padding: 3px 8px; border-radius: 20px;
+        }
+        .cd-comm-channel svg { width: 12px; height: 12px; }
+        .cd-comm-channel.whatsapp { background: #dcfce7; color: #15803d; }
+        .cd-comm-channel.email { background: var(--info-bg); color: var(--info); }
+        .cd-comm-status {
+            margin-left: auto; font-size: 10px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.4px; padding: 3px 9px; border-radius: 20px;
+        }
+        .cd-comm-status.drafted { background: var(--accent-bg); color: var(--accent); }
+        .cd-comm-status.scheduled { background: #fffbeb; color: var(--warning); }
+        .cd-comm-status.sent { background: #eef2ff; color: #4f46e5; }
+        .cd-comm-to { font-size: 11px; color: var(--text-light); }
+        .cd-comm-to strong { color: var(--text-mid); font-weight: 600; }
+        .cd-comm-title { font-size: 13px; font-weight: 600; color: var(--text-dark); line-height: 1.4; }
+        .cd-comm-snippet { font-size: 12px; color: var(--text-mid); line-height: 1.5; }
+        .cd-comm-foot { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+        .cd-comm-reg { font-size: 10px; color: var(--text-light); flex: 1; }
+        .cd-comm-reg::before { content: '↳ from '; color: var(--text-light); }
+        .cd-comm-btn {
+            font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 7px;
+            border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer;
+        }
+        .cd-comm-btn:hover { filter: brightness(1.05); }
+        .cd-comm-btn.ghost { background: #fff; color: var(--accent); }
+
         .cd-portal-bar {
             display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
         }
@@ -2246,6 +2386,13 @@
         .briefing-modal-header .bm-to { font-size: 11px; color: var(--text-light); }
         .briefing-modal-header .bm-to strong { color: var(--text-dark); }
         .briefing-modal-body { padding: 20px 24px; flex: 1; overflow-y: auto; }
+        .bm-editor-label {
+            font-size: 11px; color: var(--text-light); margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .bm-editor-label::before {
+            content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+        }
         .briefing-editor {
             width: 100%; min-height: 300px; border: 1px solid var(--border); border-radius: 10px;
             padding: 16px; font-size: 13px; font-family: inherit; line-height: 1.7; color: var(--text-mid);
@@ -4028,10 +4175,6 @@
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"/></svg>
                 Home
             </div>
-            <div class="nav-btn" data-screen="clients">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                Clients
-            </div>
             <div class="nav-btn" data-screen="feed">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
                 Regulations
@@ -4041,6 +4184,10 @@
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Briefings
                 <span class="nav-badge" style="background: var(--warning); color: #fff;">4</span>
+            </div>
+            <div class="nav-btn" data-screen="calendar">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7V3M16 7V3M3 11h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
+                Calendar
             </div>
             <div class="nav-divider"></div>
             <div class="nav-btn" data-screen="assistant" id="nav-assistant">
@@ -4065,11 +4212,6 @@
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <input type="text" placeholder="Search regulations, clients, circulars..." id="global-search">
             </div>
-            <button class="header-today" title="Today's checklist" onclick="navTo('dashboard')">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <span class="header-today-label">Today</span>
-                <span class="header-today-badge">7</span>
-            </button>
             <button class="header-bell" title="Notifications">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                 <span class="header-bell-dot"></span>
@@ -4113,10 +4255,10 @@
                                 Live compliance dashboard &middot; auto-synced with GSTN, MCA21, CBDT, FSSAI, RBI CIMS
                             </div>
                             <h1 class="home-hero-title">Welcome back, Mehta Shah &amp; Associates</h1>
-                            <p class="home-hero-sub">Live compliance status across all <strong>6 clients</strong>. Open a client to review their file.</p>
+                            <p class="home-hero-sub">Live compliance status across all <strong>6 clients</strong>. Start with <strong>Sharma Pharmaceuticals</strong> &mdash; the full demo file.</p>
                             <div class="home-hero-cta">
-                                <button class="home-hero-btn primary" onclick="navTo('clients')">
-                                    View all clients
+                                <button class="home-hero-btn primary" onclick="openClient('sharma')">
+                                    Open Sharma Pharmaceuticals
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                                 </button>
                                 <button class="home-hero-btn ghost" onclick="obReplay()">Replay setup walkthrough</button>
@@ -4165,87 +4307,132 @@
                         </div>
                     </section>
 
-                    <!-- Primary surface: clients (full-width) -->
-                    <section class="home-card home-clients-card">
-                        <div class="home-card-head">
-                            <h3>Your clients</h3>
-                            <button class="home-card-link" onclick="navTo('clients')">Open client portfolio &rarr;</button>
+                    <!-- Primary surface: client portfolio grid (home entry point) -->
+                    <div class="section-heading" style="margin-bottom:4px">Your clients</div>
+                    <p class="screen-desc">Live compliance status for every client &mdash; <strong>auto-fetched from govt portals</strong> (GSTN, MCA21, CBDT, FSSAI, RBI CIMS). Click a client to open their full dashboard.</p>
+                    <div class="screen-filter-bar">
+                        <div class="clients-search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <input type="text" id="clients-search" placeholder="Search clients by name or GSTIN…" oninput="filterClients()">
                         </div>
-                        <div class="home-card-body home-clients-list">
-                            <div class="home-client-row" onclick="openClient('sharma')">
-                                <div class="home-client-av" style="background:var(--info-bg); color:var(--info);">SP</div>
-                                <div class="home-client-info">
-                                    <div class="home-client-name">Sharma Pharmaceuticals</div>
-                                    <div class="home-client-sector">Pharma &middot; Mumbai</div>
-                                </div>
-                                <div class="home-client-status">
-                                    <span class="hcs-dot warn"></span>
-                                    <span class="hcs-text">DIN-KYC 2/4 &middot; IGST update pending</span>
-                                </div>
-                                <div class="home-client-risk med">Risk 6.8</div>
+                        <span class="filter-sep"></span>
+                        <span class="filter-label">Sector</span>
+                        <select class="company-select" id="clients-sector-filter" onchange="filterClients()" style="min-width:140px">
+                            <option value="all" selected>All</option>
+                            <option value="pharma">Pharma</option>
+                            <option value="auto">Auto</option>
+                            <option value="fnb">F&B</option>
+                            <option value="nbfc">NBFC</option>
+                            <option value="it">IT</option>
+                            <option value="realestate">Real Estate</option>
+                        </select>
+                        <span class="filter-label">Risk</span>
+                        <select class="company-select" id="clients-risk-filter" onchange="filterClients()" style="min-width:130px">
+                            <option value="all" selected>All</option>
+                            <option value="high">High (7+)</option>
+                            <option value="medium">Medium (4-7)</option>
+                            <option value="low">Low (0-4)</option>
+                        </select>
+                        <span class="filter-label">Sort</span>
+                        <select class="company-select" id="clients-sort" onchange="filterClients()" style="min-width:150px">
+                            <option value="risk-desc" selected>Highest risk</option>
+                            <option value="risk-asc">Lowest risk</option>
+                            <option value="name-asc">Name (A–Z)</option>
+                            <option value="pending-desc">Most pending</option>
+                        </select>
+                        <span class="filter-count-badge" id="clients-filter-count">Showing 6 clients</span>
+                        <button class="btn btn-primary clients-add-btn" onclick="openAddClient()">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                            Add client
+                        </button>
+                    </div>
+                    <div class="client-grid">
+                        <div class="client-card demo-ready" data-sector="pharma" data-risk="6.8" onclick="openClient('sharma')">
+                            <div class="demo-ribbon">Full demo data</div>
+                            <div class="client-card-top">
+                                <div class="av" style="background:var(--info-bg);color:var(--info)">SP</div>
+                                <div><div class="name">Sharma Pharmaceuticals Pvt. Ltd.</div><div class="sector">Pharma / Manufacturing — Mumbai</div></div>
+                                <span class="risk-score risk-med" style="margin-left:auto">Risk 6.8 <span class="risk-trend">↑0.4</span></span>
                             </div>
-                            <div class="home-client-row" onclick="openClient('nexgen')">
-                                <div class="home-client-av" style="background:var(--purple-bg); color:var(--purple);">NG</div>
-                                <div class="home-client-info">
-                                    <div class="home-client-name">NexGen Software Solutions</div>
-                                    <div class="home-client-sector">IT &middot; Bangalore</div>
-                                </div>
-                                <div class="home-client-status">
-                                    <span class="hcs-dot warn"></span>
-                                    <span class="hcs-text">Karnataka S&amp;E OT policy revision</span>
-                                </div>
-                                <div class="home-client-risk med">Risk 5.2</div>
+                            <div class="client-card-metrics">
+                                <div class="metric"><div class="num" style="color:var(--danger)">3</div><div class="lbl">Pending</div></div>
+                                <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
+                                <div class="metric"><div class="num" style="color:var(--success)">12</div><div class="lbl">Compliant</div></div>
                             </div>
-                            <div class="home-client-row" onclick="openClient('gupta')">
-                                <div class="home-client-av" style="background:var(--danger-bg); color:var(--danger);">GA</div>
-                                <div class="home-client-info">
-                                    <div class="home-client-name">Gupta Auto Components</div>
-                                    <div class="home-client-sector">Auto Ancillary &middot; Gurgaon</div>
-                                </div>
-                                <div class="home-client-status">
-                                    <span class="hcs-dot danger"></span>
-                                    <span class="hcs-text">DIN-KYC 0/4 &middot; GSTR-3B unfiled</span>
-                                </div>
-                                <div class="home-client-risk high">Risk 8.1</div>
-                            </div>
-                            <div class="home-client-row" onclick="openClient('royal')">
-                                <div class="home-client-av" style="background:var(--success-bg); color:var(--success);">RS</div>
-                                <div class="home-client-info">
-                                    <div class="home-client-name">Royal Spice Kitchen</div>
-                                    <div class="home-client-sector">F&amp;B &middot; Delhi</div>
-                                </div>
-                                <div class="home-client-status">
-                                    <span class="hcs-dot danger"></span>
-                                    <span class="hcs-text">FSSAI perpetual opt-in OVERDUE</span>
-                                </div>
-                                <div class="home-client-risk high">Risk 7.4</div>
-                            </div>
-                            <div class="home-client-row" onclick="openClient('lakshmi')">
-                                <div class="home-client-av" style="background:var(--warning-bg); color:var(--warning);">LF</div>
-                                <div class="home-client-info">
-                                    <div class="home-client-name">Lakshmi FinServ</div>
-                                    <div class="home-client-sector">NBFC &middot; Chennai</div>
-                                </div>
-                                <div class="home-client-status">
-                                    <span class="hcs-dot warn"></span>
-                                    <span class="hcs-text">RBI capital plan due 31 May</span>
-                                </div>
-                                <div class="home-client-risk med">Risk 6.1</div>
-                            </div>
-                            <div class="home-client-row" onclick="openClient('greenfield')">
-                                <div class="home-client-av" style="background:#fdf2f8; color:#be185d;">GR</div>
-                                <div class="home-client-info">
-                                    <div class="home-client-name">Greenfield Realty LLP</div>
-                                    <div class="home-client-sector">Real Estate &middot; Pune</div>
-                                </div>
-                                <div class="home-client-status">
-                                    <span class="hcs-dot warn"></span>
-                                    <span class="hcs-text">LLP Form 11 due 30 May</span>
-                                </div>
-                                <div class="home-client-risk low">Risk 3.2</div>
-                            </div>
+                            <div class="ai-monitoring-line">Live-synced with 14 portal feeds (GSTN, MCA21, CBDT, CDSCO) · 2 min ago</div>
+                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~12 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;24K</span></div>
                         </div>
-                    </section>
+                        <div class="client-card demo-sample" data-sector="it" data-risk="5.2" onclick="openClient('nexgen')">
+                            <div class="client-card-top">
+                                <div class="av" style="background:var(--purple-bg);color:var(--purple)">NG</div>
+                                <div><div class="name">NexGen Software Solutions Pvt. Ltd.</div><div class="sector">IT / Software — Bangalore</div></div>
+                                <span class="risk-score risk-med" style="margin-left:auto">Risk 5.2 <span class="risk-trend">↑1.1</span></span>
+                            </div>
+                            <div class="client-card-metrics">
+                                <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
+                                <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
+                                <div class="metric"><div class="num" style="color:var(--success)">18</div><div class="lbl">Compliant</div></div>
+                            </div>
+                            <div class="ai-monitoring-line">Live-synced with 8 portal feeds (GSTN, MCA21, CBDT, Kar. S&E) · 2 min ago</div>
+                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~4 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;9K</span></div>
+                        </div>
+                        <div class="client-card demo-sample" data-sector="auto" data-risk="8.1" onclick="openClient('gupta')">
+                            <div class="client-card-top">
+                                <div class="av" style="background:var(--danger-bg);color:var(--danger)">GA</div>
+                                <div><div class="name">Gupta Auto Components Ltd.</div><div class="sector">Auto Ancillary — Gurgaon</div></div>
+                                <span class="risk-score risk-high" style="margin-left:auto">Risk 8.1 <span class="risk-trend">↑2.3</span></span>
+                            </div>
+                            <div class="client-card-metrics">
+                                <div class="metric"><div class="num" style="color:var(--danger)">4</div><div class="lbl">Pending</div></div>
+                                <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
+                                <div class="metric"><div class="num" style="color:var(--success)">9</div><div class="lbl">Compliant</div></div>
+                            </div>
+                            <div class="ai-monitoring-line">Live-synced with 11 portal feeds (GSTN, MCA21, CBDT, Haryana DISH) · 2 min ago</div>
+                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~16 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;32K</span></div>
+                        </div>
+                        <div class="client-card demo-sample" data-sector="fnb" data-risk="7.4" onclick="openClient('royal')">
+                            <div class="client-card-top">
+                                <div class="av" style="background:var(--success-bg);color:var(--success)">RS</div>
+                                <div><div class="name">Royal Spice Kitchen Pvt. Ltd.</div><div class="sector">F&B / Restaurant Chain — Delhi</div></div>
+                                <span class="risk-score risk-high" style="margin-left:auto">Risk 7.4 <span class="risk-trend">↑1.8</span></span>
+                            </div>
+                            <div class="client-card-metrics">
+                                <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
+                                <div class="metric"><div class="num" style="color:var(--warning)">3</div><div class="lbl">This Week</div></div>
+                                <div class="metric"><div class="num" style="color:var(--success)">7</div><div class="lbl">Compliant</div></div>
+                            </div>
+                            <div class="ai-monitoring-line">Live-synced with 9 portal feeds (GSTN, MCA21, FOSCOS, Delhi Labour) · 2 min ago</div>
+                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~7 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;14K</span></div>
+                        </div>
+                        <div class="client-card demo-sample" data-sector="nbfc" data-risk="6.1" onclick="openClient('lakshmi')">
+                            <div class="client-card-top">
+                                <div class="av" style="background:var(--warning-bg);color:var(--warning)">LF</div>
+                                <div><div class="name">Lakshmi FinServ Pvt. Ltd.</div><div class="sector">NBFC — Chennai</div></div>
+                                <span class="risk-score risk-med" style="margin-left:auto">Risk 6.1 <span class="risk-trend">↑0.9</span></span>
+                            </div>
+                            <div class="client-card-metrics">
+                                <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
+                                <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
+                                <div class="metric"><div class="num" style="color:var(--success)">22</div><div class="lbl">Compliant</div></div>
+                            </div>
+                            <div class="ai-monitoring-line">Live-synced with 16 portal feeds (GSTN, MCA21, CBDT, RBI CIMS) · 2 min ago</div>
+                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~9 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;18K</span></div>
+                        </div>
+                        <div class="client-card demo-sample" data-sector="realestate" data-risk="3.2" onclick="openClient('greenfield')">
+                            <div class="client-card-top">
+                                <div class="av" style="background:#fdf2f8;color:#be185d">GR</div>
+                                <div><div class="name">Greenfield Realty LLP</div><div class="sector">Real Estate — Pune</div></div>
+                                <span class="risk-score risk-low" style="margin-left:auto">Risk 3.2 <span class="risk-trend">↓0.1</span></span>
+                            </div>
+                            <div class="client-card-metrics">
+                                <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
+                                <div class="metric"><div class="num" style="color:var(--warning)">0</div><div class="lbl">This Week</div></div>
+                                <div class="metric"><div class="num" style="color:var(--success)">14</div><div class="lbl">Compliant</div></div>
+                            </div>
+                            <div class="ai-monitoring-line">Live-synced with 7 portal feeds (GSTN, MCA21, MahaRERA) · 2 min ago</div>
+                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~3 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;6K</span></div>
+                        </div>
+                    </div>
 
                     <!-- Secondary surfaces -->
                     <div class="home-quick-grid">
@@ -4343,7 +4530,7 @@
                             <h3>Next 24 hours</h3>
                             <span class="ws-count">2</span>
                         </div>
-                        <div class="wi" onclick="navTo('clients')">
+                        <div class="wi" onclick="navTo('home')">
                             <div class="wi-body">
                                 <div class="wi-meta"><span class="wi-due">Due today &middot; 7 May</span><span class="wi-client">All 6 clients</span></div>
                                 <div class="wi-title">TDS Deposit &mdash; Q4 FY26</div>
@@ -4353,7 +4540,7 @@
                                 <button class="wi-btn primary" onclick="event.stopPropagation(); setAssistantMode('act'); navTo('assistant');">Review &amp; file</button>
                             </div>
                         </div>
-                        <div class="wi" onclick="navTo('clients')">
+                        <div class="wi" onclick="navTo('home')">
                             <div class="wi-body">
                                 <div class="wi-meta"><span class="wi-due">Tomorrow &middot; 8 May</span><span class="wi-client">Sharma Pharma</span></div>
                                 <div class="wi-title">IGST rate change &mdash; HSN codes for pharma intermediates 18%&rarr;12%</div>
@@ -4614,152 +4801,11 @@
                 </div>
             </div>
 
-            <!-- CLIENTS -->
-            <div class="screen" id="screen-clients">
-                <section class="live-sync-bar" style="margin-bottom:16px">
-                    <div class="lsb-left">
-                        <span class="lsb-live"><span class="lsb-live-dot"></span>LIVE</span>
-                        <span class="lsb-title">6 clients &middot; <strong>142 filings</strong> auto-tracked from govt portals</span>
-                        <span class="lsb-sync">Synced 2 min ago</span>
-                    </div>
-                    <div class="lsb-portals">
-                        <span class="lsb-portal"><span class="lsb-pd"></span>GSTN</span>
-                        <span class="lsb-portal"><span class="lsb-pd"></span>MCA21</span>
-                        <span class="lsb-portal"><span class="lsb-pd"></span>CBDT</span>
-                        <span class="lsb-portal"><span class="lsb-pd"></span>FOSCOS</span>
-                        <span class="lsb-portal"><span class="lsb-pd"></span>RBI</span>
-                    </div>
-                </section>
-                <div class="section-heading" style="margin-bottom:4px">Client Portfolio</div>
-                <p class="screen-desc">Live compliance status for every client &mdash; <strong>auto-fetched from govt portals</strong> (GSTN, MCA21, CBDT, FSSAI, RBI CIMS). Click a client to open their full dashboard.</p>
-                <div class="screen-filter-bar">
-                    <div class="clients-search">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        <input type="text" id="clients-search" placeholder="Search clients by name or GSTIN…" oninput="filterClients()">
-                    </div>
-                    <span class="filter-sep"></span>
-                    <span class="filter-label">Sector</span>
-                    <select class="company-select" id="clients-sector-filter" onchange="filterClients()" style="min-width:140px">
-                        <option value="all" selected>All</option>
-                        <option value="pharma">Pharma</option>
-                        <option value="auto">Auto</option>
-                        <option value="fnb">F&B</option>
-                        <option value="nbfc">NBFC</option>
-                        <option value="it">IT</option>
-                        <option value="realestate">Real Estate</option>
-                    </select>
-                    <span class="filter-label">Risk</span>
-                    <select class="company-select" id="clients-risk-filter" onchange="filterClients()" style="min-width:130px">
-                        <option value="all" selected>All</option>
-                        <option value="high">High (7+)</option>
-                        <option value="medium">Medium (4-7)</option>
-                        <option value="low">Low (0-4)</option>
-                    </select>
-                    <span class="filter-label">Sort</span>
-                    <select class="company-select" id="clients-sort" onchange="filterClients()" style="min-width:150px">
-                        <option value="risk-desc" selected>Highest risk</option>
-                        <option value="risk-asc">Lowest risk</option>
-                        <option value="name-asc">Name (A–Z)</option>
-                        <option value="pending-desc">Most pending</option>
-                    </select>
-                    <span class="filter-count-badge" id="clients-filter-count">Showing 6 clients</span>
-                    <button class="btn btn-primary clients-add-btn" onclick="openAddClient()">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                        Add client
-                    </button>
-                </div>
-                <div class="client-grid">
-                    <div class="client-card" data-sector="pharma" data-risk="6.8" onclick="openClient('sharma')">
-                        <div class="client-card-top">
-                            <div class="av" style="background:var(--info-bg);color:var(--info)">SP</div>
-                            <div><div class="name">Sharma Pharmaceuticals Pvt. Ltd.</div><div class="sector">Pharma / Manufacturing — Mumbai</div></div>
-                            <span class="risk-score risk-med" style="margin-left:auto">Risk 6.8 <span class="risk-trend">↑0.4</span></span>
-                        </div>
-                        <div class="client-card-metrics">
-                            <div class="metric"><div class="num" style="color:var(--danger)">3</div><div class="lbl">Pending</div></div>
-                            <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
-                            <div class="metric"><div class="num" style="color:var(--success)">12</div><div class="lbl">Compliant</div></div>
-                        </div>
-                        <div class="ai-monitoring-line">Live-synced with 14 portal feeds (GSTN, MCA21, CBDT, CDSCO) · 2 min ago</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~12 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;24K</span></div>
-                    </div>
-                    <div class="client-card" data-sector="it" data-risk="5.2" onclick="openClient('nexgen')">
-                        <div class="client-card-top">
-                            <div class="av" style="background:var(--purple-bg);color:var(--purple)">NG</div>
-                            <div><div class="name">NexGen Software Solutions Pvt. Ltd.</div><div class="sector">IT / Software — Bangalore</div></div>
-                            <span class="risk-score risk-med" style="margin-left:auto">Risk 5.2 <span class="risk-trend">↑1.1</span></span>
-                        </div>
-                        <div class="client-card-metrics">
-                            <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
-                            <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
-                            <div class="metric"><div class="num" style="color:var(--success)">18</div><div class="lbl">Compliant</div></div>
-                        </div>
-                        <div class="ai-monitoring-line">Live-synced with 8 portal feeds (GSTN, MCA21, CBDT, Kar. S&E) · 2 min ago</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~4 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;9K</span></div>
-                    </div>
-                    <div class="client-card" data-sector="auto" data-risk="8.1" onclick="openClient('gupta')">
-                        <div class="client-card-top">
-                            <div class="av" style="background:var(--danger-bg);color:var(--danger)">GA</div>
-                            <div><div class="name">Gupta Auto Components Ltd.</div><div class="sector">Auto Ancillary — Gurgaon</div></div>
-                            <span class="risk-score risk-high" style="margin-left:auto">Risk 8.1 <span class="risk-trend">↑2.3</span></span>
-                        </div>
-                        <div class="client-card-metrics">
-                            <div class="metric"><div class="num" style="color:var(--danger)">4</div><div class="lbl">Pending</div></div>
-                            <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
-                            <div class="metric"><div class="num" style="color:var(--success)">9</div><div class="lbl">Compliant</div></div>
-                        </div>
-                        <div class="ai-monitoring-line">Live-synced with 11 portal feeds (GSTN, MCA21, CBDT, Haryana DISH) · 2 min ago</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~16 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;32K</span></div>
-                    </div>
-                    <div class="client-card" data-sector="fnb" data-risk="7.4" onclick="openClient('royal')">
-                        <div class="client-card-top">
-                            <div class="av" style="background:var(--success-bg);color:var(--success)">RS</div>
-                            <div><div class="name">Royal Spice Kitchen Pvt. Ltd.</div><div class="sector">F&B / Restaurant Chain — Delhi</div></div>
-                            <span class="risk-score risk-high" style="margin-left:auto">Risk 7.4 <span class="risk-trend">↑1.8</span></span>
-                        </div>
-                        <div class="client-card-metrics">
-                            <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
-                            <div class="metric"><div class="num" style="color:var(--warning)">3</div><div class="lbl">This Week</div></div>
-                            <div class="metric"><div class="num" style="color:var(--success)">7</div><div class="lbl">Compliant</div></div>
-                        </div>
-                        <div class="ai-monitoring-line">Live-synced with 9 portal feeds (GSTN, MCA21, FOSCOS, Delhi Labour) · 2 min ago</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~7 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;14K</span></div>
-                    </div>
-                    <div class="client-card" data-sector="nbfc" data-risk="6.1" onclick="openClient('lakshmi')">
-                        <div class="client-card-top">
-                            <div class="av" style="background:var(--warning-bg);color:var(--warning)">LF</div>
-                            <div><div class="name">Lakshmi FinServ Pvt. Ltd.</div><div class="sector">NBFC — Chennai</div></div>
-                            <span class="risk-score risk-med" style="margin-left:auto">Risk 6.1 <span class="risk-trend">↑0.9</span></span>
-                        </div>
-                        <div class="client-card-metrics">
-                            <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
-                            <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
-                            <div class="metric"><div class="num" style="color:var(--success)">22</div><div class="lbl">Compliant</div></div>
-                        </div>
-                        <div class="ai-monitoring-line">Live-synced with 16 portal feeds (GSTN, MCA21, CBDT, RBI CIMS) · 2 min ago</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~9 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;18K</span></div>
-                    </div>
-                    <div class="client-card" data-sector="realestate" data-risk="3.2" onclick="openClient('greenfield')">
-                        <div class="client-card-top">
-                            <div class="av" style="background:#fdf2f8;color:#be185d">GR</div>
-                            <div><div class="name">Greenfield Realty LLP</div><div class="sector">Real Estate — Pune</div></div>
-                            <span class="risk-score risk-low" style="margin-left:auto">Risk 3.2 <span class="risk-trend">↓0.1</span></span>
-                        </div>
-                        <div class="client-card-metrics">
-                            <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
-                            <div class="metric"><div class="num" style="color:var(--warning)">0</div><div class="lbl">This Week</div></div>
-                            <div class="metric"><div class="num" style="color:var(--success)">14</div><div class="lbl">Compliant</div></div>
-                        </div>
-                        <div class="ai-monitoring-line">Live-synced with 7 portal feeds (GSTN, MCA21, MahaRERA) · 2 min ago</div>
-                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~3 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;6K</span></div>
-                    </div>
-                </div>
-            </div>
 
             <!-- CLIENT DETAIL -->
             <div class="screen" id="screen-client-detail">
                 <div class="client-detail-page">
-                    <button class="client-detail-back" onclick="navTo('clients')">
+                    <button class="client-detail-back" onclick="navTo('home')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                         All clients
                     </button>
@@ -4819,42 +4865,25 @@
                         </div>
                     </div>
 
-                    <div class="cd-section">
+                    <div class="cd-section cd-section-lcs">
                         <div class="cd-section-title">
                             Live compliance status
                             <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span id="cd-sync-time">Synced 2 min ago · auto-fetched from govt portals</span></span>
                         </div>
+                        <div class="cd-lcs-hint">Click any item flagged in amber or red to see exactly what to do next.</div>
                         <div class="cd-status-grid" id="cd-status-grid"></div>
+
+                        <div class="cd-lcs-sub">
+                            <div class="cd-lcs-sub-title">Upcoming deadlines</div>
+                            <div class="cd-deadlines-inline" id="cd-deadlines"></div>
+                        </div>
                     </div>
 
-                    <!-- Two-col: filing timeline + portal sync health -->
+                    <!-- Two-col: portal sync health + recent activity -->
                     <div class="cd-two-col">
-                        <div class="cd-section">
-                            <div class="cd-section-title">Filing timeline (next 6 months)</div>
-                            <div class="cd-timeline" id="cd-timeline"></div>
-                            <div class="cd-timeline-legend">
-                                <span><span class="ctl-dot ok"></span>Filed</span>
-                                <span><span class="ctl-dot warn"></span>Due soon</span>
-                                <span><span class="ctl-dot danger"></span>Overdue</span>
-                                <span><span class="ctl-dot upcoming"></span>Upcoming</span>
-                            </div>
-                        </div>
                         <div class="cd-section">
                             <div class="cd-section-title">Portal sync health</div>
                             <div class="cd-portal-rows" id="cd-portal-rows"></div>
-                        </div>
-                    </div>
-
-                    <div class="cd-section">
-                        <div class="cd-section-title">Pending action items</div>
-                        <div id="cd-pending"></div>
-                    </div>
-
-                    <!-- Two-col: applicable regs + activity feed -->
-                    <div class="cd-two-col">
-                        <div class="cd-section">
-                            <div class="cd-section-title">Applicable regulations this month</div>
-                            <div id="cd-regs"></div>
                         </div>
                         <div class="cd-section">
                             <div class="cd-section-title">Recent activity (last 7 days)</div>
@@ -4863,8 +4892,11 @@
                     </div>
 
                     <div class="cd-section">
-                        <div class="cd-section-title">Upcoming deadlines</div>
-                        <div id="cd-deadlines"></div>
+                        <div class="cd-section-title">
+                            Drafted communications
+                            <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span>Auto-drafted from this client's applicable circulars · ready to review &amp; send</span></span>
+                        </div>
+                        <div class="cd-comms-grid" id="cd-comms"></div>
                     </div>
                 </div>
             </div>
@@ -7759,7 +7791,7 @@ function closeCalPopup() {
 // Navigate to screen
 function navTo(screen) {
     // Map removed-nav screens back to their nearest visible nav button
-    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', calendar:'home', dashboard:'home', 'client-detail':'clients' };
+    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', dashboard:'home', clients:'home', 'client-detail':'home' };
     var navTarget = navMap[screen] || screen;
     document.querySelectorAll('.nav-btn').forEach(b => {
         b.classList.remove('active');
@@ -7915,7 +7947,7 @@ function filterClients() {
     var sortVal = sortEl ? sortEl.value : 'risk-desc';
     var qEl = document.getElementById('clients-search');
     var q = (qEl ? qEl.value : '').trim().toLowerCase();
-    var grid = document.querySelector('#screen-clients .client-grid');
+    var grid = document.querySelector('#screen-home .client-grid');
     if (!grid) return;
     var cards = Array.prototype.slice.call(grid.querySelectorAll('.client-card[data-sector]'));
 
@@ -8277,6 +8309,60 @@ const CLIENT_ACTIVITY = {
     ]
 };
 
+// Per-client drafted communications — circulars personalized to each client's applicable regulations
+const CLIENT_COMMS = {
+    sharma: [
+        { channel:'whatsapp', to:'Mr. Sharma (Director)', status:'drafted', title:'IGST cut on pharma intermediates — action needed on 3 invoices',
+          snippet:'CBIC has reduced IGST on pharma intermediates from 18% to 12% (eff. 1 May). We\'ve flagged 3 of your April invoices that still carry the old HSN rate — sign-off needed before GSTR-1.', reg:'CBIC IGST Rate Schedule · 1 May 2026' },
+        { channel:'email', to:'finance@sharmapharma.in', status:'scheduled', title:'Director KYC — 2 of 4 DINs still pending (due 30 Sep)',
+          snippet:'Two directors are yet to complete the 3-year DIR-3 KYC cycle. We\'ve pre-filled the forms; we only need an OTP confirmation from each. Scheduled to go out tomorrow 9 AM.', reg:'MCA Director KYC · due 30 Sep 2026' }
+    ],
+    nexgen: [
+        { channel:'email', to:'ops@nexgensoftware.com', status:'drafted', title:'Karnataka S&E amendment — overtime policy needs revision before 1 Jul',
+          snippet:'The Karnataka Shops & Establishments amendment caps overtime at 50 hrs/quarter from 1 Jul. Your current HR policy allows more — we\'ve drafted the revised clause for your sign-off.', reg:'Karnataka Labour S&E Amendment · 1 Jul 2026' },
+        { channel:'email', to:'ops@nexgensoftware.com', status:'sent', title:'TDS rate chart FY 2026-27 — 194J flat 10%',
+          snippet:'Summary of the FY26-27 TDS changes relevant to your contractor and professional payments. Sent 5 days ago — no action pending.', reg:'CBDT TDS Rate Chart · 1 Apr 2026' }
+    ],
+    gupta: [
+        { channel:'whatsapp', to:'Mr. Gupta (MD)', status:'drafted', title:'GSTR-3B for April still unfiled — due 20 May',
+          snippet:'No challan has been generated yet for April GSTR-3B. We\'ve prepared the return from your Tally data; reviewing now will avoid a late fee. One tap to approve.', reg:'GSTN GSTR-3B · due 20 May 2026' },
+        { channel:'email', to:'accounts@guptaauto.in', status:'drafted', title:'4 directors due for DIN-KYC — 0 of 4 verified',
+          snippet:'None of the four directors have completed DIR-3 KYC this cycle. We\'ve drafted individual reminders with pre-filled forms — review before we send.', reg:'MCA Director KYC · due 30 Sep 2026' },
+        { channel:'email', to:'accounts@guptaauto.in', status:'scheduled', title:'3 IGST conflicts flagged in OEM contracts',
+          snippet:'Reclassification of auto components affects your Maruti, Tata and M&M contracts. We\'ve drafted a note explaining the impact and revised rate. Scheduled for Monday.', reg:'CBIC IGST Rate Schedule · 1 May 2026' }
+    ],
+    royal: [
+        { channel:'whatsapp', to:'Royal Spice — Ops', status:'drafted', title:'FSSAI perpetual licence opt-in is OVERDUE',
+          snippet:'Your FSSAI perpetual-validity opt-in lapsed on 2 May. We\'ve drafted confirmation letters for the Delhi & Karnataka FSO covering all 4 outlets — review and we send today.', reg:'FSSAI Licensing Amendment · 10 Mar 2026' },
+        { channel:'whatsapp', to:'Royal Spice — Ops', status:'drafted', title:'F&B packaging GST rate review',
+          snippet:'CBIC has adjusted GST on F&B packaging. We\'ve summarized which of your menu/packaging SKUs are affected and the new rates — quick read before your next billing cycle.', reg:'CBIC F&B packaging rates · 1 May 2026' }
+    ],
+    lakshmi: [
+        { channel:'email', to:'compliance@lakshmifinserv.in', status:'drafted', title:'RBI CRAR threshold rising 15% → 16% — capital plan due',
+          snippet:'Under Scale Based Regulation your minimum CRAR moves to 16% by Oct. Current ratio is 15.8%. We\'ve drafted a capital-planning note outlining the shortfall and options.', reg:'RBI Scale Based Regulation · Oct 2026' },
+        { channel:'email', to:'compliance@lakshmifinserv.in', status:'sent', title:'NBFC monthly return filed on CIMS — acknowledgement attached',
+          snippet:'Your April NBFC return was filed on RBI CIMS and acknowledged. Sent for your records — no action needed.', reg:'RBI CIMS monthly return · Apr 2026' }
+    ],
+    greenfield: [
+        { channel:'whatsapp', to:'Greenfield — Partner', status:'drafted', title:'LLP Form 11 (Annual Return) due 30 May',
+          snippet:'Form 11 is due 30 May. We\'ve collected the designated-partner details and pre-filled the return — a quick review and it\'s ready to file.', reg:'MCA LLP Form 11 · due 30 May 2026' },
+        { channel:'email', to:'accounts@greenfieldrealty.in', status:'scheduled', title:'MahaRERA quarterly update — filed, summary attached',
+          snippet:'Your MahaRERA quarterly project update was filed with no exceptions. Summary scheduled to go out with this month\'s compliance digest.', reg:'MahaRERA quarterly update · May 2026' }
+    ]
+};
+
+const COMM_ICONS = {
+    whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0c-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5s-.7-1.7-1-2.3c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-1 1-1.3 2.3-1.3 3.7 0 .2 0 .4.1.6.3 1.3 1 2.5 1.9 3.6 1.3 1.6 3 2.9 4.9 3.7.6.2 1.1.4 1.5.5.7.2 1.3.2 1.8.1.5-.1 1.7-.7 2-1.3.3-.7.3-1.2.2-1.3 0-.1-.2-.2-.5-.4zM12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.5A10 10 0 1012 2z"/></svg>',
+    email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>'
+};
+const COMM_STATUS_LABEL = { drafted:'Drafted', scheduled:'Scheduled', sent:'Sent' };
+
+function cdSendComm(action, channel) {
+    var name = document.getElementById('cd-name').textContent || 'client';
+    if (action === 'send') alert('Opens the drafted ' + channel + ' message to ' + name + ' for final review before sending (demo).');
+    else alert('Opens the full briefing editor for ' + name + ' (demo). Use the Briefings screen for the full editor.');
+}
+
 function renderTimelineRow(t) {
     var total = t.ok + t.warn + t.danger + t.up;
     var pips = '';
@@ -8370,23 +8456,33 @@ function openClient(id) {
     document.getElementById('cd-portal-bar').innerHTML = COMMON_PORTAL_BAR
         .map(p => `<span class="cd-portal-chip">${p}</span>`).join('');
 
-    // Live status grid
+    // Live status grid — warn/danger cards are actionable (click to see instructions)
     const status = PORTAL_STATUS[id] || [];
     const tickFor = { ok:'&#10003;', warn:'!', danger:'!' };
-    document.getElementById('cd-status-grid').innerHTML = status.map(s =>
-        `<div class="cd-status-card ${s.state === 'ok' ? '' : s.state}">
+    document.getElementById('cd-status-grid').innerHTML = status.map((s, idx) => {
+        const actionable = s.state === 'warn' || s.state === 'danger';
+        const cls = `cd-status-card ${s.state === 'ok' ? '' : s.state}${actionable ? ' actionable' : ''}`;
+        const onclick = actionable ? ` onclick="openActionInstructions('${id}', ${idx})"` : '';
+        const cta = actionable
+            ? `<div class="cds-action">See what to do <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>`
+            : '';
+        return `<div class="${cls}"${onclick} data-status-idx="${idx}">
             <div class="cds-tick">${tickFor[s.state] || ''}</div>
             <div class="cds-top"><span class="cds-label">${s.label}</span></div>
             <div class="cds-value">${s.value}</div>
             <div class="cds-source">${s.src}</div>
-        </div>`).join('');
+            ${cta}
+        </div>`;
+    }).join('');
 
-    document.getElementById('cd-pending').innerHTML = c.pending.map(p =>
-        `<div class="cd-reg-item"><div class="cd-title">${p.title}</div><div class="cd-meta"><span>${p.meta}</span></div></div>`).join('');
-    document.getElementById('cd-regs').innerHTML = c.regs.map(r =>
-        `<div class="cd-reg-item"><div class="cd-title">${r.title}</div><div class="cd-meta"><span>${r.meta}</span></div></div>`).join('');
-    document.getElementById('cd-deadlines').innerHTML = c.deadlines.map(d =>
-        `<div class="cd-reg-item"><div class="cd-title">${d.title}</div><div class="cd-meta"><span>${d.meta}</span></div></div>`).join('');
+    // Upcoming deadlines folded inside Live Compliance Status block
+    document.getElementById('cd-deadlines').innerHTML = c.deadlines.map(d => {
+        const overdue = /overdue/i.test(d.title) || /overdue/i.test(d.meta);
+        return `<div class="cd-dl-pill${overdue ? ' overdue' : ''}">
+            <span class="dl-when">${d.meta}</span>
+            <span class="dl-title">${d.title.replace(/\s*\(OVERDUE\)/i,'')}</span>
+        </div>`;
+    }).join('');
 
     // Compliance health score ring + dashboard row
     const meta = CLIENT_META[id] || { score:70, scoreSub:'', filings:0, filingsSub:'', tax:'-', taxPct:50, roi:'-', roiSub:'' };
@@ -8405,10 +8501,6 @@ function openClient(id) {
     document.getElementById('cd-stat-roi').textContent = meta.roi;
     document.getElementById('cd-stat-roi-sub').textContent = meta.roiSub;
 
-    // Filing timeline
-    const tl = CLIENT_TIMELINE[id] || [];
-    document.getElementById('cd-timeline').innerHTML = tl.map(renderTimelineRow).join('');
-
     // Portal sync health rows
     const ph = CLIENT_PORTAL_HEALTH[id] || [];
     document.getElementById('cd-portal-rows').innerHTML = ph.map(p =>
@@ -8422,6 +8514,24 @@ function openClient(id) {
     const act = CLIENT_ACTIVITY[id] || [];
     document.getElementById('cd-activity').innerHTML = act.map(a =>
         `<div class="cda-row"><span class="cda-time">${a.t}</span><span class="cda-dot ${a.d === 'ok' ? '' : a.d}"></span><span class="cda-text">${a.x}</span></div>`).join('');
+
+    // Drafted communications (personalized circulars per client)
+    const comms = CLIENT_COMMS[id] || [];
+    document.getElementById('cd-comms').innerHTML = comms.map(m =>
+        `<div class="cd-comm-card">
+            <div class="cd-comm-head">
+                <span class="cd-comm-channel ${m.channel}">${COMM_ICONS[m.channel] || ''}${m.channel === 'whatsapp' ? 'WhatsApp' : 'Email'}</span>
+                <span class="cd-comm-status ${m.status}">${COMM_STATUS_LABEL[m.status] || m.status}</span>
+            </div>
+            <div class="cd-comm-to">To: <strong>${m.to}</strong></div>
+            <div class="cd-comm-title">${m.title}</div>
+            <div class="cd-comm-snippet">${m.snippet}</div>
+            <div class="cd-comm-foot">
+                <span class="cd-comm-reg">${m.reg}</span>
+                <button class="cd-comm-btn ghost" onclick="event.stopPropagation(); cdSendComm('edit','${m.channel}')">Edit</button>
+                <button class="cd-comm-btn" onclick="event.stopPropagation(); cdSendComm('send','${m.channel}')">${m.status === 'sent' ? 'View' : 'Review & send'}</button>
+            </div>
+        </div>`).join('');
 
     navTo('client-detail');
 }
@@ -8463,6 +8573,239 @@ function closeBriefingModal() {
     document.getElementById('briefing-modal-bg').classList.remove('open');
 }
 
+// === Action Instructions Modal (live compliance items) ===
+// Heuristically maps a status label to a step-by-step instruction set + portal link.
+const ACTION_PLAYBOOK = {
+    'din-kyc': {
+        title: 'Director KYC — DIR-3 KYC filing',
+        desc: 'Every director needs to file DIR-3 KYC annually on the MCA portal. This client has directors with pending verification.',
+        portal: { name: 'MCA21 portal', url: 'https://www.mca.gov.in/' },
+        steps: [
+            'Log in to <strong>mca.gov.in</strong> with your firm credentials (Practising CA login).',
+            'Go to <strong>MCA Services → e-Filing → Company Forms Download</strong> and select <code>DIR-3 KYC</code>.',
+            'Pre-fill the form using the director\'s DIN — system auto-loads address, mobile, and email on record.',
+            'Complete OTP verification of the director\'s mobile and email.',
+            'Attach DSC of the director and attest with the firm\'s practising CA DSC.',
+            'Submit, pay the ₹0 fee (if on time) and download the SRN confirmation. Save SRN to client folder.'
+        ]
+    },
+    'igst-hsn': {
+        title: 'IGST HSN rate update — pending invoices',
+        desc: 'CBIC changed the IGST rate for pharma intermediates from 18% to 12% effective 1 May 2026. A few invoices on the portal still carry the old rate.',
+        portal: { name: 'GST portal', url: 'https://www.gst.gov.in/' },
+        steps: [
+            'Open the client\'s <strong>Tally</strong> instance from the Reg Mitra integration tab.',
+            'Filter invoices dated <strong>1 May 2026 onwards</strong> with HSN <code>3003</code>/<code>3004</code> at 18%.',
+            'Apply the new rate (<strong>12%</strong>) to each line — Reg Mitra will draft amended invoices automatically.',
+            'Re-upload the amended invoices to <strong>gst.gov.in</strong> via GSTR-1 amendment (Table 9A).',
+            'Notify the buyer of the credit note via WhatsApp (Reg Mitra will draft this).'
+        ]
+    },
+    'gstr-3b': {
+        title: 'GSTR-3B — monthly summary return',
+        desc: 'GSTR-3B for the previous month is yet to be filed for this client. Due by the 20th of the month.',
+        portal: { name: 'GST portal', url: 'https://www.gst.gov.in/' },
+        steps: [
+            'Open <strong>gst.gov.in</strong> → Returns Dashboard → select the relevant period.',
+            'Click <strong>Prepare Online</strong> for GSTR-3B. Reg Mitra has pre-filled the values from your books.',
+            'Review the <strong>3.1 (Outward supplies)</strong> and <strong>4 (Eligible ITC)</strong> tables against the auto-populated numbers.',
+            'Pay any tax liability via challan (PMT-06) before submitting.',
+            'File using DSC or EVC, and save the ARN to the client folder.'
+        ]
+    },
+    'tds-q4': {
+        title: 'TDS Q4 deposit',
+        desc: 'Quarterly TDS deposit is due. The deposit must be made via challan ITNS-281 on the income tax portal.',
+        portal: { name: 'Income Tax portal', url: 'https://www.incometax.gov.in/' },
+        steps: [
+            'Log in to <strong>incometax.gov.in</strong> with the client\'s TAN.',
+            'Go to <strong>e-File → e-Pay Tax → New Payment</strong>.',
+            'Select <strong>Challan ITNS-281</strong> and enter the quarterly deduction total (Reg Mitra has computed: see widget).',
+            'Choose the appropriate section code (194C / 194J / 194I etc.) and complete payment via net banking.',
+            'Download the Challan Identification Number (CIN) and save it to the client folder.'
+        ]
+    },
+    'fssai': {
+        title: 'FSSAI perpetual licence opt-in',
+        desc: 'FSSAI moved to a perpetual licence model. This client has not yet confirmed transition with the local FSO.',
+        portal: { name: 'FOSCOS portal', url: 'https://foscos.fssai.gov.in/' },
+        steps: [
+            'Log in to <strong>foscos.fssai.gov.in</strong> with the client\'s FSSAI registration number.',
+            'Navigate to <strong>Licence Modification → Switch to Perpetual Validity</strong>.',
+            'Upload the latest renewal payment receipt and a self-declaration (Reg Mitra has drafted this).',
+            'Email the local Designated Officer (Delhi & Karnataka FSO) confirming the switch — draft is ready in the Drafted Communications panel.',
+            'Save the FOSCOS acknowledgement reference to the client folder.'
+        ]
+    },
+    'mca-form': {
+        title: 'MCA form filing',
+        desc: 'An MCA form is pending submission for this client.',
+        portal: { name: 'MCA21 portal', url: 'https://www.mca.gov.in/' },
+        steps: [
+            'Log in to <strong>mca.gov.in</strong> as a Practising Professional.',
+            'Go to <strong>MCA Services → e-Filing</strong> and pick the relevant form (LLP-11, AOC-4, MGT-7, etc.).',
+            'Pre-fill from CIN/LLPIN — Reg Mitra has reconciled the financials from your books.',
+            'Attach DSC of the authorised signatory + your professional certification.',
+            'Pay the filing fee and save the SRN confirmation.'
+        ]
+    },
+    'factory': {
+        title: 'Factory licence renewal',
+        desc: 'State labour department factory licence renewal is due.',
+        portal: { name: 'Haryana DISH portal', url: 'https://haryanadish.gov.in/' },
+        steps: [
+            'Log in to the state DISH portal with the factory\'s registration number.',
+            'Open <strong>Renewal of Factory Licence</strong> under Online Services.',
+            'Upload the latest plan layout (no changes if same as last year), safety audit report and fee receipt.',
+            'Submit and download the renewal acknowledgement.',
+            'Save the renewal certificate (issued in 10–15 working days) to the client folder.'
+        ]
+    },
+    'state-amendment': {
+        title: 'State labour policy revision',
+        desc: 'A state-level amendment requires an internal policy revision.',
+        portal: { name: 'State labour portal', url: 'https://labour.gov.in/' },
+        steps: [
+            'Reg Mitra has drafted the amended internal policy — review in the Drafted Communications panel.',
+            'Share the draft with the client\'s HR / Compliance head for sign-off.',
+            'Once approved, upload the revised policy to the state portal and to the company HRMS.',
+            'Brief department heads via the WhatsApp summary (Reg Mitra will send).'
+        ]
+    },
+    'fnb-packaging': {
+        title: 'F&B packaging rate review',
+        desc: 'CBIC adjusted GST rates on packaging materials. Confirm whether this client is impacted.',
+        portal: { name: 'CBIC portal', url: 'https://cbic-gst.gov.in/' },
+        steps: [
+            'Open the latest CBIC notification (link in the Regulations tab).',
+            'Reg Mitra has scanned the client\'s purchase register for affected HSNs — see flagged invoices.',
+            'Update the HSN rate master in Tally for the new period.',
+            'Re-compute pending invoices and notify the client.'
+        ]
+    },
+    'nbfc-capital': {
+        title: 'NBFC capital adequacy review',
+        desc: 'RBI requires NBFCs to maintain updated CRAR. Q1 review is due.',
+        portal: { name: 'RBI CIMS portal', url: 'https://cims.rbi.org.in/' },
+        steps: [
+            'Pull the latest capital position from the client\'s books.',
+            'Compute CRAR = (Tier 1 + Tier 2 capital) / Risk-weighted assets.',
+            'Compare against the prescribed threshold for the layer (Base / Middle / Upper).',
+            'File the quarterly return on <strong>cims.rbi.org.in</strong> with attestation.',
+            'Save the submission acknowledgement to the client folder.'
+        ]
+    },
+    'oem-conflict': {
+        title: 'OEM contract IGST conflicts',
+        desc: 'Three OEM contracts have IGST rate conflicts after the rate change.',
+        portal: { name: 'GST portal', url: 'https://www.gst.gov.in/' },
+        steps: [
+            'Review the three flagged contracts (see Drafted Communications).',
+            'Discuss with the client whether to absorb the difference or pass it through.',
+            'Draft amendment letters to each OEM (Reg Mitra has prepared templates).',
+            'Issue credit/debit notes via GSTR-1 amendment.',
+            'Update the contract value in books and notify procurement.'
+        ]
+    },
+    'llp-11': {
+        title: 'LLP Form 11 — Annual Return',
+        desc: 'LLPs must file Form 11 by 30 May each year.',
+        portal: { name: 'MCA21 portal', url: 'https://www.mca.gov.in/' },
+        steps: [
+            'Log in to <strong>mca.gov.in</strong> with the LLPIN.',
+            'Navigate to <strong>LLP Forms Download → Form 11</strong>.',
+            'Reg Mitra has pre-filled partner contributions and turnover — review the figures.',
+            'Attest with Designated Partner DSC and Practising CA DSC.',
+            'Pay the fee (₹50 if filed on time) and save SRN.'
+        ]
+    },
+    'rera': {
+        title: 'RERA quarterly update',
+        desc: 'RERA requires quarterly project status updates.',
+        portal: { name: 'MahaRERA portal', url: 'https://maharerait.maharashtra.gov.in/' },
+        steps: [
+            'Log in to <strong>maharerait.maharashtra.gov.in</strong> with the promoter login.',
+            'Open the project and click <strong>Quarterly Update</strong>.',
+            'Upload latest construction progress photos and engineer\'s certificate.',
+            'Submit and save the acknowledgement reference.'
+        ]
+    },
+    'gst-annual': {
+        title: 'GST Annual return (GSTR-9) prep',
+        desc: 'Preparation for the annual GST reconciliation has started.',
+        portal: { name: 'GST portal', url: 'https://www.gst.gov.in/' },
+        steps: [
+            'Reg Mitra has reconciled all 12 months of GSTR-1 and GSTR-3B with books.',
+            'Review the reconciliation working in the Drafted Communications panel.',
+            'Pull GSTR-2A/2B data and match ITC.',
+            'Draft GSTR-9 and GSTR-9C (if applicable). Filing window opens July.'
+        ]
+    }
+};
+
+// Resolve a status item to a playbook key
+function resolveActionKey(label, value) {
+    const t = (label + ' ' + value).toLowerCase();
+    if (/din[-\s]?kyc|dir[-\s]?3/.test(t)) return 'din-kyc';
+    if (/igst|hsn/.test(t)) return 'igst-hsn';
+    if (/gstr[-\s]?3b/.test(t)) return 'gstr-3b';
+    if (/tds/.test(t)) return 'tds-q4';
+    if (/fssai|foscos/.test(t)) return 'fssai';
+    if (/karnataka s.?e|labour|labor|shops/.test(t)) return 'state-amendment';
+    if (/factory/.test(t)) return 'factory';
+    if (/oem|conflict/.test(t)) return 'oem-conflict';
+    if (/llp form 11|llp.*11/.test(t)) return 'llp-11';
+    if (/rera/.test(t)) return 'rera';
+    if (/gst annual|gstr[-\s]?9/.test(t)) return 'gst-annual';
+    if (/nbfc|crar|capital/.test(t)) return 'nbfc-capital';
+    if (/f&b|packaging/.test(t)) return 'fnb-packaging';
+    if (/mca|director|cdsco/.test(t)) return 'mca-form';
+    return 'mca-form';
+}
+
+let _currentActionKey = null;
+function openActionInstructions(clientId, idx) {
+    const status = (PORTAL_STATUS[clientId] || [])[idx];
+    if (!status) return;
+    const key = resolveActionKey(status.label, status.value);
+    const pb = ACTION_PLAYBOOK[key];
+    if (!pb) return;
+    _currentActionKey = key;
+
+    const head = document.getElementById('action-modal-head');
+    head.classList.remove('warn', 'danger');
+    if (status.state === 'warn') head.classList.add('warn');
+    if (status.state === 'danger') head.classList.add('danger');
+
+    document.getElementById('action-modal-title').textContent = pb.title;
+    document.getElementById('action-modal-sub').textContent = status.label + ' · ' + status.value + ' · source: ' + status.src;
+    document.getElementById('action-modal-desc').innerHTML = pb.desc;
+    document.getElementById('action-modal-steps').innerHTML = pb.steps.map(s => `<li>${s}</li>`).join('');
+
+    const portal = document.getElementById('action-modal-portal');
+    if (pb.portal) {
+        portal.href = pb.portal.url;
+        portal.style.display = '';
+        document.getElementById('action-modal-portal-name').textContent = pb.portal.name;
+    } else {
+        portal.style.display = 'none';
+    }
+
+    document.getElementById('action-modal-bg').classList.add('open');
+}
+
+function closeActionInstructions() {
+    document.getElementById('action-modal-bg').classList.remove('open');
+}
+
+function markActionDone() {
+    const toast = document.getElementById('bm-sent-toast');
+    toast.innerHTML = '&#10003; Marked as done — Reg Mitra will re-verify on next portal sync.';
+    toast.classList.add('show');
+    closeActionInstructions();
+    setTimeout(function() { toast.classList.remove('show'); }, 3000);
+}
+
 function sendBriefing(channel) {
     var recipient = document.getElementById('bm-recipient').textContent;
     var toast = document.getElementById('bm-sent-toast');
@@ -8480,6 +8823,33 @@ function downloadBriefingPDF() {
     var toast = document.getElementById('bm-sent-toast');
     toast.innerHTML = '&#128196; PDF downloaded — <strong>' + document.getElementById('bm-title').textContent + '</strong>';
     toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 3000);
+}
+
+function copyBriefing() {
+    var text = document.getElementById('briefing-editor').value;
+    var toast = document.getElementById('bm-sent-toast');
+    function show() {
+        toast.innerHTML = '&#128203; Briefing copied to clipboard';
+        toast.classList.add('show');
+        setTimeout(function() { toast.classList.remove('show'); }, 2500);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(show, function() {
+            var ta = document.getElementById('briefing-editor');
+            ta.select(); document.execCommand('copy'); show();
+        });
+    } else {
+        var ta = document.getElementById('briefing-editor');
+        ta.select(); document.execCommand('copy'); show();
+    }
+}
+
+function notNowBriefing() {
+    var toast = document.getElementById('bm-sent-toast');
+    toast.innerHTML = '&#128190; Saved as draft &mdash; you can come back to it any time.';
+    toast.classList.add('show');
+    closeBriefingModal();
     setTimeout(function() { toast.classList.remove('show'); }, 3000);
 }
 
@@ -8685,6 +9055,33 @@ function startNewAgentTask() {
 </div>
 
 
+<!-- Action Instructions Modal (live compliance items) -->
+<div class="ai-modal-bg" id="action-modal-bg" onclick="if(event.target===this)closeActionInstructions()">
+    <div class="ai-modal">
+        <div class="ai-modal-head" id="action-modal-head">
+            <div class="ai-modal-icon" id="action-modal-icon">!</div>
+            <div>
+                <h3 id="action-modal-title">Action required</h3>
+                <div class="ai-modal-sub" id="action-modal-sub"></div>
+            </div>
+            <button class="modal-close" onclick="closeActionInstructions()">&times;</button>
+        </div>
+        <div class="ai-modal-body">
+            <p id="action-modal-desc"></p>
+            <ol class="ai-steps" id="action-modal-steps"></ol>
+        </div>
+        <div class="ai-modal-foot">
+            <a class="ai-portal-link" id="action-modal-portal" target="_blank" rel="noopener">
+                Open <span id="action-modal-portal-name">portal</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+            </a>
+            <div class="ai-foot-spacer"></div>
+            <button class="btn-ghost" onclick="closeActionInstructions()">Close</button>
+            <button class="btn-email" onclick="markActionDone()">Mark as done</button>
+        </div>
+    </div>
+</div>
+
 <!-- Briefing Editor Modal -->
 <div class="briefing-modal-bg" id="briefing-modal-bg" onclick="if(event.target===this)closeBriefingModal()">
     <div class="briefing-modal">
@@ -8694,13 +9091,17 @@ function startNewAgentTask() {
             <button class="modal-close" onclick="closeBriefingModal()">&times;</button>
         </div>
         <div class="briefing-modal-body">
+            <div class="bm-editor-label">
+                <span>Edit briefing &mdash; this draft is editable. Tweak the language before sending.</span>
+            </div>
             <textarea class="briefing-editor" id="briefing-editor"></textarea>
         </div>
         <div class="briefing-modal-footer">
             <div class="ai-provenance" style="margin:0;font-size:10px" id="bm-provenance"></div>
             <div class="bm-channel-hint" id="bm-channel-hint"></div>
             <div class="bm-spacer"></div>
-            <button class="btn-ghost" onclick="closeBriefingModal()">Cancel</button>
+            <button class="btn-ghost" onclick="notNowBriefing()">Not now</button>
+            <button class="btn-ghost" onclick="copyBriefing()">Copy</button>
             <button class="btn-ghost" onclick="downloadBriefingPDF()">Download PDF</button>
             <button class="btn-whatsapp" id="bm-btn-whatsapp" onclick="sendBriefing('whatsapp')">Send via WhatsApp</button>
             <button class="btn-email" id="bm-btn-email" onclick="sendBriefing('email')">Send via Email</button>
