@@ -4220,6 +4220,37 @@
         .home-client-risk.med { background: var(--warning-bg); color: var(--warning); }
         .home-client-risk.low { background: var(--success-bg); color: var(--success); }
 
+        /* Home — firm-level summary tiles */
+        .home-stats-row {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0 14px;
+        }
+        @media (max-width: 900px) { .home-stats-row { grid-template-columns: repeat(2, 1fr); } }
+        .home-stat-card {
+            background: var(--bg-white); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px 18px;
+        }
+        .home-stat-card .hsc-num {
+            font-size: 26px; font-weight: 700; color: var(--text-dark); line-height: 1.1; margin-bottom: 4px;
+            font-variant-numeric: tabular-nums;
+        }
+        .home-stat-card .hsc-num.warn { color: var(--warning); }
+        .home-stat-card .hsc-num.ok { color: var(--success); }
+        .home-stat-card .hsc-lbl { font-size: 12px; font-weight: 600; color: var(--text-dark); margin-bottom: 3px; }
+        .home-stat-card .hsc-sub { font-size: 11px; color: var(--text-light); }
+        /* Home — portfolio CTA bar */
+        .home-portfolio-cta {
+            display: flex; align-items: center; gap: 18px;
+            background: linear-gradient(135deg, #f0fdf4 0%, var(--bg-white) 70%);
+            border: 1px solid #d1fae5; border-radius: 12px;
+            padding: 14px 18px; margin-bottom: 18px;
+        }
+        .home-portfolio-cta .hpc-eyebrow {
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px;
+            color: var(--accent); margin-bottom: 2px;
+        }
+        .home-portfolio-cta .hpc-title { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+        .home-portfolio-cta .btn { margin-left: auto; }
+
         .home-activity {
             display: flex;
             align-items: flex-start;
@@ -4443,133 +4474,39 @@
                         </div>
                     </section>
 
-                    <!-- Primary surface: client portfolio grid (home entry point) -->
-                    <div class="section-heading" style="margin-bottom:4px">Your clients</div>
-                    <p class="screen-desc">Live compliance status for every client &mdash; <strong>auto-fetched from govt portals</strong> (GSTN, MCA21, CBDT, FSSAI, RBI CIMS). Click a client to open their full dashboard.</p>
-                    <div class="screen-filter-bar">
-                        <div class="clients-search">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                            <input type="text" id="clients-search" placeholder="Search clients by name or GSTIN…" oninput="filterClients()">
+                    <!-- Compact firm-level overview (Home) — client portfolio lives in the Clients tab -->
+                    <div class="home-stats-row">
+                        <div class="home-stat-card">
+                            <div class="hsc-num">6</div>
+                            <div class="hsc-lbl">Clients monitored</div>
+                            <div class="hsc-sub">Live across 49 portal feeds</div>
                         </div>
-                        <span class="filter-sep"></span>
-                        <span class="filter-label">Sector</span>
-                        <select class="company-select" id="clients-sector-filter" onchange="filterClients()" style="min-width:140px">
-                            <option value="all" selected>All</option>
-                            <option value="pharma">Pharma</option>
-                            <option value="auto">Auto</option>
-                            <option value="fnb">F&B</option>
-                            <option value="nbfc">NBFC</option>
-                            <option value="it">IT</option>
-                            <option value="realestate">Real Estate</option>
-                        </select>
-                        <span class="filter-label">Risk</span>
-                        <select class="company-select" id="clients-risk-filter" onchange="filterClients()" style="min-width:130px">
-                            <option value="all" selected>All</option>
-                            <option value="high">High (7+)</option>
-                            <option value="medium">Medium (4-7)</option>
-                            <option value="low">Low (0-4)</option>
-                        </select>
-                        <span class="filter-label">Sort</span>
-                        <select class="company-select" id="clients-sort" onchange="filterClients()" style="min-width:150px">
-                            <option value="risk-desc" selected>Highest risk</option>
-                            <option value="risk-asc">Lowest risk</option>
-                            <option value="name-asc">Name (A–Z)</option>
-                            <option value="pending-desc">Most pending</option>
-                        </select>
-                        <span class="filter-count-badge" id="clients-filter-count">Showing 6 clients</span>
-                        <button class="btn btn-primary clients-add-btn" onclick="openAddClient()">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                            Add client
+                        <div class="home-stat-card">
+                            <div class="hsc-num warn">12</div>
+                            <div class="hsc-lbl">Pending action items</div>
+                            <div class="hsc-sub">Across all clients · 2 high-priority</div>
+                        </div>
+                        <div class="home-stat-card">
+                            <div class="hsc-num ok">8</div>
+                            <div class="hsc-lbl">Drafted briefings</div>
+                            <div class="hsc-sub">Ready for your review</div>
+                        </div>
+                        <div class="home-stat-card">
+                            <div class="hsc-num">~51 hrs</div>
+                            <div class="hsc-lbl">Partner time saved</div>
+                            <div class="hsc-sub">This month · vs manual workflow</div>
+                        </div>
+                    </div>
+                    <div class="home-portfolio-cta">
+                        <div>
+                            <div class="hpc-eyebrow">Client portfolio</div>
+                            <div class="hpc-title">Every client&rsquo;s live compliance status, in one view.</div>
+                        </div>
+                        <button class="btn btn-primary" onclick="navTo('clients')">
+                            Open Clients
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-left:6px"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                         </button>
                     </div>
-                    <div class="client-grid">
-                        <div class="client-card demo-ready" data-sector="pharma" data-risk="6.8" onclick="openClient('sharma')">
-                            <div class="demo-ribbon">Full demo data</div>
-                            <div class="client-card-top">
-                                <div class="av" style="background:var(--info-bg);color:var(--info)">SP</div>
-                                <div><div class="name">Sharma Pharmaceuticals Pvt. Ltd.</div><div class="sector">Pharma / Manufacturing — Mumbai</div></div>
-                                <span class="risk-score risk-med" style="margin-left:auto">Risk 6.8 <span class="risk-trend">↑0.4</span></span>
-                            </div>
-                            <div class="client-card-metrics">
-                                <div class="metric"><div class="num" style="color:var(--danger)">3</div><div class="lbl">Pending</div></div>
-                                <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
-                                <div class="metric"><div class="num" style="color:var(--success)">12</div><div class="lbl">Compliant</div></div>
-                            </div>
-                            <div class="ai-monitoring-line">Live-synced with 14 portal feeds (GSTN, MCA21, CBDT, CDSCO) · 2 min ago</div>
-                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~12 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;24K</span></div>
-                        </div>
-                        <div class="client-card demo-sample" data-sector="it" data-risk="5.2" onclick="openClient('nexgen')">
-                            <div class="client-card-top">
-                                <div class="av" style="background:var(--purple-bg);color:var(--purple)">NG</div>
-                                <div><div class="name">NexGen Software Solutions Pvt. Ltd.</div><div class="sector">IT / Software — Bangalore</div></div>
-                                <span class="risk-score risk-med" style="margin-left:auto">Risk 5.2 <span class="risk-trend">↑1.1</span></span>
-                            </div>
-                            <div class="client-card-metrics">
-                                <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
-                                <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
-                                <div class="metric"><div class="num" style="color:var(--success)">18</div><div class="lbl">Compliant</div></div>
-                            </div>
-                            <div class="ai-monitoring-line">Live-synced with 8 portal feeds (GSTN, MCA21, CBDT, Kar. S&E) · 2 min ago</div>
-                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~4 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;9K</span></div>
-                        </div>
-                        <div class="client-card demo-sample" data-sector="auto" data-risk="8.1" onclick="openClient('gupta')">
-                            <div class="client-card-top">
-                                <div class="av" style="background:var(--danger-bg);color:var(--danger)">GA</div>
-                                <div><div class="name">Gupta Auto Components Ltd.</div><div class="sector">Auto Ancillary — Gurgaon</div></div>
-                                <span class="risk-score risk-high" style="margin-left:auto">Risk 8.1 <span class="risk-trend">↑2.3</span></span>
-                            </div>
-                            <div class="client-card-metrics">
-                                <div class="metric"><div class="num" style="color:var(--danger)">4</div><div class="lbl">Pending</div></div>
-                                <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
-                                <div class="metric"><div class="num" style="color:var(--success)">9</div><div class="lbl">Compliant</div></div>
-                            </div>
-                            <div class="ai-monitoring-line">Live-synced with 11 portal feeds (GSTN, MCA21, CBDT, Haryana DISH) · 2 min ago</div>
-                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~16 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;32K</span></div>
-                        </div>
-                        <div class="client-card demo-sample" data-sector="fnb" data-risk="7.4" onclick="openClient('royal')">
-                            <div class="client-card-top">
-                                <div class="av" style="background:var(--success-bg);color:var(--success)">RS</div>
-                                <div><div class="name">Royal Spice Kitchen Pvt. Ltd.</div><div class="sector">F&B / Restaurant Chain — Delhi</div></div>
-                                <span class="risk-score risk-high" style="margin-left:auto">Risk 7.4 <span class="risk-trend">↑1.8</span></span>
-                            </div>
-                            <div class="client-card-metrics">
-                                <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
-                                <div class="metric"><div class="num" style="color:var(--warning)">3</div><div class="lbl">This Week</div></div>
-                                <div class="metric"><div class="num" style="color:var(--success)">7</div><div class="lbl">Compliant</div></div>
-                            </div>
-                            <div class="ai-monitoring-line">Live-synced with 9 portal feeds (GSTN, MCA21, FOSCOS, Delhi Labour) · 2 min ago</div>
-                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~7 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;14K</span></div>
-                        </div>
-                        <div class="client-card demo-sample" data-sector="nbfc" data-risk="6.1" onclick="openClient('lakshmi')">
-                            <div class="client-card-top">
-                                <div class="av" style="background:var(--warning-bg);color:var(--warning)">LF</div>
-                                <div><div class="name">Lakshmi FinServ Pvt. Ltd.</div><div class="sector">NBFC — Chennai</div></div>
-                                <span class="risk-score risk-med" style="margin-left:auto">Risk 6.1 <span class="risk-trend">↑0.9</span></span>
-                            </div>
-                            <div class="client-card-metrics">
-                                <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
-                                <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
-                                <div class="metric"><div class="num" style="color:var(--success)">22</div><div class="lbl">Compliant</div></div>
-                            </div>
-                            <div class="ai-monitoring-line">Live-synced with 16 portal feeds (GSTN, MCA21, CBDT, RBI CIMS) · 2 min ago</div>
-                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~9 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;18K</span></div>
-                        </div>
-                        <div class="client-card demo-sample" data-sector="realestate" data-risk="3.2" onclick="openClient('greenfield')">
-                            <div class="client-card-top">
-                                <div class="av" style="background:#fdf2f8;color:#be185d">GR</div>
-                                <div><div class="name">Greenfield Realty LLP</div><div class="sector">Real Estate — Pune</div></div>
-                                <span class="risk-score risk-low" style="margin-left:auto">Risk 3.2 <span class="risk-trend">↓0.1</span></span>
-                            </div>
-                            <div class="client-card-metrics">
-                                <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
-                                <div class="metric"><div class="num" style="color:var(--warning)">0</div><div class="lbl">This Week</div></div>
-                                <div class="metric"><div class="num" style="color:var(--success)">14</div><div class="lbl">Compliant</div></div>
-                            </div>
-                            <div class="ai-monitoring-line">Live-synced with 7 portal feeds (GSTN, MCA21, MahaRERA) · 2 min ago</div>
-                            <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~3 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;6K</span></div>
-                        </div>
-                    </div>
-
                     <!-- Secondary surfaces -->
                     <div class="home-quick-grid">
                         <!-- Latest regulations -->
@@ -4628,6 +4565,135 @@
                         </section>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- CLIENTS — full portfolio (its own screen) -->
+            <div class="screen" id="screen-clients">
+                <div class="section-heading" style="margin-bottom:4px">Your clients</div>
+                <p class="screen-desc">Live compliance status for every client &mdash; <strong>auto-fetched from govt portals</strong> (GSTN, MCA21, CBDT, FSSAI, RBI CIMS). Click a client to open their full dashboard.</p>
+                <div class="screen-filter-bar">
+                    <div class="clients-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <input type="text" id="clients-search" placeholder="Search clients by name or GSTIN…" oninput="filterClients()">
+                    </div>
+                    <span class="filter-sep"></span>
+                    <span class="filter-label">Sector</span>
+                    <select class="company-select" id="clients-sector-filter" onchange="filterClients()" style="min-width:140px">
+                        <option value="all" selected>All</option>
+                        <option value="pharma">Pharma</option>
+                        <option value="auto">Auto</option>
+                        <option value="fnb">F&B</option>
+                        <option value="nbfc">NBFC</option>
+                        <option value="it">IT</option>
+                        <option value="realestate">Real Estate</option>
+                    </select>
+                    <span class="filter-label">Risk</span>
+                    <select class="company-select" id="clients-risk-filter" onchange="filterClients()" style="min-width:130px">
+                        <option value="all" selected>All</option>
+                        <option value="high">High (7+)</option>
+                        <option value="medium">Medium (4-7)</option>
+                        <option value="low">Low (0-4)</option>
+                    </select>
+                    <span class="filter-label">Sort</span>
+                    <select class="company-select" id="clients-sort" onchange="filterClients()" style="min-width:150px">
+                        <option value="risk-desc" selected>Highest risk</option>
+                        <option value="risk-asc">Lowest risk</option>
+                        <option value="name-asc">Name (A–Z)</option>
+                        <option value="pending-desc">Most pending</option>
+                    </select>
+                    <span class="filter-count-badge" id="clients-filter-count">Showing 6 clients</span>
+                    <button class="btn btn-primary clients-add-btn" onclick="openAddClient()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                        Add client
+                    </button>
+                </div>
+                <div class="client-grid">
+                    <div class="client-card demo-ready" data-sector="pharma" data-risk="6.8" onclick="openClient('sharma')">
+                        <div class="demo-ribbon">Full demo data</div>
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--info-bg);color:var(--info)">SP</div>
+                            <div><div class="name">Sharma Pharmaceuticals Pvt. Ltd.</div><div class="sector">Pharma / Manufacturing — Mumbai</div></div>
+                            <span class="risk-score risk-med" style="margin-left:auto">Risk 6.8 <span class="risk-trend">↑0.4</span></span>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">3</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">12</div><div class="lbl">Compliant</div></div>
+                        </div>
+                        <div class="ai-monitoring-line">Live-synced with 14 portal feeds (GSTN, MCA21, CBDT, CDSCO) · 2 min ago</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~12 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;24K</span></div>
+                    </div>
+                    <div class="client-card demo-sample" data-sector="it" data-risk="5.2" onclick="openClient('nexgen')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--purple-bg);color:var(--purple)">NG</div>
+                            <div><div class="name">NexGen Software Solutions Pvt. Ltd.</div><div class="sector">IT / Software — Bangalore</div></div>
+                            <span class="risk-score risk-med" style="margin-left:auto">Risk 5.2 <span class="risk-trend">↑1.1</span></span>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">18</div><div class="lbl">Compliant</div></div>
+                        </div>
+                        <div class="ai-monitoring-line">Live-synced with 8 portal feeds (GSTN, MCA21, CBDT, Kar. S&E) · 2 min ago</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~4 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;9K</span></div>
+                    </div>
+                    <div class="client-card demo-sample" data-sector="auto" data-risk="8.1" onclick="openClient('gupta')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--danger-bg);color:var(--danger)">GA</div>
+                            <div><div class="name">Gupta Auto Components Ltd.</div><div class="sector">Auto Ancillary — Gurgaon</div></div>
+                            <span class="risk-score risk-high" style="margin-left:auto">Risk 8.1 <span class="risk-trend">↑2.3</span></span>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">4</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">9</div><div class="lbl">Compliant</div></div>
+                        </div>
+                        <div class="ai-monitoring-line">Live-synced with 11 portal feeds (GSTN, MCA21, CBDT, Haryana DISH) · 2 min ago</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~16 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;32K</span></div>
+                    </div>
+                    <div class="client-card demo-sample" data-sector="fnb" data-risk="7.4" onclick="openClient('royal')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--success-bg);color:var(--success)">RS</div>
+                            <div><div class="name">Royal Spice Kitchen Pvt. Ltd.</div><div class="sector">F&B / Restaurant Chain — Delhi</div></div>
+                            <span class="risk-score risk-high" style="margin-left:auto">Risk 7.4 <span class="risk-trend">↑1.8</span></span>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">3</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">7</div><div class="lbl">Compliant</div></div>
+                        </div>
+                        <div class="ai-monitoring-line">Live-synced with 9 portal feeds (GSTN, MCA21, FOSCOS, Delhi Labour) · 2 min ago</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~7 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;14K</span></div>
+                    </div>
+                    <div class="client-card demo-sample" data-sector="nbfc" data-risk="6.1" onclick="openClient('lakshmi')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:var(--warning-bg);color:var(--warning)">LF</div>
+                            <div><div class="name">Lakshmi FinServ Pvt. Ltd.</div><div class="sector">NBFC — Chennai</div></div>
+                            <span class="risk-score risk-med" style="margin-left:auto">Risk 6.1 <span class="risk-trend">↑0.9</span></span>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">2</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">22</div><div class="lbl">Compliant</div></div>
+                        </div>
+                        <div class="ai-monitoring-line">Live-synced with 16 portal feeds (GSTN, MCA21, CBDT, RBI CIMS) · 2 min ago</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~9 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;18K</span></div>
+                    </div>
+                    <div class="client-card demo-sample" data-sector="realestate" data-risk="3.2" onclick="openClient('greenfield')">
+                        <div class="client-card-top">
+                            <div class="av" style="background:#fdf2f8;color:#be185d">GR</div>
+                            <div><div class="name">Greenfield Realty LLP</div><div class="sector">Real Estate — Pune</div></div>
+                            <span class="risk-score risk-low" style="margin-left:auto">Risk 3.2 <span class="risk-trend">↓0.1</span></span>
+                        </div>
+                        <div class="client-card-metrics">
+                            <div class="metric"><div class="num" style="color:var(--danger)">1</div><div class="lbl">Pending</div></div>
+                            <div class="metric"><div class="num" style="color:var(--warning)">0</div><div class="lbl">This Week</div></div>
+                            <div class="metric"><div class="num" style="color:var(--success)">14</div><div class="lbl">Compliant</div></div>
+                        </div>
+                        <div class="ai-monitoring-line">Live-synced with 7 portal feeds (GSTN, MCA21, MahaRERA) · 2 min ago</div>
+                        <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~3 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;6K</span></div>
+                    </div>
                 </div>
             </div>
 
@@ -4941,7 +5007,7 @@
             <!-- CLIENT DETAIL -->
             <div class="screen" id="screen-client-detail">
                 <div class="client-detail-page">
-                    <button class="client-detail-back" onclick="navTo('home')">
+                    <button class="client-detail-back" onclick="navTo('clients')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                         All clients
                     </button>
@@ -7688,7 +7754,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         if (screen === 'assistant') {
             resolved = getAssistantMode() === 'act' ? 'agent' : 'chat';
         }
-        if (screen === 'clients') resolved = 'home'; // Clients tab shows the client portfolio (Home)
+        // 'clients' has its own dedicated screen — no mapping needed
         const target = document.getElementById('screen-' + resolved);
         if (target) target.classList.add('active');
 
@@ -7963,7 +8029,7 @@ function closeCalPopup() {
 // Navigate to screen
 function navTo(screen) {
     // Map removed-nav screens back to their nearest visible nav button
-    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', dashboard:'home', clients:'home', 'client-detail':'home', feed:'home' };
+    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', dashboard:'home', 'client-detail':'clients', feed:'home' };
     var navTarget = navMap[screen] || screen;
     document.querySelectorAll('.nav-btn').forEach(b => {
         b.classList.remove('active');
