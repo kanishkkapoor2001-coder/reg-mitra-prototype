@@ -962,6 +962,43 @@
             display: flex;
             gap: 14px;
         }
+        /* Editable walkthrough briefing */
+        .ob-briefing-editor {
+            width: 100%; min-height: 320px; max-height: 360px;
+            background: var(--bg-main); border: 1px solid var(--border); border-radius: 12px;
+            padding: 18px 20px; font-size: 13px; line-height: 1.65; color: var(--text-dark);
+            font-family: inherit; resize: vertical; outline: none;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+            margin-bottom: 10px;
+        }
+        .ob-briefing-editor:focus { border-color: var(--accent); background: var(--bg-white); box-shadow: 0 0 0 3px rgba(22,163,74,0.08); }
+        .ob-briefing-meta-row {
+            display: flex; align-items: center; gap: 12px; margin: 4px 0 14px;
+            flex-wrap: wrap;
+        }
+        .ob-briefing-meta-pill {
+            font-size: 10px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase;
+            color: var(--accent); background: var(--accent-bg); border: 1px solid #bbf7d0;
+            padding: 4px 10px; border-radius: 20px;
+        }
+        .ob-briefing-meta-channel { font-size: 11px; color: var(--text-light); margin-left: auto; }
+        .ob-briefing-meta-channel strong { color: var(--text-dark); }
+        /* Walkthrough Sharma summary tiles */
+        .ob-walkthrough-summary {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            margin: 14px 0 18px;
+        }
+        .ob-walkthrough-summary .ows-row {
+            background: var(--bg-main); border: 1px solid var(--border); border-radius: 10px;
+            padding: 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+        }
+        .ob-walkthrough-summary .ows-num { font-size: 20px; font-weight: 700; color: var(--text-dark); }
+        .ob-walkthrough-summary .ows-num.warn { color: var(--warning); }
+        .ob-walkthrough-summary .ows-num.ok { color: var(--success); }
+        .ob-walkthrough-summary .ows-lbl { font-size: 10px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.4px; line-height: 1.4; }
+        @media (max-width: 720px) {
+            .ob-walkthrough-summary { grid-template-columns: repeat(2, 1fr); }
+        }
 
         .ob-finish-pill {
             background: var(--success-bg);
@@ -1701,6 +1738,26 @@
 
         .cal-day:has(.cal-evt) { cursor: pointer; }
         .cal-day:has(.cal-evt):hover { border-color: var(--accent); background: var(--accent-bg); }
+        .cal-day-out { background: var(--bg-main); }
+        .cal-day-out .d { color: var(--text-light); opacity: 0.5; }
+        .cal-evt-more { font-size: 9.5px; color: var(--text-light); font-weight: 600; margin-top: 2px; }
+        /* Month navigation bar */
+        .cal-month-bar { display: flex; align-items: center; gap: 10px; margin: 4px 0 10px; }
+        .cal-nav-btn {
+            width: 30px; height: 30px; border-radius: 8px;
+            border: 1px solid var(--border); background: var(--bg-white);
+            color: var(--text-mid); cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: border-color 0.15s, color 0.15s;
+        }
+        .cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .cal-nav-btn svg { width: 14px; height: 14px; }
+        .cal-today-btn {
+            margin-left: auto; padding: 6px 14px; border-radius: 8px;
+            border: 1px solid var(--border); background: var(--bg-white); color: var(--text-mid);
+            font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer;
+        }
+        .cal-today-btn:hover { border-color: var(--accent); color: var(--accent); }
 
         /* Calendar detail popup */
         .cal-popup {
@@ -4175,11 +4232,6 @@
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10"/></svg>
                 Home
             </div>
-            <div class="nav-btn" data-screen="feed">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-                Regulations
-                <span class="nav-badge">7</span>
-            </div>
             <div class="nav-btn" data-screen="briefings">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Briefings
@@ -4821,7 +4873,7 @@
                             <button class="cdh-iconbtn" title="Schedule call" onclick="cdQuick('schedule')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V3M16 7V3M3 11h18M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg></button>
                             <button class="cdh-iconbtn" title="Download report" onclick="cdQuick('download')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg></button>
                             <button class="btn btn-primary" onclick="navTo('briefings')">Generate Briefing</button>
-                            <button class="btn btn-outline" onclick="navTo('feed')">View History</button>
+                            <button class="btn btn-outline" onclick="scrollToClientRegs()">View regulations</button>
                         </div>
                     </div>
 
@@ -4891,6 +4943,14 @@
                         </div>
                     </div>
 
+                    <div class="cd-section" id="cd-regs-section">
+                        <div class="cd-section-title">
+                            Regulations applicable to this client
+                            <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span>Filtered from 142+ govt sources to what affects this client&rsquo;s sector, size, and registrations.</span></span>
+                        </div>
+                        <div id="cd-regs"></div>
+                    </div>
+
                     <div class="cd-section">
                         <div class="cd-section-title">
                             Drafted communications
@@ -4903,8 +4963,17 @@
 
             <!-- CALENDAR -->
             <div class="screen" id="screen-calendar">
-                <div class="section-heading" style="margin-bottom:4px">May 2026</div>
-                <p class="screen-desc">Auto-populated calendar of every compliance deadline across all clients. Dates extracted from gazette notifications, circulars, and filing schedules. Overdue items flagged automatically.</p>
+                <div class="cal-month-bar">
+                    <button class="cal-nav-btn" id="cal-prev-btn" onclick="calShiftMonth(-1)" aria-label="Previous month">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <div class="section-heading" id="cal-month-label" style="margin:0">May 2026</div>
+                    <button class="cal-nav-btn" id="cal-next-btn" onclick="calShiftMonth(1)" aria-label="Next month">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                    </button>
+                    <button class="cal-today-btn" onclick="calGoToday()">Today</button>
+                </div>
+                <p class="screen-desc">Auto-populated calendar of every compliance deadline across all clients. Dates extracted from gazette notifications, circulars, and filing schedules. Use the arrows to look ahead or back; overdue items are flagged automatically.</p>
                 <div class="screen-filter-bar">
                     <span class="filter-label">Client</span>
                     <span class="filter-sep"></span>
@@ -4927,44 +4996,7 @@
                         <option value="compliance">Compliance</option>
                     </select>
                 </div>
-                <div class="cal-grid">
-                    <div class="cal-hdr">Mon</div><div class="cal-hdr">Tue</div><div class="cal-hdr">Wed</div><div class="cal-hdr">Thu</div><div class="cal-hdr">Fri</div><div class="cal-hdr">Sat</div><div class="cal-hdr">Sun</div>
-                    <div class="cal-day"><div class="d">28</div></div>
-                    <div class="cal-day"><div class="d">29</div></div>
-                    <div class="cal-day"><div class="d">30</div></div>
-                    <div class="cal-day" data-clients="sharma gupta royal lakshmi" data-evttype="compliance" onclick="openCalEvent('igst')"><div class="d">1</div><div class="cal-evt evt-compliance">IGST rates effective</div></div>
-                    <div class="cal-day" data-clients="royal" data-evttype="deadline" onclick="openCalEvent('fssai-opt')"><div class="d">2</div><div class="cal-evt evt-deadline">FSSAI opt-in overdue</div></div>
-                    <div class="cal-day"><div class="d">3</div></div>
-                    <div class="cal-day"><div class="d">4</div></div>
-                    <div class="cal-day today"><div class="d">5</div></div>
-                    <div class="cal-day"><div class="d">6</div></div>
-                    <div class="cal-day" data-clients="sharma gupta royal lakshmi nexgen greenfield" data-evttype="filing" onclick="openCalEvent('tds-dep')"><div class="d">7</div><div class="cal-evt evt-filing">TDS deposit Q4</div></div>
-                    <div class="cal-day"><div class="d">8</div></div>
-                    <div class="cal-day" data-clients="sharma gupta royal lakshmi nexgen greenfield" data-evttype="deadline" onclick="openCalEvent('mca-comments')"><div class="d">9</div><div class="cal-evt evt-deadline">MCA comments due</div></div>
-                    <div class="cal-day"><div class="d">10</div></div>
-                    <div class="cal-day" data-clients="sharma gupta royal lakshmi nexgen greenfield" data-evttype="filing" onclick="openCalEvent('gstr1')"><div class="d">11</div><div class="cal-evt evt-filing">GSTR-1 due</div></div>
-                    <div class="cal-day"><div class="d">12</div></div>
-                    <div class="cal-day"><div class="d">13</div></div>
-                    <div class="cal-day"><div class="d">14</div></div>
-                    <div class="cal-day" data-clients="sharma gupta royal lakshmi nexgen greenfield" data-evttype="deadline" onclick="openCalEvent('tds-ret')"><div class="d">15</div><div class="cal-evt evt-deadline">TDS return Q4</div></div>
-                    <div class="cal-day"><div class="d">16</div></div>
-                    <div class="cal-day"><div class="d">17</div></div>
-                    <div class="cal-day"><div class="d">18</div></div>
-                    <div class="cal-day"><div class="d">19</div></div>
-                    <div class="cal-day" data-clients="sharma gupta royal lakshmi nexgen greenfield" data-evttype="deadline" onclick="openCalEvent('gstr3b')"><div class="d">20</div><div class="cal-evt evt-deadline">GSTR-3B due</div></div>
-                    <div class="cal-day"><div class="d">21</div></div>
-                    <div class="cal-day"><div class="d">22</div></div>
-                    <div class="cal-day"><div class="d">23</div></div>
-                    <div class="cal-day"><div class="d">24</div></div>
-                    <div class="cal-day"><div class="d">25</div></div>
-                    <div class="cal-day"><div class="d">26</div></div>
-                    <div class="cal-day"><div class="d">27</div></div>
-                    <div class="cal-day"><div class="d">28</div></div>
-                    <div class="cal-day"><div class="d">29</div></div>
-                    <div class="cal-day" data-clients="greenfield" data-evttype="compliance" onclick="openCalEvent('llp')"><div class="d">30</div><div class="cal-evt evt-compliance">LLP Form 11</div></div>
-                    <div class="cal-day" data-clients="sharma gupta royal lakshmi nexgen greenfield" data-evttype="filing" onclick="openCalEvent('gst-annual')"><div class="d">31</div><div class="cal-evt evt-filing">GST annual prep</div></div>
-                    <div class="cal-day"><div class="d">1</div></div>
-                </div>
+                <div class="cal-grid" id="cal-grid"></div>
 
                 <div class="ai-predictions">
                     <h4><span class="ai-badge">Forecast</span> Upcoming Regulatory Events</h4>
@@ -7791,7 +7823,7 @@ function closeCalPopup() {
 // Navigate to screen
 function navTo(screen) {
     // Map removed-nav screens back to their nearest visible nav button
-    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', dashboard:'home', clients:'home', 'client-detail':'home' };
+    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', dashboard:'home', clients:'home', 'client-detail':'home', feed:'home' };
     var navTarget = navMap[screen] || screen;
     document.querySelectorAll('.nav-btn').forEach(b => {
         b.classList.remove('active');
@@ -7990,7 +8022,7 @@ function openAddClient() {
 function filterCalendar() {
     var clientVal = document.getElementById('cal-client-filter').value;
     var typeVal = document.getElementById('cal-type-filter').value;
-    document.querySelectorAll('.cal-day').forEach(function(day) {
+    document.querySelectorAll('#cal-grid .cal-day').forEach(function(day) {
         var dc = day.dataset.clients || '';
         var dt = day.dataset.evttype || '';
         if (!dc && !dt) { day.style.opacity = '1'; return; } // days without events stay normal
@@ -8013,6 +8045,175 @@ function filterCalendar() {
         item.style.display = clientMatch ? '' : 'none';
     });
 }
+
+// ===== Calendar — month navigation engine =====
+// Date-keyed schedule (YYYY-MM-DD → events). Multi-month so prev/next reveals real items.
+const CAL_SCHEDULE = {
+    '2026-03-10': [{id:'fssai-launch', clients:'royal', type:'compliance', title:'FSSAI Amendment notified'}],
+    '2026-03-15': [{id:'tds-mar-q3', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'TDS return Q3'}],
+    '2026-03-20': [{id:'gstr3b-feb', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'GSTR-3B Feb'}],
+    '2026-04-01': [{id:'tds-rates', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'compliance', title:'TDS rates FY26-27'}],
+    '2026-04-07': [{id:'tds-apr-dep', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'TDS deposit Mar'}],
+    '2026-04-11': [{id:'gstr1-mar', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'GSTR-1 Mar'}],
+    '2026-04-20': [{id:'gstr3b-mar', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'GSTR-3B Mar'}],
+    '2026-04-28': [{id:'cbic-notif', clients:'sharma', type:'compliance', title:'CBIC IGST gazette'}],
+    '2026-05-01': [{id:'igst', clients:'sharma gupta royal lakshmi', type:'compliance', title:'IGST rates effective'}],
+    '2026-05-02': [{id:'fssai-opt', clients:'royal', type:'deadline', title:'FSSAI opt-in overdue'}],
+    '2026-05-07': [{id:'tds-dep', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'TDS deposit Q4'}],
+    '2026-05-09': [{id:'mca-comments', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'MCA comments due'}],
+    '2026-05-11': [{id:'gstr1', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'GSTR-1 due'}],
+    '2026-05-15': [{id:'tds-ret', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'TDS return Q4'}],
+    '2026-05-20': [{id:'gstr3b', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'GSTR-3B due'}],
+    '2026-05-30': [{id:'llp', clients:'greenfield', type:'compliance', title:'LLP Form 11'}],
+    '2026-05-31': [{id:'gst-annual', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'GST annual prep'}],
+    '2026-06-07': [{id:'tds-may-dep', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'TDS deposit May'}],
+    '2026-06-11': [{id:'gstr1-may', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'GSTR-1 May'}],
+    '2026-06-12': [{id:'rbi-mpc', clients:'lakshmi', type:'compliance', title:'RBI MPC meeting'}],
+    '2026-06-20': [{id:'gstr3b-may', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'GSTR-3B May'}],
+    '2026-06-22': [{id:'gst-council', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'compliance', title:'GST Council meeting'}],
+    '2026-06-30': [{id:'factory-renewal', clients:'gupta', type:'deadline', title:'Factory licence renewal'}],
+    '2026-07-07': [{id:'tds-jun-dep', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'TDS deposit Jun'}],
+    '2026-07-15': [{id:'mca-window', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'compliance', title:'MCA annual window opens'}],
+    '2026-07-20': [{id:'gstr3b-jun', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'GSTR-3B June'}],
+    '2026-07-31': [{id:'itr-individual', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'ITR individuals'}],
+    '2026-08-15': [{id:'fssai-hygiene', clients:'royal', type:'compliance', title:'FSSAI hygiene draft'}],
+    '2026-08-20': [{id:'gstr3b-jul', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'GSTR-3B July'}],
+    '2026-09-15': [{id:'tds-aug-dep', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'filing', title:'TDS deposit Aug'}],
+    '2026-09-30': [{id:'dir3-kyc', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'DIR-3 KYC deadline'}],
+    '2026-10-01': [{id:'rbi-crar', clients:'lakshmi', type:'compliance', title:'RBI CRAR threshold up'}],
+    '2026-10-20': [{id:'gstr3b-sep', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'GSTR-3B Sep'}],
+    '2026-12-31': [{id:'gstr9', clients:'sharma gupta royal lakshmi nexgen greenfield', type:'deadline', title:'GSTR-9 Annual'}]
+};
+
+// Fallback bodies for new event ids not in calEvents.
+const CAL_EVENT_FALLBACK = {
+    'fssai-launch': { title:'FSSAI Amendment 2026 notified', date:'10 March 2026', type:'Compliance', clients:'Royal Spice Kitchen', body:'FSSAI Licensing Amendment 2026 gazette-notified. Licence model moves to perpetual; inspections move to risk-based 2-year cycle.' },
+    'tds-mar-q3': { title:'TDS Q3 return', date:'15 March 2026', type:'Filing', clients:'All 6 clients', body:'Quarterly TDS return for Q3 FY 25-26 due. Form 24Q (salary) and 26Q (non-salary).' },
+    'gstr3b-feb': { title:'GSTR-3B — February', date:'20 March 2026', type:'Deadline', clients:'All GST-registered clients', body:'Monthly summary return for Feb 2026.' },
+    'tds-rates': { title:'New TDS rates FY26-27 effective', date:'1 April 2026', type:'Compliance', clients:'All 6 clients', body:'194C threshold raised to ₹50K. 194J split rates abolished — now flat 10%. Update payroll and vendor masters.' },
+    'tds-apr-dep': { title:'TDS deposit — March 2026', date:'7 April 2026', type:'Filing', clients:'All 6 clients', body:'Deposit March TDS via Challan 281.' },
+    'gstr1-mar': { title:'GSTR-1 — March 2026', date:'11 April 2026', type:'Filing', clients:'All GST-registered clients', body:'Outward supply details for March.' },
+    'gstr3b-mar': { title:'GSTR-3B — March 2026', date:'20 April 2026', type:'Deadline', clients:'All GST-registered clients', body:'Monthly summary return for March.' },
+    'cbic-notif': { title:'CBIC IGST gazette notification', date:'28 April 2026', type:'Compliance', clients:'Sharma Pharmaceuticals', body:'CBIC Notification 26/2026-IT gazetted. Pharma intermediates rate cut from 18% to 12% effective 1 May 2026.' },
+    'tds-may-dep': { title:'TDS deposit — May 2026', date:'7 June 2026', type:'Filing', clients:'All 6 clients', body:'Deposit May TDS via Challan 281.' },
+    'gstr1-may': { title:'GSTR-1 — May 2026', date:'11 June 2026', type:'Filing', clients:'All GST-registered clients', body:'Outward supply details for May.' },
+    'rbi-mpc': { title:'RBI Monetary Policy Review', date:'12 June 2026', type:'Compliance', clients:'Lakshmi FinServ', body:'Likely repo rate decision. If cut, Lakshmi FinServ lending rates may need revision.' },
+    'gstr3b-may': { title:'GSTR-3B — May 2026', date:'20 June 2026', type:'Deadline', clients:'All GST-registered clients', body:'Monthly summary return for May.' },
+    'gst-council': { title:'GST Council Meeting', date:'22 June 2026', type:'Compliance', clients:'All GST-registered clients', body:'Expected agenda: rate rationalisation, e-invoicing threshold changes.' },
+    'factory-renewal': { title:'Factory licence renewal — Gupta Auto', date:'30 June 2026', type:'Deadline', clients:'Gupta Auto Components', body:'Haryana DISH portal renewal. Upload safety audit + fee receipt.' },
+    'tds-jun-dep': { title:'TDS deposit — June 2026', date:'7 July 2026', type:'Filing', clients:'All 6 clients', body:'Deposit June TDS via Challan 281.' },
+    'mca-window': { title:'MCA annual filing window opens', date:'15 July 2026', type:'Compliance', clients:'All companies', body:'DIR-3 KYC, AOC-4, MGT-7 season begins. Plan partner workload for July-September.' },
+    'gstr3b-jun': { title:'GSTR-3B — June 2026', date:'20 July 2026', type:'Deadline', clients:'All GST-registered clients', body:'Monthly summary return for June.' },
+    'itr-individual': { title:'ITR (individuals) — AY 2026-27', date:'31 July 2026', type:'Deadline', clients:'All client directors / partners (individuals)', body:'Income tax return filing for individuals (non-audit cases).' },
+    'fssai-hygiene': { title:'FSSAI Hygiene Rating draft', date:'~15 August 2026', type:'Compliance', clients:'Royal Spice Kitchen', body:'Draft circular for mandatory hygiene rating for 3+ outlet restaurant chains. Could impact Royal Spice.' },
+    'gstr3b-jul': { title:'GSTR-3B — July 2026', date:'20 August 2026', type:'Deadline', clients:'All GST-registered clients', body:'Monthly summary return for July.' },
+    'tds-aug-dep': { title:'TDS deposit — August 2026', date:'15 September 2026', type:'Filing', clients:'All 6 clients', body:'Deposit August TDS via Challan 281.' },
+    'dir3-kyc': { title:'DIR-3 KYC — last date', date:'30 September 2026', type:'Deadline', clients:'All companies', body:'Annual identity verification for company directors. Penalty ₹5,000/director if missed.' },
+    'rbi-crar': { title:'RBI CRAR threshold raised', date:'1 October 2026', type:'Compliance', clients:'Lakshmi FinServ', body:'Scale-Based Regulation: CRAR threshold moves from 15% to 16% for Base Layer NBFCs.' },
+    'gstr3b-sep': { title:'GSTR-3B — September 2026', date:'20 October 2026', type:'Deadline', clients:'All GST-registered clients', body:'Monthly summary return for September.' },
+    'gstr9': { title:'GSTR-9 Annual Return', date:'31 December 2026', type:'Deadline', clients:'All GST-registered clients', body:'Annual GST reconciliation return for FY 2025-26. Begin prep in June.' }
+};
+
+const CAL_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const CAL_DAY_HEADERS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+// View state. Initialise to current month at load time.
+const _calToday = new Date();
+const CAL_VIEW = { year: _calToday.getFullYear(), month: _calToday.getMonth() };
+
+function _calPad(n) { return n < 10 ? '0' + n : '' + n; }
+function _calKey(y, m, d) { return y + '-' + _calPad(m + 1) + '-' + _calPad(d); }
+
+function calRender() {
+    const grid = document.getElementById('cal-grid');
+    if (!grid) return;
+    const y = CAL_VIEW.year;
+    const m = CAL_VIEW.month;
+    const label = document.getElementById('cal-month-label');
+    if (label) label.textContent = CAL_MONTH_NAMES[m] + ' ' + y;
+
+    let html = '';
+    CAL_DAY_HEADERS.forEach(function(h) { html += '<div class="cal-hdr">' + h + '</div>'; });
+
+    const firstOfMonth = new Date(y, m, 1);
+    // JS Sunday=0; we want Monday=0
+    const startDow = (firstOfMonth.getDay() + 6) % 7;
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const prevDaysInMonth = new Date(y, m, 0).getDate();
+
+    // Today reference for highlight
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === y && today.getMonth() === m;
+    const todayDate = today.getDate();
+
+    // Lead cells from previous month (greyed)
+    for (let i = startDow; i > 0; i--) {
+        const dnum = prevDaysInMonth - i + 1;
+        html += '<div class="cal-day cal-day-out"><div class="d">' + dnum + '</div></div>';
+    }
+
+    // Days of the current month
+    for (let d = 1; d <= daysInMonth; d++) {
+        const key = _calKey(y, m, d);
+        const events = CAL_SCHEDULE[key] || [];
+        let cls = 'cal-day';
+        if (isCurrentMonth && d === todayDate) cls += ' today';
+        if (events.length === 0) {
+            html += '<div class="' + cls + '"><div class="d">' + d + '</div></div>';
+        } else {
+            // For simplicity, render up to 2 events per day
+            const allClients = events.map(function(e) { return e.clients; }).join(' ');
+            const firstType = events[0].type;
+            const evtChips = events.slice(0, 2).map(function(e) {
+                return '<div class="cal-evt evt-' + e.type + '" onclick="event.stopPropagation(); openCalEvent(\'' + e.id + '\')">' + e.title + '</div>';
+            }).join('');
+            const more = events.length > 2 ? '<div class="cal-evt-more">+' + (events.length - 2) + ' more</div>' : '';
+            html += '<div class="' + cls + '" data-clients="' + allClients + '" data-evttype="' + firstType + '" onclick="openCalEvent(\'' + events[0].id + '\')"><div class="d">' + d + '</div>' + evtChips + more + '</div>';
+        }
+    }
+
+    // Trailing cells from next month
+    const totalCells = startDow + daysInMonth;
+    const trailing = (7 - (totalCells % 7)) % 7;
+    for (let i = 1; i <= trailing; i++) {
+        html += '<div class="cal-day cal-day-out"><div class="d">' + i + '</div></div>';
+    }
+
+    grid.innerHTML = html;
+    // Re-apply current filter selections to the freshly rendered grid
+    filterCalendar();
+}
+
+function calShiftMonth(delta) {
+    CAL_VIEW.month += delta;
+    while (CAL_VIEW.month < 0) { CAL_VIEW.month += 12; CAL_VIEW.year -= 1; }
+    while (CAL_VIEW.month > 11) { CAL_VIEW.month -= 12; CAL_VIEW.year += 1; }
+    calRender();
+}
+
+function calGoToday() {
+    const now = new Date();
+    CAL_VIEW.year = now.getFullYear();
+    CAL_VIEW.month = now.getMonth();
+    calRender();
+}
+
+// Override openCalEvent to fall back to CAL_EVENT_FALLBACK when not in calEvents.
+const _origOpenCalEvent = openCalEvent;
+openCalEvent = function(id) {
+    const evt = (typeof calEvents !== 'undefined' && calEvents[id]) ? calEvents[id] : CAL_EVENT_FALLBACK[id];
+    if (!evt) return;
+    document.getElementById('cal-popup-title').textContent = evt.title;
+    document.getElementById('cal-popup-date').textContent = evt.date + ' • ' + evt.type;
+    document.getElementById('cal-popup-clients').textContent = evt.clients;
+    document.getElementById('cal-popup-body').textContent = evt.body;
+    document.getElementById('cal-popup').classList.add('open');
+    document.getElementById('cal-popup-overlay').classList.add('open');
+};
+
+// Render once on load (so navigating to calendar tab shows current month immediately).
+if (document.readyState !== 'loading') calRender();
+else document.addEventListener('DOMContentLoaded', calRender);
 
 function filterBriefings() {
     var clientVal = document.getElementById('brief-client-filter').value;
@@ -8484,6 +8685,10 @@ function openClient(id) {
         </div>`;
     }).join('');
 
+    // Regulations applicable to this client (sub-section inside client file)
+    document.getElementById('cd-regs').innerHTML = c.regs.map(r =>
+        `<div class="cd-reg-item"><div class="cd-title">${r.title}</div><div class="cd-meta"><span>${r.meta}</span></div></div>`).join('');
+
     // Compliance health score ring + dashboard row
     const meta = CLIENT_META[id] || { score:70, scoreSub:'', filings:0, filingsSub:'', tax:'-', taxPct:50, roi:'-', roiSub:'' };
     const circ = 2 * Math.PI * 52; // 326.7
@@ -8571,6 +8776,11 @@ function openBriefingModal(card) {
 
 function closeBriefingModal() {
     document.getElementById('briefing-modal-bg').classList.remove('open');
+}
+
+function scrollToClientRegs() {
+    var el = document.getElementById('cd-regs-section');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // === Action Instructions Modal (live compliance items) ===
@@ -9308,40 +9518,25 @@ function qaSimSend() {
             </div>
         </div>
 
-        <!-- Step 2: Pick client -->
+        <!-- Step 2: Walk through Sharma — the demo client -->
         <div class="ob-step" data-step="2">
-            <h2>Choose a client to begin</h2>
-            <div class="ob-sub">We pre-selected Royal Spice Kitchen &mdash; they have the most pending regulatory activity in your data right now (1 overdue, 2 due this week).</div>
+            <h2>Let&rsquo;s walk through Sharma Pharmaceuticals</h2>
+            <div class="ob-sub">Sharma has the most regulatory activity in your demo data this week. We&rsquo;ll scan their books against govt portals, surface the action items, and draft a briefing &mdash; in under a minute.</div>
             <div class="ob-client-grid" id="ob-client-grid">
-                <div class="ob-client-tile selected" data-client="royal" onclick="obSelectClient('royal')">
-                    <div class="ob-ct-icon">RS</div>
-                    <div>
-                        <div class="ob-ct-name">Royal Spice Kitchen</div>
-                        <div class="ob-ct-sector">F&amp;B &middot; 4 outlets &middot; Delhi</div>
-                    </div>
-                    <span class="ob-ct-tag">Most active</span>
-                </div>
-                <div class="ob-client-tile" data-client="gupta" onclick="obSelectClient('gupta')">
-                    <div class="ob-ct-icon">GA</div>
-                    <div>
-                        <div class="ob-ct-name">Gupta Auto Components</div>
-                        <div class="ob-ct-sector">Auto Ancillary &middot; Gurgaon</div>
-                    </div>
-                </div>
-                <div class="ob-client-tile" data-client="sharma" onclick="obSelectClient('sharma')">
+                <div class="ob-client-tile selected" data-client="sharma" onclick="obSelectClient('sharma')">
                     <div class="ob-ct-icon">SP</div>
                     <div>
-                        <div class="ob-ct-name">Sharma Pharmaceuticals</div>
-                        <div class="ob-ct-sector">Pharma &middot; Mumbai</div>
+                        <div class="ob-ct-name">Sharma Pharmaceuticals Pvt. Ltd.</div>
+                        <div class="ob-ct-sector">Pharma / Manufacturing &middot; Mumbai &middot; ₹2.4Cr/mo turnover</div>
                     </div>
+                    <span class="ob-ct-tag">Walking through</span>
                 </div>
-                <div class="ob-client-tile" data-client="lakshmi" onclick="obSelectClient('lakshmi')">
-                    <div class="ob-ct-icon">LF</div>
-                    <div>
-                        <div class="ob-ct-name">Lakshmi FinServ</div>
-                        <div class="ob-ct-sector">NBFC &middot; Chennai</div>
-                    </div>
-                </div>
+            </div>
+            <div class="ob-walkthrough-summary">
+                <div class="ows-row"><span class="ows-num">14</span><span class="ows-lbl">portal feeds<br>monitored</span></div>
+                <div class="ows-row"><span class="ows-num warn">2</span><span class="ows-lbl">action items<br>needing review</span></div>
+                <div class="ows-row"><span class="ows-num ok">12</span><span class="ows-lbl">filings<br>compliant</span></div>
+                <div class="ows-row"><span class="ows-num">~12 hrs</span><span class="ows-lbl">partner time<br>saved this month</span></div>
             </div>
             <div class="ob-actions">
                 <button class="ob-btn primary" onclick="obStartScan()">Start scan</button>
@@ -9351,35 +9546,45 @@ function qaSimSend() {
 
         <!-- Step 3: Scan -->
         <div class="ob-step" data-step="3">
-            <h2>Scanning <span id="ob-scan-client-name">Royal Spice Kitchen</span></h2>
-            <div class="ob-sub">Live reasoning trace &mdash; this is the same engine that monitors all your clients in the background.</div>
+            <h2>Scanning <span id="ob-scan-client-name">Sharma Pharmaceuticals</span></h2>
+            <div class="ob-sub">Live reasoning trace &mdash; this is the same engine that will monitor every client in the background.</div>
             <div class="ob-scan-trace" id="ob-scan-trace"></div>
             <div class="ob-actions">
                 <button class="ob-btn primary" id="ob-scan-continue" disabled onclick="obGoto(4)">Continue</button>
             </div>
         </div>
 
-        <!-- Step 4: Briefing draft -->
+        <!-- Step 4: Briefing draft (editable) -->
         <div class="ob-step" data-step="4">
             <h2>Your first briefing is ready</h2>
-            <div class="ob-sub">Drafted from the FSSAI Amendment + Royal Spice client profile. Edit before sending or send as-is.</div>
-            <div class="ob-briefing-preview" id="ob-briefing-preview">
-                <h4>FSSAI Licensing Amendment 2026 &mdash; Your Licence is Now Perpetual</h4>
-                <p><strong>Dear Mr. Rajesh,</strong></p>
-                <p>We write to inform you of a significant development in food safety compliance that directly benefits Royal Spice Kitchen.</p>
-                <p>The FSSAI has issued the Food Safety and Standards (Licensing &amp; Registration) Amendment Regulations, 2026. Here is what it means for you:</p>
-                <p><strong>1. Your FSSAI licence is now perpetual</strong> &mdash; no renewal required. Your current licence (exp. Nov 2027) remains valid indefinitely unless cancelled.<br>
-                <strong>2. Inspections shift to risk-based</strong> &mdash; with your category and 4 outlets, expect inspections once every 2 years instead of annually.<br>
-                <strong>3. All 4 outlets (Delhi &amp; Karnataka) now under state food safety jurisdiction</strong> &mdash; individual outlet registrations no longer need separate renewal.</p>
-                <p><strong>What you need to do:</strong> Confirm with Delhi and Karnataka FSO that your registrations are auto-migrated. Keep Food Safety Supervisor appointed at each outlet.</p>
-                <p><em>Regards,<br>Mehta Shah &amp; Associates, Bangalore</em></p>
-                <div class="ob-briefing-meta">
-                    <span>Generated from FSSAI Amendment + Royal Spice profile</span>
-                </div>
+            <div class="ob-sub">Drafted from the CBIC IGST notification + Sharma Pharmaceuticals&rsquo; books. The text below is editable &mdash; tweak it, copy it, or send as-is.</div>
+            <textarea class="ob-briefing-editor" id="ob-briefing-editor">Subject: IGST rate cut on pharma intermediates — invoices to amend &amp; credit notes to issue
+
+Dear Mr. Sharma,
+
+We&rsquo;re writing about CBIC Notification 26/2026-IT (effective 1 May 2026), which directly affects Sharma Pharmaceuticals&rsquo; intermediates business. Here is what it means for you:
+
+1. IGST on HSN 3003 / 3004 has been cut from 18% to 12%. Bulk pharma intermediates are now in the lower slab.
+
+2. We found 3 invoices issued at the old 18% rate after 1 May. Reg Mitra has drafted credit notes for each — the largest is to Apollo Hospitals Supply Chain (₹8.91L invoice). They&rsquo;re ready in the portal for your approval.
+
+3. Your downstream ITC will be auto-adjusted. No action needed on your books — we&rsquo;ve already booked the reversal in the linked Tally instance.
+
+Separately, 2 of your 4 directors are still pending DIR-3 KYC for FY26 (cycle ends 30 Sep). We&rsquo;ll handle the filing once we have DSCs.
+
+If you have a minute today, please review and approve the 3 credit notes.
+
+Regards,
+Mehta Shah &amp; Associates, Bangalore</textarea>
+            <div class="ob-briefing-meta-row">
+                <span class="ob-briefing-meta-pill">Generated from CBIC Notification 26/2026-IT + Sharma books</span>
+                <span class="ob-briefing-meta-channel">Suggested channel: <strong>Email</strong> (enterprise client &mdash; formal record)</span>
             </div>
             <div class="ob-actions">
-                <button class="ob-btn primary" onclick="obSend()">Send via WhatsApp <span style="opacity:0.7;font-weight:500;font-size:11px">&middot; suggested for SME clients</span></button>
-                <button class="ob-btn" onclick="obSendAlt()">Send via email</button>
+                <button class="ob-btn primary" onclick="obSendAlt()">Send via Email</button>
+                <button class="ob-btn" onclick="obSend()">Send via WhatsApp</button>
+                <button class="ob-btn" onclick="obCopyBriefing()">Copy</button>
+                <button class="ob-btn" onclick="obNotNow()">Not now</button>
             </div>
         </div>
 
@@ -9389,11 +9594,11 @@ function qaSimSend() {
             <div class="ob-sub">From now on, Reg Mitra runs this same flow continuously for all your clients in the background. You only see what needs you.</div>
             <div class="ob-finish-pill">
                 <div class="pill-check">&#10003;</div>
-                <div><strong id="ob-finish-text">Briefing sent via WhatsApp to Rajesh, Royal Spice Kitchen</strong></div>
-                <div style="font-size:12px;color:var(--text-mid);margin-top:6px">Read receipt will show in the Today view when seen.</div>
+                <div><strong id="ob-finish-text">Briefing sent via Email to Mr. Sharma, Sharma Pharmaceuticals</strong></div>
+                <div style="font-size:12px;color:var(--text-mid);margin-top:6px">We&rsquo;ll drop you on the Sharma file &mdash; the 2 action items we surfaced are waiting there.</div>
             </div>
             <div class="ob-actions">
-                <button class="ob-btn primary" onclick="obFinish()">Go to Today</button>
+                <button class="ob-btn primary" onclick="obFinish()">Open Sharma&rsquo;s file</button>
             </div>
         </div>
     </div>
@@ -9402,8 +9607,8 @@ function qaSimSend() {
 <script>
 // ===== Onboarding =====
 var OB_CURRENT = 1;
-var OB_SELECTED_CLIENT = 'royal';
-var OB_FINAL_CHANNEL = 'whatsapp';
+var OB_SELECTED_CLIENT = 'sharma';
+var OB_FINAL_CHANNEL = 'email';
 
 function obShow() {
     document.getElementById('ob-overlay').classList.add('open');
@@ -9501,23 +9706,24 @@ function obSelectClient(id) {
     var tile = document.querySelector('.ob-client-tile[data-client="' + id + '"]');
     if (tile) tile.classList.add('selected');
     var nameMap = { royal:'Royal Spice Kitchen', gupta:'Gupta Auto Components', sharma:'Sharma Pharmaceuticals', lakshmi:'Lakshmi FinServ' };
-    document.getElementById('ob-scan-client-name').textContent = nameMap[id] || nameMap.royal;
+    document.getElementById('ob-scan-client-name').textContent = nameMap[id] || nameMap.sharma;
 }
 
+// Scan trace anchored on Sharma + the IGST rate cut + DIN-KYC gap
 var OB_SCAN_LINES = [
-    [400,  'Reading client books from connected accounting setup…'],
-    [2200, 'Pulled <strong>4 outlet records</strong>, <strong>3 active FSSAI licences</strong>'],
-    [4000, 'Crawling FSSAI gazette portal for changes since last scan…'],
-    [6500, 'Found: <strong>FSSAI Licensing Amendment 2026</strong> (gazette dt. 10 March)'],
-    [9000, 'Reading 14-page notification to extract operative changes'],
-    [12500,'Identified change: licence renewal cycle removed &mdash; <strong>perpetual validity</strong>'],
-    [15500,'Identified change: inspections shift from annual to <strong>risk-based (2-year)</strong>'],
-    [18500,'Cross-checking your data: current licence valid till Nov 2027'],
-    [21500,'Cross-checking: 4 outlets across Delhi &amp; Karnataka jurisdictions'],
-    [24500,'Matched: regulation applies to <strong>all 4 outlets</strong>'],
-    [27500,'No conflict with existing contracts or vendor agreements'],
+    [400,  'Reading Sharma&rsquo;s books from the connected accounting setup…'],
+    [2200, 'Pulled <strong>347 ledgers</strong>, <strong>8,412 vouchers</strong> indexed (last 12 mo)'],
+    [4000, 'Crawling CBIC gazette portal for changes since last scan…'],
+    [6500, 'Found: <strong>CBIC Notification 26/2026-IT</strong> (gazette dt. 28 April, effective 1 May)'],
+    [9000, 'Reading 22-page notification &mdash; extracting operative rate changes'],
+    [12500,'Identified: HSN <strong>3003 / 3004</strong> reclassified &mdash; pharma intermediates <strong>18% &rarr; 12%</strong>'],
+    [15500,'Cross-checking your books: <strong>47 pharma intermediate invoices</strong> in the last 30 days'],
+    [18500,'Flagged: <strong>3 invoices</strong> issued at 18% after 1 May &mdash; rate amendment needed'],
+    [21500,'Cross-checking MCA21: 4 directors on record, <strong>2 of 4</strong> pending DIR-3 KYC (FY26)'],
+    [24500,'Verified: CDSCO mfg. licence valid till 2028 &mdash; no conflict'],
+    [27500,'Drafted 3 credit notes (largest: Apollo Hospitals, ₹8.91L invoice)'],
     [30500,'Drafting client briefing in plain language…'],
-    [33000,'<strong>Done.</strong> 1 briefing ready for your review.']
+    [33000,'<strong>Done.</strong> 1 briefing + 2 action items ready for your review.']
 ];
 
 function obStartScan() {
@@ -9553,18 +9759,36 @@ function obStartScan() {
 
 function obSend() {
     OB_FINAL_CHANNEL = 'whatsapp';
-    document.getElementById('ob-finish-text').textContent = 'Briefing sent via WhatsApp to Rajesh, Royal Spice Kitchen';
+    document.getElementById('ob-finish-text').textContent = 'Briefing sent via WhatsApp to Mr. Sharma, Sharma Pharmaceuticals';
     obGoto(5);
 }
 function obSendAlt() {
     OB_FINAL_CHANNEL = 'email';
-    document.getElementById('ob-finish-text').textContent = 'Briefing sent via Email to rajesh@royalspice.in';
+    document.getElementById('ob-finish-text').textContent = 'Briefing sent via Email to ravi.sharma@sharmapharma.in';
+    obGoto(5);
+}
+function obCopyBriefing() {
+    var ta = document.getElementById('ob-briefing-editor');
+    if (!ta) return;
+    function done() { actionToast('Briefing copied to clipboard', { icon:'&#128203;' }); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ta.value).then(done, function() { ta.select(); document.execCommand('copy'); done(); });
+    } else { ta.select(); document.execCommand('copy'); done(); }
+}
+function obNotNow() {
+    actionToast('Saved as draft &mdash; we&rsquo;ll surface it in Sharma&rsquo;s file.', { icon:'&#128190;' });
+    document.getElementById('ob-finish-text').textContent = 'Briefing saved as draft &mdash; Sharma Pharmaceuticals';
     obGoto(5);
 }
 function obFinish() {
     try { localStorage.setItem('regmitra_onboarded', 'true'); } catch (e) {}
     obHide();
-    if (typeof navTo === 'function') navTo('dashboard');
+    // Meaningful drop-off: open the client file we just walked through, not the Today view.
+    if (typeof openClient === 'function') {
+        openClient(OB_SELECTED_CLIENT || 'sharma');
+    } else if (typeof navTo === 'function') {
+        navTo('home');
+    }
 }
 function obDismiss() {
     // User exited without completing — still mark onboarded so they don't get re-trapped.
