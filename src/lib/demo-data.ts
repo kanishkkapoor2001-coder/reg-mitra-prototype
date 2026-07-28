@@ -101,9 +101,57 @@ export const workItems: readonly WorkItem[] = [
 ] as const;
 
 export const regulations: readonly Regulation[] = [
-  { id: "r1", title: "IGST rate schedule revised for pharma intermediates", authority: "CBIC", published: "28 Apr 2026", effective: "1 May 2026", impact: "3 demo clients", verification: "unverified" },
-  { id: "r2", title: "Director KYC moves to a three-year cycle", authority: "MCA", published: "24 Apr 2026", effective: "Immediate", impact: "5 demo clients", verification: "unverified" },
-  { id: "r3", title: "FSSAI licensing amendment introduces perpetual validity", authority: "FSSAI", published: "10 Mar 2026", effective: "10 Mar 2026", impact: "1 demo client", verification: "unverified" },
+  {
+    id: "r1",
+    title: "IGST rate schedule revised for pharma intermediates",
+    authority: "CBIC",
+    published: "28 Apr 2026",
+    effective: "1 May 2026",
+    impact: "3 demo clients",
+    verification: "unverified",
+    evidence: {
+      state: "unverified",
+      source: null,
+      applicability: "Illustrative mapping to three demo client profiles.",
+      reviewState: "not-reviewed",
+      reviewedBy: null,
+      caveat: "The prototype did not include an official circular or notification. Verify on CBIC before use.",
+    },
+  },
+  {
+    id: "r2",
+    title: "Director KYC moves to a three-year cycle",
+    authority: "MCA",
+    published: "24 Apr 2026",
+    effective: "Immediate",
+    impact: "5 demo clients",
+    verification: "unverified",
+    evidence: {
+      state: "unverified",
+      source: null,
+      applicability: "Illustrative mapping to five demo company profiles.",
+      reviewState: "not-reviewed",
+      reviewedBy: null,
+      caveat: "No MCA notification or rule text is attached. Confirm the requirement and effective date before advising a client.",
+    },
+  },
+  {
+    id: "r3",
+    title: "FSSAI licensing amendment introduces perpetual validity",
+    authority: "FSSAI",
+    published: "10 Mar 2026",
+    effective: "10 Mar 2026",
+    impact: "1 demo client",
+    verification: "unverified",
+    evidence: {
+      state: "unverified",
+      source: null,
+      applicability: "Illustrative mapping to Royal Spice Kitchen.",
+      reviewState: "not-reviewed",
+      reviewedBy: null,
+      caveat: "No FSSAI order or advisory is attached. Confirm licence category, jurisdiction, and transition rules.",
+    },
+  },
 ] as const;
 
 export function getClient(id: string): Client | undefined {

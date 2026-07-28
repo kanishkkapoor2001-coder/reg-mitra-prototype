@@ -1,5 +1,24 @@
 export type RiskLevel = "low" | "medium" | "high";
 export type VerificationState = "demo" | "unverified" | "connected";
+export type EvidenceState = "verified" | "unverified" | "demo" | "stale" | "not-connected";
+export type ReviewState = "not-reviewed" | "in-review" | "approved";
+
+export interface SourceRecord {
+  publisher: string;
+  title: string;
+  url: string;
+  publishedAt: string;
+  checkedAt: string;
+}
+
+export interface EvidenceRecord {
+  state: EvidenceState;
+  source: SourceRecord | null;
+  applicability: string;
+  reviewState: ReviewState;
+  reviewedBy: string | null;
+  caveat: string;
+}
 
 export interface Client {
   id: string;
@@ -35,4 +54,5 @@ export interface Regulation {
   effective: string;
   impact: string;
   verification: VerificationState;
+  evidence: EvidenceRecord;
 }

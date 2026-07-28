@@ -1,4 +1,6 @@
 import { PageHeading } from "@/components/page-heading";
+import { ReviewGate } from "@/components/review-gate";
+import { TrustBadge } from "@/components/trust-badge";
 
 const prompts = [
   "What changed for Sharma Pharma this week?",
@@ -42,8 +44,8 @@ export default function AssistantPage() {
           <div className="context-section">
             <p className="eyebrow">Current context</p>
             <h2>Demo workspace</h2>
-            <div className="context-item"><span className="context-num">6</span><span>Illustrative client profiles available for questions.</span></div>
-            <div className="context-item"><span className="context-num">0</span><span>Verified external sources connected.</span></div>
+            <div className="context-item"><TrustBadge kind="evidence" state="demo" /><span>Six illustrative client profiles are available.</span></div>
+            <div className="context-item"><TrustBadge kind="evidence" state="not-connected" /><span>No authoritative external source is connected.</span></div>
           </div>
           <div className="context-section">
             <p className="eyebrow">Review standard</p>
@@ -51,6 +53,12 @@ export default function AssistantPage() {
             <div className="context-item"><span className="context-num">1</span><span>Check the cited circular or portal source.</span></div>
             <div className="context-item"><span className="context-num">2</span><span>Confirm applicability to the client and period.</span></div>
             <div className="context-item"><span className="context-num">3</span><span>Have a responsible professional approve the action.</span></div>
+          </div>
+          <div className="context-section">
+            <ReviewGate
+              title="Answers remain drafts"
+              description="An answer can help prepare work, but it cannot be approved, sent, or filed until a qualified professional checks its sources and applicability."
+            />
           </div>
         </aside>
       </div>
