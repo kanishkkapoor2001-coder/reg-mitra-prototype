@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reg Mitra — Regulatory Intelligence for CA Firms</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23122a23'/><path d='M 25.5 8.4 A 12 12 0 1 0 27 19' stroke='%2322c55e' stroke-width='3' fill='none' stroke-linecap='round'/><path d='M 10 16.2 L 14.5 20.8 L 24.5 9.5' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -40,10 +40,17 @@
             --shadow-xl: 0 24px 48px -12px rgba(16, 24, 40, 0.12), 0 8px 16px -6px rgba(16, 24, 40, 0.05);
             --radius: 14px;
             --radius-lg: 18px;
+            /* Design-guide motion + material tokens (Emil/Apple house style) */
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);      /* entrances / feedback — punchy */
+            --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);  /* on-screen movement */
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);/* subtle overshoot for toggles */
+            --glass-bg: rgba(255, 255, 255, 0.72);
+            --glass-brd: rgba(255, 255, 255, 0.55);
+            --shadow-glass: 0 16px 44px -16px rgba(16, 45, 34, 0.20), 0 2px 8px -2px rgba(16, 45, 34, 0.08);
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-main);
             color: var(--text-dark);
             height: 100vh;
@@ -61,7 +68,26 @@
         .filter-btn, .btn, .modal-close, .cal-day, .tally-client-tab,
         .chat-sidebar-item, .hero-welcome .hero-close, .qa-fab, .qa-quick-btn,
         .agent-task-step, .ai-conflict-card, .dash-filter {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transition: all 0.18s var(--ease-out) !important;
+        }
+
+        /* Design-guide: tactile press feedback + card hover-lift (transform/opacity only) */
+        .btn:active, .nav-btn:active, .filter-btn:active, .qa-quick-btn:active, .qa-fab:active,
+        .client-card:active, .briefing-card:active, .reg-card:active, .cal-day:active,
+        .mode-btn:active, .home-client-row:active, .home-card-link:active, .dash-filter:active {
+            transform: scale(0.97) !important;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .client-card:hover, .briefing-card:hover, .reg-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-lg);
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+            .client-card:hover, .briefing-card:hover, .reg-card:hover { transform: none; }
+            .btn:active, .nav-btn:active, .client-card:active, .briefing-card:active,
+            .reg-card:active, .filter-btn:active, .mode-btn:active { transform: none !important; }
         }
         .header-search input, .company-select, .briefing-editor, .chat-input-bar input,
         .agent-input-bar input, .qa-chatbox-input input {
@@ -1951,6 +1977,9 @@
             70%  { box-shadow: 0 0 0 8px rgba(22,163,74,0); }
             100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); }
         }
+        /* Demo badge — clearly not a live connection (§1 honest integrations) */
+        .live-sync-bar .lsb-demo { color: var(--warning); border-color: rgba(217,119,6,0.4); }
+        .live-sync-bar .lsb-demo .lsb-live-dot { background: var(--warning); box-shadow: none; animation: none; }
         .live-sync-bar .lsb-title { font-size: 13px; font-weight: 600; color: var(--text-dark); }
         .live-sync-bar .lsb-title strong { color: #15803d; }
         .live-sync-bar .lsb-sync { font-size: 11px; color: var(--text-light); margin-left: auto; }
@@ -4055,7 +4084,7 @@
             letter-spacing: 0.7px;
         }
         .home-kpi-value {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
             font-size: 30px;
             font-weight: 700;
             color: var(--text-dark);
@@ -4400,9 +4429,9 @@
                     <!-- Live portal sync bar -->
                     <section class="live-sync-bar">
                         <div class="lsb-left">
-                            <span class="lsb-live"><span class="lsb-live-dot"></span>LIVE</span>
-                            <span class="lsb-title">Compliance dashboard &middot; auto-fetched from govt portals</span>
-                            <span class="lsb-sync">Synced 2 min ago &middot; next refresh in 3 min</span>
+                            <span class="lsb-live lsb-demo"><span class="lsb-live-dot"></span>DEMO</span>
+                            <span class="lsb-title">Compliance dashboard &middot; sample data &mdash; connect portals to go live</span>
+                            <span class="lsb-sync">Portals not connected yet</span>
                         </div>
                         <div class="lsb-portals" id="lsb-portals">
                             <span class="lsb-portal" data-portal="GSTN"><span class="lsb-pd"></span>GSTN</span>
@@ -4419,10 +4448,10 @@
                         <div class="home-hero-content">
                             <div class="home-hero-eyebrow">
                                 <span class="home-hero-dot"></span>
-                                Live compliance dashboard &middot; auto-synced with GSTN, MCA21, CBDT, FSSAI, RBI CIMS
+                                Demo dashboard &middot; connect GSTN, MCA21, CBDT, FSSAI, RBI CIMS to go live
                             </div>
                             <h1 class="home-hero-title">Welcome back, Mehta Shah &amp; Associates</h1>
-                            <p class="home-hero-sub">Live compliance status across all <strong>6 clients</strong>. Start with <strong>Sharma Pharmaceuticals</strong> &mdash; the full demo file.</p>
+                            <p class="home-hero-sub">Compliance overview across all <strong>6 demo clients</strong>. Start with <strong>Sharma Pharmaceuticals</strong> &mdash; the full demo file.</p>
                             <div class="home-hero-cta">
                                 <button class="home-hero-btn primary" onclick="openClient('sharma')">
                                     Open Sharma Pharmaceuticals
@@ -4448,29 +4477,29 @@
                     <!-- KPI strip: portal sync status (live dashboard framing) -->
                     <section class="home-kpi-strip">
                         <div class="home-kpi">
-                            <div class="home-kpi-label">Portals connected</div>
+                            <div class="home-kpi-label">Portals available</div>
                             <div class="home-kpi-value">6</div>
-                            <div class="home-kpi-hint">GSTN, MCA21, CBDT, FSSAI, RBI, FOSCOS</div>
+                            <div class="home-kpi-hint">GSTN, MCA21, CBDT, FSSAI, RBI, FOSCOS &middot; connect to sync</div>
                         </div>
                         <div class="home-kpi">
-                            <div class="home-kpi-label">Live filings tracked</div>
+                            <div class="home-kpi-label">Sample filings</div>
                             <div class="home-kpi-value">142</div>
-                            <div class="home-kpi-hint">across all 6 clients</div>
+                            <div class="home-kpi-hint">across all 6 demo clients</div>
                         </div>
                         <div class="home-kpi">
-                            <div class="home-kpi-label">Auto-fetched today</div>
+                            <div class="home-kpi-label">In sample data</div>
                             <div class="home-kpi-value">38</div>
                             <div class="home-kpi-hint">filings &amp; status updates</div>
                         </div>
                         <div class="home-kpi">
-                            <div class="home-kpi-label">Clients monitored</div>
+                            <div class="home-kpi-label">Demo clients</div>
                             <div class="home-kpi-value">6</div>
-                            <div class="home-kpi-hint">all portal feeds healthy</div>
+                            <div class="home-kpi-hint">connect a source to monitor live</div>
                         </div>
                         <div class="home-kpi">
-                            <div class="home-kpi-label">Last sync</div>
-                            <div class="home-kpi-value">2 min</div>
-                            <div class="home-kpi-hint">auto-refresh every 5 min</div>
+                            <div class="home-kpi-label">Data source</div>
+                            <div class="home-kpi-value">Demo</div>
+                            <div class="home-kpi-hint">no portal connected yet</div>
                         </div>
                     </section>
 
@@ -4479,7 +4508,7 @@
                         <div class="home-stat-card">
                             <div class="hsc-num">6</div>
                             <div class="hsc-lbl">Clients monitored</div>
-                            <div class="hsc-sub">Live across 49 portal feeds</div>
+                            <div class="hsc-sub">Across 49 sample portal feeds</div>
                         </div>
                         <div class="home-stat-card">
                             <div class="hsc-num warn">12</div>
@@ -4500,7 +4529,7 @@
                     <div class="home-portfolio-cta">
                         <div>
                             <div class="hpc-eyebrow">Client portfolio</div>
-                            <div class="hpc-title">Every client&rsquo;s live compliance status, in one view.</div>
+                            <div class="hpc-title">Every client&rsquo;s compliance status, in one view.</div>
                         </div>
                         <button class="btn btn-primary" onclick="navTo('clients')">
                             Open Clients
@@ -4544,7 +4573,7 @@
                                 <div class="home-activity">
                                     <span class="home-activity-time">9:15&nbsp;AM</span>
                                     <span class="home-activity-dot scan"></span>
-                                    <span class="home-activity-text">Auto-fetched <strong>38 filings</strong> across portals</span>
+                                    <span class="home-activity-text">Demo scan found <strong>38 sample filings</strong> across configured portals</span>
                                 </div>
                                 <div class="home-activity">
                                     <span class="home-activity-time">9:17&nbsp;AM</span>
@@ -4571,7 +4600,7 @@
             <!-- CLIENTS — full portfolio (its own screen) -->
             <div class="screen" id="screen-clients">
                 <div class="section-heading" style="margin-bottom:4px">Your clients</div>
-                <p class="screen-desc">Live compliance status for every client &mdash; <strong>auto-fetched from govt portals</strong> (GSTN, MCA21, CBDT, FSSAI, RBI CIMS). Click a client to open their full dashboard.</p>
+                <p class="screen-desc">Compliance status for every demo client &mdash; <strong>sample data; connect portals to go live</strong> (GSTN, MCA21, CBDT, FSSAI, RBI CIMS). Click a client to open their full dashboard.</p>
                 <div class="screen-filter-bar">
                     <div class="clients-search">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -4621,7 +4650,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">12</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">Live-synced with 14 portal feeds (GSTN, MCA21, CBDT, CDSCO) · 2 min ago</div>
+                        <div class="ai-monitoring-line">Demo &middot; would sync 14 portal feeds (GSTN, MCA21, CBDT, CDSCO) on connect</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~12 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;24K</span></div>
                     </div>
                     <div class="client-card demo-sample" data-sector="it" data-risk="5.2" onclick="openClient('nexgen')">
@@ -4635,7 +4664,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">2</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">18</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">Live-synced with 8 portal feeds (GSTN, MCA21, CBDT, Kar. S&E) · 2 min ago</div>
+                        <div class="ai-monitoring-line">Demo &middot; would sync 8 portal feeds (GSTN, MCA21, CBDT, Kar. S&amp;E) on connect</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~4 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;9K</span></div>
                     </div>
                     <div class="client-card demo-sample" data-sector="auto" data-risk="8.1" onclick="openClient('gupta')">
@@ -4649,7 +4678,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">9</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">Live-synced with 11 portal feeds (GSTN, MCA21, CBDT, Haryana DISH) · 2 min ago</div>
+                        <div class="ai-monitoring-line">Demo &middot; would sync 11 portal feeds (GSTN, MCA21, CBDT, Haryana DISH) on connect</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~16 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;32K</span></div>
                     </div>
                     <div class="client-card demo-sample" data-sector="fnb" data-risk="7.4" onclick="openClient('royal')">
@@ -4663,7 +4692,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">3</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">7</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">Live-synced with 9 portal feeds (GSTN, MCA21, FOSCOS, Delhi Labour) · 2 min ago</div>
+                        <div class="ai-monitoring-line">Demo &middot; would sync 9 portal feeds (GSTN, MCA21, FOSCOS, Delhi Labour) on connect</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~7 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;14K</span></div>
                     </div>
                     <div class="client-card demo-sample" data-sector="nbfc" data-risk="6.1" onclick="openClient('lakshmi')">
@@ -4677,7 +4706,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">1</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">22</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">Live-synced with 16 portal feeds (GSTN, MCA21, CBDT, RBI CIMS) · 2 min ago</div>
+                        <div class="ai-monitoring-line">Demo &middot; would sync 16 portal feeds (GSTN, MCA21, CBDT, RBI CIMS) on connect</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~9 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;18K</span></div>
                     </div>
                     <div class="client-card demo-sample" data-sector="realestate" data-risk="3.2" onclick="openClient('greenfield')">
@@ -4691,7 +4720,7 @@
                             <div class="metric"><div class="num" style="color:var(--warning)">0</div><div class="lbl">This Week</div></div>
                             <div class="metric"><div class="num" style="color:var(--success)">14</div><div class="lbl">Compliant</div></div>
                         </div>
-                        <div class="ai-monitoring-line">Live-synced with 7 portal feeds (GSTN, MCA21, MahaRERA) · 2 min ago</div>
+                        <div class="ai-monitoring-line">Demo &middot; would sync 7 portal feeds (GSTN, MCA21, MahaRERA) on connect</div>
                         <div class="client-roi-line"><span class="roi-pill">ROI</span><strong>~3 hrs</strong> of partner time saved this month <span style="color:var(--text-light); font-weight:500">&middot; ~&#8377;6K</span></div>
                     </div>
                 </div>
@@ -4739,7 +4768,7 @@
                                 <div class="wi-sub">Challan 281 amounts ready in Tally for each client. Approve to dispatch.</div>
                             </div>
                             <div class="wi-actions">
-                                <button class="wi-btn primary" onclick="event.stopPropagation(); setAssistantMode('act'); navTo('assistant');">Review &amp; file</button>
+                                <button class="wi-btn primary" onclick="event.stopPropagation(); setAssistantMode('agent'); navTo('assistant');">Review &amp; file</button>
                             </div>
                         </div>
                         <div class="wi" onclick="navTo('home')">
@@ -5050,7 +5079,7 @@
                         <div class="cd-dash-card">
                             <div class="cd-card-label">Filings YTD</div>
                             <div class="cd-card-value" id="cd-stat-filings">0</div>
-                            <div class="cd-card-sub" id="cd-stat-filings-sub">Auto-fetched from portals</div>
+                            <div class="cd-card-sub" id="cd-stat-filings-sub">Sample portal data</div>
                             <div class="cd-trend up"><span>▲ on track</span></div>
                         </div>
                         <div class="cd-dash-card">
@@ -5069,8 +5098,8 @@
 
                     <div class="cd-section cd-section-lcs">
                         <div class="cd-section-title">
-                            Live compliance status
-                            <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span id="cd-sync-time">Synced 2 min ago · auto-fetched from govt portals</span></span>
+                            Demo compliance status
+                            <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span id="cd-sync-time">Demo data · connect portals to sync live</span></span>
                         </div>
                         <div class="cd-lcs-hint">Click any item flagged in amber or red to see exactly what to do next.</div>
                         <div class="cd-status-grid" id="cd-status-grid"></div>
@@ -5084,7 +5113,7 @@
                     <!-- Two-col: portal sync health + recent activity -->
                     <div class="cd-two-col">
                         <div class="cd-section">
-                            <div class="cd-section-title">Portal sync health</div>
+                            <div class="cd-section-title">Portal connection preview</div>
                             <div class="cd-portal-rows" id="cd-portal-rows"></div>
                         </div>
                         <div class="cd-section">
@@ -5096,7 +5125,7 @@
                     <div class="cd-section" id="cd-regs-section">
                         <div class="cd-section-title">
                             Regulations applicable to this client
-                            <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span>Filtered from 142+ govt sources to what affects this client&rsquo;s sector, size, and registrations.</span></span>
+                            <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span>Demo matching preview based on this client&rsquo;s sector, size, and registrations.</span></span>
                         </div>
                         <div id="cd-regs"></div>
                     </div>
@@ -5104,7 +5133,7 @@
                     <div class="cd-section">
                         <div class="cd-section-title">
                             Drafted communications
-                            <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span>Auto-drafted from this client's applicable circulars · ready to review &amp; send</span></span>
+                            <span class="cd-sync-meta"><span class="cd-sync-dot"></span><span>Sample drafts from applicable circulars &middot; review before sending</span></span>
                         </div>
                         <div class="cd-comms-grid" id="cd-comms"></div>
                     </div>
@@ -5123,7 +5152,7 @@
                     </button>
                     <button class="cal-today-btn" onclick="calGoToday()">Today</button>
                 </div>
-                <p class="screen-desc">Auto-populated calendar of every compliance deadline across all clients. Dates extracted from gazette notifications, circulars, and filing schedules. Use the arrows to look ahead or back; overdue items are flagged automatically.</p>
+                <p class="screen-desc">Demo calendar showing how compliance deadlines can be assembled across clients from gazette notifications, circulars, and filing schedules. Connect sources to populate and flag real deadlines.</p>
                 <div class="screen-filter-bar">
                     <span class="filter-label">Client</span>
                     <span class="filter-sep"></span>
@@ -5529,8 +5558,8 @@
             <div class="screen" id="screen-chat">
                 <div class="assistant-mode-toggle">
                     <span class="mode-toggle-label">Mode</span>
-                    <button class="mode-btn active" data-mode="answer" onclick="switchAssistantMode('answer')">Answer</button>
-                    <button class="mode-btn" data-mode="act" onclick="switchAssistantMode('act')">Act</button>
+                    <button class="mode-btn active" data-mode="chat" onclick="switchAssistantMode('chat')">Answer</button>
+                    <button class="mode-btn" data-mode="agent" onclick="switchAssistantMode('agent')">Act</button>
                     <span class="mode-toggle-hint">Answer: read-only Q&amp;A. Act: automation can perform actions.</span>
                 </div>
                 <p class="screen-desc">Ask questions in natural language about any regulation, client, or compliance topic. AI draws on gazette sources, client profiles, and Tally data for contextual answers.</p>
@@ -5688,7 +5717,7 @@
                                 <div class="ai-ctx-item"><span class="ai-ctx-dot warning"></span><strong>2 rate changes effective today:</strong> IGST schedule + TDS 194J flat 10%</div>
                                 <div class="ai-ctx-item"><span class="ai-ctx-dot warning"></span><strong>Deadline in 2 days:</strong> TDS deposit Q4 FY26 (7 May) — all 6 clients</div>
                                 <div class="ai-ctx-item"><span class="ai-ctx-dot info"></span><strong>1 conflict detected:</strong> Gupta Auto OEM contracts vs IGST rate increase</div>
-                                <div class="ai-ctx-item"><span class="ai-ctx-dot info"></span><strong>Tally sync:</strong> Last synced 4 May — Sharma Pharma ITC mismatch (₹21,600) flagged</div>
+                                <div class="ai-ctx-item"><span class="ai-ctx-dot info"></span><strong>Demo Tally scenario:</strong> Sample 4 May data flags a ₹21,600 ITC mismatch</div>
                             </div>
                         </div>
 
@@ -5812,7 +5841,7 @@
                                 <div class="msg-av ai">RM</div>
                                 <div class="msg-bubble">
                                     <strong>Sharma Pharmaceuticals — ITC Reconciliation for April 2026</strong><br>
-                                    <span style="font-size:11px;color:var(--text-light)">Data source: Tally ERP (synced 4 May 2026) × GSTR-2B (auto-populated)</span><br><br>
+                                    <span style="font-size:11px;color:var(--text-light)">Demo data: sample Tally ERP records × sample GSTR-2B</span><br><br>
                                     <table style="width:100%;font-size:12px;border-collapse:collapse;margin:8px 0;">
                                         <tr style="border-bottom:1px solid #e5e7eb"><td style="padding:6px;font-weight:600">Category</td><td style="padding:6px;font-weight:600;text-align:right">Books (Tally)</td><td style="padding:6px;font-weight:600;text-align:right">GSTR-2B</td><td style="padding:6px;font-weight:600;text-align:right">Difference</td></tr>
                                         <tr style="border-bottom:1px solid #f3f4f6"><td style="padding:6px">CGST ITC</td><td style="padding:6px;text-align:right">₹4,82,340</td><td style="padding:6px;text-align:right">₹4,82,340</td><td style="padding:6px;text-align:right;color:var(--success)">₹0 ✓</td></tr>
@@ -5829,8 +5858,8 @@
                                     2. Contact ChemLab Reagents to confirm they will file GSTR-1 before 11 May<br>
                                     3. If they file, this will appear in May GSTR-2B and you can claim it then<br>
                                     4. If you claim now: risk of notice under Section 16(2)(aa) — ITC only available if reflected in GSTR-2B<br><br>
-                                    <span class="msg-source">Source: Tally sync (4 May) × GSTN GSTR-2B API × Section 16(2)(aa) CGST Act</span><br>
-                                    <span class="msg-confidence">High Confidence — Numbers verified from live data</span>
+                                    <span class="msg-source">Demo basis: sample Tally records × sample GSTR-2B × Section 16(2)(aa), CGST Act</span><br>
+                                    <span class="msg-confidence">Illustrative result — connect and verify sources before relying on figures</span>
                                 </div>
                             </div>
                             <div class="msg user">
@@ -5869,7 +5898,7 @@
                                 <div class="msg-av ai">RM</div>
                                 <div class="msg-bubble">
                                     <strong>Gupta Auto Components — MSME Vendor Payment Ageing Report</strong><br>
-                                    <span style="font-size:11px;color:var(--text-light)">Data source: Tally payables ledger (synced 4 May 2026) × Udyam MSME registry</span><br><br>
+                                    <span style="font-size:11px;color:var(--text-light)">Demo data: sample Tally payables ledger × sample Udyam records</span><br><br>
                                     <strong>Summary:</strong> 22 MSME vendors identified. <strong style="color:var(--danger)">6 vendors past 45-day limit</strong>.<br><br>
                                     <table style="width:100%;font-size:11px;border-collapse:collapse;margin:8px 0;">
                                         <tr style="border-bottom:1px solid #e5e7eb"><td style="padding:5px;font-weight:600">Vendor</td><td style="padding:5px;font-weight:600">Udyam No.</td><td style="padding:5px;font-weight:600;text-align:right">Outstanding</td><td style="padding:5px;font-weight:600;text-align:right">Days</td><td style="padding:5px;font-weight:600">Risk</td></tr>
@@ -5887,8 +5916,8 @@
                                     1. <strong>Priority:</strong> Clear Rathi Precision (₹4.82L, 67 days) and Sharma Metal (₹3.15L, 58 days) this week<br>
                                     2. Set up RTGS for the remaining 4 vendors within 5 days<br>
                                     3. Going forward: I've flagged these vendors in the system — you'll get an alert at Day 38 for MSME vendors<br><br>
-                                    <span class="msg-source">Source: Tally payables × Udyam Registry cross-match × Section 43B(h) Finance Act 2023</span><br>
-                                    <span class="msg-confidence">High Confidence — Live data from synced books</span>
+                                    <span class="msg-source">Demo basis: sample Tally payables × sample Udyam records × Section 43B(h), Finance Act 2023</span><br>
+                                    <span class="msg-confidence">Illustrative result — connect and verify books before relying on figures</span>
                                 </div>
                             </div>
                             <div class="msg user">
@@ -6201,11 +6230,11 @@
             <div class="screen" id="screen-agent">
                 <div class="assistant-mode-toggle">
                     <span class="mode-toggle-label">Mode</span>
-                    <button class="mode-btn" data-mode="answer" onclick="switchAssistantMode('answer')">Answer</button>
-                    <button class="mode-btn active" data-mode="act" onclick="switchAssistantMode('act')">Act</button>
+                    <button class="mode-btn" data-mode="chat" onclick="switchAssistantMode('chat')">Answer</button>
+                    <button class="mode-btn active" data-mode="agent" onclick="switchAssistantMode('agent')">Act</button>
                     <span class="mode-toggle-hint">Answer: read-only Q&amp;A. Act: automation can perform actions.</span>
                 </div>
-                <p class="screen-desc">In Act mode, the assistant <strong>takes actions</strong> on your behalf — syncs Tally data, files returns, dispatches briefings, and manages compliance calendars. It will ask for confirmation before any irreversible action.</p>
+                <p class="screen-desc">Act mode is an interactive <strong>automation preview</strong> showing how Tally sync, return filing, briefings, and calendars could work after integrations are connected. Demo actions do not submit filings or contact clients.</p>
                 <div class="agent-wrap">
                     <div class="agent-msgs" id="agent-messages">
                         <!-- Agent Header Banner -->
@@ -6230,7 +6259,7 @@
                             <button class="filter-btn" onclick="showAgentThread('briefing-send')">Send Briefings</button>
                             <button class="filter-btn" onclick="showAgentThread('bulk-update')">Bulk HSN Update</button>
                             <button class="filter-btn" onclick="showAgentThread('deadline-reminders')">Deadline Reminders</button>
-                            <button class="filter-btn" onclick="showAgentThread('live-api')" style="background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#059669;">&#9679; Live API Demo</button>
+                            <button class="filter-btn" onclick="showAgentThread('live-api')" style="background:linear-gradient(135deg,#059669,#10b981);color:#fff;border-color:#059669;">API Sandbox</button>
                         </div>
 
                         <!-- Thread: Tally Sync -->
@@ -6323,10 +6352,10 @@
                                         <div class="agent-step-time">0.3s</div>
                                     </div>
                                     <div class="agent-result-box">
-                                        <div class="result-header">&#10003; All Actions Completed</div>
-                                        &#8226; Email delivered to Sharma Pharma accountant<br>
-                                        &#8226; Calendar updated with deadline<br>
-                                        &#8226; Vendor flagged for follow-up<br><br>
+                                        <div class="result-header">&#10003; Demo Actions Simulated</div>
+                                        &#8226; Email preview prepared for Sharma Pharma accountant<br>
+                                        &#8226; Calendar update previewed with deadline<br>
+                                        &#8226; Vendor follow-up flag previewed<br><br>
                                         <em style="font-size:11px;color:var(--text-light)">3 actions completed in 1.8s</em>
                                     </div>
                                 </div>
@@ -6442,11 +6471,11 @@
                                         <div class="agent-step-time">0.7s</div>
                                     </div>
                                     <div class="agent-result-box">
-                                        <div class="result-header">&#10003; All Briefings Dispatched</div>
-                                        &#8226; 3 emails sent successfully (delivery confirmed)<br>
-                                        &#8226; Read receipts enabled — you'll be notified when clients open<br>
-                                        &#8226; Follow-up reminders set for 48 hours if unopened<br><br>
-                                        <em style="font-size:11px;color:var(--text-light)">3 briefings dispatched in 4.5s | Manual equivalent: ~25 min (formatting + sending)</em>
+                                        <div class="result-header">&#10003; Demo Dispatch Simulated</div>
+                                        &#8226; 3 email previews generated; none were sent<br>
+                                        &#8226; Delivery tracking becomes available after email integration<br>
+                                        &#8226; Follow-up rules previewed for unopened messages<br><br>
+                                        <em style="font-size:11px;color:var(--text-light)">3 briefing previews generated | Estimated manual equivalent: ~25 min</em>
                                     </div>
                                 </div>
                             </div>
@@ -6552,7 +6581,7 @@
                                         <div class="agent-step-time">1.4s</div>
                                     </div>
                                     <div class="agent-result-box">
-                                        <div class="result-header">&#10003; Reminders Dispatched</div>
+                                        <div class="result-header">&#10003; Reminder Dispatch Simulated</div>
                                         &#8226; 6 personalized emails sent (with filing steps + portal links)<br>
                                         &#8226; 4 WhatsApp reminders sent (Sharma, Gupta, Royal Spice, Lakshmi)<br>
                                         &#8226; TDS Deposit (7 May) flagged as HIGH priority for all clients<br>
@@ -6568,8 +6597,8 @@
                             <div class="msg">
                                 <div class="msg-av ai">RM</div>
                                 <div class="msg-bubble">
-                                    <strong>Live Tally API Demo</strong><br>
-                                    These buttons call real API endpoints and return live data. Click any to see it in action.
+                                    <strong>Tally API Sandbox</strong><br>
+                                    These buttons call prototype endpoints and return sample data. Click any to preview the interaction.
                                 </div>
                             </div>
                             <div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;">
@@ -6595,13 +6624,13 @@
 
             <!-- TALLY DATA -->
             <div class="screen" id="screen-tally">
-                <p class="screen-desc">Live connection to clients' Tally accounting instances. Reconciles <strong>ITC</strong> (Input Tax Credit — tax credit on purchases) against GSTR-2B and validates <strong>HSN</strong> (Harmonized System of Nomenclature — product classification codes) rates across all invoices.</p>
+                <p class="screen-desc">Demo of a future Tally connection. It previews <strong>ITC</strong> reconciliation against GSTR-2B and <strong>HSN</strong> rate validation using sample invoices.</p>
                 <!-- Connection + Client filter (combined) -->
                 <div class="tally-conn-bar">
                     <span class="conn-dot"></span>
-                    <strong>6 Tally instances connected</strong>
+                    <strong>6 sample Tally instances</strong>
                     <span class="conn-sep"></span>
-                    Last sync: 9:15 AM
+                    Demo snapshot: 9:15 AM
                     <span class="conn-sep"></span>
                     FY 2025-26
                     <span class="conn-sep"></span>
@@ -6820,7 +6849,7 @@
                             <button class="ai-reasoning-toggle" onclick="toggleReasoning(this)"><span class="arr">&#9654;</span> Show Reconciliation Logic (6 steps)</button>
                             <div class="ai-reasoning-body">
                                 <div class="step"><span class="step-num">1</span><span>Pulled 847 purchase vouchers from your books for Sharma Pharma (Apr 2026), filtered to GST-applicable entries only.</span></div>
-                                <div class="step"><span class="step-num">2</span><span>Fetched GSTR-2B auto-populated data (839 entries) from GST portal for GSTIN 27AAACS1234F1ZA.</span></div>
+                                <div class="step"><span class="step-num">2</span><span>Loaded 839 sample GSTR-2B entries for demo GSTIN 27AAACS1234F1ZA.</span></div>
                                 <div class="step"><span class="step-num">3</span><span>Matched by: GSTIN + Invoice Number + Invoice Date + Taxable Value (±&#8377;100 tolerance). 831 entries matched perfectly (98.1%).</span></div>
                                 <div class="step"><span class="step-num">4</span><span>Identified 8 mismatches: 2 invoices not in GSTR-2B (vendor didn't upload), 2 amount mismatches (vendor filed different amounts), 2 GSTIN/date mismatches, 2 in GSTR-2B but not Tally.</span></div>
                                 <div class="step"><span class="step-num">5</span><span>Classified risk: &#8377;21,600 ITC at risk (claims may be denied), &#8377;18,400 unclaimed ITC (available but not entered in Tally).</span></div>
@@ -6838,7 +6867,7 @@
                     <span class="ai-stats-icon">AI</span>
                     <strong>6</strong> GSTINs monitored
                     <span class="ai-stats-sep"></span>
-                    GSTR-2B auto-populated <strong>4 May</strong>
+                    Sample GSTR-2B snapshot <strong>4 May</strong>
                     <span class="ai-stats-sep"></span>
                     GSTR-3B due <strong>20 May</strong>
                     <span class="ai-stats-sep"></span>
@@ -7155,14 +7184,14 @@
 
             <!-- COMMUNICATION HUB -->
             <div class="screen" id="screen-comms">
-                <p class="screen-desc">Centralized log of all client communications (email + WhatsApp). Auto-dispatches briefings, reminders, and alerts with delivery tracking.</p>
+                <p class="screen-desc">Demo communication log showing how email and WhatsApp briefings, reminders, alerts, and delivery tracking could work after channels are connected.</p>
                 <div class="ai-stats-bar">
                     <span class="ai-stats-icon">AI</span>
                     <strong>12</strong> messages this week
                     <span class="ai-stats-sep"></span>
                     <strong>6</strong> clients contacted
                     <span class="ai-stats-sep"></span>
-                    <strong>3</strong> briefings dispatched
+                    <strong>3</strong> sample briefings
                     <span class="ai-stats-sep"></span>
                     <strong>2</strong> WhatsApp reminders auto-sent
                 </div>
@@ -7209,7 +7238,7 @@
                     <table class="tally-table">
                         <tr><th>Date</th><th>Client</th><th>Channel</th><th>Subject</th><th>Status</th><th>Action</th></tr>
                         <tr data-client="sharma" data-channel="email" onclick="showRowDetail('IGST Rate Change — HSN Update Required','<strong>To:</strong> Sharma Pharmaceuticals Pvt. Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 7 May 2026, 9:15 AM<br><strong>Status:</strong> Read (opened 7 May, 10:02 AM)<br><br>Notified about IGST rate change for pharma intermediates (HSN 2933/2934). Advised to update Tally HSN masters before next invoice. Included list of 8 affected stock items.')"><td>7 May</td><td>Sharma Pharma</td><td><span class="comms-channel email">Email</span></td><td>IGST Rate Change — HSN Update Required</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">Drafted</span></td></tr>
-                        <tr data-client="royal" data-channel="whatsapp" onclick="showRowDetail('TDS Deposit Reminder','<strong>To:</strong> Royal Spice Kitchen Pvt. Ltd.<br><strong>Channel:</strong> WhatsApp<br><strong>Sent:</strong> 7 May 2026, 8:30 AM<br><strong>Status:</strong> Delivered<br><br>Auto-sent reminder for TDS deposit due today. Challan 281 details included. Amount: Rs 86,400.')"><td>7 May</td><td>Royal Spice Kitchen</td><td><span class="comms-channel whatsapp">WhatsApp</span></td><td>TDS Deposit Reminder — Due Today</td><td><span class="status-chip read">Delivered</span></td><td><span class="ai-auto-badge">Auto-sent</span></td></tr>
+                        <tr data-client="royal" data-channel="whatsapp" onclick="showRowDetail('TDS Deposit Reminder','<strong>Demo recipient:</strong> Royal Spice Kitchen Pvt. Ltd.<br><strong>Channel preview:</strong> WhatsApp<br><strong>Sample date:</strong> 7 May 2026, 8:30 AM<br><strong>Status:</strong> Not sent<br><br>Sample reminder for TDS deposit due today. Illustrative Challan 281 details included. Amount: Rs 86,400.')"><td>7 May</td><td>Royal Spice Kitchen</td><td><span class="comms-channel whatsapp">WhatsApp</span></td><td>TDS Deposit Reminder — Due Today</td><td><span class="status-chip read">Demo</span></td><td><span class="ai-auto-badge">Drafted</span></td></tr>
                         <tr data-client="gupta" data-channel="email" onclick="showRowDetail('Regulatory Briefing — IGST + Auto Components','<strong>To:</strong> Gupta Auto Components Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 6 May 2026, 3:00 PM<br><strong>Status:</strong> Read<br><br>Comprehensive briefing on IGST rate schedule changes affecting auto components. Includes reclassification impact analysis and Tally update instructions.')"><td>6 May</td><td>Gupta Auto</td><td><span class="comms-channel email">Email</span></td><td>Regulatory Briefing — IGST + Auto Components</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">Drafted</span></td></tr>
                         <tr data-client="lakshmi" data-channel="email" onclick="showRowDetail('RBI CRAR Update — Capital Plan Advisory','<strong>To:</strong> Lakshmi FinServ Pvt. Ltd.<br><strong>Channel:</strong> Email<br><strong>Sent:</strong> 6 May 2026, 11:30 AM<br><strong>Status:</strong> Read<br><br>Advisory on RBI Scale Based Regulation — CRAR increasing from 15% to 16% effective Oct 2026. Capital gap analysis and Board resolution timeline included.')"><td>6 May</td><td>Lakshmi FinServ</td><td><span class="comms-channel email">Email</span></td><td>RBI CRAR Update — Capital Plan Advisory</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">Drafted</span></td></tr>
                         <tr data-client="nexgen" data-channel="whatsapp" onclick="showRowDetail('GSTR-1 Filing Reminder','<strong>To:</strong> NexGen Software Solutions Pvt. Ltd.<br><strong>Channel:</strong> WhatsApp<br><strong>Sent:</strong> 5 May 2026, 9:00 AM<br><strong>Status:</strong> Read<br><br>Reminder that GSTR-1 for April 2026 is due 11 May. Data is ready — client needs to confirm and authorize filing.')"><td>5 May</td><td>NexGen IT</td><td><span class="comms-channel whatsapp">WhatsApp</span></td><td>GSTR-1 Filing Reminder — Due 11 May</td><td><span class="status-chip read">Read</span></td><td><span class="ai-auto-badge">Auto-sent</span></td></tr>
@@ -7252,9 +7281,9 @@
                             <div class="settings-item-icon">T</div>
                             <div class="settings-item-body">
                                 <div class="settings-item-title">Tally</div>
-                                <div class="settings-item-sub">Live company data, ITC reconciliation, HSN rate validation</div>
+                                <div class="settings-item-sub">Connect company data for ITC reconciliation and HSN validation</div>
                             </div>
-                            <span class="settings-item-status">Connected</span>
+                            <span class="settings-item-status">Demo</span>
                         </div>
                         <div class="settings-item" onclick="navTo('gst')">
                             <div class="settings-item-icon">G</div>
@@ -7262,7 +7291,7 @@
                                 <div class="settings-item-title">GST Portal</div>
                                 <div class="settings-item-sub">GSTR-2B fetch, ITC matching, return-status tracking</div>
                             </div>
-                            <span class="settings-item-status">Connected</span>
+                            <span class="settings-item-status">Demo</span>
                         </div>
                         <div class="settings-item" onclick="navTo('incometax')">
                             <div class="settings-item-icon">I</div>
@@ -7270,7 +7299,7 @@
                                 <div class="settings-item-title">Income Tax &amp; TDS</div>
                                 <div class="settings-item-sub">Form 26AS, TDS challan, return filing status</div>
                             </div>
-                            <span class="settings-item-status">Connected</span>
+                            <span class="settings-item-status">Demo</span>
                         </div>
                         <div class="settings-item" onclick="navTo('mca')">
                             <div class="settings-item-icon">M</div>
@@ -7278,7 +7307,7 @@
                                 <div class="settings-item-title">MCA Portal</div>
                                 <div class="settings-item-sub">Director KYC tracking, annual filings, SRN status</div>
                             </div>
-                            <span class="settings-item-status">Connected</span>
+                            <span class="settings-item-status">Demo</span>
                         </div>
                         <div class="settings-item" onclick="navTo('comms')">
                             <div class="settings-item-icon">C</div>
@@ -7286,7 +7315,7 @@
                                 <div class="settings-item-title">Communication Hub</div>
                                 <div class="settings-item-sub">WhatsApp Business + email delivery for briefings and reminders</div>
                             </div>
-                            <span class="settings-item-status">Connected</span>
+                            <span class="settings-item-status">Demo</span>
                         </div>
                     </div>
                     <div class="settings-section">
@@ -7725,51 +7754,46 @@ function toggleReasoning(el) {
 // Navigation
 // "assistant" is a virtual nav target that resolves to #screen-chat (Answer mode) or #screen-agent (Act mode)
 // based on the user's persisted preference. Both screens render the mode toggle at top so the user can swap.
+// The Assistant has two modes: 'chat' (answer questions) and 'agent' (carry out approved actions).
+// The last-used mode is persisted so navTo('assistant') reopens where the CA left off. Default: 'chat'.
+// Stored under a namespaced, non-sensitive key only — never any client data (see product rule §1).
+var ASSISTANT_MODE_KEY = 'regMitra.assistantMode';
 function getAssistantMode() {
-    try { return localStorage.getItem('regmitra_assistant_mode') === 'act' ? 'act' : 'answer'; }
-    catch (e) { return 'answer'; }
+    try {
+        var m = localStorage.getItem(ASSISTANT_MODE_KEY);
+        if (m === 'chat' || m === 'agent') return m;
+        // one-time migration from the legacy answer/act key
+        var legacy = localStorage.getItem('regmitra_assistant_mode');
+        if (legacy === 'act') return 'agent';
+        if (legacy === 'answer') return 'chat';
+    } catch (e) {}
+    return 'chat';
 }
 function setAssistantMode(mode) {
-    try { localStorage.setItem('regmitra_assistant_mode', mode); } catch (e) {}
+    // Accept legacy answer/act aliases defensively; normalise to chat/agent.
+    var m = (mode === 'agent' || mode === 'act') ? 'agent' : 'chat';
+    try { localStorage.setItem(ASSISTANT_MODE_KEY, m); } catch (e) {}
+    return m;
 }
 function switchAssistantMode(mode) {
-    setAssistantMode(mode);
-    const target = mode === 'act' ? 'agent' : 'chat';
+    var m = setAssistantMode(mode);
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-' + target).classList.add('active');
+    var target = document.getElementById('screen-' + m);
+    if (target) target.classList.add('active');
     document.querySelectorAll('.assistant-mode-toggle .mode-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.mode === mode);
+        b.classList.toggle('active', b.dataset.mode === m);
+    });
+    // keep the sidebar highlighted on Assistant while swapping modes
+    document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.screen === 'assistant');
     });
 }
 
+// Sidebar buttons delegate to navTo() — the single source of truth for navigation.
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const screen = btn.dataset.screen;
-        if (!screen) return;
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-
-        let resolved = screen;
-        if (screen === 'assistant') {
-            resolved = getAssistantMode() === 'act' ? 'agent' : 'chat';
-        }
-        // 'clients' has its own dedicated screen — no mapping needed
-        const target = document.getElementById('screen-' + resolved);
-        if (target) target.classList.add('active');
-
-        const titles = { dashboard:'Today', feed:'Regulations', clients:'Clients', calendar:'Compliance Calendar', briefings:'Client Briefings', assistant:'Assistant', chat:'Assistant', agent:'Assistant', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub', settings:'Settings' };
-        document.getElementById('page-title').textContent = titles[screen] || titles[resolved] || '';
-        const hideSearch = ['assistant','chat','agent','tally','gst','incometax','mca','comms','settings'];
-        document.querySelector('.header-search').style.display = hideSearch.includes(screen) ? 'none' : '';
-
-        // Sync the mode toggle visual when entering assistant
-        if (screen === 'assistant') {
-            const mode = getAssistantMode();
-            document.querySelectorAll('.assistant-mode-toggle .mode-btn').forEach(b => {
-                b.classList.toggle('active', b.dataset.mode === mode);
-            });
-        }
+        if (screen) navTo(screen);
     });
 });
 
@@ -8026,35 +8050,54 @@ function closeCalPopup() {
     document.getElementById('cal-popup-overlay').classList.remove('open');
 }
 
-// Navigate to screen
+// navTo(screen) — the single source of truth for screen navigation.
+// It (1) resolves the 'assistant' alias to the last-used mode screen, (2) shows the matching
+// #screen-*, (3) highlights the owning sidebar destination via NAV_MAP, and (4) sets the
+// header title + search visibility. Every deep link and button routes through here.
+var NAV_MAP = {
+    home: 'home', dashboard: 'home', feed: 'home',
+    clients: 'clients', 'client-detail': 'clients',
+    calendar: 'calendar',
+    briefings: 'briefings',
+    chat: 'assistant', agent: 'assistant',
+    tally: 'settings', gst: 'settings', incometax: 'settings',
+    mca: 'settings', comms: 'settings', settings: 'settings'
+};
+var NAV_TITLES = { home:'Home', dashboard:'Today', feed:'Regulations', clients:'Clients', 'client-detail':'Client', calendar:'Compliance Calendar', briefings:'Client Briefings', assistant:'Assistant', chat:'Assistant', agent:'Assistant', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub', settings:'Settings' };
+var NAV_HIDE_SEARCH = ['home','assistant','chat','agent','tally','gst','incometax','mca','comms','settings'];
+
 function navTo(screen) {
-    // Map removed-nav screens back to their nearest visible nav button
-    var navMap = { chat:'assistant', agent:'assistant', tally:'settings', gst:'settings', incometax:'settings', mca:'settings', comms:'settings', dashboard:'home', 'client-detail':'clients', feed:'home' };
-    var navTarget = navMap[screen] || screen;
+    // 'assistant' is a virtual alias — resolve to the last-used mode screen ('chat' | 'agent').
+    var resolved = (screen === 'assistant') ? getAssistantMode() : screen;
+
+    // Highlight the sidebar destination that owns this screen.
+    var navTarget = NAV_MAP[screen] || NAV_MAP[resolved] || resolved;
     document.querySelectorAll('.nav-btn').forEach(b => {
-        b.classList.remove('active');
-        if (b.dataset.screen === navTarget) b.classList.add('active');
+        b.classList.toggle('active', b.dataset.screen === navTarget);
     });
 
-    var resolved = screen;
-    if (screen === 'assistant') {
-        resolved = getAssistantMode() === 'act' ? 'agent' : 'chat';
-    }
+    // Show the resolved screen.
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     var target = document.getElementById('screen-' + resolved);
     if (target) target.classList.add('active');
 
-    const titles = { home:'Home', dashboard:'Today', feed:'Regulations', clients:'Clients', 'client-detail':'Client', calendar:'Compliance Calendar', briefings:'Client Briefings', assistant:'Assistant', chat:'Assistant', agent:'Assistant', tally:'Tally Intelligence', gst:'GST Portal Intelligence', incometax:'Income Tax & TDS', mca:'MCA Portal Intelligence', comms:'Communication Hub', settings:'Settings' };
-    document.getElementById('page-title').textContent = titles[screen] || titles[resolved] || '';
-    const hideSearch = ['home','assistant','chat','agent','tally','gst','incometax','mca','comms','settings'];
-    document.querySelector('.header-search').style.display = hideSearch.includes(screen) ? 'none' : '';
+    // Header title + contextual search visibility.
+    var titleEl = document.getElementById('page-title');
+    if (titleEl) titleEl.textContent = NAV_TITLES[screen] || NAV_TITLES[resolved] || '';
+    var searchEl = document.querySelector('.header-search');
+    if (searchEl) searchEl.style.display = NAV_HIDE_SEARCH.includes(screen) ? 'none' : '';
 
-    if (screen === 'assistant' || screen === 'chat' || screen === 'agent') {
-        var mode = (screen === 'agent') ? 'act' : (screen === 'chat') ? 'answer' : getAssistantMode();
+    // Sync the Assistant mode toggle when landing on an assistant screen.
+    if (resolved === 'chat' || resolved === 'agent') {
         document.querySelectorAll('.assistant-mode-toggle .mode-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.mode === mode);
+            b.classList.toggle('active', b.dataset.mode === resolved);
         });
     }
+
+    // Each screen starts scrolled to the top.
+    var content = document.querySelector('.content');
+    if (content) content.scrollTop = 0;
+    return resolved;
 }
 
 // ===== SCREEN FILTER FUNCTIONS =====
@@ -8664,7 +8707,7 @@ const CLIENT_PORTAL_HEALTH = {
 // Recent activity (last 7 days)
 const CLIENT_ACTIVITY = {
     sharma: [
-        { t:'Today',   d:'ok',     x:'Auto-fetched <strong>GSTR-3B Apr 2026</strong> filing receipt from gst.gov.in' },
+        { t:'Today',   d:'ok',     x:'Demo import loaded a sample <strong>GSTR-3B Apr 2026</strong> filing receipt' },
         { t:'Today',   d:'warn',   x:'Flagged <strong>IGST HSN update</strong> — 3 invoices need sign-off (CBIC notification)' },
         { t:'Yesterday',d:'ok',    x:'Briefing sent to <strong>Mr. Sharma</strong> via WhatsApp (IGST rate change)' },
         { t:'2 d ago', d:'ok',     x:'Tally reconciled · GSTR-2B ITC matched 96.4%' },
@@ -8685,7 +8728,7 @@ const CLIENT_ACTIVITY = {
     ],
     royal: [
         { t:'Today',   d:'danger', x:'<strong>FSSAI opt-in OVERDUE</strong> since 2 May (FOSCOS auto-detect)' },
-        { t:'Today',   d:'ok',     x:'Auto-fetched GSTR-1 Apr 2026 from gst.gov.in' },
+        { t:'Today',   d:'ok',     x:'Demo import loaded a sample GSTR-1 Apr 2026 record' },
         { t:'2 d ago', d:'warn',   x:'F&B packaging rate review queued (CBIC circular)' },
         { t:'4 d ago', d:'ok',     x:'4-outlet Shops & Establishments status auto-refreshed' }
     ],
@@ -9008,7 +9051,7 @@ const ACTION_PLAYBOOK = {
             'OTP verification on the director\'s mobile and email is <strong>complete</strong> (sent 2 mins ago).',
             'Upload the director&rsquo;s <strong>DSC (.pfx)</strong> below — we attest with the firm&rsquo;s practising CA DSC.',
             'We submit to <strong>mca.gov.in</strong>, pay the ₹0 fee (on time) and return an SRN.',
-            'SRN gets saved to the client folder. The Live Compliance Status card flips to verified.'
+            'After a real submission is confirmed, the SRN would be saved and the compliance card marked verified.'
         ],
         upload: {
             title: 'Upload the director&rsquo;s DSC',
@@ -10320,7 +10363,9 @@ function wcReplay() {
     try { onboarded = localStorage.getItem('regmitra_onboarded') === 'true'; } catch (e) {}
 
     function trigger() {
-        if (forceOnboard || !onboarded) setTimeout(obShow, 400);
+        // Walkthrough no longer auto-launches on first load — the app boots straight to Home.
+        // It stays available on demand via the "Replay setup walkthrough" buttons or ?onboard=1.
+        if (forceOnboard) setTimeout(obShow, 400);
     }
     if (document.readyState !== 'loading') trigger();
     else document.addEventListener('DOMContentLoaded', trigger);
