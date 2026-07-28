@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, KeyboardEvent, useRef, useState } from "react";
 import { ArrowUpIcon, CheckCircleIcon, SparklesIcon } from "@/components/icons";
 import { ReviewGate } from "@/components/review-gate";
 import { TrustBadge } from "@/components/trust-badge";
-import { clients } from "@/lib/demo-data";
 
 const prompts = [
   "What needs attention for Sharma Pharma?",
@@ -14,109 +13,136 @@ const prompts = [
   "Help me verify a regulatory claim",
 ] as const;
 
-interface PreparedAnswer {
-  title: string;
-  summary: string;
-  steps: readonly string[];
-  clientId: string | null;
-  clientLabel: string | null;
+interface ConversationMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  model?: string;
 }
 
-function prepareLocalAnswer(query: string): PreparedAnswer {
-  const normalized = query.toLowerCase();
-  const client = clients.find((item) =>
-    normalized.includes(item.shortName.toLowerCase())
-    || normalized.includes(item.name.split(" ").at(0)?.toLowerCase() ?? ""),
-  );
+type RequestState = "idle" | "loading" | "error";
 
-  if (normalized.includes("compare") || normalized.includes("all client")) {
-    return {
-      title: "Portfolio review prepared",
-      summary: "Three demo clients are marked high risk. Start with Sharma Pharma, then Gupta Auto and Royal Spice. These scores are illustrative and are not verified against portal or client data.",
-      steps: [
-        "Confirm each client’s open period and assigned owner.",
-        "Attach the relevant circular, notice, or portal record.",
-        "Review high-risk exceptions before routine filings.",
-      ],
-      clientId: null,
-      clientLabel: null,
-    };
-  }
-
-  if (normalized.includes("verify") || normalized.includes("source") || normalized.includes("claim")) {
-    return {
-      title: "Verification workflow prepared",
-      summary: "No authoritative regulatory source is connected in this demo. The claim should remain unverified until the original notification and client applicability are recorded.",
-      steps: [
-        "Locate the original publication on the issuing authority’s website.",
-        "Match the effective date, jurisdiction, entity type, and period.",
-        "Record the source and have a responsible professional review the conclusion.",
-      ],
-      clientId: client?.id ?? null,
-      clientLabel: client?.shortName ?? null,
-    };
-  }
-
-  return {
-    title: client ? `Review prepared for ${client.shortName}` : "Review checklist prepared",
-    summary: client
-      ? `${client.shortName} has ${client.pending} demo actions and ${client.dueThisWeek} illustrative items due this week. The workspace has no connected sources, so every action still requires verification.`
-      : "I prepared a safe review sequence from the local demo workspace. No live AI, filing portal, or client system was contacted.",
-    steps: [
-      "Confirm the client, return period, and responsible owner.",
-      "Verify the obligation against an authoritative source.",
-      "Review the working papers and record professional approval.",
-    ],
-    clientId: client?.id ?? null,
-    clientLabel: client?.shortName ?? null,
-  };
+function createId(role: ConversationMessage["role"]) {
+  return `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPrompt?: string }>) {
   const [draft, setDraft] = useState(initialPrompt);
-  const [submittedPrompt, setSubmittedPrompt] = useState("");
+  const [messages, setMessages] = useState<readonly ConversationMessage[]>([]);
+  const [requestState, setRequestState] = useState<RequestState>("idle");
+  const [error, setError] = useState("");
+  const composerRef = useRef<HTMLTextAreaElement>(null);
 
-  const answer = useMemo(
-    () => submittedPrompt ? prepareLocalAnswer(submittedPrompt) : null,
-    [submittedPrompt],
-  );
+  async function requestAnswer(prompt: string) {
+    const normalizedPrompt = prompt.trim();
+    if (!normalizedPrompt || requestState === "loading") return;
+
+    const userMessage: ConversationMessage = {
+      id: createId("user"),
+      role: "user",
+      content: normalizedPrompt,
+    };
+    const nextMessages = [...messages, userMessage];
+
+    setMessages(nextMessages);
+    setDraft("");
+    setError("");
+    setRequestState("loading");
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: nextMessages.map(({ role, content }) => ({ role, content })),
+        }),
+      });
+      const payload = await response.json() as {
+        text?: string;
+        model?: string;
+        error?: string;
+      };
+
+      if (!response.ok || !payload.text) {
+        throw new Error(payload.error || "Gemini could not prepare an answer.");
+      }
+
+      setMessages((current) => [
+        ...current,
+        {
+          id: createId("assistant"),
+          role: "assistant",
+          content: payload.text ?? "",
+          model: payload.model,
+        },
+      ]);
+      setRequestState("idle");
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Gemini could not prepare an answer.",
+      );
+      setRequestState("error");
+    }
+  }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const nextPrompt = draft.trim();
-    if (!nextPrompt) return;
-    setSubmittedPrompt(nextPrompt);
+    void requestAnswer(draft);
   }
 
-  function selectPrompt(prompt: string) {
-    setDraft(prompt);
-    setSubmittedPrompt(prompt);
+  function handleComposerKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      void requestAnswer(draft);
+    }
   }
+
+  function startAgain() {
+    setMessages([]);
+    setDraft("");
+    setError("");
+    setRequestState("idle");
+    window.requestAnimationFrame(() => composerRef.current?.focus());
+  }
+
+  const hasConversation = messages.length > 0;
 
   return (
     <>
       <header className="assistant-hero">
         <span className="assistant-symbol"><SparklesIcon /></span>
         <div>
-          <p className="eyebrow">Preparation workspace</p>
+          <p className="eyebrow">Gemini-powered preparation</p>
           <h1>Ask Reg Mitra</h1>
           <p>Turn a compliance question into a clear, reviewable next step.</p>
         </div>
+        {hasConversation ? (
+          <button className="button assistant-reset" onClick={startAgain} type="button">
+            New conversation
+          </button>
+        ) : null}
       </header>
 
       <div className="assistant-layout">
         <section className="assistant-main">
-          {!answer ? (
+          {!hasConversation ? (
             <div className="assistant-welcome">
               <div>
                 <h2>What are you trying to get done?</h2>
                 <p>
                   Choose a starting point or describe the result you need.
-                  This local demo prepares a workflow; it does not retrieve live law or file anything.
+                  Gemini will prepare the work; a qualified professional must verify every conclusion.
                 </p>
                 <div className="prompt-grid">
                   {prompts.map((prompt) => (
-                    <button className="prompt-card" onClick={() => selectPrompt(prompt)} type="button" key={prompt}>
+                    <button
+                      className="prompt-card"
+                      onClick={() => void requestAnswer(prompt)}
+                      type="button"
+                      key={prompt}
+                    >
                       {prompt}
                     </button>
                   ))}
@@ -125,51 +151,73 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
             </div>
           ) : (
             <div className="assistant-response" aria-live="polite">
-              <div className="assistant-query">
-                <span>You asked</span>
-                <p>{submittedPrompt}</p>
-              </div>
-              <div className="prepared-answer">
-                <div className="answer-heading">
-                  <span className="answer-icon"><CheckCircleIcon /></span>
-                  <div>
-                    <p className="eyebrow">Prepared from local demo data</p>
-                    <h2>{answer.title}</h2>
+              {messages.map((message) => message.role === "user" ? (
+                <div className="assistant-query" key={message.id}>
+                  <span>You</span>
+                  <p>{message.content}</p>
+                </div>
+              ) : (
+                <article className="gemini-answer" key={message.id}>
+                  <div className="answer-heading">
+                    <span className="answer-icon"><CheckCircleIcon /></span>
+                    <div>
+                      <p className="eyebrow">Gemini response</p>
+                      <h2>Prepared for professional review</h2>
+                    </div>
+                    <span className="model-label">{message.model}</span>
                   </div>
-                </div>
-                <p className="answer-summary">{answer.summary}</p>
-                <ol className="answer-steps">
-                  {answer.steps.map((step) => <li key={step}>{step}</li>)}
-                </ol>
-                <div className="answer-actions">
-                  {answer.clientId ? (
-                    <Link className="button primary" href={`/clients/${answer.clientId}`}>
-                      Open {answer.clientLabel}
-                    </Link>
-                  ) : (
+                  <div className="ai-answer-text">{message.content}</div>
+                  <div className="answer-actions">
                     <Link className="button primary" href="/clients">Review clients</Link>
-                  )}
-                  <Link className="button" href="/settings">Connect a source</Link>
+                    <Link className="button" href="/settings">Review source setup</Link>
+                  </div>
+                </article>
+              ))}
+
+              {requestState === "loading" ? (
+                <div className="assistant-thinking">
+                  <span className="thinking-mark"><SparklesIcon /></span>
+                  <span><strong>Gemini is preparing the review</strong><small>Checking the workspace context and safeguards…</small></span>
                 </div>
-              </div>
-              <ReviewGate
-                title="A professional must verify this"
-                description="This result is generated from illustrative local data. Confirm the authority, effective date, applicability, and client records before acting."
-              />
+              ) : null}
+
+              {error ? (
+                <div className="assistant-error" role="alert">
+                  <strong>Couldn’t prepare the answer</strong>
+                  <span>{error}</span>
+                  <button className="text-link" onClick={() => void requestAnswer(draft || messages.at(-1)?.content || "")} type="button">
+                    Try again
+                  </button>
+                </div>
+              ) : null}
+
+              {messages.some((message) => message.role === "assistant") ? (
+                <ReviewGate
+                  title="A professional must verify this"
+                  description="Gemini can prepare research and next steps, but it cannot confirm current law, client applicability, or a filing position without authoritative evidence and professional review."
+                />
+              ) : null}
             </div>
           )}
 
           <form className="composer" onSubmit={submit}>
             <textarea
               aria-label="Ask Reg Mitra"
+              disabled={requestState === "loading"}
               onChange={(event) => setDraft(event.target.value)}
-              placeholder="Describe the outcome you need…"
+              onKeyDown={handleComposerKeyDown}
+              placeholder={hasConversation ? "Ask a follow-up…" : "Describe the outcome you need…"}
+              ref={composerRef}
               value={draft}
             />
             <div className="composer-actions">
-              <span className="composer-note">Local demo · no live AI or external systems</span>
-              <button className="button primary" disabled={!draft.trim()} type="submit">
-                Prepare <ArrowUpIcon />
+              <span className="composer-note">Gemini connected securely · ⌘ Enter to send</span>
+              <button
+                className="button primary"
+                disabled={!draft.trim() || requestState === "loading"}
+                type="submit"
+              >
+                {requestState === "loading" ? "Preparing…" : "Send"} <ArrowUpIcon />
               </button>
             </div>
           </form>
@@ -177,17 +225,17 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
 
         <aside className="context-panel" aria-label="Trust and review context">
           <div className="context-section">
-            <p className="eyebrow">What is available</p>
-            <h2>Local demo workspace</h2>
-            <div className="context-item"><TrustBadge kind="evidence" state="demo" /><span>Six illustrative client profiles.</span></div>
-            <div className="context-item"><TrustBadge kind="evidence" state="not-connected" /><span>No live regulatory or portal data.</span></div>
+            <p className="eyebrow">Connection</p>
+            <h2>Gemini via protected server route</h2>
+            <div className="context-item"><TrustBadge kind="evidence" state="connected" /><span>The API key is never sent to the browser.</span></div>
+            <div className="context-item"><TrustBadge kind="evidence" state="demo" /><span>Client and work data remain illustrative.</span></div>
           </div>
           <div className="context-section">
             <p className="eyebrow">Safe result</p>
             <h2>Every answer should leave you with</h2>
             <div className="context-item"><span className="context-num">1</span><span>A plain-language conclusion.</span></div>
-            <div className="context-item"><span className="context-num">2</span><span>A short, ordered review path.</span></div>
-            <div className="context-item"><span className="context-num">3</span><span>A visible source and approval state.</span></div>
+            <div className="context-item"><span className="context-num">2</span><span>A short, ordered verification path.</span></div>
+            <div className="context-item"><span className="context-num">3</span><span>An explicit source status.</span></div>
           </div>
         </aside>
       </div>

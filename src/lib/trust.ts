@@ -32,6 +32,11 @@ export const evidenceStates: Record<EvidenceState, StateDefinition> = {
     description: "No external system is supplying or confirming this information.",
     tone: "neutral",
   },
+  connected: {
+    label: "AI connected",
+    description: "Gemini is available through a protected server-side connection.",
+    tone: "positive",
+  },
 };
 
 export const reviewStates: Record<ReviewState, StateDefinition> = {
