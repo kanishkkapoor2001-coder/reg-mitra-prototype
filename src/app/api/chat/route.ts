@@ -140,7 +140,7 @@ export async function POST(request: Request) {
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
   if (!apiKey) {
     return Response.json(
-      { error: "Gemini is not configured for this workspace." },
+      { error: "AI assistance is not configured for this workspace." },
       { status: 503 },
     );
   }
@@ -184,8 +184,8 @@ export async function POST(request: Request) {
       return Response.json(
         {
           error: status === 429
-            ? "Gemini is at its current usage limit. Please try again shortly."
-            : "Gemini could not prepare an answer. Please try again.",
+            ? "AI assistance is at its current usage limit. Please try again shortly."
+            : "Reg Mitra could not prepare an answer. Please try again.",
         },
         { status },
       );
@@ -201,8 +201,8 @@ export async function POST(request: Request) {
       return Response.json(
         {
           error: payload.promptFeedback?.blockReason
-            ? "Gemini could not answer that request safely. Try rephrasing it."
-            : "Gemini returned an empty answer. Please try again.",
+            ? "Reg Mitra could not answer that request safely. Try rephrasing it."
+            : "Reg Mitra returned an empty answer. Please try again.",
         },
         { status: 502 },
       );
@@ -211,7 +211,7 @@ export async function POST(request: Request) {
     return Response.json({ text, model });
   } catch {
     return Response.json(
-      { error: "Gemini took too long to respond. Please try again." },
+      { error: "AI assistance took too long to respond. Please try again." },
       { status: 504 },
     );
   }

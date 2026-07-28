@@ -17,7 +17,6 @@ interface ConversationMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
-  model?: string;
 }
 
 type RequestState = "idle" | "loading" | "error";
@@ -64,7 +63,7 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
       };
 
       if (!response.ok || !payload.text) {
-        throw new Error(payload.error || "Gemini could not prepare an answer.");
+        throw new Error(payload.error || "Reg Mitra could not prepare an answer.");
       }
 
       setMessages((current) => [
@@ -73,7 +72,6 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
           id: createId("assistant"),
           role: "assistant",
           content: payload.text ?? "",
-          model: payload.model,
         },
       ]);
       setRequestState("idle");
@@ -81,7 +79,7 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Gemini could not prepare an answer.",
+          : "Reg Mitra could not prepare an answer.",
       );
       setRequestState("error");
     }
@@ -114,7 +112,7 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
       <header className="assistant-hero">
         <span className="assistant-symbol"><SparklesIcon /></span>
         <div>
-          <p className="eyebrow">Gemini-powered preparation</p>
+          <p className="eyebrow">Evidence-aware preparation</p>
           <h1>Ask Reg Mitra</h1>
           <p>Turn a compliance question into a clear, reviewable next step.</p>
         </div>
@@ -133,7 +131,7 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
                 <h2>What are you trying to get done?</h2>
                 <p>
                   Choose a starting point or describe the result you need.
-                  Gemini will prepare the work; a qualified professional must verify every conclusion.
+                  Reg Mitra will prepare the work; a qualified professional must verify every conclusion.
                 </p>
                 <div className="prompt-grid">
                   {prompts.map((prompt) => (
@@ -157,14 +155,13 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
                   <p>{message.content}</p>
                 </div>
               ) : (
-                <article className="gemini-answer" key={message.id}>
+                <article className="assistant-answer" key={message.id}>
                   <div className="answer-heading">
                     <span className="answer-icon"><CheckCircleIcon /></span>
                     <div>
-                      <p className="eyebrow">Gemini response</p>
+                      <p className="eyebrow">Reg Mitra response</p>
                       <h2>Prepared for professional review</h2>
                     </div>
-                    <span className="model-label">{message.model}</span>
                   </div>
                   <div className="ai-answer-text">{message.content}</div>
                   <div className="answer-actions">
@@ -177,7 +174,7 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
               {requestState === "loading" ? (
                 <div className="assistant-thinking">
                   <span className="thinking-mark"><SparklesIcon /></span>
-                  <span><strong>Gemini is preparing the review</strong><small>Checking the workspace context and safeguards…</small></span>
+                  <span><strong>Reg Mitra is preparing the review</strong><small>Checking the workspace context and safeguards…</small></span>
                 </div>
               ) : null}
 
@@ -194,7 +191,7 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
               {messages.some((message) => message.role === "assistant") ? (
                 <ReviewGate
                   title="A professional must verify this"
-                  description="Gemini can prepare research and next steps, but it cannot confirm current law, client applicability, or a filing position without authoritative evidence and professional review."
+                  description="Reg Mitra can prepare research and next steps, but it cannot confirm current law, client applicability, or a filing position without authoritative evidence and professional review."
                 />
               ) : null}
             </div>
@@ -211,7 +208,7 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
               value={draft}
             />
             <div className="composer-actions">
-              <span className="composer-note">Gemini connected securely · ⌘ Enter to send</span>
+              <span className="composer-note">AI connected securely · ⌘ Enter to send</span>
               <button
                 className="button primary"
                 disabled={!draft.trim() || requestState === "loading"}
@@ -226,7 +223,7 @@ export function AssistantExperience({ initialPrompt = "" }: Readonly<{ initialPr
         <aside className="context-panel" aria-label="Trust and review context">
           <div className="context-section">
             <p className="eyebrow">Connection</p>
-            <h2>Gemini via protected server route</h2>
+            <h2>AI via protected server route</h2>
             <div className="context-item"><TrustBadge kind="evidence" state="connected" /><span>The API key is never sent to the browser.</span></div>
             <div className="context-item"><TrustBadge kind="evidence" state="demo" /><span>Client and work data remain illustrative.</span></div>
           </div>

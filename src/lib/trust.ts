@@ -34,7 +34,7 @@ export const evidenceStates: Record<EvidenceState, StateDefinition> = {
   },
   connected: {
     label: "AI connected",
-    description: "Gemini is available through a protected server-side connection.",
+    description: "AI assistance is available through a protected server-side connection.",
     tone: "positive",
   },
 };

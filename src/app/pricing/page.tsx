@@ -16,7 +16,7 @@ export default function PricingPage() {
             <h2>Product demo</h2>
             <strong>Free</strong>
             <p>Explore the full interaction model with clearly labelled sample clients and live AI assistance.</p>
-            <ul><li>Today priority queue</li><li>Source-linked compliance calendar</li><li>Ask Reg Mitra with Gemini</li><li>Demo client workspaces</li></ul>
+            <ul><li>Today priority queue</li><li>Source-linked compliance calendar</li><li>AI-assisted compliance research</li><li>Demo client workspaces</li></ul>
             <Link className="marketing-button primary" href="/login">Open demo</Link>
           </article>
           <article className="pricing-future">
