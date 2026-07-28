@@ -19,8 +19,9 @@ import {
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
+const publicPaths = ["/", "/about", "/pricing", "/faq", "/login"];
+
 function isActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -52,10 +53,14 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
     assistant: SparklesIcon,
   } as const;
 
+  if (publicPaths.includes(pathname)) {
+    return children;
+  }
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <Link className="brand" href="/" aria-label="Reg Mitra home">
+        <Link className="brand" href="/today" aria-label="Reg Mitra workspace home">
           <span className="brand-mark"><CheckCircleIcon /></span>
           <span>
             <strong>Reg Mitra</strong>
@@ -102,6 +107,9 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
             <small>Demo workspace · 6 clients</small>
           </span>
         </div>
+        <form action="/api/auth/logout" method="post">
+          <button className="sidebar-signout" type="submit">Leave demo</button>
+        </form>
       </aside>
 
       <div className="workspace">

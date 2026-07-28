@@ -176,6 +176,19 @@ button { color: inherit; }
 }
 .firm-card strong { display: block; overflow: hidden; max-width: 150px; color: white; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .firm-card small { display: block; margin-top: 3px; color: #819a8e; font-size: 9px; }
+.sidebar-signout {
+  width: 100%;
+  margin-top: 9px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #789086;
+  cursor: pointer;
+  font-size: 8px;
+  text-align: left;
+}
+.sidebar-signout:hover { background: rgb(255 255 255 / 5%); color: #dce8e2; }
 
 .workspace { min-width: 0; }
 .topbar {

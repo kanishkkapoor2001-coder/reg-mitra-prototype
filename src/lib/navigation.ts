@@ -6,7 +6,7 @@ export interface NavigationItem {
 }
 
 export const navigation: readonly NavigationItem[] = [
-  { label: "Today", href: "/", icon: "today" },
+  { label: "Today", href: "/today", icon: "today" },
   { label: "Clients", href: "/clients", icon: "clients", badge: "6" },
   { label: "Ask Reg Mitra", href: "/assistant", icon: "assistant" },
 ] as const;

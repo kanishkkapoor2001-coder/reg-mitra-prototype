@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { TodayExperience } from "@/components/today-experience";
 
 export default function TodayPage() {
-  redirect("/");
+  return <TodayExperience />;
 }

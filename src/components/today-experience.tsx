@@ -125,10 +125,10 @@ export function TodayExperience() {
       <section className="next-up">
         <div>
           <p className="eyebrow">Next up</p>
-          <h2>TDS return preparation · Sharma Pharma</h2>
-          <p>Draft working papers are ready for review. Claimed due date: 15 May.</p>
+          <h2>Q1 quarterly TDS statement · 31 July</h2>
+          <p>General statutory date from the Income Tax Department. Confirm client applicability and any later notification.</p>
         </div>
-        <Link className="text-link" href="/clients/sharma">Open client workspace →</Link>
+        <Link className="text-link" href="/calendar">Open source-linked calendar →</Link>
       </section>
     </>
   );
