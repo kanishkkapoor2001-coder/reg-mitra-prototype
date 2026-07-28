@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { DemoNotice } from "@/components/demo-notice";
 import { PageHeading } from "@/components/page-heading";
+import { WorkspaceTrustSummary } from "@/components/workspace-trust-summary";
 import { workItems } from "@/lib/demo-data";
 
 const activity = [
@@ -18,7 +18,7 @@ export default function HomePage() {
         description="A focused view of what needs attention across your compliance workspace."
         actions={<Link className="button primary" href="/assistant">Ask Reg Mitra <span aria-hidden="true">→</span></Link>}
       />
-      <DemoNotice />
+      <WorkspaceTrustSummary />
 
       <section className="kpi-grid" aria-label="Workspace summary">
         <article className="kpi-card"><span className="kpi-label">Needs review</span><div className="kpi-value">7</div><div className="kpi-meta"><span>Across 4 demo clients</span><span className="trend">2 high priority</span></div></article>

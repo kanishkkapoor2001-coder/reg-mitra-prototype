@@ -1,4 +1,5 @@
 import { PageHeading } from "@/components/page-heading";
+import { TrustBadge } from "@/components/trust-badge";
 
 const integrations = [
   ["TA", "Tally", "Ledgers, vouchers, stock items, and reconciliations"],
@@ -22,6 +23,33 @@ export default function SettingsPage() {
           </article>
         ))}
       </div>
+      <section style={{ marginTop: 26 }}>
+        <div className="page-heading" style={{ marginBottom: 14 }}>
+          <div>
+            <p className="eyebrow">Source register</p>
+            <h2>Authoritative sources and review policy</h2>
+            <p className="page-subtitle">The workspace will show information as verified only after a source and reviewer are recorded.</p>
+          </div>
+          <button className="button" type="button">Add source</button>
+        </div>
+        <div className="source-register">
+          <article className="source-row">
+            <div><strong>Government portals</strong><small>GSTN, MCA, Income Tax, FSSAI, RBI</small></div>
+            <p className="source-policy">No portal credentials or data connections have been configured.</p>
+            <TrustBadge kind="evidence" state="not-connected" />
+          </article>
+          <article className="source-row">
+            <div><strong>Regulatory documents</strong><small>Circulars, notifications, orders, and rules</small></div>
+            <p className="source-policy">No authoritative document has been attached to the current demo claims.</p>
+            <TrustBadge kind="evidence" state="unverified" />
+          </article>
+          <article className="source-row">
+            <div><strong>Professional review</strong><small>Named reviewer and version-level approval</small></div>
+            <p className="source-policy">Approval is required before sending advice, communicating a position, or taking a filing action.</p>
+            <TrustBadge kind="review" state="not-reviewed" />
+          </article>
+        </div>
+      </section>
     </>
   );
 }

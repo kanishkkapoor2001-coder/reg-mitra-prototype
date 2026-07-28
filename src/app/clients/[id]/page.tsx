@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DemoNotice } from "@/components/demo-notice";
+import { EvidencePanel } from "@/components/evidence-panel";
+import { ReviewGate } from "@/components/review-gate";
 import { clients, getClient, workItems } from "@/lib/demo-data";
+import type { EvidenceRecord } from "@/lib/types";
 
 interface ClientPageProps {
   params: Promise<{ id: string }>;
@@ -16,6 +19,14 @@ export default async function ClientPage({ params }: ClientPageProps) {
   const client = getClient(id);
   if (!client) notFound();
   const items = workItems.filter((item) => item.client === client.shortName);
+  const clientEvidence: EvidenceRecord = {
+    state: "demo",
+    source: null,
+    applicability: `Illustrative profile for ${client.sector} workflows.`,
+    reviewState: "not-reviewed",
+    reviewedBy: null,
+    caveat: "Identifiers, obligations, scores, and statuses are demo content. Confirm against client records and authoritative portals.",
+  };
 
   return (
     <>
@@ -31,6 +42,9 @@ export default async function ClientPage({ params }: ClientPageProps) {
         <div className="detail-risk"><strong>{client.riskScore}</strong><span>Demo risk score · {client.risk}</span></div>
       </section>
       <DemoNotice />
+      <div style={{ marginBottom: 18 }}>
+        <EvidencePanel evidence={clientEvidence} />
+      </div>
       <section className="kpi-grid">
         <article className="kpi-card"><span className="kpi-label">Pending actions</span><div className="kpi-value">{client.pending}</div><div className="kpi-meta"><span>Needs review</span></div></article>
         <article className="kpi-card"><span className="kpi-label">Due this week</span><div className="kpi-value">{client.dueThisWeek}</div><div className="kpi-meta"><span>Illustrative deadlines</span></div></article>
@@ -45,6 +59,17 @@ export default async function ClientPage({ params }: ClientPageProps) {
           <div className="empty-state"><div className="empty-state-icon">✓</div><h2>No demo actions listed</h2><p>Connect verified sources or add an obligation to begin tracking work for this client.</p><button className="button" type="button">Add obligation</button></div>
         )}
       </section>
+      <div style={{ marginTop: 14 }}>
+        <ReviewGate
+          title="Professional review required before action"
+          description="Confirm the source, period, client applicability, and filing position. Reg Mitra does not replace professional judgement or an authoritative portal."
+        >
+          <div className="button-row">
+            <button className="button small" type="button">Start review checklist</button>
+            <button className="button small" type="button" disabled>Approve action</button>
+          </div>
+        </ReviewGate>
+      </div>
     </>
   );
 }

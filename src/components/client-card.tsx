@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TrustBadge } from "@/components/trust-badge";
 import type { Client } from "@/lib/types";
 
 export function ClientCard({ client }: Readonly<{ client: Client }>) {
@@ -17,7 +18,7 @@ export function ClientCard({ client }: Readonly<{ client: Client }>) {
         <span className="client-metric"><strong>{client.dueThisWeek}</strong><span>This week</span></span>
         <span className="client-metric"><strong>{client.compliant}</strong><span>Compliant</span></span>
       </div>
-      <span className="source-line"><i /> Demo data · connect sources to verify</span>
+      <span className="source-line"><TrustBadge kind="evidence" state="demo" /> Connect sources to verify</span>
     </Link>
   );
 }
