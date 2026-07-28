@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/app-shell";
+import "./tokens.css";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({

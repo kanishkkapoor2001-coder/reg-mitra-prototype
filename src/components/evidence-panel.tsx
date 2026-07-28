@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { EvidenceRecord } from "@/lib/types";
 import { TrustBadge } from "@/components/trust-badge";
 
@@ -47,7 +48,7 @@ export function EvidencePanel({ evidence, compact = false }: EvidencePanelProps)
           Open authoritative source ↗
         </a>
       ) : (
-        <button className="button small" type="button">Attach official source</button>
+        <Link className="button small" href="/settings">Review source setup</Link>
       )}
     </section>
   );

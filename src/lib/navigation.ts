@@ -1,18 +1,12 @@
 export interface NavigationItem {
   label: string;
   href: string;
-  icon: string;
+  icon: "today" | "clients" | "assistant";
   badge?: string;
-  section?: string;
 }
 
 export const navigation: readonly NavigationItem[] = [
-  { label: "Home", href: "/", icon: "⌂", section: "Workspace" },
-  { label: "Today", href: "/today", icon: "✓" },
-  { label: "Clients", href: "/clients", icon: "◫", badge: "6" },
-  { label: "Briefings", href: "/briefings", icon: "▤", badge: "6" },
-  { label: "Calendar", href: "/calendar", icon: "□" },
-  { label: "Regulations", href: "/regulations", icon: "≋", section: "Intelligence" },
-  { label: "Ask Reg Mitra", href: "/assistant", icon: "✦" },
-  { label: "Settings", href: "/settings", icon: "⚙", section: "System" },
+  { label: "Today", href: "/", icon: "today" },
+  { label: "Clients", href: "/clients", icon: "clients", badge: "6" },
+  { label: "Ask Reg Mitra", href: "/assistant", icon: "assistant" },
 ] as const;

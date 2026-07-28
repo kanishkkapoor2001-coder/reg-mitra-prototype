@@ -13,13 +13,17 @@ export default function SettingsPage() {
   return (
     <>
       <PageHeading eyebrow="System" title="Settings" description="Manage sources, workspace controls, and review policies." />
+      <div className="notice">
+        <strong>Connection setup is not available in this local demo.</strong>
+        A production version needs encrypted credentials, audit logs, and an approved data-handling policy.
+      </div>
       <div className="settings-list">
         {integrations.map(([icon, title, description]) => (
           <article className="settings-row" key={title}>
             <span className="settings-icon">{icon}</span>
             <div className="settings-copy"><h2>{title}</h2><p>{description}</p></div>
             <span className="status-pill">Not connected</span>
-            <button className="button" type="button">Configure</button>
+            <span className="locked-action">Requires secure connector service</span>
           </article>
         ))}
       </div>
@@ -30,7 +34,6 @@ export default function SettingsPage() {
             <h2>Authoritative sources and review policy</h2>
             <p className="page-subtitle">The workspace will show information as verified only after a source and reviewer are recorded.</p>
           </div>
-          <button className="button" type="button">Add source</button>
         </div>
         <div className="source-register">
           <article className="source-row">

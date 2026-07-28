@@ -2,7 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { CommandPalette } from "@/components/command-palette";
+import {
+  AppearanceIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  ClientsIcon,
+  FileIcon,
+  MoreIcon,
+  RegulationsIcon,
+  SearchIcon,
+  SettingsIcon,
+  SparklesIcon,
+  TodayIcon,
+} from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
 function isActive(pathname: string, href: string): boolean {
@@ -12,12 +26,37 @@ function isActive(pathname: string, href: string): boolean {
 
 export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
   const pathname = usePathname();
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    function onShortcut(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setCommandOpen((current) => !current);
+      }
+    }
+    window.addEventListener("keydown", onShortcut);
+    return () => window.removeEventListener("keydown", onShortcut);
+  }, []);
+
+  function toggleTheme() {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
+    document.documentElement.dataset.theme = nextTheme;
+  }
+
+  const primaryIcons = {
+    today: TodayIcon,
+    clients: ClientsIcon,
+    assistant: SparklesIcon,
+  } as const;
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <Link className="brand" href="/" aria-label="Reg Mitra home">
-          <span className="brand-mark" aria-hidden="true">✓</span>
+          <span className="brand-mark"><CheckCircleIcon /></span>
           <span>
             <strong>Reg Mitra</strong>
             <small>Regulatory intelligence</small>
@@ -25,22 +64,36 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
         </Link>
 
         <nav className="primary-nav" aria-label="Primary navigation">
-          {navigation.map((item, index) => (
-            <div className="nav-group" key={item.href}>
-              {item.section ? <p className="nav-section">{item.section}</p> : null}
-              <Link
-                className={`nav-link ${isActive(pathname, item.href) ? "active" : ""}`}
-                href={item.href}
-                aria-current={isActive(pathname, item.href) ? "page" : undefined}
-              >
-                <span className="nav-icon" aria-hidden="true">{item.icon}</span>
-                <span>{item.label}</span>
-                {item.badge ? <span className="nav-badge">{item.badge}</span> : null}
-              </Link>
-              {index === 4 ? <span className="nav-spacer" /> : null}
-            </div>
-          ))}
+          {navigation.map((item) => {
+            const Icon = primaryIcons[item.icon];
+            return (
+              <div className="nav-group" key={item.href}>
+                <Link
+                  className={`nav-link ${isActive(pathname, item.href) ? "active" : ""}`}
+                  href={item.href}
+                  aria-current={isActive(pathname, item.href) ? "page" : undefined}
+                >
+                  <span className="nav-icon"><Icon /></span>
+                  <span>{item.label}</span>
+                  {item.badge ? <span className="nav-badge">{item.badge}</span> : null}
+                </Link>
+              </div>
+            );
+          })}
         </nav>
+
+        <details className="more-menu">
+          <summary><MoreIcon /><span>More</span></summary>
+          <div className="more-menu-panel">
+            <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Drafts and reviews</small></span></Link>
+            <Link href="/calendar"><CalendarIcon /><span><strong>Calendar</strong><small>Deadlines and obligations</small></span></Link>
+            <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Updates and sources</small></span></Link>
+            <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources and policy</small></span></Link>
+            <button className="appearance-button" onClick={toggleTheme} type="button">
+              <AppearanceIcon /><span><strong>Appearance</strong><small>Use {theme === "light" ? "dark" : "light"} mode</small></span>
+            </button>
+          </div>
+        </details>
 
         <div className="firm-card">
           <span className="firm-avatar">MS</span>
@@ -53,19 +106,19 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
 
       <div className="workspace">
         <header className="topbar">
-          <label className="global-search">
-            <span aria-hidden="true">⌕</span>
-            <input aria-label="Search workspace" placeholder="Search clients, regulations, filings…" />
+          <button className="global-search" onClick={() => setCommandOpen(true)} type="button">
+            <SearchIcon />
+            <span>Search or jump anywhere</span>
             <kbd>⌘ K</kbd>
-          </label>
+          </button>
           <div className="topbar-actions">
             <span className="demo-pill"><i /> Demo data</span>
-            <button className="icon-button" type="button" aria-label="Notifications">○</button>
             <span className="user-avatar" aria-label="Mehta Shah, Partner">MS</span>
           </div>
         </header>
         <main className="main-content">{children}</main>
       </div>
+      <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} />
     </div>
   );
 }

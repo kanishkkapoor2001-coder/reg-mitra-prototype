@@ -39,6 +39,7 @@ export interface Client {
 export interface WorkItem {
   id: string;
   title: string;
+  clientId: string;
   client: string;
   authority: string;
   due: string;

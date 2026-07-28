@@ -52,11 +52,11 @@ export default async function ClientPage({ params }: ClientPageProps) {
         <article className="kpi-card"><span className="kpi-label">Connected sources</span><div className="kpi-value">0</div><div className="kpi-meta"><span>Set up in Settings</span></div></article>
       </section>
       <section className="panel">
-        <div className="panel-header"><div><h2>Open work</h2><p>Items associated with this demo client</p></div><Link className="button" href="/assistant">Ask about client</Link></div>
+        <div className="panel-header"><div><h2>Open work</h2><p>Items associated with this demo client</p></div><Link className="button" href={`/assistant?prompt=${encodeURIComponent(`What needs attention for ${client.shortName}?`)}`}>Ask about client</Link></div>
         {items.length ? (
           <ul className="work-list">{items.map((item) => <li className="work-item" key={item.id}><i className={`urgency-dot ${item.urgency}`} /><div><p className="work-title">{item.title}</p><span className="work-meta">{item.authority} · {item.state.replace("-", " ")}</span></div><span className="due">{item.due}</span></li>)}</ul>
         ) : (
-          <div className="empty-state"><div className="empty-state-icon">✓</div><h2>No demo actions listed</h2><p>Connect verified sources or add an obligation to begin tracking work for this client.</p><button className="button" type="button">Add obligation</button></div>
+          <div className="empty-state"><h2>No demo actions listed</h2><p>Prepare a review path in Ask Reg Mitra, or connect a verified source before tracking live work.</p><Link className="button" href={`/assistant?prompt=${encodeURIComponent(`Prepare a compliance review for ${client.shortName}`)}`}>Prepare review</Link></div>
         )}
       </section>
       <div style={{ marginTop: 14 }}>
@@ -65,8 +65,8 @@ export default async function ClientPage({ params }: ClientPageProps) {
           description="Confirm the source, period, client applicability, and filing position. Reg Mitra does not replace professional judgement or an authoritative portal."
         >
           <div className="button-row">
-            <button className="button small" type="button">Start review checklist</button>
-            <button className="button small" type="button" disabled>Approve action</button>
+            <Link className="button small" href={`/assistant?prompt=${encodeURIComponent(`Prepare a review checklist for ${client.shortName}`)}`}>Prepare review checklist</Link>
+            <span className="locked-action">Approval unlocks after evidence and a reviewer are recorded.</span>
           </div>
         </ReviewGate>
       </div>
