@@ -1,5 +1,19 @@
 export type BillingStatus = "trialing" | "active" | "past_due" | "canceled" | "expired";
 
+export function hasFounderAccess(
+  email: string | null | undefined,
+  configuredEmails = process.env.FOUNDER_ACCESS_EMAILS,
+) {
+  const normalizedEmail = email?.trim().toLowerCase();
+  if (!normalizedEmail || !configuredEmails) return false;
+
+  return configuredEmails
+    .split(",")
+    .map((candidate) => candidate.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(normalizedEmail);
+}
+
 export function hasProductEntitlement(
   status: BillingStatus | null | undefined,
   trialEndsAt: string | null | undefined,

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
-import { hasProductEntitlement } from "@/lib/billing/entitlements";
+import { hasFounderAccess, hasProductEntitlement } from "@/lib/billing/entitlements";
 
 export async function proxy(request: NextRequest) {
   const session = request.cookies.get("reg_mitra_session")?.value;
@@ -13,6 +13,7 @@ export async function proxy(request: NextRequest) {
     const supabase = createSupabaseRequestClient(request, response);
     const { data } = await supabase.auth.getUser();
     if (data.user) {
+      const founderAccess = hasFounderAccess(data.user.email);
       const { data: membership } = await supabase
         .from("workspace_memberships")
         .select("workspace_id, workspaces(subscriptions(status, trial_ends_at))")
@@ -35,6 +36,7 @@ export async function proxy(request: NextRequest) {
           || request.nextUrl.pathname.startsWith("/api/billing/portal");
         if (
           !billingPath
+          && !founderAccess
           && !hasProductEntitlement(subscription?.status, subscription?.trial_ends_at)
         ) {
           return NextResponse.redirect(new URL("/billing", request.url));

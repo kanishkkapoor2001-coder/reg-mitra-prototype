@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { hasFounderAccess } from "@/lib/billing/entitlements";
 
 export interface CurrentWorkspace {
   id: string;
@@ -6,6 +7,7 @@ export interface CurrentWorkspace {
   role: "owner" | "admin" | "reviewer" | "member" | "viewer";
   subscriptionStatus: "trialing" | "active" | "past_due" | "canceled" | "expired";
   trialEndsAt: string | null;
+  founderAccess: boolean;
 }
 
 export async function getCurrentWorkspace(): Promise<CurrentWorkspace | null> {
@@ -33,5 +35,6 @@ export async function getCurrentWorkspace(): Promise<CurrentWorkspace | null> {
     role: membership.role,
     subscriptionStatus: subscription?.status ?? "expired",
     trialEndsAt: subscription?.trial_ends_at ?? null,
+    founderAccess: hasFounderAccess(userData.user.email),
   };
 }

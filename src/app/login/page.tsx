@@ -12,10 +12,11 @@ const errors: Record<string, string> = {
 export default async function LoginPage({
   searchParams,
 }: Readonly<{
-  searchParams: Promise<{ error?: string; sent?: string; from?: string }>;
+  searchParams: Promise<{ error?: string; sent?: string; from?: string; founder?: string }>;
 }>) {
   const params = await searchParams;
   const error = params.error ? errors[params.error] : null;
+  const founderEntry = params.founder === "1";
   const from = params.from?.startsWith("/") && !params.from.startsWith("//")
     ? params.from
     : "/today";
@@ -24,9 +25,9 @@ export default async function LoginPage({
     <PublicShell>
       <main className="login-page">
         <section className="login-copy">
-          <p className="marketing-kicker">Reg Mitra workspace</p>
-          <h1>Return to your firm’s regulatory workspace.</h1>
-          <p>A secure sign-in link keeps passwords out of your workflow. Use the email address associated with your firm.</p>
+          <p className="marketing-kicker">{founderEntry ? "Private founder access" : "Reg Mitra workspace"}</p>
+          <h1>{founderEntry ? "Open your complete Reg Mitra workspace." : "Return to your firm’s regulatory workspace."}</h1>
+          <p>{founderEntry ? "Use your approved founder email. Access is checked on the server before the billing gate is opened." : "A secure sign-in link keeps passwords out of your workflow. Use the email address associated with your firm."}</p>
           <ul>
             <li><span>01</span> Firm and client data remains isolated by workspace</li>
             <li><span>02</span> Roles govern access, review, and administration</li>
@@ -35,8 +36,8 @@ export default async function LoginPage({
         </section>
         <section className="login-panel" aria-labelledby="login-title">
           <div className="login-mark">R/M</div>
-          <p className="access-label">Secure access</p>
-          <h2 id="login-title">Email me a sign-in link</h2>
+          <p className="access-label">{founderEntry ? "Founder access" : "Secure access"}</p>
+          <h2 id="login-title">{founderEntry ? "Send my private sign-in link" : "Email me a sign-in link"}</h2>
           {params.sent === "1" ? (
             <div className="notice" role="status">
               <strong>Check your inbox.</strong>
@@ -57,12 +58,14 @@ export default async function LoginPage({
               />
               {error ? <p className="form-error" role="alert">{error}</p> : null}
               <button className="marketing-button primary wide" type="submit">
-                Send secure link <span>→</span>
+                {founderEntry ? "Send founder sign-in link" : "Send secure link"} <span>→</span>
               </button>
             </form>
           )}
           <small>Never share portal credentials, passwords, client records, or OTPs on this page.</small>
-          <Link href="/start">New to Reg Mitra? Start your 7-day trial →</Link>
+          {founderEntry
+            ? <Link href="/login">Use a different workspace account →</Link>
+            : <Link href="/start">New to Reg Mitra? Start your 7-day trial →</Link>}
         </section>
       </main>
     </PublicShell>
