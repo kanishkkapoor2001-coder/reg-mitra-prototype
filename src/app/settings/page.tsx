@@ -14,7 +14,7 @@ export default function SettingsPage() {
     <>
       <PageHeading eyebrow="System" title="Settings" description="Manage sources, workspace controls, and review policies." />
       <div className="notice">
-        <strong>Connection setup is not available in this local demo.</strong>
+        <strong>Connection setup is not available in this local product environment.</strong>
         A production version needs encrypted credentials, audit logs, and an approved data-handling policy.
       </div>
       <div className="settings-list">
@@ -43,7 +43,7 @@ export default function SettingsPage() {
           </article>
           <article className="source-row">
             <div><strong>Regulatory documents</strong><small>Circulars, notifications, orders, and rules</small></div>
-            <p className="source-policy">No authoritative document has been attached to the current demo claims.</p>
+            <p className="source-policy">No authoritative document has been attached to the current illustrative claims.</p>
             <TrustBadge kind="evidence" state="unverified" />
           </article>
           <article className="source-row">

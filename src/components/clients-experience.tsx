@@ -36,7 +36,7 @@ export function ClientsExperience() {
         <div>
           <p className="eyebrow">Client portfolio</p>
           <h1>Who needs attention?</h1>
-          <p>Clients are ranked by demo risk so the most important review is always visible first.</p>
+          <p>Clients are ranked by illustrative risk so the most important review is always visible first.</p>
         </div>
         <div className="portfolio-stat">
           <strong>{clients.filter((client) => client.risk === "high").length}</strong>
@@ -84,7 +84,7 @@ export function ClientsExperience() {
         </section>
       )}
 
-      <p className="demo-footnote">Demo profiles only · Connect a secure client store before adding or editing records.</p>
+      <p className="demo-footnote">Illustrative profiles · Connect a secure client store before adding or editing records.</p>
     </>
   );
 }

@@ -18,8 +18,8 @@ export const evidenceStates: Record<EvidenceState, StateDefinition> = {
     tone: "warning",
   },
   demo: {
-    label: "Demo only",
-    description: "Illustrative information used to demonstrate the workspace.",
+    label: "Illustrative",
+    description: "Sample information used to preview the workspace.",
     tone: "neutral",
   },
   stale: {

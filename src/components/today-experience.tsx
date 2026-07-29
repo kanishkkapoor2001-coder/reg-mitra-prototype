@@ -26,7 +26,7 @@ export function TodayExperience() {
     <>
       <header className="today-hero">
         <div>
-          <p className="eyebrow">Today · Demo workspace</p>
+          <p className="eyebrow">Today · Partner workspace</p>
           <h1>
             {decisionCount
               ? `${decisionCount} ${decisionCount === 1 ? "thing needs" : "things need"} your decision`
@@ -35,7 +35,7 @@ export function TodayExperience() {
           <p>
             {decisionCount
               ? "Start with the highest-risk exception. Everything else can wait."
-              : "The demo queue has been reviewed for this session."}
+              : "The current queue has been reviewed for this session."}
           </p>
         </div>
         <Link className="button primary" href="/assistant">
@@ -51,7 +51,7 @@ export function TodayExperience() {
         <span><strong>0</strong><small>verified sources</small></span>
         <div className="today-summary-note">
           <TrustBadge kind="evidence" state="demo" />
-          <small>Progress resets when the demo reloads.</small>
+          <small>Progress resets when this local session reloads.</small>
         </div>
       </section>
 
@@ -90,7 +90,7 @@ export function TodayExperience() {
                       <p className="decision-why">
                         {item.state === "needs-review"
                           ? "The underlying regulatory claim has no authoritative source attached. Confirm the rule and client applicability before taking action."
-                          : "This item is prepared as demo work. Review the period, client records, and authoritative portal before using it."}
+                          : "This item uses illustrative workspace data. Review the period, client records, and authoritative portal before using it."}
                       </p>
                       <div className="decision-state">
                         <TrustBadge kind="evidence" state="unverified" />
@@ -116,7 +116,7 @@ export function TodayExperience() {
             <div className="queue-complete">
               <CheckCircleIcon />
               <h2>Queue reviewed</h2>
-              <p>You handled every demo item in this session. No external action was taken.</p>
+              <p>You handled every item in this session. No external action was taken.</p>
             </div>
           ) : null}
         </div>

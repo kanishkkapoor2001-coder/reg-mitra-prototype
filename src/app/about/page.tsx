@@ -23,7 +23,7 @@ export default function AboutPage() {
         </section>
         <section className="editorial-callout">
           <blockquote>Simple is not the absence of substance. It is substance arranged around the user.</blockquote>
-          <Link className="marketing-button primary" href="/login">Experience the demo</Link>
+          <Link className="marketing-button primary" href="/start">Start today</Link>
         </section>
       </main>
     </PublicShell>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Newsreader, Plus_Jakarta_Sans } from "next/font/google";
+import { cookies } from "next/headers";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/app-shell";
 import "./tokens.css";
@@ -27,11 +28,14 @@ export const metadata: Metadata = {
   description: "Regulatory intelligence workspace for Indian CA firms.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const sessionCookie = (await cookies()).get("reg_mitra_session")?.value;
+  const sessionMode = sessionCookie === "demo" ? "demo" : sessionCookie === "product" ? "product" : null;
+
   return (
     <html lang="en" className={`${jakarta.variable} ${newsreader.variable}`}>
       <body>
-        <AppShell>{children}</AppShell>
+        <AppShell sessionMode={sessionMode}>{children}</AppShell>
       </body>
     </html>
   );

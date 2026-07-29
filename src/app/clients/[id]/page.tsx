@@ -25,7 +25,7 @@ export default async function ClientPage({ params }: ClientPageProps) {
     applicability: `Illustrative profile for ${client.sector} workflows.`,
     reviewState: "not-reviewed",
     reviewedBy: null,
-    caveat: "Identifiers, obligations, scores, and statuses are demo content. Confirm against client records and authoritative portals.",
+    caveat: "Identifiers, obligations, scores, and statuses are illustrative. Confirm against client records and authoritative portals.",
   };
 
   return (
@@ -39,7 +39,7 @@ export default async function ClientPage({ params }: ClientPageProps) {
           <p className="page-subtitle">{client.sector} · {client.location}</p>
           <div className="identifier-list">{client.identifiers.map((identifier) => <span className="identifier" key={identifier}>{identifier}</span>)}</div>
         </div>
-        <div className="detail-risk"><strong>{client.riskScore}</strong><span>Demo risk score · {client.risk}</span></div>
+        <div className="detail-risk"><strong>{client.riskScore}</strong><span>Illustrative risk score · {client.risk}</span></div>
       </section>
       <DemoNotice />
       <div style={{ marginBottom: 18 }}>
@@ -52,11 +52,11 @@ export default async function ClientPage({ params }: ClientPageProps) {
         <article className="kpi-card"><span className="kpi-label">Connected sources</span><div className="kpi-value">0</div><div className="kpi-meta"><span>Set up in Settings</span></div></article>
       </section>
       <section className="panel">
-        <div className="panel-header"><div><h2>Open work</h2><p>Items associated with this demo client</p></div><Link className="button" href={`/assistant?prompt=${encodeURIComponent(`What needs attention for ${client.shortName}?`)}`}>Ask about client</Link></div>
+        <div className="panel-header"><div><h2>Open work</h2><p>Items associated with this client profile</p></div><Link className="button" href={`/assistant?prompt=${encodeURIComponent(`What needs attention for ${client.shortName}?`)}`}>Ask about client</Link></div>
         {items.length ? (
           <ul className="work-list">{items.map((item) => <li className="work-item" key={item.id}><i className={`urgency-dot ${item.urgency}`} /><div><p className="work-title">{item.title}</p><span className="work-meta">{item.authority} · {item.state.replace("-", " ")}</span></div><span className="due">{item.due}</span></li>)}</ul>
         ) : (
-          <div className="empty-state"><h2>No demo actions listed</h2><p>Prepare a review path in Ask Reg Mitra, or connect a verified source before tracking live work.</p><Link className="button" href={`/assistant?prompt=${encodeURIComponent(`Prepare a compliance review for ${client.shortName}`)}`}>Prepare review</Link></div>
+          <div className="empty-state"><h2>No actions listed</h2><p>Prepare a review path in Ask Reg Mitra, or connect a verified source before tracking live work.</p><Link className="button" href={`/assistant?prompt=${encodeURIComponent(`Prepare a compliance review for ${client.shortName}`)}`}>Prepare review</Link></div>
         )}
       </section>
       <div style={{ marginTop: 14 }}>

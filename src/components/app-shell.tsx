@@ -19,13 +19,16 @@ import {
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
-const publicPaths = ["/", "/about", "/pricing", "/faq", "/login"];
+const publicPaths = ["/", "/about", "/pricing", "/faq", "/login", "/start", "/demo"];
 
 function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
+export function AppShell({
+  children,
+  sessionMode,
+}: Readonly<{ children: ReactNode; sessionMode: "demo" | "product" | null }>) {
   const pathname = usePathname();
   const [commandOpen, setCommandOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -104,11 +107,11 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
           <span className="firm-avatar">MS</span>
           <span>
             <strong>Mehta Shah & Associates</strong>
-            <small>Demo workspace · 6 clients</small>
+            <small>{sessionMode === "demo" ? "Demo workspace" : "Workspace"} · 6 clients</small>
           </span>
         </div>
         <form action="/api/auth/logout" method="post">
-          <button className="sidebar-signout" type="submit">Leave demo</button>
+          <button className="sidebar-signout" type="submit">{sessionMode === "demo" ? "Leave demo" : "Sign out"}</button>
         </form>
       </aside>
 
@@ -120,7 +123,7 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
             <kbd>⌘ K</kbd>
           </button>
           <div className="topbar-actions">
-            <span className="demo-pill"><i /> Demo data</span>
+            {sessionMode === "demo" ? <span className="demo-pill"><i /> Demo data</span> : null}
             <span className="user-avatar" aria-label="Mehta Shah, Partner">MS</span>
           </div>
         </header>

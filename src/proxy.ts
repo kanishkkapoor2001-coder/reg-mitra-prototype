@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
-  const isDemo = request.cookies.get("reg_mitra_session")?.value === "demo";
-  if (isDemo) return NextResponse.next();
+  const session = request.cookies.get("reg_mitra_session")?.value;
+  if (session === "demo" || session === "product") return NextResponse.next();
 
-  const loginUrl = new URL("/login", request.url);
+  const loginUrl = new URL("/start", request.url);
   loginUrl.searchParams.set("from", request.nextUrl.pathname);
   return NextResponse.redirect(loginUrl);
 }

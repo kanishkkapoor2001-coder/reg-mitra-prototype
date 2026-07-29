@@ -14,10 +14,10 @@ export default function HomePage() {
               deliberate workspace for Indian compliance teams.
             </p>
             <div className="marketing-actions">
-              <Link className="marketing-button primary" href="/login">Open the demo</Link>
-              <Link className="marketing-button quiet" href="#how-it-works">See how it works</Link>
+              <Link className="marketing-button primary" href="/start">Start today</Link>
+              <Link className="marketing-button quiet" href="/demo">Explore demo</Link>
             </div>
-            <p className="marketing-proof">No card required · Demo data clearly labelled · Official sources linked</p>
+            <p className="marketing-proof">No card required · Source-aware workflows · Official sources linked</p>
           </div>
 
           <div className="ledger-object" aria-label="A preview of the Reg Mitra compliance ledger">
@@ -74,7 +74,7 @@ export default function HomePage() {
               Reg Mitra’s compliance calendar separates recurring national obligations from
               client-specific applicability and links each rule to its source.
             </p>
-            <Link className="marketing-text-link" href="/login">Explore the live calendar →</Link>
+            <Link className="marketing-text-link" href="/start">Explore the live calendar →</Link>
           </div>
           <div className="calendar-mini" aria-hidden="true">
             <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span>
@@ -85,7 +85,7 @@ export default function HomePage() {
         <section className="marketing-cta">
           <p className="marketing-kicker">Experience the product</p>
           <h2>Give the work a quieter place to happen.</h2>
-          <Link className="marketing-button light" href="/login">Enter demo workspace</Link>
+          <Link className="marketing-button light" href="/start">Start today</Link>
         </section>
       </main>
     </PublicShell>

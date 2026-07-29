@@ -337,6 +337,7 @@
 .login-copy li span { display: inline-block; width: 38px; color: #7a827c; font-family: var(--font-editorial), Georgia, serif; font-size: 16px; }
 .login-panel { padding: clamp(28px, 4vw, 48px); border: 1px solid #bfc0b9; background: #faf8f1; box-shadow: 0 32px 70px -50px rgb(23 35 28 / 42%); }
 .login-mark { display: grid; width: 54px; height: 54px; margin-bottom: 48px; place-items: center; border: 1px solid #17231c; border-radius: 50%; font-size: 9px; font-weight: 800; }
+.access-label { margin: -28px 0 12px !important; color: #38634d !important; font-size: 7px !important; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
 .login-panel h2 { font-family: var(--font-editorial), Georgia, serif; font-size: 34px; font-weight: 400; }
 .login-panel > p { margin: 12px 0 28px; color: #657067; font-size: 10px; line-height: 1.7; }
 .login-panel small { display: block; margin: 15px 0 30px; color: #858b85; font-size: 7px; line-height: 1.5; }
