@@ -16,6 +16,12 @@ const allowedHosts = new Set([
   "www.icai.org",
   "www.sebi.gov.in",
   "www.epfindia.gov.in",
+  "www.fssai.gov.in",
+  "fssai.gov.in",
+  "www.mca.gov.in",
+  "www.rbi.org.in",
+  "rbi.org.in",
+  "m.rbi.org.in",
 ]);
 const execFileAsync = promisify(execFile);
 

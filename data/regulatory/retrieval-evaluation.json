@@ -112,6 +112,48 @@
       "topK": 2
     },
     {
+      "id": "rbi-mfi-qualifying-assets",
+      "query": "What minimum qualifying assets percentage must an NBFC-MFI maintain under RBI/2025-26/44?",
+      "expectedSourceIds": ["rbi-nbfc-mfi-qualifying-assets-2025"],
+      "topK": 2
+    },
+    {
+      "id": "rbi-nbfc-cco",
+      "query": "Which RBI circular covers the compliance function and Chief Compliance Officer for Middle and Upper Layer NBFCs?",
+      "expectedSourceIds": ["rbi-nbfc-compliance-function-cco-2022"],
+      "topK": 2
+    },
+    {
+      "id": "mca-companies-act",
+      "query": "Find the official MCA text of the Companies Act 2013 and warn me what else is needed for a current company-law conclusion.",
+      "expectedSourceIds": ["mca-companies-act-2013"],
+      "topK": 2
+    },
+    {
+      "id": "fssai-artificial-ripening",
+      "query": "Is calcium carbide allowed for artificial ripening of fruit and what does FSSAI say about direct ethylene contact?",
+      "expectedSourceIds": ["fssai-artificial-ripening-advisory-2026"],
+      "topK": 2
+    },
+    {
+      "id": "fssai-street-vendor-registration",
+      "query": "Which 2026 FSSAI licensing amendment covers street food vendor registration, annual fees, returns and closure intimation?",
+      "expectedSourceIds": ["fssai-licensing-amendment-2026"],
+      "topK": 2
+    },
+    {
+      "id": "fssai-fifo-fefo-records",
+      "query": "What FSSAI amendment requires manufacturing records and FIFO or FEFO storage controls?",
+      "expectedSourceIds": ["fssai-licensing-second-amendment-2026"],
+      "topK": 2
+    },
+    {
+      "id": "fssai-current-indexes",
+      "query": "Where are the official FSSAI Advisories and Orders index and FSSAI Gazette Notifications index for freshness checks?",
+      "expectedSourceIds": ["fssai-advisories-index", "fssai-gazette-index"],
+      "topK": 4
+    },
+    {
       "id": "unsupported-domain",
       "query": "What are the maritime radio licensing rules for an Antarctic research vessel?",
       "expectNoRelevantSource": true

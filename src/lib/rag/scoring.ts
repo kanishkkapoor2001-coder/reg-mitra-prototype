@@ -12,6 +12,11 @@ const synonymGroups = [
   ["gst", "cgst", "gstr", "tax"],
   ["tds", "deductor", "deductee", "certificate"],
   ["epf", "epfo", "provident", "ecr"],
+  ["rbi", "reserve", "bank", "nbfc"],
+  ["mca", "company", "companies", "corporate"],
+  ["fssai", "food", "safety", "fbo"],
+  ["microfinance", "mfi", "qualifying", "assets"],
+  ["fifo", "fefo", "storage", "inventory"],
   ["audit", "auditing", "assurance", "engagement"],
   ["sqm", "quality", "sqc"],
   ["din", "document", "identification"],
@@ -83,6 +88,12 @@ function authorityBoost(query: string, authority: string) {
   if (/\b(sebi|securities|demat|rta|mutual fund|aif)\b/.test(normalised)
     && target.includes("sebi")) return 0.1;
   if (/\b(epf|epfo|provident|ecr)\b/.test(normalised) && target.includes("epfo")) return 0.1;
+  if (/\b(rbi|reserve bank|nbfc|microfinance|mfi|qualifying assets|chief compliance officer|cco)\b/.test(normalised)
+    && target.includes("rbi")) return 0.1;
+  if (/\b(mca|companies act|company law|cin|llpin|registrar of companies|roc)\b/.test(normalised)
+    && target.includes("mca")) return 0.1;
+  if (/\b(fssai|food safety|food business|fbo|street vendor|calcium carbide|ethylene|fifo|fefo)\b/.test(normalised)
+    && target.includes("fssai")) return 0.1;
   return 0;
 }
 

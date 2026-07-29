@@ -37,6 +37,15 @@ function inferAuthorityScope(query: string) {
     return new Set(["SEBI"]);
   }
   if (/\b(epf|epfo|provident|ecr)\b/.test(normalised)) return new Set(["EPFO"]);
+  if (/\b(rbi|reserve bank|nbfc|microfinance|mfi|qualifying assets|chief compliance officer|cco)\b/.test(normalised)) {
+    return new Set(["RBI"]);
+  }
+  if (/\b(mca|companies act|company law|cin|llpin|registrar of companies|roc)\b/.test(normalised)) {
+    return new Set(["MCA"]);
+  }
+  if (/\b(fssai|food safety|food business|fbo|street vendor|calcium carbide|ethylene|fifo|fefo)\b/.test(normalised)) {
+    return new Set(["FSSAI"]);
+  }
   return null;
 }
 
