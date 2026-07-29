@@ -1,35 +1,19 @@
+import { cookies } from "next/headers";
+import { ConnectorControlCenter } from "@/components/connector-control-center";
 import { PageHeading } from "@/components/page-heading";
 import { TrustBadge } from "@/components/trust-badge";
 import { getCorpusHealth } from "@/lib/rag/corpus";
+import { getSupabasePublicConfig } from "@/lib/supabase/config";
 
-const integrations = [
-  ["TA", "Tally", "Ledgers, vouchers, stock items, and reconciliations"],
-  ["GS", "GST Portal", "Returns, ledgers, notices, and filing status"],
-  ["IT", "Income Tax & TDS", "Statements, challans, defaults, and filing status"],
-  ["MC", "MCA", "Company filings, directors, and compliance events"],
-  ["CM", "Communications", "Email and approved client delivery channels"],
-] as const;
-
-export default function SettingsPage() {
+export default async function SettingsPage() {
   const corpus = getCorpusHealth();
+  const isDemo = (await cookies()).get("reg_mitra_session")?.value === "demo";
+  const productMode = !isDemo && Boolean(getSupabasePublicConfig());
 
   return (
     <>
       <PageHeading eyebrow="System" title="Settings" description="Manage sources, workspace controls, and review policies." />
-      <div className="notice">
-        <strong>Connection setup is not available in this local product environment.</strong>
-        A production version needs encrypted credentials, audit logs, and an approved data-handling policy.
-      </div>
-      <div className="settings-list">
-        {integrations.map(([icon, title, description]) => (
-          <article className="settings-row" key={title}>
-            <span className="settings-icon">{icon}</span>
-            <div className="settings-copy"><h2>{title}</h2><p>{description}</p></div>
-            <span className="status-pill">Not connected</span>
-            <span className="locked-action">Requires secure connector service</span>
-          </article>
-        ))}
-      </div>
+      <ConnectorControlCenter productMode={productMode} />
       <section style={{ marginTop: 26 }}>
         <div className="page-heading" style={{ marginBottom: 14 }}>
           <div>

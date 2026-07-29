@@ -70,5 +70,6 @@ export const config = {
     "/api/billing/portal/:path*",
     "/api/calendar/:path*",
     "/api/chat/:path*",
+    "/api/connectors/:path*",
   ],
 };
