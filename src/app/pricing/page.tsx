@@ -7,25 +7,25 @@ export default function PricingPage() {
       <main className="editorial-page">
         <header className="editorial-hero narrow">
           <p className="marketing-kicker">Pricing</p>
-          <h1>Try Reg Mitra for seven days.</h1>
-          <p>Use daily regulatory monitoring, client-impact mapping, and review-ready actions with your firm’s workflow before choosing a subscription.</p>
+          <h1>Use Reg Mitra free for seven days.</h1>
+          <p>Create your firm’s secure workspace and use the complete regulatory monitoring, client-impact, calendar, Ask, and Act workflow.</p>
         </header>
         <section className="pricing-comparison">
           <article>
             <p className="pricing-label">Available now</p>
-            <h2>7-day trial</h2>
-            <strong>No payment to begin</strong>
-            <p>We configure selected sources, client context, review gates, and one workflow that matters to your practice. Your seven days begin once access is ready.</p>
-            <ul><li>Selected official-source monitoring</li><li>Client-impact workflow design</li><li>Live source-linked calendar</li><li>Ask and Act review controls</li></ul>
-            <Link className="marketing-button primary" href="/start">Request your 7-day trial</Link>
+            <h2>7-day full-product trial</h2>
+            <strong>No card required</strong>
+            <p>Create a secure firm workspace and use Reg Mitra for seven days. The trial begins when your workspace is created.</p>
+            <ul><li>Official-source regulatory radar</li><li>Personalised client impact</li><li>Live source-linked calendar</li><li>Ask and Act review controls</li></ul>
+            <Link className="marketing-button primary" href="/start">Start 7-day trial</Link>
           </article>
           <article className="pricing-future">
             <p className="pricing-label">After your trial</p>
             <h2>Team subscription</h2>
-            <strong>Choose after seven days</strong>
-            <p>Continue with a secure paid Reg Mitra workspace for your team, client profiles, live calendars, and governed actions. Pricing is shared before you subscribe.</p>
+            <strong>Keep your workspace active</strong>
+            <p>Subscribe to continue using Reg Mitra with your team, client profiles, live calendars, and governed actions.</p>
             <ul><li>Continuous regulatory radar</li><li>Personalised client impact</li><li>Team roles and approvals</li><li>Private firm and client data</li></ul>
-            <span className="pricing-note">No automatic charge after the trial</span>
+            <span className="pricing-note">You choose whether to subscribe</span>
           </article>
         </section>
       </main>

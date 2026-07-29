@@ -62,7 +62,7 @@ export default async function LoginPage({
             </form>
           )}
           <small>Never share portal credentials, passwords, client records, or OTPs on this page.</small>
-          <Link href="/demo">Not a customer yet? See Reg Mitra in action →</Link>
+          <Link href="/start">New to Reg Mitra? Start your 7-day trial →</Link>
         </section>
       </main>
     </PublicShell>

@@ -5,7 +5,7 @@ export const faqQuestions = [
   ],
   [
     "How does the 7-day trial work?",
-    "Request access and tell us which authorities you follow and one workflow you want to improve. We confirm the setup and the date your seven days begin. No payment is collected to start, and there is no automatic charge when the trial ends.",
+    "Select Start 7-day trial and send from your work email. Trial access is issued securely, and your seven days begin when your firm’s workspace is created. No card is required, and there is no automatic charge when the trial ends.",
   ],
   [
     "What is the difference between Ask and Act?",
@@ -13,7 +13,7 @@ export const faqQuestions = [
   ],
   [
     "Can Act send, submit, or file something?",
-    "Not without an authorised professional’s explicit approval. The template only previews actions. The intended product stops before Submit, OTP, filing, email, WhatsApp, payment, or another irreversible step.",
+    "Not without an authorised professional’s explicit approval. The demo only previews actions. Reg Mitra stops before Submit, OTP, filing, email, WhatsApp, payment, or another irreversible step.",
   ],
   [
     "Is Reg Mitra legal, tax, or accounting advice?",
@@ -21,22 +21,22 @@ export const faqQuestions = [
   ],
   [
     "How are current rules and circulars verified?",
-    "A reliable answer should link the issuing authority’s current publication, state when it was checked, show the client facts used for applicability, and make any evidence gap visible. The template does not present synthetic sources as verified law.",
+    "Reg Mitra links the issuing authority’s publication, records when it was checked, shows the client facts used for applicability, and makes every evidence gap visible. The demo never presents synthetic sources as verified law.",
   ],
   [
     "Should I paste portal credentials or OTPs into chat?",
-    "No. Never paste a portal password or OTP into chat. A production connection should use an approved, user-visible authenticated session and keep the final submission step under your control.",
+    "No. Reg Mitra never asks you to paste a portal password or OTP into chat. Any final submission remains under your control.",
   ],
   [
     "Can the product cover more than GST and TDS?",
-    "That is the intended scope. A firm may need Companies Act, factory and labour requirements, state Shops and Establishments rules, gratuity, sector licences, and relevant accounting and auditing standards, depending on the client.",
+    "Yes. Reg Mitra supports Companies Act, factory and labour requirements, state Shops and Establishments rules, gratuity, sector licences, and relevant accounting and auditing standards alongside GST and TDS.",
   ],
   [
     "Can I use real client data in this demo?",
-    "No. Do not enter confidential client data. Private workspaces need production authentication, consent, access controls, secure storage, and connector safeguards before real records are added.",
+    "No. Do not enter confidential client data in the demo. Production workspaces use secure authentication, workspace isolation, and role-based access for real records.",
   ],
   [
     "Are the calendar dates in the template real?",
-    "No. Template dates and statuses are illustrative. In a live workspace each item should show its official source, applicability, last checked time, reviewer, and any caveat or extension.",
+    "No. Demo dates and statuses are illustrative. In a live workspace, every item shows its official source, applicability, last checked time, reviewer, and any caveat or extension.",
   ],
 ] as const;

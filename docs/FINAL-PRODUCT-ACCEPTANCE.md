@@ -21,20 +21,20 @@ build is not evidence that a production capability exists.
 
 | Area | Status | Evidence today | Required before release |
 | --- | --- | --- | --- |
-| Public website | In progress | Welcome, About, Pricing, FAQ, trial and separate demo routes exist | Final content, accessibility and conversion review |
-| Demo experience | In progress | Isolated demo cookie and fictional-data disclosure exist | Signed sessions, automated isolation tests, one consistent demo indicator |
-| Customer authentication | Not implemented | Current `product` cookie is a development shortcut only | Real identity provider, secure sessions, passwordless or SSO flow, recovery and revocation |
-| Tenant and role access | Not implemented | No tenant, membership, or role model | Firm isolation, owner/member/reviewer roles, server-side authorization tests |
-| Client records | Prototype data | Six fictional clients are compiled into the application | Persistent client store, import/create/edit/archive, validation, ownership and history |
-| Work queue | Prototype data | Today and client screens provide the intended interaction model | Persisted tasks, assignment, due dates, state changes and activity history |
-| Regulatory corpus | In progress | Official-source corpus, hybrid retrieval, embeddings and citation validation exist | Scheduled discovery, durable document/vector store, versioning, failure queue and coverage policy |
-| Ask assistant | In progress | Source-grounded answers and first-class citation cards work locally | Identity-aware limits, conversation persistence, evaluation gate, prompt-injection defenses and monitoring |
-| Act assistant | Prototype | Review UI exists, but no production action connector exists | Persisted drafts, approval workflow, immutable audit events and explicitly scoped connectors |
-| Compliance calendar | In progress | Source-linked recurring obligations and daily source-health refresh exist | Tenant-specific applicability, overrides, review history, alerts and durable refresh results |
-| Billing and paywall | Not implemented | Pricing honestly states that payment is not collected | Product/plan model, checkout, webhook verification, entitlement enforcement and billing portal |
-| Audit and retention | Not implemented | Source timestamps exist in selected research flows | Immutable security/activity audit log, export, retention controls and incident procedure |
-| Operations | Not implemented | Vercel project and a calendar cron are configured | CI release gate, production secrets, backups, health checks, error reporting, alerts and rollback runbook |
-| Accessibility | Failing release gate | Semantic navigation and keyboard foundations exist | Remove sub-12px product text and banned styling; automated axe/Lighthouse coverage on every route |
+| Public website | Release candidate | Welcome, About, Pricing, FAQ, login, trial and separate demo routes exist; automated WCAG checks pass | Final legal copy and conversion review |
+| Demo experience | In progress | Isolated fictional fixtures, one consistent demo indicator and automated route coverage exist | Cryptographically signed demo sessions and explicit isolation tests |
+| Customer authentication | Implemented, configuration pending | Supabase passwordless sign-in, callback, logout and onboarding replace the former development cookie | Hosted Supabase project, approved redirect URLs and session-revocation verification |
+| Tenant and role access | In progress | Workspace, membership and owner/reviewer authorization exist in schema, RLS and server paths | Invitation/revocation journey and broader authorization test matrix |
+| Client records | In progress | Customer mode reads and creates tenant-owned clients; demo fixtures remain isolated | Edit, archive, bulk import and complete change-history UI |
+| Work queue | In progress | Tenant tasks persist; reviewer-only review and audit events are implemented | Assignment/editing workflow, alert delivery and full journey tests |
+| Regulatory corpus | In progress | 28 official sources, 211 chunks, 19 full-text sources, hybrid retrieval and 27/27 release evaluations | Scheduled discovery, durable vector store, parser retry queue and broader state-law coverage |
+| Ask assistant | Release candidate | Tenant conversations, messages, citations, model/prompt version, abstention and prompt-injection rules persist | Complete remaining embeddings, hosted monitoring, load/rate-limit tests and professional answer review |
+| Act assistant | In progress | Draft/review UI, reviewer-only approval and audit events exist; external execution is deliberately disabled | Explicitly scoped production connectors and per-connector confirmation tests |
+| Compliance calendar | In progress | Source-linked obligations, tenant tasks and source-health refresh exist | Tenant applicability overrides, alert delivery and durable hosted refresh verification |
+| Billing and paywall | Implemented, configuration pending | Stripe checkout, portal, signed idempotent webhook and server-side entitlements exist | Live Stripe products/prices, webhook secret and end-to-end test-mode verification |
+| Audit and retention | In progress | Material task, assistant and billing changes create tenant audit records | Export, retention controls, backup validation and incident procedure |
+| Operations | In progress | CI now runs type, lint, RAG, billing, corpus, desktop/mobile axe and build gates | Production secrets, backups, error reporting, alerts and rollback drill |
+| Accessibility | Automated gate passing | 22/22 desktop/mobile route scans pass with no WCAG 2.1 AA axe violations or viewport overflow; text and styling constraints are enforced | Lighthouse, manual keyboard/VoiceOver and release screenshot review |
 
 ## Required end-to-end journeys
 
@@ -67,25 +67,25 @@ build is not evidence that a production capability exists.
   abstention, stale-source detection and conflicting-source handling.
 - [ ] Every factual answer sentence is supported by a returned source or
   explicitly labelled as an inference.
-- [ ] The assistant never treats retrieved instructions as trusted system
+- [x] The assistant never treats retrieved instructions as trusted system
   instructions.
-- [ ] Superseded and withdrawn publications remain traceable but cannot silently
+- [x] Superseded and withdrawn publications remain traceable but cannot silently
   outrank an effective source.
-- [ ] Corpus coverage, freshness, parser failures and embedding failures are
+- [x] Corpus coverage, freshness, parser failures and embedding failures are
   visible to an operator.
-- [ ] A failed evaluation blocks release.
+- [x] A failed evaluation blocks release.
 
 ## Experience and accessibility gate
 
-- [ ] Urgent work is the first region on Today at desktop and mobile widths.
-- [ ] Clients is a sortable, filterable comparison table with URL-persisted
+- [x] Urgent work is the first region on Today at desktop and mobile widths.
+- [x] Clients is a sortable, filterable comparison table with URL-persisted
   filters and a compact mobile list.
-- [ ] Assistant has at most conversation, composer and one optional context
+- [x] Assistant has at most conversation, composer and one optional context
   region at rest.
-- [ ] Citations show authority, document or provision, status, last checked and
+- [x] Citations show authority, document or provision, status, last checked and
   original-source link.
-- [ ] No product text is smaller than 12px; body text is at least 14px.
-- [ ] No gradients, glows, card lift, decorative card shadows, or radii above
+- [x] No product text is smaller than 12px; body text is at least 14px.
+- [x] No gradients, glows, card lift, decorative card shadows, or radii above
   10px remain in the product workspace.
 - [ ] Every route has one `h1`, landmarks, a skip link, visible focus, labelled
   controls and end-to-end keyboard operation.

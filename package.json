@@ -13,7 +13,8 @@
     "corpus:check": "node scripts/check-regulatory-corpus.mjs",
     "rag:test": "node --experimental-strip-types --test src/lib/rag/retrieval.test.ts",
     "rag:evaluate": "node --experimental-strip-types scripts/evaluate-regulatory-retrieval.mjs",
-    "billing:test": "node --experimental-strip-types --test src/lib/billing/entitlements.test.ts"
+    "billing:test": "node --experimental-strip-types --test src/lib/billing/entitlements.test.ts",
+    "test:a11y": "playwright test tests/e2e/accessibility.spec.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
@@ -24,6 +25,8 @@
     "stripe": "^22.3.2"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.62.0",
     "@types/node": "24.10.1",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",

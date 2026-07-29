@@ -24,7 +24,7 @@ export default function DemoPage() {
             <button className="marketing-button primary wide" type="submit">Open the Reg Mitra demo <span>→</span></button>
           </form>
           <small>Template only. Do not enter confidential data, portal credentials, passwords, or OTPs.</small>
-          <Link href="/start">Ready to use your own workflow? Request a 7-day trial →</Link>
+          <Link href="/start">Ready to use your own workflow? Start your 7-day trial →</Link>
         </section>
       </main>
     </PublicShell>

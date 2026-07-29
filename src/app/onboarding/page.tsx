@@ -20,7 +20,7 @@ export default async function OnboardingPage({
           <h1>Give your firm one trusted compliance workspace.</h1>
           <p>This creates an isolated workspace with you as its owner. Client records are added only after the workspace is ready.</p>
           <ul>
-            <li><span>01</span> Your firm begins with a private seven-day trial</li>
+            <li><span>01</span> Your firm starts with seven days of full product access</li>
             <li><span>02</span> You control invitations and member roles</li>
             <li><span>03</span> Every material change is recorded in the audit history</li>
           </ul>

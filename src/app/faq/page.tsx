@@ -20,9 +20,9 @@ export default function FaqPage() {
         </section>
         <section className="faq-cta faq-contact-box">
           <div>
-            <p className="marketing-kicker">A human answer</p>
-            <h2>Bring us one workflow your firm wants to make faster.</h2>
-            <p>We will show where Reg Mitra can monitor, match, explain, or prepare the next step—without bypassing professional review.</p>
+            <p className="marketing-kicker">Use it with your workflow</p>
+            <h2>Put one compliance workflow through Reg Mitra.</h2>
+            <p>Monitor the source, identify affected clients, explain the impact, and prepare the next step—with professional review built in.</p>
           </div>
           <div className="faq-contact-actions">
             <Link className="marketing-button" href="/demo">See Reg Mitra in action</Link>

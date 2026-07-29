@@ -90,7 +90,7 @@ export function AppShell({
         </nav>
 
         <details className="more-menu">
-          <summary><MoreIcon /><span>More</span></summary>
+          <summary aria-label="More workspace options"><MoreIcon /><span>More</span></summary>
           <div className="more-menu-panel">
             <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Drafts and reviews</small></span></Link>
             <Link href="/calendar"><CalendarIcon /><span><strong>Calendar</strong><small>Deadlines and obligations</small></span></Link>
