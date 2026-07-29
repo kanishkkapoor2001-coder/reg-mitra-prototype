@@ -19,7 +19,7 @@ export default function DemoPage() {
           <div className="login-mark">R/M</div>
           <p className="access-label">Template access</p>
           <h2>Explore Reg Mitra with sample data</h2>
-          <p>Enter the fictional Mehta Shah & Associates workspace with realistic Ask and Act sessions already prepared.</p>
+          <p>Enter the fictional Mehta Shah & Associates workspace with realistic Answer and Prepare sessions already set up.</p>
           <form action="/api/auth/demo" method="post">
             <button className="marketing-button primary wide" type="submit">Open the Reg Mitra demo <span>→</span></button>
           </form>

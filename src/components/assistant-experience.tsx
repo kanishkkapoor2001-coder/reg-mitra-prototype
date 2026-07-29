@@ -374,21 +374,21 @@ export function AssistantExperience({
         <span className="assistant-symbol"><SparklesIcon /></span>
         <div>
           <p className="eyebrow">Answers with official sources</p>
-          <h1>Ask Reg Mitra</h1>
-          <p>Ask a compliance question or prepare a draft. The source and review status stay visible.</p>
+          <h1>Reg Mitra</h1>
+          <p>Get a sourced answer or prepare work for review. Nothing is sent without you.</p>
         </div>
         <div className="assistant-hero-actions">
           <div className="assistant-mode-switch" aria-label="Assistant mode">
             {(["ask", "act"] as const).map((item) => (
               <button
                 aria-pressed={mode === item}
-                className={mode === item ? "active" : ""}
+                className={`${mode === item ? "active" : ""} mode-${item}`}
                 key={item}
                 onClick={() => setMode(item)}
                 type="button"
               >
-                <strong>{item === "ask" ? "Ask" : "Act"}</strong>
-                <small>{item === "ask" ? "Explain & verify" : "Prepare & preview"}</small>
+                <strong>{item === "ask" ? "Answer" : "Prepare"}</strong>
+                <small>{item === "ask" ? "Understand with sources" : "Create a reviewable draft"}</small>
               </button>
             ))}
           </div>
@@ -452,12 +452,12 @@ export function AssistantExperience({
           {!hasConversation ? (
             <div className="assistant-welcome">
               <div>
-                <span className="mode-kicker">{mode === "ask" ? "ASK MODE" : "ACT MODE"}</span>
+                <span className="mode-kicker">{mode === "ask" ? "ANSWER MODE" : "PREPARE MODE"}</span>
                 <h2>{mode === "ask" ? "What do you need to understand?" : "What should Reg Mitra prepare?"}</h2>
                 <p>
                   {mode === "ask"
-                    ? "Ask a compliance question and get a conclusion, verification path, next steps, and source status."
-                    : "Prepare a draft action for review. Reg Mitra will not send, submit, file, or change an external system."}
+                    ? "Get a clear conclusion, what it means, what to check, and the official sources."
+                    : "Create a client note, checklist, task, or calendar update. You review it before anything happens."}
                 </p>
                 <div className="prompt-grid">
                   {promptsByMode[mode].map((prompt) => (
@@ -467,7 +467,7 @@ export function AssistantExperience({
                       type="button"
                       key={prompt}
                     >
-                      <span>{mode === "ask" ? "Ask" : "Act"}</span>
+                      <span>{mode === "ask" ? "Answer" : "Prepare"}</span>
                       {prompt}
                     </button>
                   ))}
@@ -478,7 +478,7 @@ export function AssistantExperience({
             <div className="assistant-response" aria-live="polite">
               {messages.map((message) => message.role === "user" ? (
                 <div className="assistant-query" key={message.id}>
-                  <span>You · {message.mode === "ask" ? "Ask" : "Act"}</span>
+                  <span>You · {message.mode === "ask" ? "Answer" : "Prepare"}</span>
                   <p>{message.content}</p>
                 </div>
               ) : (
@@ -487,7 +487,7 @@ export function AssistantExperience({
                     <span className="answer-icon"><CheckCircleIcon /></span>
                     <div>
                       <p className="eyebrow">
-                        {message.mode === "act" ? "Act preview" : "Ask answer"} · Reg Mitra
+                        {message.mode === "act" ? "Prepared draft" : "Sourced answer"} · Reg Mitra
                       </p>
                       <h2>
                         {message.mode === "act"
@@ -528,7 +528,7 @@ export function AssistantExperience({
                     ) : (
                       <>
                         <Link className="button primary" href="/clients">{templateMode ? "Review sample clients" : "Review clients"}</Link>
-                        <button className="button" onClick={() => setMode("act")} type="button">Continue in Act</button>
+                        <button className="button" onClick={() => setMode("act")} type="button">Prepare the next step</button>
                       </>
                     )}
                   </div>
@@ -603,7 +603,7 @@ export function AssistantExperience({
                 <div className="assistant-thinking">
                   <span className="thinking-mark"><SparklesIcon /></span>
                   <span>
-                    <strong>{mode === "ask" ? "Preparing the review" : "Preparing a safe action preview"}</strong>
+                    <strong>{mode === "ask" ? "Checking official sources" : "Preparing a draft for review"}</strong>
                     <small>Checking context, evidence gaps, and approval boundaries…</small>
                   </span>
                 </div>
@@ -634,15 +634,15 @@ export function AssistantExperience({
 
           <form className="composer" onSubmit={submit}>
             <div className="composer-mode-line">
-              <span className={`composer-mode ${mode}`}>{mode === "ask" ? "Ask" : "Act"}</span>
+              <span className={`composer-mode ${mode}`}>{mode === "ask" ? "Answer" : "Prepare"}</span>
               <span>
                 {mode === "ask"
-                  ? "Research and explain with visible evidence gaps"
-                  : "Prepare a draft — never execute without approval"}
+                  ? "Sourced explanation — nothing is changed"
+                  : "Draft creation — your review is required"}
               </span>
             </div>
             <textarea
-              aria-label={`${mode === "ask" ? "Ask" : "Act with"} Reg Mitra`}
+              aria-label={`${mode === "ask" ? "Get an answer from" : "Prepare with"} Reg Mitra`}
               disabled={requestState === "loading"}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={handleComposerKeyDown}
@@ -659,7 +659,7 @@ export function AssistantExperience({
                 disabled={!draft.trim() || requestState === "loading"}
                 type="submit"
               >
-                {requestState === "loading" ? "Preparing…" : mode === "ask" ? "Ask" : "Prepare"} <ArrowUpIcon />
+                {requestState === "loading" ? "Preparing…" : mode === "ask" ? "Get answer" : "Prepare"} <ArrowUpIcon />
               </button>
             </div>
           </form>
@@ -667,8 +667,8 @@ export function AssistantExperience({
 
         <aside className="context-panel" aria-label="Trust and review context">
           <div className="context-section">
-            <p className="eyebrow">Mode contract</p>
-            <h2>{mode === "ask" ? "Ask is read-only" : "Act is approval-gated"}</h2>
+            <p className="eyebrow">What this mode does</p>
+            <h2>{mode === "ask" ? "Answer explains. It never changes anything." : "Prepare creates. You approve the result."}</h2>
             <div className="context-item">
               <TrustBadge kind="evidence" state={templateMode ? "demo" : latestRetrieval?.citationState === "locked" ? "verified" : "unverified"} />
               <span>

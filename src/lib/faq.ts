@@ -8,11 +8,11 @@ export const faqQuestions = [
     "Select Start 7-day trial and send from your work email. Trial access is issued securely, and your seven days begin when your firm’s workspace is created. No card is required, and there is no automatic charge when the trial ends.",
   ],
   [
-    "What is the difference between Ask and Act?",
-    "Ask explains a compliance question, shows what evidence is missing, and prepares a verification path. Act prepares a draft communication, checklist, calendar change, document pack, or portal handoff for review.",
+    "What is the difference between Answer and Prepare?",
+    "Answer explains a compliance question and shows the supporting sources and missing evidence. Prepare creates a draft communication, checklist, calendar change, document pack, or portal handoff for your review.",
   ],
   [
-    "Can Act send, submit, or file something?",
+    "Can Prepare send, submit, or file something?",
     "Not without an authorised professional’s explicit approval. The demo only previews actions. Reg Mitra stops before Submit, OTP, filing, email, WhatsApp, payment, or another irreversible step.",
   ],
   [

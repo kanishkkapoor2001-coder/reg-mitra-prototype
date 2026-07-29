@@ -8,7 +8,7 @@ export default function PricingPage() {
         <header className="editorial-hero narrow">
           <p className="marketing-kicker">Pricing</p>
           <h1>Use Reg Mitra free for seven days.</h1>
-          <p>Create your firm’s secure workspace and use the complete regulatory monitoring, client-impact, calendar, Ask, and Act workflow.</p>
+          <p>Create your firm’s secure workspace and use the complete regulatory monitoring, client-impact, calendar, Answer, and Prepare workflow.</p>
         </header>
         <section className="pricing-comparison">
           <article>

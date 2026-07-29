@@ -5,13 +5,13 @@ const workflowNodes = [
     className: "workflow-source",
     eyebrow: "01 · Official source",
     title: "A rule changes",
-    description: "A circular, notification, order, or deadline is published.",
+    description: "A circular, notification, or deadline appears.",
   },
   {
     className: "workflow-radar",
     eyebrow: "02 · Source check",
     title: "Reg Mitra checks the source",
-    description: "The authority, dates, and original source stay attached.",
+    description: "Keeps the authority, date, and original text attached.",
   },
   {
     className: "workflow-explain",
@@ -23,7 +23,7 @@ const workflowNodes = [
     className: "workflow-match",
     eyebrow: "03B · Match",
     title: "Find affected clients",
-    description: "Based on sector, location, registrations, profile, and transactions.",
+    description: "Checks profile, registrations, location, and transactions.",
   },
   {
     className: "workflow-act",
@@ -44,37 +44,46 @@ export function MarketingWorkflow() {
     <section className="workflow-explainer" id="workflow" aria-labelledby="workflow-title">
       <header className="workflow-heading">
         <div>
-          <p className="marketing-kicker">How Reg Mitra works</p>
-          <h2 id="workflow-title">From official change to reviewed client action.</h2>
+          <p className="marketing-kicker">The path through Reg Mitra</p>
+          <h2 id="workflow-title">One update in. The right client action out.</h2>
         </div>
         <p>
-          Reg Mitra connects the source, the affected clients, and the next action in one
-          clear workflow—so your firm can move earlier while keeping professional judgement.
+          The system reads the official source, explains the change, finds affected clients,
+          and prepares the next step. Your team makes the final call.
         </p>
       </header>
 
       <div className="workflow-frame">
+        <div className="workflow-live-label"><i /> Live workflow</div>
         <svg
           aria-hidden="true"
           className="workflow-lines"
           preserveAspectRatio="none"
-          viewBox="0 0 1200 520"
+          viewBox="0 0 1200 610"
         >
-          <path d="M192 260 H252" pathLength="1" />
-          <path d="M444 260 C480 260 468 80 504 80" pathLength="1" />
-          <path d="M444 260 C480 260 468 440 504 440" pathLength="1" />
-          <path d="M696 80 C732 80 720 260 756 260" pathLength="1" />
-          <path d="M696 440 C732 440 720 260 756 260" pathLength="1" />
-          <path d="M948 260 H1008" pathLength="1" />
-          <circle className="workflow-pulse pulse-one" cx="192" cy="260" r="4" />
-          <circle className="workflow-pulse pulse-two" cx="444" cy="260" r="4" />
-          <circle className="workflow-pulse pulse-three" cx="696" cy="440" r="4" />
-          <circle className="workflow-pulse pulse-four" cx="948" cy="260" r="4" />
+          <g className="workflow-base">
+            <path d="M192 305 H252" />
+            <path d="M444 305 C480 305 468 95 504 95" />
+            <path d="M444 305 C480 305 468 515 504 515" />
+            <path d="M696 95 C732 95 720 305 756 305" />
+            <path d="M696 515 C732 515 720 305 756 305" />
+            <path d="M948 305 H1008" />
+          </g>
+          <path d="M192 305 H252" pathLength="1" />
+          <path d="M444 305 C480 305 468 95 504 95" pathLength="1" />
+          <path d="M444 305 C480 305 468 515 504 515" pathLength="1" />
+          <path d="M696 95 C732 95 720 305 756 305" pathLength="1" />
+          <path d="M696 515 C732 515 720 305 756 305" pathLength="1" />
+          <path d="M948 305 H1008" pathLength="1" />
+          <circle className="workflow-pulse pulse-one" cx="192" cy="305" r="4" />
+          <circle className="workflow-pulse pulse-two" cx="444" cy="305" r="4" />
+          <circle className="workflow-pulse pulse-three" cx="696" cy="515" r="4" />
+          <circle className="workflow-pulse pulse-four" cx="948" cy="305" r="4" />
           <circle className="workflow-runner" r="5">
             <animateMotion
               begin="0s"
               dur="7.2s"
-              path="M192 260 H252 M252 260 H444 C480 260 468 80 504 80"
+              path="M192 305 H252 M252 305 H444 C480 305 468 95 504 95"
               repeatCount="indefinite"
             />
           </circle>
@@ -82,7 +91,7 @@ export function MarketingWorkflow() {
             <animateMotion
               begin="2.2s"
               dur="7.2s"
-              path="M444 260 C480 260 468 440 504 440 H696 C732 440 720 260 756 260"
+              path="M444 305 C480 305 468 515 504 515 H696 C732 515 720 305 756 305"
               repeatCount="indefinite"
             />
           </circle>
@@ -90,7 +99,7 @@ export function MarketingWorkflow() {
             <animateMotion
               begin="4.3s"
               dur="7.2s"
-              path="M756 260 H948 H1008"
+              path="M756 305 H948 H1008"
               repeatCount="indefinite"
             />
           </circle>

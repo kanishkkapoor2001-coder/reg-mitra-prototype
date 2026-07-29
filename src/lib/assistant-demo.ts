@@ -20,7 +20,7 @@ export const demoConversations: readonly DemoConversation[] = [
     id: "igst-client-note",
     title: "Circular to client note",
     description: "Map a CBIC update, then prepare a client message.",
-    modeLabel: "Ask → Act",
+    modeLabel: "Answer → Prepare",
     finalMode: "act",
     messages: [
       {
@@ -71,7 +71,7 @@ Draft only. No WhatsApp message has been sent.`,
     id: "msme-review-tasks",
     title: "MSME ageing review",
     description: "Surface disputed dates before creating audit work.",
-    modeLabel: "Ask → Act",
+    modeLabel: "Answer → Prepare",
     finalMode: "act",
     messages: [
       {
@@ -122,7 +122,7 @@ Preview only. No task or calendar item has been created.`,
     id: "din-kyc-handoff",
     title: "DIN KYC handoff",
     description: "Prepare the last mile while preserving the MCA approval step.",
-    modeLabel: "Ask → Act",
+    modeLabel: "Answer → Prepare",
     finalMode: "act",
     messages: [
       {
@@ -171,7 +171,7 @@ Not executed. No portal was opened and no form was submitted.`,
     id: "sector-calendar",
     title: "Beyond GST and TDS",
     description: "Turn a manufacturing profile into a reviewable calendar.",
-    modeLabel: "Ask → Act",
+    modeLabel: "Answer → Prepare",
     finalMode: "act",
     messages: [
       {
@@ -220,7 +220,7 @@ Preview only. No calendar entry or reminder has been created.`,
     id: "fssai-claim",
     title: "FSSAI licence claim",
     description: "Challenge a client claim before advising on renewal.",
-    modeLabel: "Ask",
+    modeLabel: "Answer",
     finalMode: "ask",
     messages: [
       {
@@ -271,7 +271,7 @@ Preparation guidance only; no current-law conclusion has been reached.`,
     id: "portal-health",
     title: "Portal sync health",
     description: "Separate current, stale, and disconnected evidence.",
-    modeLabel: "Ask → Act",
+    modeLabel: "Answer → Prepare",
     finalMode: "act",
     messages: [
       {
@@ -320,7 +320,7 @@ Not started. No credentials were requested, stored, or used.`,
     id: "tds-status",
     title: "TDS filing status",
     description: "Ask for status without pretending the portal is connected.",
-    modeLabel: "Ask",
+    modeLabel: "Answer",
     finalMode: "ask",
     messages: [
       {
@@ -406,7 +406,7 @@ WHAT TO VERIFY
 3. Record any missing or conflicting evidence for professional review.
 
 NEXT STEPS
-Attach the authoritative source, confirm the client facts, and switch to Act only when you are ready to prepare a reviewable next step.
+Attach the authoritative source, confirm the client facts, and switch to Prepare only when you are ready to prepare a reviewable next step.
 
 SOURCE STATUS
 Illustrative template response for: “${prompt}” No live source or client system was queried.`;

@@ -65,7 +65,7 @@ export default function HomePage() {
           <ol className="process-list">
             <li><span>01</span><div><h3>Stop checking every website yourself</h3><p>Reg Mitra monitors the official bodies your firm follows and brings new updates into one source-linked review queue.</p></div></li>
             <li><span>02</span><div><h3>Know exactly which clients need attention</h3><p>Each change is matched against client sector, location, registrations, profile, and transaction context.</p></div></li>
-            <li><span>03</span><div><h3>Start with the next action already prepared</h3><p>Ask explains the impact. Act prepares a client brief, checklist, calendar change, or draft communication for professional approval.</p></div></li>
+            <li><span>03</span><div><h3>Start with the next action already prepared</h3><p>Answer explains the impact with sources. Prepare creates a client brief, checklist, calendar change, or draft communication for professional approval.</p></div></li>
           </ol>
         </section>
 

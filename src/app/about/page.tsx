@@ -18,7 +18,7 @@ export default function AboutPage() {
             <h2>Move from rule to the right clients</h2>
             <p>Reg Mitra connects a change to client profile, sector, location, registrations, and transaction context.</p>
             <h2>Prepare work without surrendering judgment</h2>
-            <p>Ask explains. Act prepares. The source, caveats, and professional approval stay attached before anything leaves the workspace.</p>
+            <p>Answer explains with sources. Prepare creates the next step for review. Professional approval stays attached before anything leaves the workspace.</p>
           </div>
         </section>
         <section className="editorial-callout">
