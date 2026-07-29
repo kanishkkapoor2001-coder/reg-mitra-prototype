@@ -3,9 +3,10 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
-import { clients, workItems } from "@/lib/demo-data";
 import { validateCitations } from "@/lib/rag/citations";
 import { formatRetrievedEvidence, retrieveRegulatorySources } from "@/lib/rag/retrieval";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentWorkspace } from "@/lib/workspace";
 
 export const maxDuration = 30;
 export const runtime = "nodejs";
@@ -38,7 +39,7 @@ const BASE_SYSTEM_INSTRUCTIONS = `You are Reg Mitra, an India-focused compliance
 Your job is to help a qualified professional understand a question, identify what must be verified, and prepare the next actions. You do not replace legal, tax, accounting, or regulatory judgement.
 
 Rules:
-- Treat the supplied workspace data as illustrative local context only.
+- Treat supplied workspace data according to its context notice. Never assume a missing field or infer an unrecorded client fact.
 - Never claim that a filing, notice response, communication, or approval has been completed.
 - Never invent a circular, section, notification, effective date, deadline, or authoritative source.
 - Base every regulatory proposition on the supplied retrieved evidence. Do not use general model memory as authority.
@@ -76,25 +77,6 @@ function hasCompleteStructure(text: string, mode: AssistantMode) {
     : ["CONCLUSION", "WHAT TO VERIFY", "NEXT STEPS", "SOURCE STATUS"];
   return required.every((heading) => text.includes(heading));
 }
-
-const WORKSPACE_CONTEXT = JSON.stringify({
-  notice: "Illustrative local workspace data; no portal or client system is connected.",
-  clients: clients.map((client) => ({
-    id: client.id,
-    name: client.shortName,
-    sector: client.sector,
-    risk: client.risk,
-    pending: client.pending,
-    dueThisWeek: client.dueThisWeek,
-  })),
-  workItems: workItems.map((item) => ({
-    title: item.title,
-    client: item.client,
-    authority: item.authority,
-    due: item.due,
-    state: item.state,
-  })),
-});
 
 function isIncomingMessage(value: unknown): value is IncomingMessage {
   if (!value || typeof value !== "object") return false;
@@ -197,6 +179,11 @@ export async function POST(request: Request) {
 
   const rawMode = (body as { mode?: unknown })?.mode;
   const mode: AssistantMode = rawMode === "act" ? "act" : "ask";
+  const rawConversationId = (body as { conversationId?: unknown })?.conversationId;
+  const requestedConversationId = typeof rawConversationId === "string"
+    && /^[0-9a-f-]{36}$/i.test(rawConversationId)
+    ? rawConversationId
+    : null;
   const rawMessages = (body as { messages?: unknown })?.messages;
   if (!Array.isArray(rawMessages) || !rawMessages.length || !rawMessages.every(isIncomingMessage)) {
     return Response.json({ error: "Enter a valid compliance question." }, { status: 400 });
@@ -213,6 +200,35 @@ export async function POST(request: Request) {
   }
 
   const messages = rawMessages.slice(-8);
+  const workspace = await getCurrentWorkspace();
+  if (!workspace) {
+    return Response.json({ error: "A secure firm workspace is required." }, { status: 401 });
+  }
+  const supabase = await createSupabaseServerClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) {
+    return Response.json({ error: "Your session has expired. Sign in again." }, { status: 401 });
+  }
+  const [{ data: workspaceClients }, { data: workspaceTasks }] = await Promise.all([
+    supabase
+      .from("clients")
+      .select("id, display_name, sector, state_code")
+      .eq("workspace_id", workspace.id)
+      .eq("status", "active")
+      .limit(50),
+    supabase
+      .from("tasks")
+      .select("title, state, priority, due_at, client_id")
+      .eq("workspace_id", workspace.id)
+      .not("state", "in", '("completed","dismissed")')
+      .limit(50),
+  ]);
+  const workspaceContext = JSON.stringify({
+    notice: "Private workspace facts supplied by the signed-in firm. Treat missing fields as unknown.",
+    workspace: { id: workspace.id, name: workspace.name },
+    clients: workspaceClients ?? [],
+    openTasks: workspaceTasks ?? [],
+  });
   const retrievalQuery = messages
     .filter((message) => message.role === "user")
     .slice(-3)
@@ -236,8 +252,8 @@ export async function POST(request: Request) {
             `RETRIEVAL QUALITY: ${retrieval.confidence.toUpperCase()} (${retrieval.strategy} retrieval).`,
             "AUTHORITATIVE RETRIEVED EVIDENCE:",
             retrievedEvidence,
-            "LOCAL WORKSPACE CONTEXT:",
-            WORKSPACE_CONTEXT,
+            "PRIVATE WORKSPACE CONTEXT:",
+            workspaceContext,
           ].join("\n\n"),
         }],
       },
@@ -294,17 +310,86 @@ export async function POST(request: Request) {
     }
 
     const citations = validateCitations(text, retrieval);
+    const retrievalPayload = {
+      strategy: retrieval.strategy,
+      confidence: retrieval.confidence,
+      citationState: citations.state,
+      citedSourceIds: citations.valid,
+      corpus: retrieval.corpus,
+      sources: retrieval.sources,
+    };
+    let conversationId = requestedConversationId;
+
+    if (conversationId) {
+      const { data: existingConversation } = await supabase
+        .from("conversations")
+        .select("id")
+        .eq("workspace_id", workspace.id)
+        .eq("id", conversationId)
+        .maybeSingle();
+      if (!existingConversation) conversationId = null;
+    }
+
+    if (!conversationId) {
+      const title = retrievalQuery.replace(/\s+/g, " ").trim().slice(0, 96) || "Compliance review";
+      const { data: createdConversation, error: conversationError } = await supabase
+        .from("conversations")
+        .insert({
+          workspace_id: workspace.id,
+          title,
+          created_by: userData.user.id,
+        })
+        .select("id")
+        .single();
+      if (conversationError || !createdConversation) {
+        return Response.json(
+          { error: "The answer was prepared but could not be saved. Please try again." },
+          { status: 503 },
+        );
+      }
+      conversationId = createdConversation.id;
+    }
+
+    const latestUserMessage = [...messages].reverse().find((message) => message.role === "user");
+    const { data: savedMessages, error: messageError } = await supabase.from("messages").insert([
+      {
+        workspace_id: workspace.id,
+        conversation_id: conversationId,
+        role: "user",
+        mode,
+        content: latestUserMessage?.content ?? retrievalQuery,
+        created_by: userData.user.id,
+      },
+      {
+        workspace_id: workspace.id,
+        conversation_id: conversationId,
+        role: "assistant",
+        mode,
+        content: text,
+        citations: { retrieval: retrievalPayload },
+        model,
+        prompt_version: "rag-v1",
+        created_by: userData.user.id,
+      },
+    ]).select("id, role");
+    if (messageError) {
+      return Response.json(
+        { error: "The answer was prepared but could not be saved. Please try again." },
+        { status: 503 },
+      );
+    }
+    await supabase
+      .from("conversations")
+      .update({ updated_at: new Date().toISOString() })
+      .eq("workspace_id", workspace.id)
+      .eq("id", conversationId);
+
     return Response.json({
       text,
       model,
-      retrieval: {
-        strategy: retrieval.strategy,
-        confidence: retrieval.confidence,
-        citationState: citations.state,
-        citedSourceIds: citations.valid,
-        corpus: retrieval.corpus,
-        sources: retrieval.sources,
-      },
+      conversationId,
+      messageId: savedMessages?.find((message) => message.role === "assistant")?.id,
+      retrieval: retrievalPayload,
     });
   } catch {
     return Response.json(

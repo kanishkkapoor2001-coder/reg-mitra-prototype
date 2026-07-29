@@ -14,12 +14,18 @@ import {
 } from "@/lib/assistant-demo";
 import type { ChatRetrievalPayload, RetrievedSource } from "@/lib/rag/types";
 
-interface ConversationMessage {
+export interface ConversationMessage {
   id: string;
   role: "user" | "assistant";
   mode: AssistantMode;
   content: string;
   retrieval?: ChatRetrievalPayload;
+}
+
+export interface ConversationSummary {
+  id: string;
+  title: string;
+  updatedAt: string;
 }
 
 type RequestState = "idle" | "loading" | "error";
@@ -205,17 +211,28 @@ function ResearchTrail({
 }
 
 export function AssistantExperience({
+  conversationHistory = [],
+  initialConversationId = null,
+  initialMessages = [],
   initialPrompt = "",
   templateMode = false,
-}: Readonly<{ initialPrompt?: string; templateMode?: boolean }>) {
+}: Readonly<{
+  conversationHistory?: readonly ConversationSummary[];
+  initialConversationId?: string | null;
+  initialMessages?: readonly ConversationMessage[];
+  initialPrompt?: string;
+  templateMode?: boolean;
+}>) {
   const defaultConversation = templateMode ? demoConversations[0] : null;
   const [draft, setDraft] = useState(initialPrompt);
-  const [mode, setMode] = useState<AssistantMode>(defaultConversation?.finalMode ?? "ask");
+  const [mode, setMode] = useState<AssistantMode>(
+    defaultConversation?.finalMode ?? initialMessages.at(-1)?.mode ?? "ask",
+  );
   const [activeConversationId, setActiveConversationId] = useState<string | null>(
-    defaultConversation?.id ?? null,
+    defaultConversation?.id ?? initialConversationId,
   );
   const [messages, setMessages] = useState<readonly ConversationMessage[]>(
-    defaultConversation ? messagesFromDemo(defaultConversation) : [],
+    defaultConversation ? messagesFromDemo(defaultConversation) : initialMessages,
   );
   const [requestState, setRequestState] = useState<RequestState>("idle");
   const [actionStates, setActionStates] = useState<Record<string, ActionReviewState>>({});
@@ -261,6 +278,7 @@ export function AssistantExperience({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          conversationId: activeConversationId,
           mode: requestMode,
           messages: nextMessages.map(({ role, content }) => ({ role, content })),
         }),
@@ -270,6 +288,8 @@ export function AssistantExperience({
         model?: string;
         error?: string;
         retrieval?: ChatRetrievalPayload;
+        conversationId?: string;
+        messageId?: string;
       };
 
       if (!response.ok || !payload.text) {
@@ -279,13 +299,14 @@ export function AssistantExperience({
       setMessages((current) => [
         ...current,
         {
-          id: createId("assistant"),
+          id: payload.messageId ?? createId("assistant"),
           role: "assistant",
           mode: requestMode,
           content: payload.text ?? "",
           retrieval: payload.retrieval,
         },
       ]);
+      if (payload.conversationId) setActiveConversationId(payload.conversationId);
       setRequestState("idle");
     } catch (requestError) {
       setError(
@@ -328,6 +349,17 @@ export function AssistantExperience({
     setActionStates({});
     setError("");
     setRequestState("idle");
+  }
+
+  async function approveMessage(messageId: string) {
+    if (!templateMode) {
+      const response = await fetch(`/api/messages/${encodeURIComponent(messageId)}/review`, { method: "POST" });
+      if (!response.ok) {
+        setError("This draft could not be approved. Reviewer access is required.");
+        return;
+      }
+    }
+    setActionStates((current) => ({ ...current, [messageId]: "approved" }));
   }
 
   const hasConversation = messages.length > 0;
@@ -377,26 +409,39 @@ export function AssistantExperience({
       ) : null}
 
       <div className="assistant-layout">
-        <aside className="conversation-library" aria-label="Sample conversations">
+        <aside className="conversation-library" aria-label={templateMode ? "Sample conversations" : "Recent conversations"}>
           <div className="conversation-library-heading">
-            <p className="eyebrow">Sample sessions</p>
-            <h2>See the full workflow</h2>
-            <p>Realistic CA use cases, shown with synthetic data.</p>
+            <p className="eyebrow">{templateMode ? "Sample sessions" : "Recent reviews"}</p>
+            <h2>{templateMode ? "See the full workflow" : "Continue your work"}</h2>
+            <p>{templateMode ? "Realistic CA use cases, shown with synthetic data." : "Saved securely in this firm workspace."}</p>
           </div>
           <div className="conversation-list">
-            {demoConversations.map((conversation) => (
-              <button
-                aria-pressed={activeConversationId === conversation.id}
-                className={`conversation-card ${activeConversationId === conversation.id ? "active" : ""}`}
-                key={conversation.id}
-                onClick={() => loadConversation(conversation)}
-                type="button"
-              >
-                <span className="conversation-mode">{conversation.modeLabel}</span>
-                <strong>{conversation.title}</strong>
-                <small>{conversation.description}</small>
-              </button>
-            ))}
+            {templateMode
+              ? demoConversations.map((conversation) => (
+                <button
+                  aria-pressed={activeConversationId === conversation.id}
+                  className={`conversation-card ${activeConversationId === conversation.id ? "active" : ""}`}
+                  key={conversation.id}
+                  onClick={() => loadConversation(conversation)}
+                  type="button"
+                >
+                  <span className="conversation-mode">{conversation.modeLabel}</span>
+                  <strong>{conversation.title}</strong>
+                  <small>{conversation.description}</small>
+                </button>
+              ))
+              : conversationHistory.map((conversation) => (
+                <Link
+                  aria-current={activeConversationId === conversation.id ? "page" : undefined}
+                  className={`conversation-card ${activeConversationId === conversation.id ? "active" : ""}`}
+                  href={`/assistant?conversation=${encodeURIComponent(conversation.id)}`}
+                  key={conversation.id}
+                >
+                  <span className="conversation-mode">Saved review</span>
+                  <strong>{conversation.title}</strong>
+                  <small>{new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" }).format(new Date(conversation.updatedAt))}</small>
+                </Link>
+              ))}
           </div>
           <p className="conversation-library-footnote">
             Never paste client secrets, portal passwords, or OTPs into chat.
@@ -482,7 +527,7 @@ export function AssistantExperience({
                       </>
                     ) : (
                       <>
-                        <Link className="button primary" href="/clients">Review sample clients</Link>
+                        <Link className="button primary" href="/clients">{templateMode ? "Review sample clients" : "Review clients"}</Link>
                         <button className="button" onClick={() => setMode("act")} type="button">Continue in Act</button>
                       </>
                     )}
@@ -492,7 +537,7 @@ export function AssistantExperience({
                       <div>
                         <span className="action-review-step">Approval checkpoint</span>
                         <strong>Review the scope and evidence before continuing</strong>
-                        <p>This template records a preview decision only. External execution remains disabled.</p>
+                        <p>{templateMode ? "This demo records a preview decision only." : "This records internal professional approval only."} External execution remains disabled.</p>
                       </div>
                       <div className="action-review-flow" aria-label="Action status">
                         <span className="complete">Prepared</span>
@@ -504,10 +549,10 @@ export function AssistantExperience({
                       <div className="action-review-buttons">
                         <button
                           className="button primary"
-                          onClick={() => setActionStates((current) => ({ ...current, [message.id]: "approved" }))}
+                          onClick={() => void approveMessage(message.id)}
                           type="button"
                         >
-                          Approve template
+                          Approve for internal use
                         </button>
                         <button
                           className="button"
@@ -527,15 +572,15 @@ export function AssistantExperience({
                     <div className="action-result positive" role="status">
                       <CheckCircleIcon />
                       <span>
-                        <strong>Template approval recorded</strong>
-                        <small>No external action was executed. A live workspace would now require the authorised last-mile confirmation.</small>
+                        <strong>{templateMode ? "Demo approval recorded" : "Professional approval recorded"}</strong>
+                        <small>No external action was executed. An authorised last-mile confirmation remains required.</small>
                       </span>
                     </div>
                   ) : null}
                   {message.mode === "act" && actionStates[message.id] === "deferred" ? (
                     <div className="action-result" role="status">
                       <span>
-                        <strong>Set aside for this demo session</strong>
+                        <strong>{templateMode ? "Set aside for this demo session" : "Set aside for this session"}</strong>
                         <small>The draft remains unchanged and nothing was executed.</small>
                       </span>
                       <button
@@ -625,7 +670,7 @@ export function AssistantExperience({
             <p className="eyebrow">Mode contract</p>
             <h2>{mode === "ask" ? "Ask is read-only" : "Act is approval-gated"}</h2>
             <div className="context-item">
-              <TrustBadge kind="evidence" state="demo" />
+              <TrustBadge kind="evidence" state={templateMode ? "demo" : latestRetrieval?.citationState === "locked" ? "verified" : "unverified"} />
               <span>
                 {mode === "ask"
                   ? "Explains, compares, and identifies what must be verified."

@@ -21,6 +21,12 @@ const synonymGroups = [
   ["appeal", "appellate", "review", "revision"],
 ];
 
+const supportedRegulatorySignals = /\b(gst|gstr|cgst|cbic|gstn|din|rfn|dggi|income tax|tds|itr|cbdt|deductor|deductee|challan|advance tax|form 10a|form 10ab|section 12a|section 80g|charitable trust|sovereign wealth fund|audit|auditing|assurance|icai|sqm|sqc|accounting standard|sebi|securities|demat|dematerialisation|rta|epf|epfo|provident|ecr|mca|companies act|cin|llpin|rbi|nbfc|fssai|food safety|labour law|professional tax)\b/i;
+
+export function hasSupportedRegulatorySignal(query: string) {
+  return supportedRegulatorySignals.test(query);
+}
+
 function stem(token: string) {
   if (token.length > 5 && token.endsWith("ies")) return `${token.slice(0, -3)}y`;
   if (token.length > 5 && token.endsWith("ing")) return token.slice(0, -3);

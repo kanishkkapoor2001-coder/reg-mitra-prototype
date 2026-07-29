@@ -11,7 +11,9 @@
     "corpus:build": "node scripts/build-regulatory-corpus.mjs",
     "corpus:embed": "node scripts/embed-regulatory-corpus.mjs",
     "corpus:check": "node scripts/check-regulatory-corpus.mjs",
-    "rag:test": "node --experimental-strip-types --test src/lib/rag/retrieval.test.ts"
+    "rag:test": "node --experimental-strip-types --test src/lib/rag/retrieval.test.ts",
+    "rag:evaluate": "node --experimental-strip-types scripts/evaluate-regulatory-retrieval.mjs",
+    "billing:test": "node --experimental-strip-types --test src/lib/billing/entitlements.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

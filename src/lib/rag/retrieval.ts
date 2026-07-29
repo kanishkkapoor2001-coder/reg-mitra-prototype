@@ -1,6 +1,6 @@
 import { regulatoryCorpus } from "@/lib/rag/corpus";
 import { embedRegulatoryQuery } from "@/lib/rag/embedding";
-import { scoreRegulatoryChunks } from "@/lib/rag/scoring";
+import { hasSupportedRegulatorySignal, scoreRegulatoryChunks } from "@/lib/rag/scoring";
 import type {
   RetrievedSource,
   RetrievalConfidence,
@@ -46,6 +46,21 @@ export async function retrieveRegulatorySources(
 ): Promise<RetrievalResult> {
   const limit = Math.max(1, Math.min(options.limit ?? 6, 8));
   const normalisedQuery = query.trim().slice(0, 6_000);
+  if (!hasSupportedRegulatorySignal(normalisedQuery)) {
+    return {
+      query: normalisedQuery,
+      strategy: "lexical",
+      confidence: "low",
+      sources: [],
+      corpus: {
+        sourceCount: regulatoryCorpus.sourceCount,
+        chunkCount: regulatoryCorpus.chunkCount,
+        fullTextSourceCount: regulatoryCorpus.fullTextSourceCount,
+        embeddedChunkCount: regulatoryCorpus.embeddedChunkCount,
+        generatedAt: regulatoryCorpus.generatedAt,
+      },
+    };
+  }
   const queryEmbedding = options.apiKey
     ? await embedRegulatoryQuery(normalisedQuery, options.apiKey)
     : null;

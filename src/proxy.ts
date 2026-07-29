@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
+import { hasProductEntitlement } from "@/lib/billing/entitlements";
 
 export async function proxy(request: NextRequest) {
   const session = request.cookies.get("reg_mitra_session")?.value;
@@ -14,7 +15,7 @@ export async function proxy(request: NextRequest) {
     if (data.user) {
       const { data: membership } = await supabase
         .from("workspace_memberships")
-        .select("workspace_id")
+        .select("workspace_id, workspaces(subscriptions(status, trial_ends_at))")
         .limit(1)
         .maybeSingle();
 
@@ -23,6 +24,21 @@ export async function proxy(request: NextRequest) {
       }
       if (membership && request.nextUrl.pathname === "/onboarding") {
         return NextResponse.redirect(new URL("/today", request.url));
+      }
+      if (membership) {
+        const workspaceValue = membership.workspaces;
+        const workspace = Array.isArray(workspaceValue) ? workspaceValue[0] : workspaceValue;
+        const subscriptionValue = workspace?.subscriptions;
+        const subscription = Array.isArray(subscriptionValue) ? subscriptionValue[0] : subscriptionValue;
+        const billingPath = request.nextUrl.pathname === "/billing"
+          || request.nextUrl.pathname.startsWith("/api/billing/checkout")
+          || request.nextUrl.pathname.startsWith("/api/billing/portal");
+        if (
+          !billingPath
+          && !hasProductEntitlement(subscription?.status, subscription?.trial_ends_at)
+        ) {
+          return NextResponse.redirect(new URL("/billing", request.url));
+        }
       }
       return response;
     }
@@ -42,9 +58,14 @@ export const config = {
     "/briefings/:path*",
     "/regulations/:path*",
     "/settings/:path*",
+    "/billing/:path*",
     "/onboarding/:path*",
     "/api/workspaces/:path*",
     "/api/clients/:path*",
+    "/api/tasks/:path*",
+    "/api/messages/:path*",
+    "/api/billing/checkout/:path*",
+    "/api/billing/portal/:path*",
     "/api/calendar/:path*",
     "/api/chat/:path*",
   ],

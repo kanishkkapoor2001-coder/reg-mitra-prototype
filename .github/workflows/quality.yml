@@ -29,6 +29,10 @@ jobs:
         run: npm run lint
       - name: Test regulatory retrieval
         run: npm run rag:test
+      - name: Evaluate regulatory retrieval
+        run: npm run rag:evaluate
+      - name: Test billing entitlements
+        run: npm run billing:test
       - name: Check corpus integrity
         run: npm run corpus:check
       - name: Build production application

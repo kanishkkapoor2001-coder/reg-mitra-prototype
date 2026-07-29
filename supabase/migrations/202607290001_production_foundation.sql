@@ -167,6 +167,8 @@ create table public.tasks (
   due_at timestamptz,
   assigned_to uuid references auth.users(id),
   created_by uuid not null references auth.users(id),
+  reviewed_by uuid references auth.users(id),
+  reviewed_at timestamptz,
   completed_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -188,6 +190,7 @@ create table public.messages (
   workspace_id uuid not null references public.workspaces(id) on delete cascade,
   conversation_id uuid not null references public.conversations(id) on delete cascade,
   role text not null check (role in ('user', 'assistant', 'system')),
+  mode text not null default 'ask' check (mode in ('ask', 'act')),
   content text not null,
   citations jsonb not null default '[]'::jsonb,
   model text,
@@ -214,6 +217,15 @@ create table public.audit_events (
 );
 create index audit_events_workspace_time_idx
   on public.audit_events(workspace_id, created_at desc);
+
+create table public.billing_events (
+  provider_event_id text primary key,
+  event_type text not null,
+  status text not null default 'processing' check (status in ('processing', 'processed', 'error')),
+  error_message text,
+  received_at timestamptz not null default now(),
+  processed_at timestamptz
+);
 
 create or replace function public.is_workspace_member(target_workspace_id uuid)
 returns boolean
@@ -264,6 +276,7 @@ alter table public.tasks enable row level security;
 alter table public.conversations enable row level security;
 alter table public.messages enable row level security;
 alter table public.audit_events enable row level security;
+alter table public.billing_events enable row level security;
 
 create policy profiles_self_select on public.profiles
   for select using (user_id = auth.uid());
@@ -522,3 +535,110 @@ $$;
 
 revoke all on function public.create_client(uuid, text, text, text, text) from public;
 grant execute on function public.create_client(uuid, text, text, text, text) to authenticated;
+
+create or replace function public.review_task(target_task_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  target_task public.tasks%rowtype;
+  current_user_id uuid := auth.uid();
+begin
+  if current_user_id is null then
+    raise exception 'Authentication required';
+  end if;
+
+  select * into target_task
+  from public.tasks
+  where id = target_task_id;
+
+  if target_task.id is null
+    or not public.has_workspace_role(
+      target_task.workspace_id,
+      array['owner','admin','reviewer']::public.workspace_role[]
+    ) then
+    raise exception 'Insufficient workspace role';
+  end if;
+
+  update public.tasks
+  set reviewed_by = current_user_id,
+      reviewed_at = now(),
+      updated_at = now()
+  where id = target_task_id;
+
+  insert into public.audit_events (
+    workspace_id,
+    actor_user_id,
+    action,
+    target_type,
+    target_id,
+    after_state
+  )
+  values (
+    target_task.workspace_id,
+    current_user_id,
+    'task.reviewed',
+    'task',
+    target_task_id::text,
+    jsonb_build_object('reviewed_at', now())
+  );
+end;
+$$;
+
+revoke all on function public.review_task(uuid) from public;
+grant execute on function public.review_task(uuid) to authenticated;
+
+create or replace function public.review_message(target_message_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  target_message public.messages%rowtype;
+  current_user_id uuid := auth.uid();
+begin
+  if current_user_id is null then
+    raise exception 'Authentication required';
+  end if;
+
+  select * into target_message
+  from public.messages
+  where id = target_message_id
+    and role = 'assistant';
+
+  if target_message.id is null
+    or not public.has_workspace_role(
+      target_message.workspace_id,
+      array['owner','admin','reviewer']::public.workspace_role[]
+    ) then
+    raise exception 'Insufficient workspace role';
+  end if;
+
+  update public.messages
+  set review_state = 'approved'
+  where id = target_message_id;
+
+  insert into public.audit_events (
+    workspace_id,
+    actor_user_id,
+    action,
+    target_type,
+    target_id,
+    after_state
+  )
+  values (
+    target_message.workspace_id,
+    current_user_id,
+    'assistant_message.approved',
+    'message',
+    target_message_id::text,
+    jsonb_build_object('review_state', 'approved')
+  );
+end;
+$$;
+
+revoke all on function public.review_message(uuid) from public;
+grant execute on function public.review_message(uuid) to authenticated;

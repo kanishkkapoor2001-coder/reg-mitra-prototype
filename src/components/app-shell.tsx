@@ -96,6 +96,7 @@ export function AppShell({
             <Link href="/calendar"><CalendarIcon /><span><strong>Calendar</strong><small>Deadlines and obligations</small></span></Link>
             <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Updates and sources</small></span></Link>
             <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources and policy</small></span></Link>
+            <Link href="/billing"><FileIcon /><span><strong>Billing</strong><small>Trial and subscription</small></span></Link>
             <button className="appearance-button" onClick={toggleTheme} type="button">
               <AppearanceIcon /><span><strong>Appearance</strong><small>Use {theme === "light" ? "dark" : "light"} mode</small></span>
             </button>
