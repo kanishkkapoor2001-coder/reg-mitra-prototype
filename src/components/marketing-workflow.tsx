@@ -70,6 +70,30 @@ export function MarketingWorkflow() {
           <circle className="workflow-pulse pulse-two" cx="444" cy="260" r="4" />
           <circle className="workflow-pulse pulse-three" cx="696" cy="440" r="4" />
           <circle className="workflow-pulse pulse-four" cx="948" cy="260" r="4" />
+          <circle className="workflow-runner" r="5">
+            <animateMotion
+              begin="0s"
+              dur="7.2s"
+              path="M192 260 H252 M252 260 H444 C480 260 468 80 504 80"
+              repeatCount="indefinite"
+            />
+          </circle>
+          <circle className="workflow-runner secondary" r="5">
+            <animateMotion
+              begin="2.2s"
+              dur="7.2s"
+              path="M444 260 C480 260 468 440 504 440 H696 C732 440 720 260 756 260"
+              repeatCount="indefinite"
+            />
+          </circle>
+          <circle className="workflow-runner" r="5">
+            <animateMotion
+              begin="4.3s"
+              dur="7.2s"
+              path="M756 260 H948 H1008"
+              repeatCount="indefinite"
+            />
+          </circle>
         </svg>
 
         <ol className="workflow-grid">
@@ -88,7 +112,7 @@ export function MarketingWorkflow() {
       </div>
 
       <p className="workflow-caption">
-        One regulatory change becomes a sourced, client-specific, review-ready action.
+        The moving signal is the core value: one official update becomes the right action for the right client.
       </p>
     </section>
   );

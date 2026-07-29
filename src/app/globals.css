@@ -1125,6 +1125,48 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .source-row small { display: block; margin-top: 3px; color: var(--ink-500); font-size: 12px; }
 .source-policy { color: var(--ink-600); font-size: 12px; line-height: 1.5; }
 
+/* Reading-first product scale: dense metadata stays compact; decisions and answers do not. */
+.nav-link { font-size: 15px; }
+.more-menu summary { font-size: 14px; }
+.more-menu-panel strong,
+.firm-card strong { font-size: 14px; }
+.more-menu-panel small,
+.firm-card small { font-size: 13px; }
+.assistant-hero p:not(.eyebrow) { max-width: 680px; font-size: 15px; line-height: 1.55; }
+.assistant-mode-switch strong { font-size: 14px; }
+.assistant-mode-switch small { font-size: 13px; }
+.assistant-template-note { font-size: 14px; line-height: 1.5; }
+.conversation-library-heading h2,
+.context-section h2,
+.research-trail-heading h3 { font-size: 15px; }
+.conversation-library-heading > p:last-child,
+.conversation-card small,
+.conversation-library-footnote,
+.context-item { font-size: 14px; line-height: 1.55; }
+.conversation-card { gap: 6px; padding: 13px; }
+.conversation-card strong { font-size: 15px; line-height: 1.4; }
+.conversation-mode { font-size: 12px; }
+.assistant-welcome h2 { font-size: 28px; }
+.assistant-welcome p { font-size: 16px; line-height: 1.65; }
+.prompt-card { min-height: 82px; padding: 15px; font-size: 15px; line-height: 1.5; }
+.composer textarea { min-height: 66px; font-size: 16px; line-height: 1.5; }
+.composer-mode-line,
+.composer-note { font-size: 13px; }
+.assistant-query p,
+.answer-summary,
+.answer-steps li,
+.ai-answer-text,
+.structured-answer p { font-size: 15px; line-height: 1.68; }
+.answer-heading h2 { font-size: 20px; }
+.structured-answer h3,
+.source-card-copy h4 { font-size: 15px; }
+.research-summary,
+.source-card-copy > p,
+.source-card-status,
+.source-open-link { font-size: 14px; line-height: 1.5; }
+.source-card-meta { font-size: 13px; }
+.research-badge { min-height: 28px; font-size: 13px; }
+
 [data-theme="dark"] {
   --ink-950: #edf3ef;
   --ink-800: #d2ddd7;
