@@ -93,7 +93,6 @@ export function AppShell({
           <summary aria-label="More workspace options"><MoreIcon /><span>More</span></summary>
           <div className="more-menu-panel">
             <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Drafts and reviews</small></span></Link>
-            <Link href="/calendar"><CalendarIcon /><span><strong>Calendar</strong><small>Deadlines and obligations</small></span></Link>
             <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Updates and sources</small></span></Link>
             <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources and policy</small></span></Link>
             <Link href="/billing"><FileIcon /><span><strong>Billing</strong><small>Trial and subscription</small></span></Link>
@@ -123,6 +122,15 @@ export function AppShell({
             <kbd>⌘ K</kbd>
           </button>
           <div className="topbar-actions">
+            <Link
+              className={`topbar-calendar-link ${isActive(pathname, "/calendar") ? "active" : ""}`}
+              href="/calendar"
+              aria-current={isActive(pathname, "/calendar") ? "page" : undefined}
+              aria-label="Open compliance calendar"
+            >
+              <CalendarIcon />
+              <span>Calendar</span>
+            </Link>
             <span className="user-avatar" aria-label={sessionMode === "demo" ? "Mehta Shah, Partner" : "Signed-in user"}>
               {sessionMode === "demo" ? "MS" : "You"}
             </span>
