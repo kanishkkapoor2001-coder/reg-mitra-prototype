@@ -7,8 +7,8 @@ export default function FaqPage() {
     <PublicShell>
       <main className="editorial-page">
         <header className="editorial-hero narrow">
-          <p className="marketing-kicker">Frequently asked</p>
-          <h1>Clear answers before you enter.</h1>
+          <p className="marketing-kicker">Understand Reg Mitra</p>
+          <h1>What Reg Mitra does, how it helps, and where judgment stays human.</h1>
         </header>
         <section className="faq-list">
           {faqQuestions.map(([question, answer], index) => (
@@ -21,12 +21,12 @@ export default function FaqPage() {
         <section className="faq-cta faq-contact-box">
           <div>
             <p className="marketing-kicker">A human answer</p>
-            <h2>Ask a question or connect with us.</h2>
-            <p>Talk through source coverage, a client workflow, or what a private pilot could look like for your firm.</p>
+            <h2>Bring us one workflow your firm wants to make faster.</h2>
+            <p>We will show where Reg Mitra can monitor, match, explain, or prepare the next step—without bypassing professional review.</p>
           </div>
           <div className="faq-contact-actions">
-            <Link className="marketing-button" href="/demo">Ask in the template</Link>
-            <Link className="marketing-button primary" href="/start">Connect with us</Link>
+            <Link className="marketing-button" href="/demo">See Reg Mitra in action</Link>
+            <Link className="marketing-button primary" href="/start">Start your 7-day trial</Link>
           </div>
         </section>
       </main>

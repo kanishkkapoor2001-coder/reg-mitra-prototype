@@ -349,6 +349,25 @@
 .access-label { margin: -28px 0 12px !important; color: #38634d !important; font-size: 7px !important; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
 .login-panel h2 { font-family: var(--font-editorial), Georgia, serif; font-size: 34px; font-weight: 400; }
 .login-panel > p { margin: 12px 0 28px; color: #657067; font-size: 10px; line-height: 1.7; }
+.login-panel form { display: grid; gap: 12px; margin-top: 24px; }
+.login-panel form label { color: #354039; font-size: 12px; font-weight: 700; }
+.login-panel form input[type="email"],
+.login-panel form input[type="text"] {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #aeb5af;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #17231c;
+  font: inherit;
+  font-size: 14px;
+}
+.login-panel form input[type="email"]:focus-visible,
+.login-panel form input[type="text"]:focus-visible { border-color: #38634d; box-shadow: 0 0 0 3px rgb(56 99 77 / 16%); }
+.login-panel .form-error { margin: 0; color: #8f332e; font-size: 12px; line-height: 1.5; }
+.login-panel .notice { margin: 24px 0; }
 .login-panel small { display: block; margin: 15px 0 30px; color: #858b85; font-size: 7px; line-height: 1.5; }
 .login-panel > a { color: #657067; font-size: 8px; }
 

@@ -19,7 +19,7 @@ import {
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
-const publicPaths = ["/", "/about", "/pricing", "/faq", "/login", "/start", "/demo"];
+const publicPaths = ["/", "/about", "/pricing", "/faq", "/login", "/start", "/demo", "/onboarding"];
 
 function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -83,7 +83,6 @@ export function AppShell({
                 >
                   <span className="nav-icon"><Icon /></span>
                   <span>{item.label}</span>
-                  {item.badge ? <span className="nav-badge">{item.badge}</span> : null}
                 </Link>
               </div>
             );
@@ -104,10 +103,10 @@ export function AppShell({
         </details>
 
         <div className="firm-card">
-          <span className="firm-avatar">MS</span>
+          <span className="firm-avatar">{sessionMode === "demo" ? "MS" : "RM"}</span>
           <span>
-            <strong>Mehta Shah & Associates</strong>
-            <small>{sessionMode === "demo" ? "Template demo" : "Workspace"} · 6 clients</small>
+            <strong>{sessionMode === "demo" ? "Mehta Shah & Associates" : "Your firm"}</strong>
+            <small>{sessionMode === "demo" ? "Template workspace" : "Secure workspace"}</small>
           </span>
         </div>
         <form action="/api/auth/logout" method="post">
@@ -123,8 +122,9 @@ export function AppShell({
             <kbd>⌘ K</kbd>
           </button>
           <div className="topbar-actions">
-            {sessionMode === "demo" ? <span className="demo-pill"><i /> Template demo</span> : null}
-            <span className="user-avatar" aria-label="Mehta Shah, Partner">MS</span>
+            <span className="user-avatar" aria-label={sessionMode === "demo" ? "Mehta Shah, Partner" : "Signed-in user"}>
+              {sessionMode === "demo" ? "MS" : "You"}
+            </span>
           </div>
         </header>
         {sessionMode === "demo" ? (

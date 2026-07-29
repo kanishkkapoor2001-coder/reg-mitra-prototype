@@ -669,10 +669,10 @@ export function AssistantExperience({
           <div className="context-section assistant-contact-box">
             <p className="eyebrow">Human help</p>
             <h2>Ask a question or connect with us</h2>
-            <p>Talk through source coverage, your firm’s workflow, or a private pilot.</p>
+            <p>Talk through source coverage, your firm’s workflow, or starting a 7-day trial.</p>
             <div>
               <Link className="button" href="/faq">View FAQs</Link>
-              <Link className="button primary" href="/start">Connect with us</Link>
+              <Link className="button primary" href="/start">Start 7-day trial</Link>
             </div>
           </div>
         </aside>

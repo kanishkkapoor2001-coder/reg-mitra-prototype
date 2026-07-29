@@ -58,6 +58,10 @@
   background: #a66c2d;
   box-shadow: 0 0 0 3px #f4e8d7;
 }
+.calendar-sync-status > i.template {
+  background: var(--ink-400);
+  box-shadow: 0 0 0 3px var(--ink-100);
+}
 .calendar-sync-status span,
 .calendar-sync-status strong,
 .calendar-sync-status small { display: block; }
@@ -132,7 +136,7 @@
 .calendar-event.gst i, .detail-category.gst i { background: #4a7fab; }
 .calendar-event.direct-tax i, .detail-category.direct-tax i { background: #b16c32; }
 .calendar-event.payroll i, .detail-category.payroll i { background: #4c8a63; }
-.calendar-event.regulatory-update i, .detail-category.regulatory-update i { background: #786da2; }
+.calendar-event.regulatory-update i, .detail-category.regulatory-update i { background: var(--green-700); }
 .calendar-detail { min-width: 0; padding: 24px 22px; background: var(--surface-muted); }
 .detail-category { display: flex; align-items: center; gap: 7px; color: var(--ink-500); font-size: 7px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
 .detail-date { margin: 22px 0 7px; color: var(--ink-500); font-size: 8px; }

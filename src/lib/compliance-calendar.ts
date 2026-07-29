@@ -54,7 +54,7 @@ const sources = {
   },
   epf: {
     label: "EPFO · Employer FAQ",
-    url: "https://www.epfindia.gov.in/site_en/FAQ.php/FAQ.php",
+    url: "https://www.epfindia.gov.in/site_en/FAQ.php",
   },
 } as const;
 

@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { DemoNotice } from "@/components/demo-notice";
 import { EvidencePanel } from "@/components/evidence-panel";
 import { ReviewGate } from "@/components/review-gate";
 import { clients, getClient, workItems } from "@/lib/demo-data";
+import { getSupabasePublicConfig } from "@/lib/supabase/config";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentWorkspace } from "@/lib/workspace";
 import type { EvidenceRecord } from "@/lib/types";
 
 interface ClientPageProps {
@@ -16,6 +20,12 @@ export function generateStaticParams() {
 
 export default async function ClientPage({ params }: ClientPageProps) {
   const { id } = await params;
+  const isDemo = (await cookies()).get("reg_mitra_session")?.value === "demo";
+
+  if (!isDemo && getSupabasePublicConfig()) {
+    return <ProductClientPage id={id} />;
+  }
+
   const client = getClient(id);
   if (!client) notFound();
   const items = workItems.filter((item) => item.client === client.shortName);
@@ -69,6 +79,93 @@ export default async function ClientPage({ params }: ClientPageProps) {
             <span className="locked-action">Approval unlocks after evidence and a reviewer are recorded.</span>
           </div>
         </ReviewGate>
+      </div>
+    </>
+  );
+}
+
+async function ProductClientPage({ id }: Readonly<{ id: string }>) {
+  const workspace = await getCurrentWorkspace();
+  if (!workspace) notFound();
+
+  const supabase = await createSupabaseServerClient();
+  const { data: client } = await supabase
+    .from("clients")
+    .select("id, legal_name, display_name, sector, state_code, created_at, tasks(id, title, state, priority, due_at)")
+    .eq("workspace_id", workspace.id)
+    .eq("id", id)
+    .eq("status", "active")
+    .maybeSingle();
+  if (!client) notFound();
+
+  const openTasks = (client.tasks ?? [])
+    .filter((task) => task.state !== "completed" && task.state !== "dismissed")
+    .sort((left, right) => right.priority - left.priority);
+  const highPriorityTasks = openTasks.filter((task) => task.priority >= 3).length;
+  const initials = client.display_name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part: string) => part[0]?.toUpperCase())
+    .join("");
+
+  return (
+    <>
+      <Link className="text-link" href="/clients">← All clients</Link>
+      <section className="detail-hero" style={{ marginTop: 16 }}>
+        <span className="detail-avatar">{initials || "CL"}</span>
+        <div>
+          <p className="eyebrow">Client workspace</p>
+          <h1>{client.display_name}</h1>
+          <p className="page-subtitle">
+            {[client.legal_name, client.sector, client.state_code].filter(Boolean).join(" · ")}
+          </p>
+        </div>
+      </section>
+      <div className="notice">
+        <strong>Profile evidence is not complete.</strong>
+        Add registrations and applicability facts before relying on client-specific regulatory conclusions.
+      </div>
+      <section className="kpi-grid">
+        <article className="kpi-card"><span className="kpi-label">Open work</span><div className="kpi-value">{openTasks.length}</div><div className="kpi-meta"><span>Persisted tasks</span></div></article>
+        <article className="kpi-card"><span className="kpi-label">High priority</span><div className="kpi-value">{highPriorityTasks}</div><div className="kpi-meta"><span>Based on recorded task priority</span></div></article>
+        <article className="kpi-card"><span className="kpi-label">Identifiers</span><div className="kpi-value">—</div><div className="kpi-meta"><span>Not yet recorded</span></div></article>
+        <article className="kpi-card"><span className="kpi-label">Source connections</span><div className="kpi-value">0</div><div className="kpi-meta"><span>No client portal connected</span></div></article>
+      </section>
+      <section className="panel">
+        <div className="panel-header">
+          <div><h2>Open work</h2><p>Tasks recorded for this client</p></div>
+          <Link className="button" href={`/assistant?client=${client.id}`}>Ask about client</Link>
+        </div>
+        {openTasks.length ? (
+          <ul className="work-list">
+            {openTasks.map((item) => (
+              <li className="work-item" key={item.id}>
+                <i className={`urgency-dot ${item.priority >= 3 ? "high" : item.priority === 2 ? "medium" : "low"}`} />
+                <div>
+                  <p className="work-title">{item.title}</p>
+                  <span className="work-meta">{item.state.replaceAll("_", " ")}</span>
+                </div>
+                <span className="due">
+                  {item.due_at
+                    ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" }).format(new Date(item.due_at))
+                    : "No due date"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="empty-state">
+            <h2>No open work</h2>
+            <p>Map a source-supported regulatory impact before creating a client action.</p>
+            <Link className="button" href={`/assistant?client=${client.id}`}>Start a source review</Link>
+          </div>
+        )}
+      </section>
+      <div style={{ marginTop: 14 }}>
+        <ReviewGate
+          title="Professional review required before action"
+          description="Confirm the official source, effective period, client facts, applicability, and filing position before advice or execution."
+        />
       </div>
     </>
   );

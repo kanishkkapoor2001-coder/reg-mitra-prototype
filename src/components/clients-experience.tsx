@@ -1,16 +1,56 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ClientCard } from "@/components/client-card";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 import { SearchIcon } from "@/components/icons";
-import { clients } from "@/lib/demo-data";
 import type { RiskLevel } from "@/lib/types";
 
-type RiskFilter = "all" | RiskLevel;
+export interface PortfolioClient {
+  id: string;
+  name: string;
+  identifier: string;
+  sector: string;
+  risk: RiskLevel;
+  pending: number;
+  nextDeadline: string;
+  sourceStatus: string;
+}
 
-export function ClientsExperience() {
-  const [query, setQuery] = useState("");
-  const [risk, setRisk] = useState<RiskFilter>("all");
+type SortKey = "name" | "identifier" | "risk" | "nextDeadline" | "pending" | "sourceStatus";
+
+const riskRank: Record<RiskLevel, number> = { high: 3, medium: 2, low: 1 };
+
+export function ClientsExperience({
+  clients,
+  mode,
+}: Readonly<{
+  clients: readonly PortfolioClient[];
+  mode: "demo" | "product";
+}>) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") ?? "";
+  const risk = searchParams.get("risk") ?? "all";
+  const sort = (searchParams.get("sort") ?? "risk") as SortKey;
+  const direction = searchParams.get("direction") === "asc" ? "asc" : "desc";
+
+  function updateParams(changes: Record<string, string | null>) {
+    const next = new URLSearchParams(searchParams.toString());
+    Object.entries(changes).forEach(([key, value]) => {
+      if (!value || value === "all") next.delete(key);
+      else next.set(key, value);
+    });
+    router.replace(`${pathname}${next.size ? `?${next.toString()}` : ""}`);
+  }
+
+  function changeSort(key: SortKey) {
+    updateParams({
+      sort: key,
+      direction: sort === key && direction === "asc" ? "desc" : "asc",
+    });
+  }
 
   const visibleClients = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -18,17 +58,19 @@ export function ClientsExperience() {
       .filter((client) => risk === "all" || client.risk === risk)
       .filter((client) =>
         !normalized
-        || `${client.name} ${client.shortName} ${client.sector} ${client.location}`
-          .toLowerCase()
-          .includes(normalized),
+        || `${client.name} ${client.identifier} ${client.sector}`.toLowerCase().includes(normalized),
       )
-      .sort((left, right) => right.riskScore - left.riskScore);
-  }, [query, risk]);
+      .sort((left, right) => {
+        const leftValue = sort === "risk" ? riskRank[left.risk] : left[sort];
+        const rightValue = sort === "risk" ? riskRank[right.risk] : right[sort];
+        const comparison = typeof leftValue === "number" && typeof rightValue === "number"
+          ? leftValue - rightValue
+          : String(leftValue).localeCompare(String(rightValue), "en-IN", { numeric: true });
+        return direction === "asc" ? comparison : -comparison;
+      });
+  }, [clients, direction, query, risk, sort]);
 
-  function clearFilters() {
-    setQuery("");
-    setRisk("all");
-  }
+  const highRiskCount = clients.filter((client) => client.risk === "high").length;
 
   return (
     <>
@@ -36,11 +78,15 @@ export function ClientsExperience() {
         <div>
           <p className="eyebrow">Client portfolio</p>
           <h1>Who needs attention?</h1>
-          <p>Clients are ranked by illustrative risk so the most important review is always visible first.</p>
+          <p>
+            {mode === "demo"
+              ? "Fictional client profiles demonstrate the review workflow."
+              : "Open work and reviewed applicability determine what needs attention."}
+          </p>
         </div>
         <div className="portfolio-stat">
-          <strong>{clients.filter((client) => client.risk === "high").length}</strong>
-          <span>high-risk clients</span>
+          <strong>{highRiskCount}</strong>
+          <span>high-priority {highRiskCount === 1 ? "client" : "clients"}</span>
         </div>
       </header>
 
@@ -50,41 +96,100 @@ export function ClientsExperience() {
           <span className="sr-only">Search clients</span>
           <input
             aria-label="Search clients"
-            onChange={(event) => setQuery(event.target.value)}
+            defaultValue={query}
+            key={query}
+            onChange={(event) => updateParams({ q: event.target.value || null })}
             placeholder="Find a client"
-            value={query}
           />
         </label>
-        <div className="segmented-control" aria-label="Filter clients by risk">
-          {(["all", "high", "medium", "low"] as const).map((value) => (
-            <button
-              aria-pressed={risk === value}
-              className={risk === value ? "active" : ""}
-              key={value}
-              onClick={() => setRisk(value)}
-              type="button"
-            >
-              {value === "all" ? "All" : `${value.charAt(0).toUpperCase()}${value.slice(1)}`}
-            </button>
-          ))}
-        </div>
+        <label className="filter-label">
+          <span className="sr-only">Filter by risk</span>
+          <select
+            className="filter-select"
+            onChange={(event) => updateParams({ risk: event.target.value })}
+            value={risk}
+          >
+            <option value="all">All priorities</option>
+            <option value="high">High priority</option>
+            <option value="medium">Medium priority</option>
+            <option value="low">Low priority</option>
+          </select>
+        </label>
         <span className="result-count">{visibleClients.length} {visibleClients.length === 1 ? "client" : "clients"}</span>
+        {mode === "product" ? <Link className="button primary" href="/clients/new">Add client</Link> : null}
       </div>
 
       {visibleClients.length ? (
-        <section className="client-grid" aria-label="Client portfolio">
-          {visibleClients.map((client) => <ClientCard client={client} key={client.id} />)}
-        </section>
+        <div className="client-table-wrap">
+          <table className="client-table">
+            <thead>
+              <tr>
+                <SortableHeading active={sort} direction={direction} label="Client" onSort={changeSort} sortKey="name" />
+                <SortableHeading active={sort} direction={direction} label="Identifier" onSort={changeSort} sortKey="identifier" />
+                <SortableHeading active={sort} direction={direction} label="Priority" onSort={changeSort} sortKey="risk" />
+                <SortableHeading active={sort} direction={direction} label="Next deadline" onSort={changeSort} sortKey="nextDeadline" />
+                <SortableHeading active={sort} direction={direction} label="Open work" numeric onSort={changeSort} sortKey="pending" />
+                <SortableHeading active={sort} direction={direction} label="Evidence" onSort={changeSort} sortKey="sourceStatus" />
+              </tr>
+            </thead>
+            <tbody>
+              {visibleClients.map((client) => (
+                <tr key={client.id}>
+                  <th scope="row">
+                    <Link href={`/clients/${client.id}`}>{client.name}</Link>
+                    <small>{client.sector}</small>
+                  </th>
+                  <td className="client-identifier">{client.identifier}</td>
+                  <td><span className={`risk-chip ${client.risk}`}>{client.risk}</span></td>
+                  <td>{client.nextDeadline}</td>
+                  <td className="numeric">{client.pending}</td>
+                  <td>{client.sourceStatus}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <section className="empty-state portfolio-empty">
           <SearchIcon />
-          <h2>No clients match</h2>
-          <p>Try a different name or remove the risk filter.</p>
-          <button className="button" onClick={clearFilters} type="button">Clear filters</button>
+          <h2>{clients.length ? "No clients match" : "Add your first client"}</h2>
+          <p>{clients.length ? "Change the search or priority filter." : "Create a client profile before mapping regulatory impact or assigning work."}</p>
+          {clients.length ? (
+            <button className="button" onClick={() => router.replace(pathname)} type="button">Clear filters</button>
+          ) : mode === "product" ? (
+            <Link className="button primary" href="/clients/new">Add client</Link>
+          ) : null}
         </section>
       )}
-
-      <p className="demo-footnote">Illustrative profiles · Connect a secure client store before adding or editing records.</p>
     </>
+  );
+}
+
+function SortableHeading({
+  active,
+  direction,
+  label,
+  numeric = false,
+  onSort,
+  sortKey,
+}: Readonly<{
+  active: SortKey;
+  direction: "asc" | "desc";
+  label: string;
+  numeric?: boolean;
+  onSort: (key: SortKey) => void;
+  sortKey: SortKey;
+}>) {
+  const isActive = active === sortKey;
+  return (
+    <th
+      aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
+      className={numeric ? "numeric" : undefined}
+      scope="col"
+    >
+      <button onClick={() => onSort(sortKey)} type="button">
+        {label}<span aria-hidden="true">{isActive ? (direction === "asc" ? " ↑" : " ↓") : ""}</span>
+      </button>
+    </th>
   );
 }

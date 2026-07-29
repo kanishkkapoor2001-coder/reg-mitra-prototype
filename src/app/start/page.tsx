@@ -6,35 +6,28 @@ export default function StartPage() {
     <PublicShell>
       <main className="login-page">
         <section className="login-copy">
-          <p className="marketing-kicker">Connect with Reg Mitra</p>
-          <h1>Tell us where compliance work gets stuck.</h1>
-          <p>We are speaking with CA firms and compliance teams about source coverage, client workflows, and private pilot workspaces.</p>
+          <p className="marketing-kicker">Your 7-day Reg Mitra trial</p>
+          <h1>See what changed. See which clients need action.</h1>
+          <p>For seven days, use Reg Mitra to monitor selected official updates, understand client impact, and prepare the next step for review.</p>
           <ul>
-            <li><span>01</span> Share the bodies, acts, and sectors you monitor</li>
-            <li><span>02</span> Walk us through one client workflow end to end</li>
-            <li><span>03</span> Define what Ask and Act should safely handle</li>
+            <li><span>01</span> Replace repetitive website checking with one regulatory radar</li>
+            <li><span>02</span> See client impact before an update becomes urgent</li>
+            <li><span>03</span> Begin with source-linked, review-ready work</li>
           </ul>
         </section>
         <section className="login-panel">
           <div className="login-mark">R/M</div>
-          <p className="access-label">A human conversation</p>
-          <h2>Ask a question or discuss a pilot</h2>
-          <p>Tell us what your firm needs covered and which part of the workflow you want to reduce, verify, or prepare.</p>
+          <p className="access-label">7-day trial</p>
+          <h2>Request trial access</h2>
+          <p>Tell us which authorities you follow and one workflow you want to improve. We will confirm the setup and when your seven days begin.</p>
           <a
             className="marketing-button primary wide"
-            href="mailto:kanishk@outreach.learno.ai?subject=Reg%20Mitra%20conversation"
+            href="mailto:kanishk@outreach.learno.ai?subject=Reg%20Mitra%207-day%20trial"
           >
-            Email the team <span>→</span>
+            Request your 7-day trial <span>→</span>
           </a>
-          {process.env.NODE_ENV !== "production" ? (
-            <form action="/api/auth/local-product" method="post">
-              <button className="marketing-button wide" type="submit">
-                Open local workspace <span>→</span>
-              </button>
-            </form>
-          ) : null}
-          <small>Please do not include confidential client data, portal credentials, passwords, or OTPs.</small>
-          <Link href="/demo">Want to explore first? Open the template demo →</Link>
+          <small>No payment is collected to begin. Please do not email confidential client data, credentials, passwords, or OTPs.</small>
+          <Link href="/demo">Want to explore first? See Reg Mitra in action →</Link>
         </section>
       </main>
     </PublicShell>

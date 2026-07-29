@@ -7,25 +7,25 @@ export default function PricingPage() {
       <main className="editorial-page">
         <header className="editorial-hero narrow">
           <p className="marketing-kicker">Pricing</p>
-          <h1>Start with the product today.</h1>
-          <p>Product access is open locally now. Paid team workspaces will launch after production security and billing are ready.</p>
+          <h1>Try Reg Mitra for seven days.</h1>
+          <p>Use daily regulatory monitoring, client-impact mapping, and review-ready actions with your firm’s workflow before choosing a subscription.</p>
         </header>
         <section className="pricing-comparison">
           <article>
             <p className="pricing-label">Available now</p>
-            <h2>Reg Mitra workspace</h2>
-            <strong>Early access</strong>
-            <p>Use the complete product workflow locally, with a source-linked calendar and AI assistance.</p>
-            <ul><li>Today priority queue</li><li>Source-linked compliance calendar</li><li>AI-assisted compliance research</li><li>Client workspaces</li></ul>
-            <Link className="marketing-button primary" href="/start">Start today</Link>
+            <h2>7-day trial</h2>
+            <strong>No payment to begin</strong>
+            <p>We configure selected sources, client context, review gates, and one workflow that matters to your practice. Your seven days begin once access is ready.</p>
+            <ul><li>Selected official-source monitoring</li><li>Client-impact workflow design</li><li>Live source-linked calendar</li><li>Ask and Act review controls</li></ul>
+            <Link className="marketing-button primary" href="/start">Request your 7-day trial</Link>
           </article>
           <article className="pricing-future">
-            <p className="pricing-label">Opening later</p>
-            <h2>Team workspace</h2>
-            <strong>Pricing before launch</strong>
-            <p>A private, paid workspace for real teams and client data. No payment is being collected today.</p>
-            <ul><li>Secure team accounts</li><li>Private firm and client data</li><li>Roles and review controls</li><li>Billing and service terms</li></ul>
-            <span className="pricing-note">Customer access is not yet enabled</span>
+            <p className="pricing-label">After your trial</p>
+            <h2>Team subscription</h2>
+            <strong>Choose after seven days</strong>
+            <p>Continue with a secure paid Reg Mitra workspace for your team, client profiles, live calendars, and governed actions. Pricing is shared before you subscribe.</p>
+            <ul><li>Continuous regulatory radar</li><li>Personalised client impact</li><li>Team roles and approvals</li><li>Private firm and client data</li></ul>
+            <span className="pricing-note">No automatic charge after the trial</span>
           </article>
         </section>
       </main>

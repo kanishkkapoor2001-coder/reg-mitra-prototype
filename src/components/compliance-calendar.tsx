@@ -61,6 +61,9 @@ export function ComplianceCalendar({
   const [refreshKey, setRefreshKey] = useState(0);
   const year = visibleMonth.getFullYear();
   const monthIndex = visibleMonth.getMonth();
+  const visibleCategories = mode === "demo"
+    ? categories.filter((item) => item !== "Regulatory update")
+    : categories;
   const snapshotMatchesMonth = snapshot?.year === year && snapshot.monthIndex === monthIndex;
   const templateEvents = useMemo(
     () => getComplianceEvents(year, monthIndex),
@@ -158,7 +161,7 @@ export function ComplianceCalendar({
           </p>
         </div>
         <div className="calendar-sync-status" aria-live="polite">
-          <i className={syncState === "error" || snapshot?.health === "review" ? "review" : ""} />
+          <i className={mode === "demo" ? "template" : syncState === "error" || snapshot?.health === "review" ? "review" : ""} />
           <span>
             <strong>
               {mode === "demo"
@@ -206,7 +209,7 @@ export function ComplianceCalendar({
           {monthKey(visibleMonth) !== monthKey(now) ? <button className="calendar-today" onClick={showCurrentMonth} type="button">Today</button> : null}
         </div>
         <div className="calendar-filters" aria-label="Filter obligations">
-          {categories.map((item) => (
+          {visibleCategories.map((item) => (
             <button
               className={category === item ? "active" : ""}
               key={item}

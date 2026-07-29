@@ -4,6 +4,10 @@ export const faqQuestions = [
     "No. The public experience is a template demo. All names, records, conversations, balances, filing states, and portal results are synthetic. No government portal, ledger, filing system, or client account is connected.",
   ],
   [
+    "How does the 7-day trial work?",
+    "Request access and tell us which authorities you follow and one workflow you want to improve. We confirm the setup and the date your seven days begin. No payment is collected to start, and there is no automatic charge when the trial ends.",
+  ],
+  [
     "What is the difference between Ask and Act?",
     "Ask explains a compliance question, shows what evidence is missing, and prepares a verification path. Act prepares a draft communication, checklist, calendar change, document pack, or portal handoff for review.",
   ],

@@ -7,17 +7,17 @@ export default function HomePage() {
       <main>
         <section className="marketing-hero">
           <div className="marketing-hero-copy">
-            <p className="marketing-kicker">Regulatory intelligence for Indian CA firms</p>
-            <h1>Every regulatory change, mapped to the clients it affects.</h1>
+            <p className="marketing-kicker">The regulatory intelligence workspace for Indian CA firms</p>
+            <h1>Know what changed. Know which clients need action.</h1>
             <p className="marketing-lede">
-              Reg Mitra monitors official circulars, explains what changed, identifies the
-              clients that need attention, and prepares the next step for professional review.
+              Reg Mitra monitors selected official sources every day, explains each regulatory
+              change, maps it to the right clients, and prepares the next action for your review.
             </p>
             <div className="marketing-actions">
-              <Link className="marketing-button primary" href="/demo">Explore the template</Link>
-              <Link className="marketing-button quiet" href="/start">Discuss a pilot</Link>
+              <Link className="marketing-button primary" href="/demo">See Reg Mitra in action</Link>
+              <Link className="marketing-button quiet" href="/start">Start your 7-day trial</Link>
             </div>
-            <p className="marketing-proof">Official-source monitoring · Client-specific impact · Approval-gated actions</p>
+            <p className="marketing-proof">Less manual checking · Earlier client action · Every answer source-linked</p>
           </div>
 
           <div className="ledger-object" aria-label="A preview of a client-specific regulatory impact brief">
@@ -47,34 +47,34 @@ export default function HomePage() {
         </section>
 
         <section className="marketing-principle">
-          <p>Built for the person doing the work</p>
+          <p>Reg Mitra in one sentence</p>
           <blockquote>
-            The useful answer is not another circular summary. It is knowing which clients
-            are affected, why, and what to do next.
+            Reg Mitra tells your firm what changed, which clients need attention, and what
+            to do next—with the official source attached.
           </blockquote>
         </section>
 
         <section className="marketing-process" id="how-it-works">
           <div className="section-intro">
-            <p className="marketing-kicker">One continuous workflow</p>
-            <h2>From official update to client action.</h2>
+            <p className="marketing-kicker">How Reg Mitra supercharges your firm</p>
+            <h2>Turn hours of monitoring into a clear client-action list.</h2>
           </div>
           <ol className="process-list">
-            <li><span>01</span><div><h3>Monitor official sources</h3><p>Bring new circulars and regulatory updates into one source-linked review queue.</p></div></li>
-            <li><span>02</span><div><h3>See who is affected</h3><p>Match the change to each client’s sector, location, profile, and transaction context.</p></div></li>
-            <li><span>03</span><div><h3>Ask or prepare the action</h3><p>Explain the impact or draft the next step, with evidence and professional approval attached.</p></div></li>
+            <li><span>01</span><div><h3>Stop checking every website yourself</h3><p>Reg Mitra monitors the official bodies your firm follows and brings new updates into one source-linked review queue.</p></div></li>
+            <li><span>02</span><div><h3>Know exactly which clients need attention</h3><p>Each change is matched against client sector, location, registrations, profile, and transaction context.</p></div></li>
+            <li><span>03</span><div><h3>Start with the next action already prepared</h3><p>Ask explains the impact. Act prepares a client brief, checklist, calendar change, or draft communication for professional approval.</p></div></li>
           </ol>
         </section>
 
         <section className="marketing-calendar-preview">
           <div>
-            <p className="marketing-kicker">A calendar you can interrogate</p>
-            <h2>Dates are useful. Applicability is the work.</h2>
+            <p className="marketing-kicker">A calendar that stays current</p>
+            <h2>See the deadline, the source, and who it applies to.</h2>
             <p>
-              Reg Mitra’s compliance calendar separates recurring national obligations from
-              client-specific applicability and links each rule to its source.
+              The live product calendar refreshes daily, separates general obligations from
+              client-specific applicability, and keeps the authority behind every date attached.
             </p>
-            <Link className="marketing-text-link" href="/demo">See the template calendar →</Link>
+            <Link className="marketing-text-link" href="/demo">Explore the static demo calendar →</Link>
           </div>
           <div className="calendar-mini" aria-hidden="true">
             <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span>
@@ -83,9 +83,9 @@ export default function HomePage() {
         </section>
 
         <section className="marketing-cta">
-          <p className="marketing-kicker">See the full workflow</p>
-          <h2>Know what changed. Know who it affects. Prepare what comes next.</h2>
-          <Link className="marketing-button light" href="/demo">Explore the template</Link>
+          <p className="marketing-kicker">Try Reg Mitra with your workflow</p>
+          <h2>Give your team fewer places to check—for seven days.</h2>
+          <Link className="marketing-button light" href="/start">Start your 7-day trial</Link>
         </section>
       </main>
     </PublicShell>

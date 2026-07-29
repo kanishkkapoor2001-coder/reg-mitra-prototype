@@ -7,23 +7,23 @@ export default function AboutPage() {
       <main className="editorial-page">
         <header className="editorial-hero">
           <p className="marketing-kicker">Why Reg Mitra exists</p>
-          <h1>Compliance software should reduce cognitive load—not rearrange it.</h1>
-          <p>We are building a workspace where deadlines, evidence, client context, and judgment stay connected.</p>
+          <h1>Reg Mitra turns regulatory change into client action.</h1>
+          <p>It is a regulatory intelligence workspace for Indian CA firms—connecting official updates, client context, deadlines, and review-ready next steps.</p>
         </header>
         <section className="manifesto-grid">
-          <p>Most regulatory tools begin with the database. Reg Mitra begins with the day of the person using it.</p>
+          <p>Your team should not have to search, interpret, match, and draft from scratch every time a rule changes.</p>
           <div>
-            <h2>Fewer places to look</h2>
-            <p>A focused Today queue replaces the ritual of checking five systems before meaningful work can begin.</p>
-            <h2>Evidence stays attached</h2>
-            <p>Rules and AI answers should show where they came from, when they were checked, and what still needs professional judgment.</p>
-            <h2>Complexity appears when needed</h2>
-            <p>The default experience stays simple. Client detail, caveats, and source depth remain one step away.</p>
+            <h2>Monitor once, across the firm</h2>
+            <p>Selected official sources flow into one regulatory radar instead of being checked manually by every team member.</p>
+            <h2>Move from rule to the right clients</h2>
+            <p>Reg Mitra connects a change to client profile, sector, location, registrations, and transaction context.</p>
+            <h2>Prepare work without surrendering judgment</h2>
+            <p>Ask explains. Act prepares. The source, caveats, and professional approval stay attached before anything leaves the workspace.</p>
           </div>
         </section>
         <section className="editorial-callout">
-          <blockquote>Simple is not the absence of substance. It is substance arranged around the user.</blockquote>
-          <Link className="marketing-button primary" href="/start">Start today</Link>
+          <blockquote>Less time finding the change. More time advising the client.</blockquote>
+          <Link className="marketing-button primary" href="/demo">See Reg Mitra in action</Link>
         </section>
       </main>
     </PublicShell>
