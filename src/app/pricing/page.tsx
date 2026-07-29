@@ -13,18 +13,18 @@ export default function PricingPage() {
         <section className="pricing-comparison">
           <article>
             <p className="pricing-label">Available now</p>
-            <h2>7-day full-product trial</h2>
+            <h2>Seven days free</h2>
             <strong>No card required</strong>
             <p>Create a secure firm workspace and use Reg Mitra for seven days. The trial begins when your workspace is created.</p>
-            <ul><li>Official-source regulatory radar</li><li>Personalised client impact</li><li>Live source-linked calendar</li><li>Ask and Act review controls</li></ul>
+            <ul><li>Updates from official sources</li><li>Personalised client impact</li><li>Source-linked compliance calendar</li><li>Answers and drafts with review controls</li></ul>
             <Link className="marketing-button primary" href="/start">Start 7-day trial</Link>
           </article>
           <article className="pricing-future">
             <p className="pricing-label">After your trial</p>
             <h2>Team subscription</h2>
             <strong>Keep your workspace active</strong>
-            <p>Subscribe to continue using Reg Mitra with your team, client profiles, live calendars, and governed actions.</p>
-            <ul><li>Continuous regulatory radar</li><li>Personalised client impact</li><li>Team roles and approvals</li><li>Private firm and client data</li></ul>
+            <p>Subscribe to continue using Reg Mitra with your team, client profiles, calendars, and reviewed drafts.</p>
+            <ul><li>Continuous official-source monitoring</li><li>Personalised client impact</li><li>Team roles and approvals</li><li>Private firm and client data</li></ul>
             <span className="pricing-note">You choose whether to subscribe</span>
           </article>
         </section>

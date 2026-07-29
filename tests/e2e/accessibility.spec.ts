@@ -2,7 +2,18 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 const publicRoutes = ["/", "/about", "/pricing", "/faq", "/login"];
-const productRoutes = ["/today", "/clients", "/calendar", "/assistant", "/regulations", "/settings"];
+const productRoutes = [
+  "/today",
+  "/clients",
+  "/clients/sharma",
+  "/clients/new",
+  "/briefings",
+  "/calendar",
+  "/assistant",
+  "/regulations",
+  "/settings",
+  "/billing",
+];
 
 async function expectNoAccessibilityViolations(page: Page, route: string) {
   const pageOverflowsViewport = await page.evaluate(
@@ -26,6 +37,9 @@ test.describe("public experience", () => {
     test(`${route} has no automated WCAG AA violations`, async ({ page }) => {
       await page.goto(route);
       await expect(page.locator("body")).toBeVisible();
+      await expect(page.locator("main h1")).toHaveCount(1);
+      const mainText = (await page.locator("main").innerText()).replace(/\s+/g, " ").trim();
+      expect(mainText.length, `${route} renders an empty product page`).toBeGreaterThan(80);
       await expectNoAccessibilityViolations(page, route);
     });
   }

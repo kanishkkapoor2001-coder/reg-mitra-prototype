@@ -138,9 +138,9 @@ function ResearchTrail({
   retrieval,
 }: Readonly<{ messageId: string; retrieval: ChatRetrievalPayload }>) {
   const stateLabel = {
-    locked: "Citations matched",
-    partial: "Check citation coverage",
-    unsupported: "Not source-locked",
+    locked: "Sources support this answer",
+    partial: "Some claims need review",
+    unsupported: "No supporting source",
   }[retrieval.citationState];
 
   return (
@@ -153,14 +153,14 @@ function ResearchTrail({
         <div className="research-badges">
           <span className={`research-badge ${retrieval.citationState}`}>{stateLabel}</span>
           <span className="research-badge neutral">
-            {retrieval.strategy === "hybrid" ? "Semantic + exact search" : "Exact search fallback"}
+            {retrieval.strategy === "hybrid" ? "Meaning + exact-term search" : "Exact-term search"}
           </span>
         </div>
       </div>
       <div className="research-summary">
-        <span><strong>{retrieval.confidence}</strong> retrieval confidence</span>
-        <span>{retrieval.corpus.embeddedChunkCount} semantic chunks</span>
-        <span>{retrieval.corpus.fullTextSourceCount} full-text sources</span>
+        <span>Source match: <strong>{retrieval.confidence}</strong></span>
+        <span>{retrieval.corpus.embeddedChunkCount} source sections searched</span>
+        <span>{retrieval.corpus.fullTextSourceCount} complete official documents</span>
       </div>
       <div className="source-card-list">
         {retrieval.sources.map((source) => (
@@ -187,7 +187,7 @@ function ResearchTrail({
                       ? "Official index"
                       : "Verified summary"}
                 </span>
-                <span>{Math.round(source.relevance * 100)}% relative match</span>
+                <span>{Math.round(source.relevance * 100)}% match strength</span>
               </div>
             </div>
             <a
@@ -203,7 +203,7 @@ function ResearchTrail({
       </div>
       {retrieval.citationState !== "locked" ? (
         <p className="research-caveat">
-          The answer is visible for review, but it is not fully citation-locked. Verify the source cards before relying on it.
+          Some statements are not fully supported by the sources below. Check them before relying on this answer.
         </p>
       ) : null}
     </section>
@@ -373,9 +373,9 @@ export function AssistantExperience({
       <header className="assistant-hero">
         <span className="assistant-symbol"><SparklesIcon /></span>
         <div>
-          <p className="eyebrow">Evidence-aware preparation</p>
+          <p className="eyebrow">Answers with official sources</p>
           <h1>Ask Reg Mitra</h1>
-          <p>Ask for a reviewable answer. Switch to Act when you want a safe draft or next-step preview.</p>
+          <p>Ask a compliance question or prepare a draft. The source and review status stay visible.</p>
         </div>
         <div className="assistant-hero-actions">
           <div className="assistant-mode-switch" aria-label="Assistant mode">
@@ -402,9 +402,9 @@ export function AssistantExperience({
 
       {templateMode ? (
         <div className="assistant-template-note" role="note">
-          <strong>Illustrative template.</strong>
-          <span>All conversations, clients, filing states, and portal results are synthetic.</span>
-          <span>Nothing here is sent, submitted, filed, or connected.</span>
+          <strong>Demo only.</strong>
+          <span>All clients and conversations are fictional.</span>
+          <span>Nothing can be sent or filed.</span>
         </div>
       ) : null}
 
@@ -413,7 +413,7 @@ export function AssistantExperience({
           <div className="conversation-library-heading">
             <p className="eyebrow">{templateMode ? "Sample sessions" : "Recent reviews"}</p>
             <h2>{templateMode ? "See the full workflow" : "Continue your work"}</h2>
-            <p>{templateMode ? "Realistic CA use cases, shown with synthetic data." : "Saved securely in this firm workspace."}</p>
+            <p>{templateMode ? "Realistic CA use cases, shown with fictional data." : "Saved securely in this firm workspace."}</p>
           </div>
           <div className="conversation-list">
             {templateMode
@@ -496,7 +496,7 @@ export function AssistantExperience({
                       </h2>
                     </div>
                     <span className={`answer-mode-badge ${message.mode}`}>
-                      {message.mode === "act" ? "Not executed" : "Evidence-aware"}
+                      {message.mode === "act" ? "Not sent" : "Official sources shown"}
                     </span>
                   </div>
                   <StructuredAnswer
@@ -698,8 +698,8 @@ export function AssistantExperience({
                 <span className="context-num">↗</span>
                 <span>
                   {latestRetrieval.strategy === "hybrid"
-                    ? "Semantic meaning and exact regulatory terms were both ranked."
-                    : "Lexical fallback stayed available while semantic search was unavailable."}
+                    ? "Reg Mitra checked both meaning and exact regulatory terms."
+                    : "Reg Mitra used exact-term search for this answer."}
                 </span>
               </div>
             </div>

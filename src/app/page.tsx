@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MarketingWorkflow } from "@/components/marketing-workflow";
 import { PublicShell } from "@/components/public-shell";
 
 export default function HomePage() {
@@ -54,9 +55,11 @@ export default function HomePage() {
           </blockquote>
         </section>
 
+        <MarketingWorkflow />
+
         <section className="marketing-process" id="how-it-works">
           <div className="section-intro">
-            <p className="marketing-kicker">How Reg Mitra supercharges your firm</p>
+            <p className="marketing-kicker">How it helps your firm</p>
             <h2>Turn hours of monitoring into a clear client-action list.</h2>
           </div>
           <ol className="process-list">
