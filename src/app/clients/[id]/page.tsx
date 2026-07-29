@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { DemoNotice } from "@/components/demo-notice";
+import { DemoIntegrationCenter } from "@/components/demo-integration-center";
 import { EvidencePanel } from "@/components/evidence-panel";
 import { ReviewGate } from "@/components/review-gate";
 import { clients, getClient, workItems } from "@/lib/demo-data";
@@ -52,6 +53,7 @@ export default async function ClientPage({ params }: ClientPageProps) {
         <div className="detail-risk"><strong>{client.riskScore}</strong><span>Illustrative risk score · {client.risk}</span></div>
       </section>
       <DemoNotice />
+      {client.id === "sharma" ? <DemoIntegrationCenter /> : null}
       <div style={{ marginBottom: 18 }}>
         <EvidencePanel evidence={clientEvidence} />
       </div>
@@ -59,7 +61,7 @@ export default async function ClientPage({ params }: ClientPageProps) {
         <article className="kpi-card"><span className="kpi-label">Pending actions</span><div className="kpi-value">{client.pending}</div><div className="kpi-meta"><span>Needs review</span></div></article>
         <article className="kpi-card"><span className="kpi-label">Due this week</span><div className="kpi-value">{client.dueThisWeek}</div><div className="kpi-meta"><span>Illustrative deadlines</span></div></article>
         <article className="kpi-card"><span className="kpi-label">Marked compliant</span><div className="kpi-value">{client.compliant}</div><div className="kpi-meta"><span>Not portal-verified</span></div></article>
-        <article className="kpi-card"><span className="kpi-label">Connected sources</span><div className="kpi-value">0</div><div className="kpi-meta"><span>Set up in Settings</span></div></article>
+        <article className="kpi-card"><span className="kpi-label">Live connections</span><div className="kpi-value">{client.id === "sharma" ? "4" : "0"}</div><div className="kpi-meta"><span>{client.id === "sharma" ? "Illustrative demo systems" : "Set up in Settings"}</span></div></article>
       </section>
       <section className="panel">
         <div className="panel-header"><div><h2>Open work</h2><p>Items associated with this client profile</p></div><Link className="button" href={`/assistant?prompt=${encodeURIComponent(`What needs attention for ${client.shortName}?`)}`}>Ask about client</Link></div>
