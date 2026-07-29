@@ -48,6 +48,10 @@ export function CalendarIcon(props: IconProps) {
   return <IconBase {...props}><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" {...strokeProps} /><path d="M8 3v5M16 3v5M3.5 10h17" {...strokeProps} /></IconBase>;
 }
 
+export function SyncIcon(props: IconProps) {
+  return <IconBase {...props}><path d="M20 7v5h-5M4 17v-5h5M18.4 10A7 7 0 0 0 6.2 6.2L4 8M5.6 14A7 7 0 0 0 17.8 17.8L20 16" {...strokeProps} /></IconBase>;
+}
+
 export function FileIcon(props: IconProps) {
   return <IconBase {...props}><path d="M6 3.5h8l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" {...strokeProps} /><path d="M14 3.5v5h4M8 13h7M8 17h5" {...strokeProps} /></IconBase>;
 }

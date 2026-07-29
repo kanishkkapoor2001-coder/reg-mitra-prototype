@@ -7,39 +7,39 @@ export default function HomePage() {
       <main>
         <section className="marketing-hero">
           <div className="marketing-hero-copy">
-            <p className="marketing-kicker">Regulatory work, with a calmer centre</p>
-            <h1>The compliance day, already sorted.</h1>
+            <p className="marketing-kicker">Regulatory intelligence for Indian CA firms</p>
+            <h1>Every regulatory change, mapped to the clients it affects.</h1>
             <p className="marketing-lede">
-              Reg Mitra brings deadlines, client context, and source-aware answers into one
-              deliberate workspace for Indian compliance teams.
+              Reg Mitra monitors official circulars, explains what changed, identifies the
+              clients that need attention, and prepares the next step for professional review.
             </p>
             <div className="marketing-actions">
-              <Link className="marketing-button primary" href="/start">Start today</Link>
-              <Link className="marketing-button quiet" href="/demo">Explore demo</Link>
+              <Link className="marketing-button primary" href="/demo">Explore the template</Link>
+              <Link className="marketing-button quiet" href="/start">Discuss a pilot</Link>
             </div>
-            <p className="marketing-proof">No card required · Source-aware workflows · Official sources linked</p>
+            <p className="marketing-proof">Official-source monitoring · Client-specific impact · Approval-gated actions</p>
           </div>
 
-          <div className="ledger-object" aria-label="A preview of the Reg Mitra compliance ledger">
+          <div className="ledger-object" aria-label="A preview of a client-specific regulatory impact brief">
             <div className="ledger-rail"><span>RM</span><i /><small>2026</small></div>
             <div className="ledger-sheet ledger-sheet-back" />
             <div className="ledger-sheet ledger-sheet-front">
               <div className="ledger-sheet-head">
-                <span>Compliance ledger</span>
-                <strong>July</strong>
+                <span>Regulatory impact brief</span>
+                <strong>New</strong>
               </div>
               <div className="ledger-date-row">
-                <time>31</time>
-                <div><strong>Quarterly TDS statement</strong><small>Income Tax Department · Official source</small></div>
-                <span className="ledger-status">3 days</span>
+                <time>01</time>
+                <div><strong>Official update detected</strong><small>CBIC · Original publication attached</small></div>
+                <span className="ledger-status">Verified</span>
               </div>
               <div className="ledger-date-row muted">
-                <time>07</time>
-                <div><strong>TDS deposit</strong><small>Monthly obligation · Conditional</small></div>
-                <span>Filed</span>
+                <time>02</time>
+                <div><strong>Two clients need review</strong><small>Matched to sector and transaction context</small></div>
+                <span>Mapped</span>
               </div>
               <div className="ledger-note">
-                <span>Every answer keeps its evidence attached.</span>
+                <span>Next: prepare the client brief for approval.</span>
                 <i>↗</i>
               </div>
             </div>
@@ -49,20 +49,20 @@ export default function HomePage() {
         <section className="marketing-principle">
           <p>Built for the person doing the work</p>
           <blockquote>
-            The useful answer is not another dashboard. It is knowing what matters now,
-            why it matters, and where the rule came from.
+            The useful answer is not another circular summary. It is knowing which clients
+            are affected, why, and what to do next.
           </blockquote>
         </section>
 
         <section className="marketing-process" id="how-it-works">
           <div className="section-intro">
             <p className="marketing-kicker">One continuous workflow</p>
-            <h2>From obligation to decision, without the hunt.</h2>
+            <h2>From official update to client action.</h2>
           </div>
           <ol className="process-list">
-            <li><span>01</span><div><h3>Begin with today</h3><p>See the few items that need judgment, ranked ahead of routine work.</p></div></li>
-            <li><span>02</span><div><h3>Open the evidence</h3><p>Trace a deadline or answer back to the authority before relying on it.</p></div></li>
-            <li><span>03</span><div><h3>Act with client context</h3><p>Move from the rule to the relevant client workspace without losing the thread.</p></div></li>
+            <li><span>01</span><div><h3>Monitor official sources</h3><p>Bring new circulars and regulatory updates into one source-linked review queue.</p></div></li>
+            <li><span>02</span><div><h3>See who is affected</h3><p>Match the change to each client’s sector, location, profile, and transaction context.</p></div></li>
+            <li><span>03</span><div><h3>Ask or prepare the action</h3><p>Explain the impact or draft the next step, with evidence and professional approval attached.</p></div></li>
           </ol>
         </section>
 
@@ -74,7 +74,7 @@ export default function HomePage() {
               Reg Mitra’s compliance calendar separates recurring national obligations from
               client-specific applicability and links each rule to its source.
             </p>
-            <Link className="marketing-text-link" href="/start">Explore the live calendar →</Link>
+            <Link className="marketing-text-link" href="/demo">See the template calendar →</Link>
           </div>
           <div className="calendar-mini" aria-hidden="true">
             <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span>
@@ -83,9 +83,9 @@ export default function HomePage() {
         </section>
 
         <section className="marketing-cta">
-          <p className="marketing-kicker">Experience the product</p>
-          <h2>Give the work a quieter place to happen.</h2>
-          <Link className="marketing-button light" href="/start">Start today</Link>
+          <p className="marketing-kicker">See the full workflow</p>
+          <h2>Know what changed. Know who it affects. Prepare what comes next.</h2>
+          <Link className="marketing-button light" href="/demo">Explore the template</Link>
         </section>
       </main>
     </PublicShell>

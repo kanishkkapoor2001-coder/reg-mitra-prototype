@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/calendar-refresh",
+      "schedule": "30 0 * * *"
+    }
+  ]
+}

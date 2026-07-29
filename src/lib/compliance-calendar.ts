@@ -1,4 +1,6 @@
-export type ComplianceCategory = "GST" | "Direct tax" | "Payroll";
+export type ComplianceCategory = "GST" | "Direct tax" | "Payroll" | "Regulatory update";
+export type CalendarMode = "demo" | "product";
+export type CalendarSourceState = "checked" | "review";
 
 export interface ComplianceEvent {
   id: string;
@@ -12,6 +14,21 @@ export interface ComplianceEvent {
   sourceLabel: string;
   sourceUrl: string;
   lastVerified: string;
+  kind: "obligation" | "regulatory-update";
+  sourceState: CalendarSourceState;
+}
+
+export interface CalendarSnapshot {
+  mode: "live";
+  year: number;
+  monthIndex: number;
+  checkedAt: string;
+  nextRefreshAt: string;
+  sourceCount: number;
+  sourcesReachable: number;
+  health: "healthy" | "review";
+  warnings: string[];
+  events: ComplianceEvent[];
 }
 
 const sources = {
@@ -50,10 +67,19 @@ function priorMonthLabel(year: number, monthIndex: number): string {
     .format(new Date(year, monthIndex - 1, 1));
 }
 
-export function getComplianceEvents(year: number, monthIndex: number): ComplianceEvent[] {
+export function getComplianceEvents(
+  year: number,
+  monthIndex: number,
+  options: {
+    lastVerified?: string;
+    sourceState?: CalendarSourceState;
+  } = {},
+): ComplianceEvent[] {
   const events: ComplianceEvent[] = [];
   const tdsDay = monthIndex === 3 ? 30 : 7;
   const tdsPeriod = priorMonthLabel(year, monthIndex);
+  const lastVerified = options.lastVerified ?? "Template data · 28 July 2026";
+  const sourceState = options.sourceState ?? "review";
 
   events.push({
     id: `tds-deposit-${year}-${monthIndex}`,
@@ -68,7 +94,9 @@ export function getComplianceEvents(year: number, monthIndex: number): Complianc
       : "The general due date is seven days from the end of the month in which tax was deducted or collected.",
     sourceLabel: sources.tdsDeposit.label,
     sourceUrl: sources.tdsDeposit.url,
-    lastVerified: "28 July 2026",
+    lastVerified,
+    kind: "obligation",
+    sourceState,
   });
 
   events.push({
@@ -82,7 +110,9 @@ export function getComplianceEvents(year: number, monthIndex: number): Complianc
     description: "The standard monthly due date is the 11th day of the succeeding month, subject to notifications or extensions.",
     sourceLabel: sources.gstr1.label,
     sourceUrl: sources.gstr1.url,
-    lastVerified: "28 July 2026",
+    lastVerified,
+    kind: "obligation",
+    sourceState,
   });
 
   events.push({
@@ -96,7 +126,9 @@ export function getComplianceEvents(year: number, monthIndex: number): Complianc
     description: "Employers generally pay contributions within 15 days of the close of each month.",
     sourceLabel: sources.epf.label,
     sourceUrl: sources.epf.url,
-    lastVerified: "28 July 2026",
+    lastVerified,
+    kind: "obligation",
+    sourceState,
   });
 
   events.push({
@@ -110,7 +142,9 @@ export function getComplianceEvents(year: number, monthIndex: number): Complianc
     description: "The standard monthly due date is the 20th day of the succeeding month, subject to notifications or extensions.",
     sourceLabel: sources.gstr3b.label,
     sourceUrl: sources.gstr3b.url,
-    lastVerified: "28 July 2026",
+    lastVerified,
+    kind: "obligation",
+    sourceState,
   });
 
   const statementDeadlines: Record<number, { day: number; quarter: string }> = {
@@ -132,7 +166,9 @@ export function getComplianceEvents(year: number, monthIndex: number): Complianc
       description: "Quarterly TDS statement deadlines are 31 July, 31 October, 31 January, and 31 May for Q1 through Q4 respectively.",
       sourceLabel: sources.tdsStatement.label,
       sourceUrl: sources.tdsStatement.url,
-      lastVerified: "28 July 2026",
+      lastVerified,
+      kind: "obligation",
+      sourceState,
     });
   }
 
@@ -149,7 +185,9 @@ export function getComplianceEvents(year: number, monthIndex: number): Complianc
       description: "Standard instalment dates are 15 June, 15 September, 15 December, and 15 March.",
       sourceLabel: sources.advanceTax.label,
       sourceUrl: sources.advanceTax.url,
-      lastVerified: "28 July 2026",
+      lastVerified,
+      kind: "obligation",
+      sourceState,
     });
   }
 

@@ -1,5 +1,6 @@
 import { PageHeading } from "@/components/page-heading";
 import { TrustBadge } from "@/components/trust-badge";
+import { getCorpusHealth } from "@/lib/rag/corpus";
 
 const integrations = [
   ["TA", "Tally", "Ledgers, vouchers, stock items, and reconciliations"],
@@ -10,6 +11,8 @@ const integrations = [
 ] as const;
 
 export default function SettingsPage() {
+  const corpus = getCorpusHealth();
+
   return (
     <>
       <PageHeading eyebrow="System" title="Settings" description="Manage sources, workspace controls, and review policies." />
@@ -36,15 +39,37 @@ export default function SettingsPage() {
           </div>
         </div>
         <div className="source-register">
+          <div className="corpus-health">
+            <div>
+              <p className="eyebrow">Research corpus</p>
+              <h3>Official regulatory evidence is ready</h3>
+              <p>
+                Hybrid retrieval combines semantic meaning with exact circular, form, section,
+                authority, date, and status matching.
+              </p>
+            </div>
+            <dl>
+              <div><dt>Official sources</dt><dd>{corpus.sourceCount}</dd></div>
+              <div><dt>Searchable chunks</dt><dd>{corpus.chunkCount}</dd></div>
+              <div><dt>Semantic chunks</dt><dd>{corpus.embeddedChunkCount}</dd></div>
+              <div><dt>Full text</dt><dd>{corpus.fullTextSourceCount}</dd></div>
+            </dl>
+            <div className="corpus-authorities" aria-label="Authorities in corpus">
+              {corpus.authorities.map((authority) => <span key={authority}>{authority}</span>)}
+            </div>
+          </div>
           <article className="source-row">
             <div><strong>Government portals</strong><small>GSTN, MCA, Income Tax, FSSAI, RBI</small></div>
             <p className="source-policy">No portal credentials or data connections have been configured.</p>
             <TrustBadge kind="evidence" state="not-connected" />
           </article>
           <article className="source-row">
-            <div><strong>Regulatory documents</strong><small>Circulars, notifications, orders, and rules</small></div>
-            <p className="source-policy">No authoritative document has been attached to the current illustrative claims.</p>
-            <TrustBadge kind="evidence" state="unverified" />
+            <div><strong>Regulatory documents</strong><small>Circulars, guidance, manuals, announcements, and official indexes</small></div>
+            <p className="source-policy">
+              {corpus.fullTextSourceCount} full-text official publications and {corpus.summaryOnlySourceCount} source summaries
+              are indexed. Every generated answer still requires applicability review.
+            </p>
+            <TrustBadge kind="evidence" state="connected" />
           </article>
           <article className="source-row">
             <div><strong>Professional review</strong><small>Named reviewer and version-level approval</small></div>

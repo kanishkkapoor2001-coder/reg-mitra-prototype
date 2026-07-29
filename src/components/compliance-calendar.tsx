@@ -1,15 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { CalendarIcon, ChevronRightIcon } from "@/components/icons";
+import { useEffect, useMemo, useState } from "react";
+import { CalendarIcon, ChevronRightIcon, SyncIcon } from "@/components/icons";
 import {
   getComplianceEvents,
   parseLocalDate,
+  type CalendarMode,
+  type CalendarSnapshot,
   type ComplianceCategory,
   type ComplianceEvent,
 } from "@/lib/compliance-calendar";
 
-const categories: readonly ("All" | ComplianceCategory)[] = ["All", "GST", "Direct tax", "Payroll"];
+const categories: readonly ("All" | ComplianceCategory)[] = [
+  "All",
+  "GST",
+  "Direct tax",
+  "Payroll",
+  "Regulatory update",
+];
 const weekdayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function monthKey(date: Date): string {
@@ -25,17 +33,85 @@ function dateLabel(value: string): string {
   }).format(parseLocalDate(value));
 }
 
-export function ComplianceCalendar() {
+function syncLabel(value: string): string {
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "Asia/Kolkata",
+    timeZoneName: "short",
+  }).format(new Date(value));
+}
+
+export function ComplianceCalendar({
+  initialSnapshot,
+  mode,
+}: {
+  initialSnapshot: CalendarSnapshot | null;
+  mode: CalendarMode;
+}) {
   const now = new Date();
   const [visibleMonth, setVisibleMonth] = useState(() => new Date(now.getFullYear(), now.getMonth(), 1));
   const [category, setCategory] = useState<(typeof categories)[number]>("All");
-  const events = useMemo(
-    () => getComplianceEvents(visibleMonth.getFullYear(), visibleMonth.getMonth()),
-    [visibleMonth],
+  const [snapshot, setSnapshot] = useState<CalendarSnapshot | null>(initialSnapshot);
+  const [syncState, setSyncState] = useState<"ready" | "loading" | "error">(
+    () => mode === "product" && !initialSnapshot ? "loading" : "ready",
   );
+  const [refreshKey, setRefreshKey] = useState(0);
+  const year = visibleMonth.getFullYear();
+  const monthIndex = visibleMonth.getMonth();
+  const snapshotMatchesMonth = snapshot?.year === year && snapshot.monthIndex === monthIndex;
+  const templateEvents = useMemo(
+    () => getComplianceEvents(year, monthIndex),
+    [year, monthIndex],
+  );
+  const fallbackEvents = useMemo(
+    () => getComplianceEvents(year, monthIndex, {
+      lastVerified: "Source refresh pending",
+      sourceState: "review",
+    }),
+    [year, monthIndex],
+  );
+  const events = mode === "demo"
+    ? templateEvents
+    : snapshotMatchesMonth
+      ? snapshot.events
+      : syncState === "error"
+        ? fallbackEvents
+        : [];
   const filteredEvents = category === "All" ? events : events.filter((event) => event.category === category);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = filteredEvents.find((event) => event.id === selectedId) ?? filteredEvents[0] ?? null;
+
+  useEffect(() => {
+    if (mode !== "product") return;
+    if (snapshotMatchesMonth && refreshKey === 0) return;
+
+    const controller = new AbortController();
+
+    fetch(`/api/calendar?year=${year}&month=${monthIndex}`, {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Calendar refresh failed");
+        return response.json() as Promise<CalendarSnapshot>;
+      })
+      .then((nextSnapshot) => {
+        setSnapshot(nextSnapshot);
+        setSelectedId(null);
+        setSyncState("ready");
+        setRefreshKey(0);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setSyncState("error");
+        setRefreshKey(0);
+      });
+
+    return () => controller.abort();
+  }, [mode, monthIndex, refreshKey, snapshotMatchesMonth, year]);
 
   const firstDay = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1);
   const lastDay = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 0);
@@ -49,11 +125,13 @@ export function ComplianceCalendar() {
   function moveMonth(offset: number) {
     setVisibleMonth((current) => new Date(current.getFullYear(), current.getMonth() + offset, 1));
     setSelectedId(null);
+    setSyncState(mode === "product" ? "loading" : "ready");
   }
 
   function showCurrentMonth() {
     setVisibleMonth(new Date(now.getFullYear(), now.getMonth(), 1));
     setSelectedId(null);
+    setSyncState(mode === "product" ? "loading" : "ready");
   }
 
   function eventsForDay(day: number): ComplianceEvent[] {
@@ -61,7 +139,61 @@ export function ComplianceCalendar() {
   }
 
   return (
-    <div className="compliance-calendar-shell">
+    <>
+      <div className={`calendar-source-notice ${mode === "demo" ? "template" : "live"}`}>
+        <div className="calendar-source-copy">
+          <span className="calendar-source-badge">
+            {mode === "demo"
+              ? "Static template"
+              : syncState === "loading"
+                ? "Refreshing"
+                : snapshot?.health === "review" || syncState === "error"
+                  ? "Review needed"
+                  : "Daily live feed"}
+          </span>
+          <p>
+            {mode === "demo"
+              ? "Sample dates only. This calendar never calls the live feed and does not update."
+              : "Official sources are checked daily at 6:00 AM IST. Extensions and client applicability remain review-gated."}
+          </p>
+        </div>
+        <div className="calendar-sync-status" aria-live="polite">
+          <i className={syncState === "error" || snapshot?.health === "review" ? "review" : ""} />
+          <span>
+            <strong>
+              {mode === "demo"
+                ? "Fixed sample"
+                : syncState === "loading"
+                  ? "Checking sources…"
+                  : snapshot
+                    ? `Checked ${syncLabel(snapshot.checkedAt)}`
+                    : "Source check pending"}
+            </strong>
+            <small>
+              {mode === "demo"
+                ? "No automatic refresh"
+                : snapshot
+                  ? `${snapshot.sourcesReachable}/${snapshot.sourceCount} sources reachable`
+                  : "Recurring dates remain visible"}
+            </small>
+          </span>
+          {mode === "product" ? (
+            <button
+              aria-label="Refresh live calendar"
+              disabled={syncState === "loading"}
+              onClick={() => {
+                setSyncState("loading");
+                setRefreshKey((current) => current + 1);
+              }}
+              type="button"
+            >
+              <SyncIcon />
+            </button>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="compliance-calendar-shell" aria-busy={syncState === "loading"}>
       <div className="calendar-toolbar">
         <div className="calendar-month-controls">
           <button aria-label="Previous month" className="calendar-arrow" onClick={() => moveMonth(-1)} type="button">
@@ -87,7 +219,16 @@ export function ComplianceCalendar() {
         </div>
       </div>
 
-      <div className="calendar-workspace">
+      {syncState === "loading" && events.length === 0 ? (
+        <div className="calendar-loading" role="status">
+          <div>
+            {Array.from({ length: 14 }, (_, index) => <span key={index} />)}
+          </div>
+          <aside><i /><i /><i /><i /></aside>
+          <p>Checking official sources and preparing this month…</p>
+        </div>
+      ) : (
+        <div className="calendar-workspace">
         <section className="month-grid" aria-label={`${new Intl.DateTimeFormat("en-IN", { month: "long", year: "numeric" }).format(visibleMonth)} calendar`}>
           <div className="weekday-row">
             {weekdayLabels.map((day) => <span key={day}>{day}</span>)}
@@ -131,6 +272,7 @@ export function ComplianceCalendar() {
                 <div><dt>Authority</dt><dd>{selected.authority}</dd></div>
                 <div><dt>Applies to</dt><dd>{selected.applicability}</dd></div>
                 <div><dt>Last verified</dt><dd>{selected.lastVerified}</dd></div>
+                <div><dt>Calendar state</dt><dd>{selected.kind === "regulatory-update" ? "Regulatory effective date" : "Recurring general obligation"} · {selected.sourceState === "checked" ? "source checked" : "review before relying"}</dd></div>
               </dl>
               <a className="official-source-link" href={selected.sourceUrl} rel="noreferrer" target="_blank">
                 <span><small>Official source</small><strong>{selected.sourceLabel}</strong></span>
@@ -147,6 +289,7 @@ export function ComplianceCalendar() {
           )}
         </aside>
       </div>
+      )}
 
       <section className="calendar-agenda" aria-label="Month agenda">
         <h2>Month agenda</h2>
@@ -159,5 +302,6 @@ export function ComplianceCalendar() {
         ))}
       </section>
     </div>
+    </>
   );
 }

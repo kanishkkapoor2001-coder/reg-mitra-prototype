@@ -19,6 +19,7 @@ export const config = {
     "/briefings/:path*",
     "/regulations/:path*",
     "/settings/:path*",
+    "/api/calendar/:path*",
     "/api/chat/:path*",
   ],
 };

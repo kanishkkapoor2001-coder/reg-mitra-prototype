@@ -107,7 +107,7 @@ export function AppShell({
           <span className="firm-avatar">MS</span>
           <span>
             <strong>Mehta Shah & Associates</strong>
-            <small>{sessionMode === "demo" ? "Demo workspace" : "Workspace"} · 6 clients</small>
+            <small>{sessionMode === "demo" ? "Template demo" : "Workspace"} · 6 clients</small>
           </span>
         </div>
         <form action="/api/auth/logout" method="post">
@@ -123,10 +123,16 @@ export function AppShell({
             <kbd>⌘ K</kbd>
           </button>
           <div className="topbar-actions">
-            {sessionMode === "demo" ? <span className="demo-pill"><i /> Demo data</span> : null}
+            {sessionMode === "demo" ? <span className="demo-pill"><i /> Template demo</span> : null}
             <span className="user-avatar" aria-label="Mehta Shah, Partner">MS</span>
           </div>
         </header>
+        {sessionMode === "demo" ? (
+          <div className="template-demo-banner" role="note">
+            <strong>Template demo</strong>
+            <span>Fictional records · no live portals, ledgers, filings, or client messages</span>
+          </div>
+        ) : null}
         <main className="main-content">{children}</main>
       </div>
       <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} />

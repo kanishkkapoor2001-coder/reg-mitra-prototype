@@ -6,25 +6,25 @@ export default function DemoPage() {
     <PublicShell>
       <main className="login-page">
         <section className="login-copy">
-          <p className="marketing-kicker">Separate product demo</p>
-          <h1>Explore the workflow with sample data.</h1>
-          <p>Enter a clearly labelled demonstration workspace with six fictional clients, a source-linked calendar, and AI assistance.</p>
+          <p className="marketing-kicker">Template demo</p>
+          <h1>See the workflow without mistaking it for live data.</h1>
+          <p>Explore a clearly labelled template with fictional clients, synthetic compliance states, realistic Ask and Act sessions, and visible review gates.</p>
           <ul>
-            <li><span>01</span> No password or card</li>
-            <li><span>02</span> Sample records stay clearly labelled</li>
-            <li><span>03</span> Progress resets with the browser session</li>
+            <li><span>01</span> Ask explains and shows what must be verified</li>
+            <li><span>02</span> Act prepares a draft but never executes it</li>
+            <li><span>03</span> No live portal, ledger, filing, or client system</li>
           </ul>
         </section>
         <section className="login-panel">
           <div className="login-mark">R/M</div>
-          <p className="access-label">Demonstration access</p>
-          <h2>Open sample workspace</h2>
-          <p>You will join as a demonstration partner at the fictional Mehta Shah & Associates.</p>
+          <p className="access-label">Template access</p>
+          <h2>Open the guided template</h2>
+          <p>You will enter the fictional Mehta Shah & Associates workspace with a complete sample conversation already open.</p>
           <form action="/api/auth/demo" method="post">
-            <button className="marketing-button primary wide" type="submit">Explore demo <span>→</span></button>
+            <button className="marketing-button primary wide" type="submit">Open template demo <span>→</span></button>
           </form>
-          <small>This is a sample environment. Do not enter confidential data.</small>
-          <Link href="/start">Ready for the product? Start today →</Link>
+          <small>Template only. Do not enter confidential data, portal credentials, passwords, or OTPs.</small>
+          <Link href="/start">Want to discuss a private pilot? Connect with us →</Link>
         </section>
       </main>
     </PublicShell>
