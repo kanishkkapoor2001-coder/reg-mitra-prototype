@@ -4,6 +4,14 @@ import { PageHeading } from "@/components/page-heading";
 import { trialDaysRemaining } from "@/lib/billing/entitlements";
 import { getCurrentWorkspace } from "@/lib/workspace";
 
+const statusLabels: Record<string, string> = {
+  trialing: "Trial",
+  active: "Active",
+  past_due: "Past due",
+  canceled: "Cancelled",
+  expired: "Expired",
+};
+
 export default async function BillingPage({
   searchParams,
 }: Readonly<{ searchParams: Promise<{ canceled?: string; success?: string }> }>) {
@@ -19,7 +27,7 @@ export default async function BillingPage({
       <>
         <PageHeading
           eyebrow="Plan and billing"
-          title="Your demo includes the complete workspace"
+          title="Explore the Reg Mitra sample workspace"
           description="This page shows how trial and subscription controls work. No payment can be made from the demo."
         />
         <section className="billing-panel demo-billing-panel">
@@ -27,18 +35,18 @@ export default async function BillingPage({
             <p className="eyebrow">Demo plan</p>
             <h2>Reg Mitra for teams</h2>
             <p>
-              Explore Today, Clients, Calendar, Briefings, Regulations, and Ask Reg Mitra
-              with fictional data. Your demo access does not expire and never creates a charge.
+              Explore Today, Clients, Calendar, Briefings, Regulations, and Assistant
+              with sample data. Your sample session lasts up to eight hours and never creates a charge.
             </p>
           </div>
           <dl>
-            <div><dt>Access</dt><dd>Complete demo</dd></div>
+            <div><dt>Access</dt><dd>Sample session</dd></div>
             <div><dt>Payment</dt><dd>Disabled</dd></div>
             <div><dt>Data</dt><dd>Fictional only</dd></div>
           </dl>
           <div className="button-row">
             <Link className="button primary" href="/today">Return to Today</Link>
-            <Link className="button" href="/pricing">View pricing</Link>
+            <Link className="button" href="/pricing">View pilot details</Link>
           </div>
         </section>
         <section className="billing-explainer" aria-labelledby="billing-demo-title">
@@ -48,7 +56,7 @@ export default async function BillingPage({
           </div>
           <ol>
             <li><strong>Start free</strong><span>Create a private firm workspace. No card is required.</span></li>
-            <li><strong>Use the full product</strong><span>Add clients, review updates, and save your work for seven days.</span></li>
+            <li><strong>Use the firm workspace</strong><span>Add clients, review updates, and save your work for seven days.</span></li>
             <li><strong>Choose whether to continue</strong><span>Your team subscribes only if you approve it.</span></li>
           </ol>
         </section>
@@ -85,7 +93,7 @@ export default async function BillingPage({
       <PageHeading
         eyebrow="Plan and billing"
         title={workspace.founderAccess ? "Founder access is active" : workspace.subscriptionStatus === "active" ? "Your subscription is active" : days ? `${days} trial ${days === 1 ? "day" : "days"} remaining` : "Choose a plan to continue"}
-        description={workspace.founderAccess ? "Your approved founder account has complete product access without billing." : "See your plan, trial period, and payment settings."}
+        description={workspace.founderAccess ? "Your approved founder account has access to this firm workspace without billing." : "See your plan, trial period, and payment settings."}
       />
       {params.success === "1" ? <div className="notice"><strong>Payment received.</strong> Access will update as soon as Stripe confirms the subscription.</div> : null}
       {params.canceled === "1" ? <div className="notice"><strong>Checkout canceled.</strong> No payment change was made.</div> : null}
@@ -95,12 +103,12 @@ export default async function BillingPage({
           <h2>{workspace.name}</h2>
           <p>
             {entitled
-              ? "Your team has access to every Reg Mitra workspace feature."
-              : "Your records remain private, but the workspace is paused until you choose a plan."}
+              ? "Your team has access to the features available in this workspace."
+              : "Your records remain in the workspace, but access is paused until you choose a plan."}
           </p>
         </div>
         <dl>
-          <div><dt>Status</dt><dd>{workspace.founderAccess ? "Founder access" : workspace.subscriptionStatus.replaceAll("_", " ")}</dd></div>
+          <div><dt>Status</dt><dd>{workspace.founderAccess ? "Founder access" : statusLabels[workspace.subscriptionStatus] ?? workspace.subscriptionStatus}</dd></div>
           <div><dt>Role</dt><dd>{workspace.role}</dd></div>
         </dl>
         <div className="button-row">
@@ -110,7 +118,7 @@ export default async function BillingPage({
             </form>
           ) : (
             <form action="/api/billing/checkout" method="post">
-              <button className="button primary" type="submit">Continue with Reg Mitra</button>
+              <button className="button primary" type="submit">View plan and price</button>
             </form>
           )}
           {entitled ? <Link className={`button ${workspace.founderAccess ? "primary" : ""}`} href="/today">Return to workspace</Link> : null}

@@ -1,31 +1,37 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { PublicShell } from "@/components/public-shell";
+
+export const metadata: Metadata = {
+  title: "Pilot access",
+  description: "Request a seven-day Reg Mitra pilot. No card, no automatic charge, and pricing confirmed before any paid plan.",
+};
 
 export default function PricingPage() {
   return (
     <PublicShell>
       <main className="editorial-page">
         <header className="editorial-hero narrow">
-          <p className="marketing-kicker">Pricing</p>
-          <h1>Use Reg Mitra free for seven days.</h1>
-          <p>Create your firm’s secure workspace and use the complete regulatory monitoring, client-impact, calendar, Answer, and Prepare workflow.</p>
+          <p className="marketing-kicker">Private pilot</p>
+          <h1>Try Reg Mitra for seven days.</h1>
+          <p>Request a workspace for one focused firm workflow. No card is required, and the pilot starts only after setup is confirmed.</p>
         </header>
         <section className="pricing-comparison">
           <article>
             <p className="pricing-label">Available now</p>
-            <h2>Seven days free</h2>
-            <strong>No card required</strong>
-            <p>Create a secure firm workspace and use Reg Mitra for seven days. The trial begins when your workspace is created.</p>
-            <ul><li>Updates from official sources</li><li>Personalised client impact</li><li>Source-linked compliance calendar</li><li>Answers and drafts with review controls</li></ul>
-            <Link className="marketing-button primary" href="/start">Start 7-day trial</Link>
+            <h2>Seven-day pilot</h2>
+            <strong>No charge · no card required</strong>
+            <p>Use a firm workspace with a small client set and a defined compliance workflow. Access is issued manually so the scope is clear before the seven days begin.</p>
+            <ul><li>Source-linked Answer and Prepare sessions</li><li>Client records, work queue, and review controls</li><li>Selected official-source regulatory library</li><li>Source-linked calendar for general obligations</li></ul>
+            <Link className="marketing-button primary" href="/start">Request pilot access</Link>
           </article>
           <article className="pricing-future">
-            <p className="pricing-label">After your trial</p>
+            <p className="pricing-label">After the pilot</p>
             <h2>Team subscription</h2>
-            <strong>Keep your workspace active</strong>
-            <p>Subscribe to continue using Reg Mitra with your team, client profiles, calendars, and reviewed drafts.</p>
-            <ul><li>Continuous official-source monitoring</li><li>Personalised client impact</li><li>Team roles and approvals</li><li>Private firm and client data</li></ul>
-            <span className="pricing-note">You choose whether to subscribe</span>
+            <strong>Pricing confirmed before you continue</strong>
+            <p>If the workflow is useful, we will share the current plan, included users, coverage, and support before any billing step.</p>
+            <ul><li>Keep the workspace and review history</li><li>Continue with team roles and approvals</li><li>Agree on regulatory coverage and onboarding</li><li>Choose whether to activate a paid plan</li></ul>
+            <span className="pricing-note">The pilot does not convert automatically</span>
           </article>
         </section>
       </main>

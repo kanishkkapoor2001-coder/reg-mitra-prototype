@@ -224,7 +224,7 @@ export function ConnectorControlCenter({ productMode }: ConnectorControlCenterPr
               <p>{connector.scope}</p>
               <dl>
                 <div><dt>Safe route</dt><dd>{connector.route}</dd></div>
-                <div><dt>Last verified</dt><dd>{relativeCheck(account?.last_succeeded_at ?? null)}</dd></div>
+                <div><dt>Last confirmed</dt><dd>{relativeCheck(account?.last_succeeded_at ?? null)}</dd></div>
               </dl>
               <small>{connector.note}</small>
               <button className="button" disabled type="button">Awaiting verified adapter</button>
@@ -236,14 +236,14 @@ export function ConnectorControlCenter({ productMode }: ConnectorControlCenterPr
       <div className="connector-truth-rule">
         <div>
           <p className="eyebrow">Execution truth</p>
-          <h3>Prepared ≠ submitted ≠ verified complete</h3>
+          <h3>Prepared ≠ submitted ≠ confirmed complete</h3>
         </div>
         <ol aria-label="Action truth progression">
           <li><span>1</span><strong>Prepared</strong><small>Workspace artifact</small></li>
           <li><i aria-hidden="true" /></li>
           <li><span>2</span><strong>Submitted</strong><small>Receipt required</small></li>
           <li><i aria-hidden="true" /></li>
-          <li><span>3</span><strong>Verified</strong><small>Source read-back</small></li>
+          <li><span>3</span><strong>Confirmed</strong><small>Source read-back</small></li>
         </ol>
       </div>
 

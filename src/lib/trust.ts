@@ -8,33 +8,33 @@ interface StateDefinition {
 
 export const evidenceStates: Record<EvidenceState, StateDefinition> = {
   verified: {
-    label: "Verified",
-    description: "Matched to an authoritative source and checked by a reviewer.",
+    label: "Source reviewed",
+    description: "A reviewer checked the official source for this specific item.",
     tone: "positive",
   },
   unverified: {
-    label: "Source needed",
-    description: "No authoritative source has been attached. Do not rely on this item yet.",
+    label: "Source not reviewed",
+    description: "An official source may be linked, but a reviewer has not approved this item.",
     tone: "warning",
   },
   demo: {
-    label: "Illustrative",
+    label: "Sample data",
     description: "Sample information used to preview the workspace.",
     tone: "neutral",
   },
   stale: {
-    label: "Check again",
+    label: "Source may be outdated",
     description: "The source is older than the workspace review policy allows.",
     tone: "danger",
   },
   "not-connected": {
-    label: "Not connected",
+    label: "No connection",
     description: "No external system is supplying or confirming this information.",
     tone: "neutral",
   },
   connected: {
-    label: "AI connected",
-    description: "AI assistance is available through a protected server-side connection.",
+    label: "Indexed",
+    description: "Official documents or source summaries are available in workspace search.",
     tone: "positive",
   },
 };

@@ -78,7 +78,7 @@ export function getComplianceEvents(
   const events: ComplianceEvent[] = [];
   const tdsDay = monthIndex === 3 ? 30 : 7;
   const tdsPeriod = priorMonthLabel(year, monthIndex);
-  const lastVerified = options.lastVerified ?? "Template data · 28 July 2026";
+  const lastVerified = options.lastVerified ?? "Sample data · 28 July 2026";
   const sourceState = options.sourceState ?? "review";
 
   events.push({

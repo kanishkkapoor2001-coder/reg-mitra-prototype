@@ -24,10 +24,10 @@ const newsreader = Newsreader({
 
 export const metadata: Metadata = {
   title: {
-    default: "Reg Mitra",
-    template: "%s · Reg Mitra",
+    default: "Reg Mitra | Regulatory research for Indian CA firms",
+    template: "%s | Reg Mitra",
   },
-  description: "Reg Mitra monitors official regulatory updates, maps them to affected clients, and prepares the next action for Indian CA firms.",
+  description: "Review official regulatory sources, check which clients may be affected, and prepare review-ready client work in one workspace for Indian CA firms.",
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

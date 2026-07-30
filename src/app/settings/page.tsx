@@ -12,30 +12,30 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <PageHeading eyebrow="System" title="Settings" description="Manage sources, workspace controls, and review policies." />
+      <PageHeading eyebrow="System" title="Settings" description="Review source coverage, connection status, and approval rules." />
       <ConnectorControlCenter productMode={productMode} />
       <section style={{ marginTop: 26 }}>
         <div className="page-heading" style={{ marginBottom: 14 }}>
           <div>
             <p className="eyebrow">Source register</p>
-            <h2>Authoritative sources and review policy</h2>
-            <p className="page-subtitle">The workspace will show information as verified only after a source and reviewer are recorded.</p>
+            <h2>Official sources and review policy</h2>
+            <p className="page-subtitle">Source links, indexed text, and reviewer approval remain separate states.</p>
           </div>
         </div>
         <div className="source-register">
           <div className="corpus-health">
             <div>
-              <p className="eyebrow">Research corpus</p>
-              <h3>Official regulatory evidence is ready</h3>
+              <p className="eyebrow">Source library</p>
+              <h3>Indexed regulatory sources</h3>
               <p>
-                Hybrid retrieval combines semantic meaning with exact circular, form, section,
-                authority, date, and status matching.
+                Reg Mitra searches indexed official documents and source summaries using both
+                exact terms and related meaning.
               </p>
             </div>
             <dl>
               <div><dt>Official sources</dt><dd>{corpus.sourceCount}</dd></div>
-              <div><dt>Searchable chunks</dt><dd>{corpus.chunkCount}</dd></div>
-              <div><dt>Semantic chunks</dt><dd>{corpus.embeddedChunkCount}</dd></div>
+              <div><dt>Searchable sections</dt><dd>{corpus.chunkCount}</dd></div>
+              <div><dt>Meaning-indexed sections</dt><dd>{corpus.embeddedChunkCount}</dd></div>
               <div><dt>Full text</dt><dd>{corpus.fullTextSourceCount}</dd></div>
             </dl>
             <div className="corpus-authorities" aria-label="Authorities in corpus">

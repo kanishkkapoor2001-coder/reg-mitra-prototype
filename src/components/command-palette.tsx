@@ -32,7 +32,7 @@ interface Command {
 const baseCommands: readonly Command[] = [
   { label: "Today", detail: "Your ranked work queue", href: "/", group: "Go to", icon: "today" },
   { label: "Clients", detail: "Open the client portfolio", href: "/clients", group: "Go to", icon: "clients" },
-  { label: "Ask Reg Mitra", detail: "Research and prepare work", href: "/assistant", group: "Go to", icon: "assistant" },
+  { label: "Assistant", detail: "Research and prepare work", href: "/assistant", group: "Go to", icon: "assistant" },
   { label: "Briefings", detail: "Client-ready drafts and reviews", href: "/briefings", group: "Go to", icon: "briefings" },
   { label: "Calendar", detail: "Deadlines and obligations", href: "/calendar", group: "Go to", icon: "calendar" },
   { label: "Regulations", detail: "Source-aware regulatory updates", href: "/regulations", group: "Go to", icon: "regulations" },

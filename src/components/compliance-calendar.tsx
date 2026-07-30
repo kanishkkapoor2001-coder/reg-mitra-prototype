@@ -71,7 +71,7 @@ export function ComplianceCalendar({
   );
   const fallbackEvents = useMemo(
     () => getComplianceEvents(year, monthIndex, {
-      lastVerified: "Source refresh pending",
+      lastVerified: "Availability check pending",
       sourceState: "review",
     }),
     [year, monthIndex],
@@ -147,17 +147,17 @@ export function ComplianceCalendar({
         <div className="calendar-source-copy">
           <span className="calendar-source-badge">
             {mode === "demo"
-              ? "Static template"
+              ? "Sample calendar"
               : syncState === "loading"
                 ? "Refreshing"
                 : snapshot?.health === "review" || syncState === "error"
                   ? "Review needed"
-                  : "Daily live feed"}
+                  : "Daily availability check"}
           </span>
           <p>
             {mode === "demo"
-              ? "Sample dates only. This calendar never calls the live feed and does not update."
-              : "Official sources are checked daily at 6:00 AM IST. Extensions and client applicability remain review-gated."}
+              ? "Fixed sample obligations. These dates do not refresh and must not be used for client work."
+              : "Monitored source pages are checked for availability daily at 6:00 AM IST. Confirm the current text, extensions, and client applicability before relying."}
           </p>
         </div>
         <div className="calendar-sync-status" aria-live="polite">
@@ -167,7 +167,7 @@ export function ComplianceCalendar({
               {mode === "demo"
                 ? "Fixed sample"
                 : syncState === "loading"
-                  ? "Checking sources…"
+                  ? "Checking source availability…"
                   : snapshot
                     ? `Checked ${syncLabel(snapshot.checkedAt)}`
                     : "Source check pending"}
@@ -182,7 +182,7 @@ export function ComplianceCalendar({
           </span>
           {mode === "product" ? (
             <button
-              aria-label="Refresh live calendar"
+              aria-label="Refresh source availability"
               disabled={syncState === "loading"}
               onClick={() => {
                 setSyncState("loading");
@@ -228,7 +228,7 @@ export function ComplianceCalendar({
             {Array.from({ length: 14 }, (_, index) => <span key={index} />)}
           </div>
           <aside><i /><i /><i /><i /></aside>
-          <p>Checking official sources and preparing this month…</p>
+          <p>Checking source availability and loading this month…</p>
         </div>
       ) : (
         <div className="calendar-workspace">
@@ -274,8 +274,8 @@ export function ComplianceCalendar({
               <dl>
                 <div><dt>Authority</dt><dd>{selected.authority}</dd></div>
                 <div><dt>Applies to</dt><dd>{selected.applicability}</dd></div>
-                <div><dt>Last verified</dt><dd>{selected.lastVerified}</dd></div>
-                <div><dt>Calendar state</dt><dd>{selected.kind === "regulatory-update" ? "Regulatory effective date" : "Recurring general obligation"} · {selected.sourceState === "checked" ? "source checked" : "review before relying"}</dd></div>
+                <div><dt>Availability checked</dt><dd>{selected.lastVerified}</dd></div>
+                <div><dt>Calendar state</dt><dd>{selected.kind === "regulatory-update" ? "Regulatory effective date" : "Recurring general obligation"} · {selected.sourceState === "checked" ? "source page reachable" : "manual source review needed"}</dd></div>
               </dl>
               <a className="official-source-link" href={selected.sourceUrl} rel="noreferrer" target="_blank">
                 <span><small>Official source</small><strong>{selected.sourceLabel}</strong></span>

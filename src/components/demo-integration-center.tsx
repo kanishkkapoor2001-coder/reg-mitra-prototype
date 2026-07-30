@@ -44,7 +44,7 @@ const actions: ReadonlyArray<{
     title: "Director KYC",
     source: "MCA",
     state: "verified",
-    label: "Verified complete",
+    label: "Confirmed complete",
     description: "The source system reports the filing as completed.",
     evidence: "MCA read-back · SRN ending 4821 · illustrative",
   },
@@ -180,7 +180,7 @@ export function DemoIntegrationCenter() {
 
       <footer className="action-truth-footer">
         <p>
-          <strong>Truth rule:</strong> preparing work never marks it submitted. “Verified
+          <strong>Truth rule:</strong> preparing work never marks it submitted. “Confirmed
           complete” requires a receipt or a read-back from the connected source.
         </p>
         <Link className="text-link" href="/settings">See connector plan →</Link>

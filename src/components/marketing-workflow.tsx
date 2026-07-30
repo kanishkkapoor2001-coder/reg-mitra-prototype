@@ -1,41 +1,39 @@
-import type { CSSProperties } from "react";
-
 const workflowNodes = [
   {
     className: "workflow-source",
     eyebrow: "01 · Official source",
-    title: "A rule changes",
-    description: "A circular, notification, or deadline appears.",
+    title: "Start with the publication",
+    description: "Open the authority, date, status, and original text behind the question.",
   },
   {
     className: "workflow-radar",
-    eyebrow: "02 · Source check",
-    title: "Reg Mitra checks the source",
-    description: "Keeps the authority, date, and original text attached.",
+    eyebrow: "02 · Source-grounded answer",
+    title: "See what changed",
+    description: "Get a concise explanation with citations, caveats, and missing evidence.",
   },
   {
     className: "workflow-explain",
-    eyebrow: "03A · Explain",
-    title: "Understand the impact",
-    description: "A plain-English explanation, with anything uncertain clearly marked.",
+    eyebrow: "03A · Client context",
+    title: "Check recorded facts",
+    description: "Compare sector, location, registrations, and open work. Missing facts stay unknown.",
   },
   {
     className: "workflow-match",
-    eyebrow: "03B · Match",
-    title: "Find affected clients",
-    description: "Checks profile, registrations, location, and transactions.",
+    eyebrow: "03B · Applicability",
+    title: "Identify who needs review",
+    description: "Flag clients that may be affected and show what still needs confirmation.",
   },
   {
     className: "workflow-act",
     eyebrow: "04 · Prepare",
-    title: "Prepare the next step",
-    description: "A client brief, task, checklist, calendar update, or draft.",
+    title: "Create the next draft",
+    description: "Prepare a brief, checklist, calendar update, document pack, or client note.",
   },
   {
     className: "workflow-review",
-    eyebrow: "05 · Review",
-    title: "Your team reviews",
-    description: "Nothing leaves the firm until a person approves it.",
+    eyebrow: "05 · Professional review",
+    title: "Approve before use",
+    description: "A named reviewer checks the source, client facts, and draft. Nothing is sent or filed.",
   },
 ] as const;
 
@@ -44,17 +42,17 @@ export function MarketingWorkflow() {
     <section className="workflow-explainer" id="workflow" aria-labelledby="workflow-title">
       <header className="workflow-heading">
         <div>
-          <p className="marketing-kicker">The path through Reg Mitra</p>
-          <h2 id="workflow-title">One update in. The right client action out.</h2>
+          <p className="marketing-kicker">How Reg Mitra works</p>
+          <h2 id="workflow-title">Keep the source attached from question to review.</h2>
         </div>
         <p>
-          The system reads the official source, explains the change, finds affected clients,
-          and prepares the next step. Your team makes the final call.
+          Research the update, compare it with client context, and prepare the next piece of
+          work. Your team decides the final position.
         </p>
       </header>
 
       <div className="workflow-frame">
-        <div className="workflow-live-label"><i /> Live workflow</div>
+        <div className="workflow-live-label">Review workflow</div>
         <svg
           aria-hidden="true"
           className="workflow-lines"
@@ -75,42 +73,16 @@ export function MarketingWorkflow() {
           <path d="M696 95 C732 95 720 305 756 305" pathLength="1" />
           <path d="M696 515 C732 515 720 305 756 305" pathLength="1" />
           <path d="M948 305 H1008" pathLength="1" />
-          <circle className="workflow-pulse pulse-one" cx="192" cy="305" r="4" />
-          <circle className="workflow-pulse pulse-two" cx="444" cy="305" r="4" />
-          <circle className="workflow-pulse pulse-three" cx="696" cy="515" r="4" />
-          <circle className="workflow-pulse pulse-four" cx="948" cy="305" r="4" />
           <circle className="workflow-runner" r="5">
-            <animateMotion
-              begin="0s"
-              dur="7.2s"
-              path="M192 305 H252 M252 305 H444 C480 305 468 95 504 95"
-              repeatCount="indefinite"
-            />
-          </circle>
-          <circle className="workflow-runner secondary" r="5">
-            <animateMotion
-              begin="2.2s"
-              dur="7.2s"
-              path="M444 305 C480 305 468 515 504 515 H696 C732 515 720 305 756 305"
-              repeatCount="indefinite"
-            />
-          </circle>
-          <circle className="workflow-runner" r="5">
-            <animateMotion
-              begin="4.3s"
-              dur="7.2s"
-              path="M756 305 H948 H1008"
-              repeatCount="indefinite"
-            />
+            <animateMotion begin="0s" dur="3.8s" path="M192 305 H252 H444 C480 305 468 515 504 515 H696 C732 515 720 305 756 305 H948 H1008" repeatCount="1" />
           </circle>
         </svg>
 
         <ol className="workflow-grid">
-          {workflowNodes.map((node, index) => (
+          {workflowNodes.map((node) => (
             <li
               className={`workflow-node ${node.className}`}
               key={node.eyebrow}
-              style={{ "--workflow-delay": `${index * 1.15}s` } as CSSProperties}
             >
               <span>{node.eyebrow}</span>
               <h3>{node.title}</h3>
@@ -121,7 +93,7 @@ export function MarketingWorkflow() {
       </div>
 
       <p className="workflow-caption">
-        The moving signal is the core value: one official update becomes the right action for the right client.
+        One review trail connects the publication, the client decision, and the prepared work.
       </p>
     </section>
   );

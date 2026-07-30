@@ -16,6 +16,7 @@
     "billing:test": "node --experimental-strip-types --test src/lib/billing/entitlements.test.ts",
     "connectors:test": "node --experimental-strip-types --test src/lib/connectors/truth.test.ts",
     "trials:test": "node --experimental-strip-types --test src/lib/trials/domain.test.ts",
+    "founder:test": "node --experimental-strip-types --test src/lib/auth/founder-access.test.ts",
     "test:a11y": "playwright test tests/e2e/accessibility.spec.ts"
   },
   "dependencies": {

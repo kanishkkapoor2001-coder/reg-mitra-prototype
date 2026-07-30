@@ -55,7 +55,7 @@ export default function BriefingsPage() {
                 className="text-link"
                 href={`/assistant?prompt=${encodeURIComponent(`Prepare a client briefing for ${briefing.client}: ${briefing.title}`)}`}
               >
-                Open in Ask Reg Mitra →
+                Open draft in Assistant →
               </Link>
             </article>
           ))}

@@ -22,8 +22,19 @@ export function requireSupabasePublicConfig(): SupabasePublicConfig {
 }
 
 export function getAppUrl(requestUrl?: string): string {
+  const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (productionHost) return `https://${productionHost.replace(/^https?:\/\//, "").replace(/\/+$/, "")}`;
+
   const configured = process.env.APP_URL?.trim();
-  if (configured) return configured.replace(/\/+$/, "");
+  if (configured && !(
+    process.env.VERCEL_ENV === "production"
+    && /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?$/i.test(configured)
+  )) return configured.replace(/\/+$/, "");
+
   if (requestUrl) return new URL(requestUrl).origin;
+
+  const deploymentHost = process.env.VERCEL_URL?.trim();
+  if (deploymentHost) return `https://${deploymentHost.replace(/^https?:\/\//, "").replace(/\/+$/, "")}`;
+
   return "http://localhost:3000";
 }

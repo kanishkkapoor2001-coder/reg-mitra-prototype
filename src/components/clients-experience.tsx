@@ -80,13 +80,13 @@ export function ClientsExperience({
           <h1>Who needs attention?</h1>
           <p>
             {mode === "demo"
-              ? "Fictional client profiles demonstrate the review workflow."
-              : "Open work and reviewed applicability determine what needs attention."}
+              ? "Sample client profiles demonstrate the review workflow."
+              : "Clients are ranked by their highest-priority open task. Review the client profile before acting."}
           </p>
         </div>
         <div className="portfolio-stat">
           <strong>{highRiskCount}</strong>
-          <span>high-priority {highRiskCount === 1 ? "client" : "clients"}</span>
+          <span>{highRiskCount === 1 ? "client with" : "clients with"} high-priority work</span>
         </div>
       </header>
 
@@ -103,7 +103,7 @@ export function ClientsExperience({
           />
         </label>
         <label className="filter-label">
-          <span className="sr-only">Filter by risk</span>
+          <span className="sr-only">Filter by highest task priority</span>
           <select
             className="filter-select"
             onChange={(event) => updateParams({ risk: event.target.value })}
@@ -125,11 +125,11 @@ export function ClientsExperience({
             <thead>
               <tr>
                 <SortableHeading active={sort} direction={direction} label="Client" onSort={changeSort} sortKey="name" />
-                <SortableHeading active={sort} direction={direction} label="Identifier" onSort={changeSort} sortKey="identifier" />
-                <SortableHeading active={sort} direction={direction} label="Priority" onSort={changeSort} sortKey="risk" />
+                <SortableHeading active={sort} direction={direction} label="Primary identifier" onSort={changeSort} sortKey="identifier" />
+                <SortableHeading active={sort} direction={direction} label="Highest task priority" onSort={changeSort} sortKey="risk" />
                 <SortableHeading active={sort} direction={direction} label="Next deadline" onSort={changeSort} sortKey="nextDeadline" />
                 <SortableHeading active={sort} direction={direction} label="Open work" numeric onSort={changeSort} sortKey="pending" />
-                <SortableHeading active={sort} direction={direction} label="Evidence" onSort={changeSort} sortKey="sourceStatus" />
+                <SortableHeading active={sort} direction={direction} label="Impact review" onSort={changeSort} sortKey="sourceStatus" />
               </tr>
             </thead>
             <tbody>

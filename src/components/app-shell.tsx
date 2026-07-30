@@ -19,7 +19,7 @@ import {
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
-const publicPaths = ["/", "/about", "/pricing", "/faq", "/login", "/start", "/demo", "/onboarding"];
+const publicPaths = ["/", "/about", "/pricing", "/faq", "/login", "/start", "/demo", "/founder", "/onboarding"];
 
 function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -92,7 +92,7 @@ export function AppShell({
         <details className="more-menu">
           <summary aria-label="More workspace options"><MoreIcon /><span>More</span></summary>
           <div className="more-menu-panel">
-            <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Drafts and reviews</small></span></Link>
+            <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Drafts awaiting review</small></span></Link>
             <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Updates and sources</small></span></Link>
             <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources and policy</small></span></Link>
             <Link href="/billing"><FileIcon /><span><strong>Billing</strong><small>Trial and subscription</small></span></Link>
@@ -106,7 +106,7 @@ export function AppShell({
           <span className="firm-avatar">{sessionMode === "demo" ? "MS" : "RM"}</span>
           <span>
             <strong>{sessionMode === "demo" ? "Mehta Shah & Associates" : "Your firm"}</strong>
-            <small>{sessionMode === "demo" ? "Template workspace" : "Secure workspace"}</small>
+            <small>{sessionMode === "demo" ? "Sample workspace" : "Firm workspace"}</small>
           </span>
         </div>
         <form action="/api/auth/logout" method="post">
@@ -118,7 +118,7 @@ export function AppShell({
         <header className="topbar">
           <button className="global-search" onClick={() => setCommandOpen(true)} type="button">
             <SearchIcon />
-            <span>Search or jump anywhere</span>
+            <span>Search pages and clients</span>
             <kbd>⌘ K</kbd>
           </button>
           <div className="topbar-actions">
@@ -138,8 +138,8 @@ export function AppShell({
         </header>
         {sessionMode === "demo" ? (
           <div className="template-demo-banner" role="note">
-            <strong>Template demo</strong>
-            <span>Fictional records · no live portals, ledgers, filings, or client messages</span>
+            <strong>Sample workspace</strong>
+            <span>Sample clients and regulatory data · no live connections or external actions</span>
           </div>
         ) : null}
         <main className="main-content">{children}</main>

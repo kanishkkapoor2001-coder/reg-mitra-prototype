@@ -43,7 +43,7 @@ NEXT STEPS
 Attach the official document, confirm the relevant product classification, and have the tax reviewer approve the position before client communication.
 
 SOURCE STATUS
-Illustrative template only. No authoritative document or live client ledger is connected.`,
+Sample response only. No official document or client ledger is connected.`,
       },
       {
         role: "user",
@@ -243,7 +243,7 @@ NEXT STEPS
 Keep the existing renewal control in place until the official text and client record are reviewed.
 
 SOURCE STATUS
-No authoritative FSSAI source or live licence record is attached.`,
+No official FSSAI source or licence record is attached.`,
       },
       {
         role: "user",
@@ -332,7 +332,7 @@ Not started. No credentials were requested, stored, or used.`,
         role: "assistant",
         mode: "ask",
         content: `CONCLUSION
-Reg Mitra cannot confirm a filing from this template. A live status needs authoritative portal evidence or an accepted acknowledgement.
+Reg Mitra cannot confirm a filing from this sample. A current status needs official portal evidence or an accepted acknowledgement.
 
 WHAT TO VERIFY
 Check the relevant period, form, filing status, acknowledgement, processing state, and any correction statement.
@@ -406,8 +406,8 @@ WHAT TO VERIFY
 3. Record any missing or conflicting evidence for professional review.
 
 NEXT STEPS
-Attach the authoritative source, confirm the client facts, and switch to Prepare only when you are ready to prepare a reviewable next step.
+Attach the official source, confirm the client facts, and switch to Prepare only when you are ready to prepare a reviewable next step.
 
 SOURCE STATUS
-Illustrative template response for: “${prompt}” No live source or client system was queried.`;
+Sample response for: “${prompt}” No external source or client system was queried.`;
 }

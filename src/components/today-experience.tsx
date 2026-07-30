@@ -75,7 +75,7 @@ export function TodayExperience({
           </p>
         </div>
         <Link className="button primary" href="/assistant">
-          <SparklesIcon /> Ask Reg Mitra
+          <SparklesIcon /> Assistant
         </Link>
       </header>
 

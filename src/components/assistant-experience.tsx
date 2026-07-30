@@ -138,9 +138,9 @@ function ResearchTrail({
   retrieval,
 }: Readonly<{ messageId: string; retrieval: ChatRetrievalPayload }>) {
   const stateLabel = {
-    locked: "Sources support this answer",
-    partial: "Some claims need review",
-    unsupported: "No supporting source",
+    locked: "Citations included",
+    partial: "Review the citations",
+    unsupported: "No source cited",
   }[retrieval.citationState];
 
   return (
@@ -185,9 +185,9 @@ function ResearchTrail({
                     ? "Full official text"
                     : source.sourceKind === "official-index-text"
                       ? "Official index"
-                      : "Verified summary"}
+                    : "Source summary"}
                 </span>
-                <span>{Math.round(source.relevance * 100)}% match strength</span>
+                <span>{Math.round(source.relevance * 100)}% relative search score</span>
               </div>
             </div>
             <a
@@ -373,9 +373,9 @@ export function AssistantExperience({
       <header className="assistant-hero">
         <span className="assistant-symbol"><SparklesIcon /></span>
         <div>
-          <p className="eyebrow">Answers with official sources</p>
-          <h1>Reg Mitra</h1>
-          <p>Get a sourced answer or prepare work for review. Nothing is sent without you.</p>
+          <p className="eyebrow">Source-linked research and drafting</p>
+          <h1>Assistant</h1>
+          <p>Search indexed sources or draft work for internal review. Reg Mitra cannot send, file, pay, or change an external system.</p>
         </div>
         <div className="assistant-hero-actions">
           <div className="assistant-mode-switch" aria-label="Assistant mode">
@@ -388,7 +388,7 @@ export function AssistantExperience({
                 type="button"
               >
                 <strong>{item === "ask" ? "Answer" : "Prepare"}</strong>
-                <small>{item === "ask" ? "Understand with sources" : "Create a reviewable draft"}</small>
+                <small>{item === "ask" ? "Research with source links" : "Draft for internal review"}</small>
               </button>
             ))}
           </div>
@@ -411,7 +411,7 @@ export function AssistantExperience({
       <div className="assistant-layout">
         <aside className="conversation-library" aria-label={templateMode ? "Sample conversations" : "Recent conversations"}>
           <div className="conversation-library-heading">
-            <p className="eyebrow">{templateMode ? "Sample sessions" : "Recent reviews"}</p>
+            <p className="eyebrow">{templateMode ? "Sample sessions" : "Recent conversations"}</p>
             <h2>{templateMode ? "See the full workflow" : "Continue your work"}</h2>
             <p>{templateMode ? "Realistic CA use cases, shown with fictional data." : "Saved securely in this firm workspace."}</p>
           </div>
@@ -437,7 +437,7 @@ export function AssistantExperience({
                   href={`/assistant?conversation=${encodeURIComponent(conversation.id)}`}
                   key={conversation.id}
                 >
-                  <span className="conversation-mode">Saved review</span>
+                  <span className="conversation-mode">Saved conversation</span>
                   <strong>{conversation.title}</strong>
                   <small>{new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" }).format(new Date(conversation.updatedAt))}</small>
                 </Link>
@@ -457,7 +457,7 @@ export function AssistantExperience({
                 <p>
                   {mode === "ask"
                     ? "Get a clear conclusion, what it means, what to check, and the official sources."
-                    : "Create a client note, checklist, task, or calendar update. You review it before anything happens."}
+                    : "Draft a client note, checklist, task outline, or proposed calendar change. You review and apply it yourself."}
                 </p>
                 <div className="prompt-grid">
                   {promptsByMode[mode].map((prompt) => (
@@ -552,7 +552,7 @@ export function AssistantExperience({
                           onClick={() => void approveMessage(message.id)}
                           type="button"
                         >
-                          Approve for internal use
+                          Record internal approval
                         </button>
                         <button
                           className="button"
@@ -572,8 +572,8 @@ export function AssistantExperience({
                     <div className="action-result positive" role="status">
                       <CheckCircleIcon />
                       <span>
-                        <strong>{templateMode ? "Demo approval recorded" : "Professional approval recorded"}</strong>
-                        <small>No external action was executed. An authorised last-mile confirmation remains required.</small>
+                        <strong>Internal approval recorded</strong>
+                        <small>No external action was taken. Sending and filing are not available in Reg Mitra.</small>
                       </span>
                     </div>
                   ) : null}
@@ -603,7 +603,7 @@ export function AssistantExperience({
                 <div className="assistant-thinking">
                   <span className="thinking-mark"><SparklesIcon /></span>
                   <span>
-                    <strong>{mode === "ask" ? "Checking official sources" : "Preparing a draft for review"}</strong>
+                    <strong>{mode === "ask" ? "Searching indexed sources" : "Preparing a draft for review"}</strong>
                     <small>Checking context, evidence gaps, and approval boundaries…</small>
                   </span>
                 </div>
@@ -652,7 +652,7 @@ export function AssistantExperience({
             />
             <div className="composer-actions">
               <span className="composer-note">
-                {templateMode ? "Template response · no live systems queried" : "Protected server route"} · ⌘ Enter
+                {templateMode ? "Sample response · no external systems queried" : "Saved to this conversation"} · ⌘ Enter
               </span>
               <button
                 className="button primary"
@@ -668,13 +668,13 @@ export function AssistantExperience({
         <aside className="context-panel" aria-label="Trust and review context">
           <div className="context-section">
             <p className="eyebrow">What this mode does</p>
-            <h2>{mode === "ask" ? "Answer explains. It never changes anything." : "Prepare creates. You approve the result."}</h2>
+            <h2>{mode === "ask" ? "Answer explains. It never changes anything." : "Prepare drafts. You decide what to use."}</h2>
             <div className="context-item">
-              <TrustBadge kind="evidence" state={templateMode ? "demo" : latestRetrieval?.citationState === "locked" ? "verified" : "unverified"} />
+              <TrustBadge kind="evidence" state={templateMode ? "demo" : "unverified"} />
               <span>
                 {mode === "ask"
                   ? "Explains, compares, and identifies what must be verified."
-                  : "Prepares drafts, checklists, calendar changes, and portal handoffs."}
+                  : "Drafts checklists, proposed calendar changes, and handoff steps."}
               </span>
             </div>
             <div className="context-item">
@@ -684,7 +684,7 @@ export function AssistantExperience({
           </div>
           {latestRetrieval ? (
             <div className="context-section retrieval-context">
-              <p className="eyebrow">Live research</p>
+              <p className="eyebrow">Source search</p>
               <h2>
                 {latestRetrieval.citationState === "locked"
                   ? "Answer linked to its evidence"
@@ -714,10 +714,10 @@ export function AssistantExperience({
           <div className="context-section assistant-contact-box">
             <p className="eyebrow">Human help</p>
             <h2>Ask a question or connect with us</h2>
-            <p>Talk through source coverage, your firm’s workflow, or starting a 7-day trial.</p>
+            <p>Talk through source coverage, your firm’s workflow, or requesting pilot access.</p>
             <div>
               <Link className="button" href="/faq">View FAQs</Link>
-              <Link className="button primary" href="/start">Start 7-day trial</Link>
+              <Link className="button primary" href="/start">Request pilot access</Link>
             </div>
           </div>
         </aside>
