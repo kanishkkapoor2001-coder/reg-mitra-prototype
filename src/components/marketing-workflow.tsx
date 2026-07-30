@@ -53,6 +53,7 @@ export function MarketingWorkflow() {
 
       <div className="workflow-frame">
         <div className="workflow-live-label"><i /> Review workflow</div>
+        <div className="workflow-compact-rail" aria-hidden="true"><i /></div>
         <svg
           aria-hidden="true"
           className="workflow-lines"

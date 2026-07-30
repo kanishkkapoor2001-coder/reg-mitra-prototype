@@ -390,11 +390,10 @@
   width: min(1200px, 100%);
   min-width: 920px;
   margin: 0 auto;
-  padding-top: 32px;
 }
 .workflow-live-label {
   position: absolute;
-  top: -16px;
+  top: -36px;
   left: 0;
   display: inline-flex;
   align-items: center;
@@ -405,6 +404,7 @@
   letter-spacing: .12em;
   text-transform: uppercase;
 }
+.workflow-compact-rail { display: none; }
 .workflow-live-label i {
   width: 7px;
   height: 7px;
@@ -550,6 +550,11 @@
   0%, 100% { opacity: .45; transform: scale(.82); }
   50% { opacity: 1; transform: scale(1); }
 }
+@keyframes workflow-rail {
+  0% { top: 4px; opacity: 0; }
+  5%, 92% { opacity: 1; }
+  100% { top: calc(100% - 14px); opacity: 0; }
+}
 
 @media (max-width: 1100px) {
   .marketing-hero {
@@ -567,13 +572,54 @@
   .workflow-heading { grid-template-columns: 1fr; align-items: start; }
   .workflow-frame { min-width: 0; }
   .workflow-lines { display: none; }
-  .workflow-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; gap: 16px; }
+  .workflow-compact-rail {
+    position: absolute;
+    z-index: 0;
+    top: 4px;
+    bottom: 4px;
+    left: 10px;
+    display: block;
+    width: 1px;
+    background: color-mix(in srgb, var(--paper) 20%, transparent);
+  }
+  .workflow-compact-rail::after {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in srgb, #a8d5b7 72%, transparent) 18%,
+      color-mix(in srgb, #a8d5b7 72%, transparent) 50%,
+      color-mix(in srgb, #a8d5b7 72%, transparent) 82%,
+      transparent
+    );
+    background-size: 100% 42%;
+    content: "";
+    animation: workflow-rail-glow 9s linear infinite;
+  }
+  .workflow-compact-rail i {
+    position: absolute;
+    top: 4px;
+    left: -4px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #f4f0df;
+    box-shadow: 0 0 0 5px rgb(168 213 183 / 10%), 0 0 14px rgb(222 239 226 / 85%);
+    animation: workflow-rail 9s linear infinite;
+  }
+  .workflow-grid { grid-template-columns: 1fr; grid-template-rows: none; gap: 16px; }
   .workflow-node {
     position: relative;
     grid-area: auto;
-    min-height: 154px;
+    min-height: 124px;
+    margin-left: 36px;
     animation-duration: 9s;
   }
+}
+@keyframes workflow-rail-glow {
+  from { background-position: 0 -42%; }
+  to { background-position: 0 142%; }
 }
 
 .marketing-process { max-width: 1280px; margin: 0 auto; padding: 120px clamp(24px, 5vw, 76px); }
@@ -818,17 +864,9 @@
   .workflow-heading { gap: 24px; margin-bottom: 44px; }
   .workflow-heading h2 { font-size: 42px; }
   .workflow-heading > p { font-size: 16px; }
-  .workflow-grid { grid-template-columns: 1fr; gap: 16px; }
-  .workflow-node { min-height: 0; padding: 20px; }
-  .workflow-node:not(:last-child)::after {
-    position: absolute;
-    top: 100%;
-    left: 28px;
-    width: 1px;
-    height: 17px;
-    background: color-mix(in srgb, var(--paper) 42%, transparent);
-    content: "";
-  }
+  .workflow-grid { gap: 14px; }
+  .workflow-node { min-height: 0; margin-left: 28px; padding: 20px; }
+  .workflow-compact-rail { left: 8px; }
   .workflow-caption { margin-top: 36px; font-size: 16px; }
   .marketing-process, .marketing-calendar-preview { padding: 80px 20px; }
   .calendar-proof-grid { grid-template-columns: repeat(5, minmax(74px, 1fr)); overflow-x: auto; }
