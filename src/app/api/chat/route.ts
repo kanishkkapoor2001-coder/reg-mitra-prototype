@@ -201,34 +201,39 @@ export async function POST(request: Request) {
 
   const messages = rawMessages.slice(-8);
   const workspace = await getCurrentWorkspace();
-  if (!workspace) {
-    return Response.json({ error: "A secure firm workspace is required." }, { status: 401 });
-  }
-  const supabase = await createSupabaseServerClient();
-  const { data: userData } = await supabase.auth.getUser();
-  if (!userData.user) {
-    return Response.json({ error: "Your session has expired. Sign in again." }, { status: 401 });
-  }
-  const [{ data: workspaceClients }, { data: workspaceTasks }] = await Promise.all([
-    supabase
-      .from("clients")
-      .select("id, display_name, sector, state_code")
-      .eq("workspace_id", workspace.id)
-      .eq("status", "active")
-      .limit(50),
-    supabase
-      .from("tasks")
-      .select("title, state, priority, due_at, client_id")
-      .eq("workspace_id", workspace.id)
-      .not("state", "in", '("completed","dismissed")')
-      .limit(50),
-  ]);
-  const workspaceContext = JSON.stringify({
-    notice: "Private workspace facts supplied by the signed-in firm. Treat missing fields as unknown.",
-    workspace: { id: workspace.id, name: workspace.name },
-    clients: workspaceClients ?? [],
-    openTasks: workspaceTasks ?? [],
-  });
+  const supabase = workspace ? await createSupabaseServerClient() : null;
+  const { data: userData } = supabase
+    ? await supabase.auth.getUser()
+    : { data: { user: null } };
+  const [{ data: workspaceClients }, { data: workspaceTasks }] = workspace && supabase
+    ? await Promise.all([
+      supabase
+        .from("clients")
+        .select("id, display_name, sector, state_code")
+        .eq("workspace_id", workspace.id)
+        .eq("status", "active")
+        .limit(50),
+      supabase
+        .from("tasks")
+        .select("title, state, priority, due_at, client_id")
+        .eq("workspace_id", workspace.id)
+        .not("state", "in", '("completed","dismissed")')
+        .limit(50),
+    ])
+    : [{ data: [] }, { data: [] }];
+  const workspaceContext = JSON.stringify(workspace
+    ? {
+      notice: "Private workspace facts supplied by the signed-in firm. Treat missing fields as unknown.",
+      workspace: { id: workspace.id, name: workspace.name },
+      clients: workspaceClients ?? [],
+      openTasks: workspaceTasks ?? [],
+    }
+    : {
+      notice: "Open public workspace. No private client facts are available. Ask for missing client facts instead of assuming them.",
+      workspace: { name: "Reg Mitra public workspace" },
+      clients: [],
+      openTasks: [],
+    });
   const retrievalQuery = messages
     .filter((message) => message.role === "user")
     .slice(-3)
@@ -318,6 +323,13 @@ export async function POST(request: Request) {
       corpus: retrieval.corpus,
       sources: retrieval.sources,
     };
+    if (!workspace || !supabase || !userData.user) {
+      return Response.json({
+        text,
+        model,
+        retrieval: retrievalPayload,
+      });
+    }
     let conversationId = requestedConversationId;
 
     if (conversationId) {

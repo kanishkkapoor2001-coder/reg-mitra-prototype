@@ -17,8 +17,8 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
           <Link href="/demo">Live demo</Link>
         </nav>
         <div className="public-header-actions">
-          <Link className="header-signin-link" href="/login">Sign in</Link>
-          <Link className="header-demo-link" href="/start">Start today <span>↗</span></Link>
+          <Link className="header-signin-link" href="/demo">View demo</Link>
+          <Link className="header-demo-link" href="/today">Open product <span>↗</span></Link>
         </div>
       </header>
       {children}
@@ -31,9 +31,9 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
           <Link href="/pricing">Pricing</Link>
           <Link href="/faq">FAQ</Link>
           <Link href="/demo">Live demo</Link>
-          <Link href="/login">Sign in</Link>
+          <Link href="/today">Open product</Link>
         </nav>
-        <small>© 2026 Reg Mitra · Private pilot</small>
+        <small>© 2026 Reg Mitra · Open access</small>
       </footer>
     </div>
   );

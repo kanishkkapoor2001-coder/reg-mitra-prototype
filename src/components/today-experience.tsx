@@ -25,7 +25,7 @@ export function TodayExperience({
   verifiedSourceCount,
 }: Readonly<{
   items: readonly TodayItem[];
-  mode: "demo" | "product";
+  mode: "demo" | "public" | "product";
   verifiedSourceCount: number;
 }>) {
   const [expandedId, setExpandedId] = useState<string | null>(items[0]?.id ?? null);
@@ -87,7 +87,13 @@ export function TodayExperience({
         <span><strong>{verifiedSourceCount}</strong><small>source-reviewed items</small></span>
         <div className="today-summary-note">
           <TrustBadge kind="evidence" state={mode === "demo" ? "demo" : verifiedSourceCount ? "verified" : "unverified"} />
-          <small>{mode === "demo" ? "Demo progress resets on reload." : "Reviews are saved to the workspace audit history."}</small>
+          <small>
+            {mode === "demo"
+              ? "Demo progress resets on reload."
+              : mode === "public"
+                ? "Public workspace progress lasts for this browser session."
+                : "Reviews are saved to the workspace audit history."}
+          </small>
         </div>
       </section>
 

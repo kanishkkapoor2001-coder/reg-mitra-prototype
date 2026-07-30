@@ -23,7 +23,7 @@ export default async function AssistantPage({ searchParams }: AssistantPageProps
   }
 
   const workspace = await getCurrentWorkspace();
-  if (!workspace) return <AssistantExperience initialPrompt={initialPrompt} />;
+  if (!workspace) return <AssistantExperience initialPrompt={initialPrompt} templateMode={false} />;
   const supabase = await createSupabaseServerClient();
   const { data: conversations } = await supabase
     .from("conversations")

@@ -19,7 +19,7 @@ import {
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
-const publicPaths = ["/", "/about", "/pricing", "/faq", "/login", "/start", "/demo", "/founder", "/onboarding"];
+const publicPaths = ["/", "/about", "/pricing", "/faq", "/demo"];
 
 function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -95,7 +95,6 @@ export function AppShell({
             <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Drafts awaiting review</small></span></Link>
             <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Updates and sources</small></span></Link>
             <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources and policy</small></span></Link>
-            <Link href="/billing"><FileIcon /><span><strong>Billing</strong><small>Trial and subscription</small></span></Link>
             <button className="appearance-button" onClick={toggleTheme} type="button">
               <AppearanceIcon /><span><strong>Appearance</strong><small>Use {theme === "light" ? "dark" : "light"} mode</small></span>
             </button>
@@ -105,13 +104,10 @@ export function AppShell({
         <div className="firm-card">
           <span className="firm-avatar">{sessionMode === "demo" ? "MS" : "RM"}</span>
           <span>
-            <strong>{sessionMode === "demo" ? "Mehta Shah & Associates" : "Your firm"}</strong>
-            <small>{sessionMode === "demo" ? "Sample workspace" : "Firm workspace"}</small>
+            <strong>{sessionMode === "demo" ? "Mehta Shah & Associates" : "Reg Mitra"}</strong>
+            <small>{sessionMode === "demo" ? "Sample workspace" : "Open workspace"}</small>
           </span>
         </div>
-        <form action="/api/auth/logout" method="post">
-          <button className="sidebar-signout" type="submit">{sessionMode === "demo" ? "Leave demo" : "Sign out"}</button>
-        </form>
       </aside>
 
       <div className="workspace">
@@ -131,8 +127,8 @@ export function AppShell({
               <CalendarIcon />
               <span>Calendar</span>
             </Link>
-            <span className="user-avatar" aria-label={sessionMode === "demo" ? "Mehta Shah, Partner" : "Signed-in user"}>
-              {sessionMode === "demo" ? "MS" : "You"}
+            <span className="user-avatar" aria-label={sessionMode === "demo" ? "Mehta Shah, Partner" : "Open workspace"}>
+              {sessionMode === "demo" ? "MS" : "RM"}
             </span>
           </div>
         </header>

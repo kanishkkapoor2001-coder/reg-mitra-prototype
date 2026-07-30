@@ -26,7 +26,7 @@ export function ClientsExperience({
   mode,
 }: Readonly<{
   clients: readonly PortfolioClient[];
-  mode: "demo" | "product";
+  mode: "demo" | "public" | "product";
 }>) {
   const router = useRouter();
   const pathname = usePathname();

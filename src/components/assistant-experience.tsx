@@ -717,7 +717,7 @@ export function AssistantExperience({
             <p>Talk through source coverage, your firm’s workflow, or requesting pilot access.</p>
             <div>
               <Link className="button" href="/faq">View FAQs</Link>
-              <Link className="button primary" href="/start">Request pilot access</Link>
+              <Link className="button primary" href="/today">Open the product</Link>
             </div>
           </div>
         </aside>

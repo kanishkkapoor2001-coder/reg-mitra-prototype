@@ -30,7 +30,7 @@ export default function DemoPage() {
             <button className="marketing-button primary wide" type="submit">Open the sample workspace <span>→</span></button>
           </form>
           <small>Sample data only. Do not enter client information, passwords, portal credentials, or OTPs.</small>
-          <Link href="/start">Want to test your own workflow? Request pilot access →</Link>
+          <Link href="/today">Want to use the full workspace? Open the product →</Link>
         </section>
       </main>
     </PublicShell>

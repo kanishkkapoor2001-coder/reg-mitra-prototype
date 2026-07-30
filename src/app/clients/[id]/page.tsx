@@ -8,7 +8,7 @@ import { ReviewGate } from "@/components/review-gate";
 import { clients, getClient, workItems } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getCurrentWorkspace } from "@/lib/workspace";
+import { getCurrentWorkspace, type CurrentWorkspace } from "@/lib/workspace";
 import type { EvidenceRecord } from "@/lib/types";
 
 interface ClientPageProps {
@@ -22,9 +22,12 @@ export function generateStaticParams() {
 export default async function ClientPage({ params }: ClientPageProps) {
   const { id } = await params;
   const isDemo = (await cookies()).get("reg_mitra_session")?.value === "demo";
+  const workspace = !isDemo && getSupabasePublicConfig()
+    ? await getCurrentWorkspace()
+    : null;
 
-  if (!isDemo && getSupabasePublicConfig()) {
-    return <ProductClientPage id={id} />;
+  if (workspace) {
+    return <ProductClientPage id={id} workspace={workspace} />;
   }
 
   const client = getClient(id);
@@ -85,10 +88,10 @@ export default async function ClientPage({ params }: ClientPageProps) {
   );
 }
 
-async function ProductClientPage({ id }: Readonly<{ id: string }>) {
-  const workspace = await getCurrentWorkspace();
-  if (!workspace) notFound();
-
+async function ProductClientPage({
+  id,
+  workspace,
+}: Readonly<{ id: string; workspace: CurrentWorkspace }>) {
   const supabase = await createSupabaseServerClient();
   const { data: client } = await supabase
     .from("clients")

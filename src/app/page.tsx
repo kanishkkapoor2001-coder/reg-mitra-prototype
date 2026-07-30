@@ -18,7 +18,7 @@ export default function HomePage() {
             </p>
             <div className="marketing-actions">
               <Link className="marketing-button primary" href="/demo">Open the live demo</Link>
-              <Link className="marketing-button quiet" href="/start">Start with your firm</Link>
+              <Link className="marketing-button quiet" href="/today">Open the product</Link>
             </div>
             <p className="marketing-proof">Selected official sources · Evidence gaps shown · Nothing sent or filed</p>
           </div>
@@ -93,7 +93,7 @@ export default function HomePage() {
           <p className="marketing-kicker">Private pilot · seven days · no card</p>
           <h2>Test one compliance workflow with your team.</h2>
           <p>We confirm the pilot scope and start date before creating your workspace.</p>
-          <Link className="marketing-button light" href="/start">Request pilot access</Link>
+          <Link className="marketing-button light" href="/today">Open the product</Link>
         </section>
       </main>
     </PublicShell>

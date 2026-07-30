@@ -8,7 +8,11 @@ import { getCurrentWorkspace } from "@/lib/workspace";
 export default async function ClientsPage() {
   const isDemo = (await cookies()).get("reg_mitra_session")?.value === "demo";
 
-  if (isDemo || !getSupabasePublicConfig()) {
+  const workspace = isDemo || !getSupabasePublicConfig()
+    ? null
+    : await getCurrentWorkspace();
+
+  if (!workspace) {
     return (
       <ClientsExperience
         clients={demoClients.map((client) => ({
@@ -21,14 +25,9 @@ export default async function ClientsPage() {
           nextDeadline: client.dueThisWeek ? "This week" : "No deadline",
           sourceStatus: "Illustrative",
         }))}
-        mode="demo"
+        mode="public"
       />
     );
-  }
-
-  const workspace = await getCurrentWorkspace();
-  if (!workspace) {
-    return <ClientsExperience clients={[]} mode="product" />;
   }
 
   const supabase = await createSupabaseServerClient();
