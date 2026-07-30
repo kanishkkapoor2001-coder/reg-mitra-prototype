@@ -15,6 +15,7 @@
     "rag:evaluate": "node --experimental-strip-types scripts/evaluate-regulatory-retrieval.mjs",
     "billing:test": "node --experimental-strip-types --test src/lib/billing/entitlements.test.ts",
     "connectors:test": "node --experimental-strip-types --test src/lib/connectors/truth.test.ts",
+    "trials:test": "node --experimental-strip-types --test src/lib/trials/domain.test.ts",
     "test:a11y": "playwright test tests/e2e/accessibility.spec.ts"
   },
   "dependencies": {

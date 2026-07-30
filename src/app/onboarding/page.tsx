@@ -1,9 +1,11 @@
 import { PublicShell } from "@/components/public-shell";
 
 const errors: Record<string, string> = {
-  invalid_workspace: "Enter a firm name and a short workspace address.",
+  invalid_workspace: "Enter a firm name, domain, and a short workspace address.",
+  trial_required: "Request pilot access with this work email before creating a workspace.",
+  trial_claimed: "This organization has already used its Reg Mitra trial.",
   unavailable: "That workspace address is unavailable. Try a different one.",
-  not_configured: "Customer workspaces are not enabled in this environment.",
+  not_configured: "Workspace setup is not available right now. Try again later.",
 };
 
 export default async function OnboardingPage({
@@ -17,12 +19,12 @@ export default async function OnboardingPage({
       <main className="login-page">
         <section className="login-copy">
           <p className="marketing-kicker">Create your workspace</p>
-          <h1>Give your firm one trusted compliance workspace.</h1>
-          <p>This creates an isolated workspace with you as its owner. Client records are added only after the workspace is ready.</p>
+          <h1>Set up your firm workspace.</h1>
+          <p>This creates a separate workspace with you as its owner. Add client records only after setup is complete.</p>
           <ul>
-            <li><span>01</span> Your firm starts with seven days of full product access</li>
+            <li><span>01</span> Your pilot begins when this workspace is created</li>
             <li><span>02</span> You control invitations and member roles</li>
-            <li><span>03</span> Every material change is recorded in the audit history</li>
+            <li><span>03</span> Review actions are recorded in the workspace audit history</li>
           </ul>
         </section>
         <section className="login-panel" aria-labelledby="workspace-title">
@@ -49,10 +51,19 @@ export default async function OnboardingPage({
               required
               type="text"
             />
-            <small>Use lowercase letters, numbers, and hyphens. You can invite your team after setup.</small>
+            <label htmlFor="workspace-domain">Firm website or domain</label>
+            <input
+              autoCapitalize="none"
+              id="workspace-domain"
+              name="organization_domain"
+              placeholder="yourfirm.in"
+              required
+              type="text"
+            />
+            <small>The domain identifies your firm and enforces one trial per organization.</small>
             {error ? <p className="form-error" role="alert">{error}</p> : null}
             <button className="marketing-button primary wide" type="submit">
-              Create secure workspace <span>→</span>
+              Create workspace <span>→</span>
             </button>
           </form>
         </section>
