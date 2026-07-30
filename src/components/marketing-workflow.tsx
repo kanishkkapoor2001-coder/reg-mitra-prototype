@@ -52,7 +52,7 @@ export function MarketingWorkflow() {
       </header>
 
       <div className="workflow-frame">
-        <div className="workflow-live-label">Review workflow</div>
+        <div className="workflow-live-label"><i /> Review workflow</div>
         <svg
           aria-hidden="true"
           className="workflow-lines"
@@ -73,16 +73,42 @@ export function MarketingWorkflow() {
           <path d="M696 95 C732 95 720 305 756 305" pathLength="1" />
           <path d="M696 515 C732 515 720 305 756 305" pathLength="1" />
           <path d="M948 305 H1008" pathLength="1" />
+          <circle className="workflow-pulse pulse-one" cx="192" cy="305" r="4" />
+          <circle className="workflow-pulse pulse-two" cx="444" cy="305" r="4" />
+          <circle className="workflow-pulse pulse-three" cx="696" cy="515" r="4" />
+          <circle className="workflow-pulse pulse-four" cx="948" cy="305" r="4" />
           <circle className="workflow-runner" r="5">
-            <animateMotion begin="0s" dur="3.8s" path="M192 305 H252 H444 C480 305 468 515 504 515 H696 C732 515 720 305 756 305 H948 H1008" repeatCount="1" />
+            <animateMotion
+              begin="0s"
+              dur="7.2s"
+              path="M192 305 H252 M252 305 H444 C480 305 468 95 504 95"
+              repeatCount="indefinite"
+            />
+          </circle>
+          <circle className="workflow-runner secondary" r="5">
+            <animateMotion
+              begin="2.2s"
+              dur="7.2s"
+              path="M444 305 C480 305 468 515 504 515 H696 C732 515 720 305 756 305"
+              repeatCount="indefinite"
+            />
+          </circle>
+          <circle className="workflow-runner" r="5">
+            <animateMotion
+              begin="4.3s"
+              dur="7.2s"
+              path="M756 305 H948 H1008"
+              repeatCount="indefinite"
+            />
           </circle>
         </svg>
 
         <ol className="workflow-grid">
-          {workflowNodes.map((node) => (
+          {workflowNodes.map((node, index) => (
             <li
               className={`workflow-node ${node.className}`}
               key={node.eyebrow}
+              style={{ "--workflow-delay": `${index * 1.15}s` } as CSSProperties}
             >
               <span>{node.eyebrow}</span>
               <h3>{node.title}</h3>
@@ -98,3 +124,4 @@ export function MarketingWorkflow() {
     </section>
   );
 }
+import type { CSSProperties } from "react";
