@@ -6,7 +6,6 @@ import { hasFounderAccess, hasProductEntitlement } from "@/lib/billing/entitleme
 
 export async function proxy(request: NextRequest) {
   const session = request.cookies.get("reg_mitra_session")?.value;
-  if (session === "demo") return NextResponse.next();
 
   if (getSupabasePublicConfig()) {
     const response = NextResponse.next({ request });
@@ -45,6 +44,8 @@ export async function proxy(request: NextRequest) {
       return response;
     }
   }
+
+  if (session === "demo") return NextResponse.next();
 
   const loginUrl = new URL("/login", request.url);
   loginUrl.searchParams.set("from", request.nextUrl.pathname);
