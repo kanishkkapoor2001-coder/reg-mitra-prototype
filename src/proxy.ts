@@ -13,13 +13,15 @@ export async function proxy(request: NextRequest) {
     const { data } = await supabase.auth.getUser();
     if (data.user) {
       const founderAccess = hasFounderAccess(data.user.email);
+      const onboardingPath = request.nextUrl.pathname === "/onboarding"
+        || request.nextUrl.pathname === "/api/workspaces";
       const { data: membership } = await supabase
         .from("workspace_memberships")
         .select("workspace_id, workspaces(subscriptions(status, trial_ends_at))")
         .limit(1)
         .maybeSingle();
 
-      if (!membership && request.nextUrl.pathname !== "/onboarding") {
+      if (!membership && !onboardingPath) {
         return NextResponse.redirect(new URL("/onboarding", request.url));
       }
       if (membership && request.nextUrl.pathname === "/onboarding") {
