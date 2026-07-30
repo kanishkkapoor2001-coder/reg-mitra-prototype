@@ -23,10 +23,14 @@ export function TodayExperience({
   items,
   mode,
   verifiedSourceCount,
+  hasClients = false,
+  notice = "",
 }: Readonly<{
   items: readonly TodayItem[];
   mode: "demo" | "public" | "product";
   verifiedSourceCount: number;
+  hasClients?: boolean;
+  notice?: string;
 }>) {
   const [expandedId, setExpandedId] = useState<string | null>(items[0]?.id ?? null);
   const [reviewedIds, setReviewedIds] = useState<readonly string[]>([]);
@@ -74,10 +78,17 @@ export function TodayExperience({
                 : "No unreviewed client-impact decisions are currently assigned to you."}
           </p>
         </div>
-        <Link className="button primary" href="/assistant">
-          <SparklesIcon /> Assistant
-        </Link>
+        <div className="today-hero-actions">
+          {mode === "product" ? (
+            <Link className="button" href="/tasks/new">Add work item</Link>
+          ) : null}
+          <Link className="button primary" href="/assistant">
+            <SparklesIcon /> Assistant
+          </Link>
+        </div>
       </header>
+
+      {notice ? <p className="today-notice" role="status">{notice}</p> : null}
 
       <section className="today-summary" aria-label="Today at a glance">
         <span><strong>{openItems.length}</strong><small>open items</small></span>
@@ -156,11 +167,35 @@ export function TodayExperience({
           })}
 
           {!openItems.length ? (
-            <div className="queue-complete">
-              <CheckCircleIcon />
-              <h2>No unreviewed work</h2>
-              <p>{mode === "demo" ? "Every demo item was handled for this session." : "New source impacts and assigned tasks will appear here."}</p>
-            </div>
+            mode === "product" ? (
+              <div className="queue-complete">
+                <CheckCircleIcon />
+                <h2>{hasClients ? "Your queue is empty" : "Set up your first queue"}</h2>
+                <p>
+                  {hasClients
+                    ? "Build a review queue from the statutory compliance calendar for your clients, or add a work item yourself."
+                    : "Add a client first, then build a review queue from the statutory compliance calendar."}
+                </p>
+                <div className="queue-empty-actions">
+                  {hasClients ? (
+                    <>
+                      <form action="/api/tasks/generate" method="post">
+                        <button className="button primary" type="submit">Build my queue from the calendar</button>
+                      </form>
+                      <Link className="button" href="/tasks/new">Add a work item</Link>
+                    </>
+                  ) : (
+                    <Link className="button primary" href="/clients/new">Add your first client</Link>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="queue-complete">
+                <CheckCircleIcon />
+                <h2>No unreviewed work</h2>
+                <p>{mode === "demo" ? "Every demo item was handled for this session." : "New source impacts and assigned tasks will appear here."}</p>
+              </div>
+            )
           ) : null}
         </div>
       </section>

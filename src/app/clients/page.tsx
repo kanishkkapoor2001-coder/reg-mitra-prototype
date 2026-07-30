@@ -61,7 +61,7 @@ export default async function ClientsPage() {
       risk: highestPriority >= 3 ? "high" as const : highestPriority === 2 ? "medium" as const : "low" as const,
       pending: openTasks.length,
       nextDeadline: deadlines[0]
-        ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(new Date(deadlines[0]))
+        ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" }).format(new Date(deadlines[0]))
         : "No deadline",
       sourceStatus: impacts.length === 0 ? "Not assessed" : reviewed ? "Reviewed" : "Needs review",
     };

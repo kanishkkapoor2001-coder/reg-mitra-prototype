@@ -371,6 +371,9 @@ export async function POST(request: Request) {
         role: "user",
         mode,
         content: latestUserMessage?.content ?? retrievalQuery,
+        // Explicit: a batch insert unions all keys, so a row that omits
+        // citations is sent NULL (not the column default) and violates NOT NULL.
+        citations: [],
         created_by: userData.user.id,
       },
       {

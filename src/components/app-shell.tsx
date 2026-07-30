@@ -19,16 +19,24 @@ import {
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
-const publicPaths = ["/", "/about", "/pricing", "/faq", "/demo"];
+const publicPaths = ["/", "/about", "/pricing", "/faq", "/demo", "/login", "/founder", "/start", "/onboarding"];
 
 function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function initialsFor(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  const first = parts[0]?.[0] ?? "";
+  const second = parts[1]?.[0] ?? "";
+  return `${first}${second}`.toUpperCase() || "RM";
+}
+
 export function AppShell({
   children,
   sessionMode,
-}: Readonly<{ children: ReactNode; sessionMode: "demo" | "product" | null }>) {
+  workspaceName = null,
+}: Readonly<{ children: ReactNode; sessionMode: "demo" | "product" | null; workspaceName?: string | null }>) {
   const pathname = usePathname();
   const [commandOpen, setCommandOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -59,6 +67,22 @@ export function AppShell({
   if (publicPaths.includes(pathname)) {
     return children;
   }
+
+  const firmName = sessionMode === "demo"
+    ? "Mehta Shah & Associates"
+    : sessionMode === "product"
+      ? workspaceName ?? "Your firm"
+      : "Reg Mitra";
+  const firmSubtitle = sessionMode === "demo"
+    ? "Sample workspace"
+    : sessionMode === "product"
+      ? "Firm workspace"
+      : "Open workspace";
+  const firmAvatar = sessionMode === "demo"
+    ? "MS"
+    : sessionMode === "product" && workspaceName
+      ? initialsFor(workspaceName)
+      : "RM";
 
   return (
     <div className="app-shell">
@@ -102,10 +126,10 @@ export function AppShell({
         </details>
 
         <div className="firm-card">
-          <span className="firm-avatar">{sessionMode === "demo" ? "MS" : "RM"}</span>
+          <span className="firm-avatar">{firmAvatar}</span>
           <span>
-            <strong>{sessionMode === "demo" ? "Mehta Shah & Associates" : "Reg Mitra"}</strong>
-            <small>{sessionMode === "demo" ? "Sample workspace" : "Open workspace"}</small>
+            <strong>{firmName}</strong>
+            <small>{firmSubtitle}</small>
           </span>
         </div>
       </aside>
@@ -127,9 +151,18 @@ export function AppShell({
               <CalendarIcon />
               <span>Calendar</span>
             </Link>
-            <span className="user-avatar" aria-label={sessionMode === "demo" ? "Mehta Shah, Partner" : "Open workspace"}>
-              {sessionMode === "demo" ? "MS" : "RM"}
+            <span className="user-avatar" aria-label={sessionMode === "demo" ? "Mehta Shah, Partner" : firmName}>
+              {firmAvatar}
             </span>
+            {sessionMode ? (
+              <form action="/api/auth/logout" method="post">
+                <button className="button topbar-auth" type="submit">
+                  {sessionMode === "demo" ? "Leave demo" : "Sign out"}
+                </button>
+              </form>
+            ) : (
+              <Link className="button topbar-auth" href="/login">Sign in</Link>
+            )}
           </div>
         </header>
         {sessionMode === "demo" ? (

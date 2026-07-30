@@ -244,7 +244,18 @@ export function AssistantExperience({
   const [requestState, setRequestState] = useState<RequestState>("idle");
   const [actionStates, setActionStates] = useState<Record<string, ActionReviewState>>({});
   const [error, setError] = useState("");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
+
+  async function copyAnswer(messageId: string, content: string) {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedId(messageId);
+      window.setTimeout(() => setCopiedId((current) => (current === messageId ? null : current)), 2_000);
+    } catch {
+      setError("Couldn’t copy the answer. Select the text and copy manually.");
+    }
+  }
 
   async function requestAnswer(prompt: string) {
     const normalizedPrompt = prompt.trim();
@@ -540,8 +551,15 @@ export function AssistantExperience({
                       </>
                     ) : (
                       <>
-                        <Link className="button primary" href="/clients">{templateMode ? "Review sample clients" : "Review clients"}</Link>
-                        <button className="button" onClick={() => setMode("act")} type="button">Prepare the next step</button>
+                        <button
+                          className="button"
+                          onClick={() => void copyAnswer(message.id, message.content)}
+                          type="button"
+                        >
+                          {copiedId === message.id ? "Copied" : "Copy for file note"}
+                        </button>
+                        <Link className="button" href="/clients">{templateMode ? "Review sample clients" : "Review clients"}</Link>
+                        <button className="button primary" onClick={() => setMode("act")} type="button">Prepare the next step</button>
                       </>
                     )}
                   </div>
