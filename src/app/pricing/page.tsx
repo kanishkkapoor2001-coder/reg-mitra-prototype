@@ -21,7 +21,7 @@ export default function PricingPage() {
             <p className="pricing-label">Available now</p>
             <h2>Complete workspace</h2>
             <strong>Free · no sign-in required</strong>
-            <p>Open the product and use its source-linked regulatory research, workflow, client examples, and live compliance calendar immediately.</p>
+            <p>Open the product and use its source-linked regulatory research, workflow, client examples, and source-linked compliance calendar immediately.</p>
             <ul>
               <li>Source-grounded Ask and Act sessions</li>
               <li>Client workspace and review queue</li>

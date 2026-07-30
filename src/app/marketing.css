@@ -747,6 +747,13 @@
 .pricing-comparison li { font-size: 15px; }
 .pricing-comparison li::before { margin-right: 10px; color: var(--green-600); content: "✓"; }
 .pricing-comparison .marketing-button { align-self: flex-start; margin-top: auto; }
+.pricing-future .marketing-button.quiet {
+  border-color: color-mix(in srgb, var(--paper) 52%, transparent);
+  color: var(--paper);
+}
+.pricing-future .marketing-button.quiet:hover {
+  background: color-mix(in srgb, var(--paper) 10%, transparent);
+}
 .pricing-note { align-self: flex-start; margin-top: auto; padding: 10px 13px; border: 1px solid rgb(255 255 255 / 20%); border-radius: var(--radius-md); color: color-mix(in srgb, var(--paper) 68%, transparent); font-size: 12px; }
 
 .faq-list { border-top: 1px solid var(--line-strong); }

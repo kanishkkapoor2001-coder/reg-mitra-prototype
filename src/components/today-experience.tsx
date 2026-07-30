@@ -60,7 +60,7 @@ export function TodayExperience({
     <>
       <header className="today-hero">
         <div>
-          <p className="eyebrow">Today · Review workspace</p>
+          <p className="eyebrow">Today · Review queue</p>
           <h1>
             {decisionCount
               ? `${decisionCount} ${decisionCount === 1 ? "thing needs" : "things need"} your decision`
@@ -71,7 +71,7 @@ export function TodayExperience({
               ? "Start with the highest-priority exception. Everything else can wait."
               : mode === "demo"
                 ? "The fictional queue has been reviewed for this session."
-                : "There are no unreviewed decisions in your current queue."}
+                : "No unreviewed client-impact decisions are currently assigned to you."}
           </p>
         </div>
         <Link className="button primary" href="/assistant">
@@ -84,7 +84,7 @@ export function TodayExperience({
         <i />
         <span><strong>{decisionCount}</strong><small>need a decision</small></span>
         <i />
-        <span><strong>{verifiedSourceCount}</strong><small>source-reviewed items</small></span>
+        <span><strong>{verifiedSourceCount}</strong><small>sources reviewed</small></span>
         <div className="today-summary-note">
           <TrustBadge kind="evidence" state={mode === "demo" ? "demo" : verifiedSourceCount ? "verified" : "unverified"} />
           <small>

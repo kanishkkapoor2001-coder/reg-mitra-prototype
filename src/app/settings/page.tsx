@@ -12,7 +12,7 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <PageHeading eyebrow="System" title="Settings" description="Review source coverage, connection status, and approval rules." />
+      <PageHeading eyebrow="Workspace policy" title="Settings" description="Manage your firm, selected sources, reviewer roles, and workspace policy." />
       <ConnectorControlCenter productMode={productMode} />
       <section style={{ marginTop: 26 }}>
         <div className="page-heading" style={{ marginBottom: 14 }}>

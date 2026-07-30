@@ -67,7 +67,7 @@ export function AppShell({
           <span className="brand-mark"><CheckCircleIcon /></span>
           <span>
             <strong>Reg Mitra</strong>
-            <small>Regulatory intelligence</small>
+            <small>Regulatory research</small>
           </span>
         </Link>
 
@@ -92,9 +92,9 @@ export function AppShell({
         <details className="more-menu">
           <summary aria-label="More workspace options"><MoreIcon /><span>More</span></summary>
           <div className="more-menu-panel">
-            <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Drafts awaiting review</small></span></Link>
-            <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Updates and sources</small></span></Link>
-            <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources and policy</small></span></Link>
+            <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Internal drafts and review</small></span></Link>
+            <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Official sources and updates</small></span></Link>
+            <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources, team, and review policy</small></span></Link>
             <button className="appearance-button" onClick={toggleTheme} type="button">
               <AppearanceIcon /><span><strong>Appearance</strong><small>Use {theme === "light" ? "dark" : "light"} mode</small></span>
             </button>
@@ -114,7 +114,7 @@ export function AppShell({
         <header className="topbar">
           <button className="global-search" onClick={() => setCommandOpen(true)} type="button">
             <SearchIcon />
-            <span>Search pages and clients</span>
+            <span>Search clients, sources, and drafts</span>
             <kbd>⌘ K</kbd>
           </button>
           <div className="topbar-actions">

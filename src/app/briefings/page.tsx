@@ -28,17 +28,17 @@ export default function BriefingsPage() {
   return (
     <>
       <PageHeading
-        eyebrow="Client communication"
-        title="Client briefings"
-        description="Turn a regulatory update into a clear client note, with the source and review status attached."
-        actions={<Link className="button primary" href="/assistant?prompt=Prepare%20a%20client%20briefing"><SparklesIcon /> Prepare briefing</Link>}
+        eyebrow="Prepared work"
+        title="Internal drafts and review"
+        description="Review source-linked briefs, client requests, checklists, and proposed calendar changes."
+        actions={<Link className="button primary" href="/assistant?prompt=Prepare%20an%20internal%20client%20briefing"><SparklesIcon /> Prepare internal draft</Link>}
       />
       <section className="briefing-overview" aria-labelledby="briefing-overview-title">
         <div className="panel-header">
           <div>
-            <p className="eyebrow">Demo briefing queue</p>
-            <h2 id="briefing-overview-title">Three drafts show how review works</h2>
-            <p>Fictional examples only. Nothing has been sent to a client.</p>
+            <p className="eyebrow">Sample draft queue</p>
+            <h2 id="briefing-overview-title">Three internal drafts awaiting a decision</h2>
+            <p>Sample data. Nothing has been sent to a client.</p>
           </div>
         </div>
         <div className="briefing-grid">
@@ -55,7 +55,7 @@ export default function BriefingsPage() {
                 className="text-link"
                 href={`/assistant?prompt=${encodeURIComponent(`Prepare a client briefing for ${briefing.client}: ${briefing.title}`)}`}
               >
-                Open draft in Assistant →
+                Open internal draft →
               </Link>
             </article>
           ))}

@@ -66,15 +66,16 @@ function systemInstructionsForMode(mode: AssistantMode): string {
 
   return `${BASE_SYSTEM_INSTRUCTIONS}
 - You are in ASK mode. Explain, compare, or prepare a verification path without taking action.
-- Use plain text with these exact sections: CONCLUSION, WHAT TO VERIFY, NEXT STEPS, SOURCE STATUS.
-- NEXT STEPS should be a short numbered list.
-- SOURCE STATUS must name the cited source identifiers and state whether the retrieved evidence is sufficient for the conclusion.`;
+- Use plain text with these exact sections in this exact order: DIRECT ANSWER, WHY IT MATTERS, SOURCES, CAVEATS AND MISSING INFORMATION, POSSIBLE NEXT STEP.
+- SOURCES must name the cited source identifiers and explain what each one supports.
+- CAVEATS AND MISSING INFORMATION must identify applicability gaps and any client facts still required.
+- POSSIBLE NEXT STEP should be a short numbered list.`;
 }
 
 function hasCompleteStructure(text: string, mode: AssistantMode) {
   const required = mode === "act"
     ? ["DRAFT ACTION", "REQUIRED EVIDENCE", "APPROVAL GATE", "EXECUTION STATUS"]
-    : ["CONCLUSION", "WHAT TO VERIFY", "NEXT STEPS", "SOURCE STATUS"];
+    : ["DIRECT ANSWER", "WHY IT MATTERS", "SOURCES", "CAVEATS AND MISSING INFORMATION", "POSSIBLE NEXT STEP"];
   return required.every((heading) => text.includes(heading));
 }
 

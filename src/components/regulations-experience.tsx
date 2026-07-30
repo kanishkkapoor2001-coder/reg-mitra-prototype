@@ -25,9 +25,9 @@ export function RegulationsExperience() {
     <>
       <header className="page-heading">
         <div>
-          <p className="eyebrow">Regulatory intelligence</p>
-          <h1>What changed?</h1>
-          <p className="page-subtitle">Review illustrative changes alongside their evidence and approval state.</p>
+          <p className="eyebrow">Selected regulatory publications</p>
+          <h1>Official sources and updates</h1>
+          <p className="page-subtitle">Search selected indexed publications, review source details, and trace updates into client work.</p>
         </div>
       </header>
       <WorkspaceTrustSummary />
@@ -38,7 +38,7 @@ export function RegulationsExperience() {
           <input
             aria-label="Search regulatory items"
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search changes"
+            placeholder="Search official sources"
             value={query}
           />
         </label>
@@ -51,7 +51,7 @@ export function RegulationsExperience() {
           <option value="all">All authorities</option>
           {authorities.map((item) => <option value={item} key={item}>{item}</option>)}
         </select>
-        <span className="result-count">{visibleRegulations.length} changes</span>
+        <span className="result-count">{visibleRegulations.length} sources</span>
       </div>
 
       {visibleRegulations.length ? (
@@ -74,8 +74,8 @@ export function RegulationsExperience() {
       ) : (
         <section className="empty-state portfolio-empty">
           <SearchIcon />
-          <h2>No changes match</h2>
-          <p>Try another term or authority.</p>
+          <h2>No sources match</h2>
+          <p>Try another publication title, term, or authority.</p>
           <button className="button" onClick={() => { setQuery(""); setAuthority("all"); }} type="button">
             Clear filters
           </button>

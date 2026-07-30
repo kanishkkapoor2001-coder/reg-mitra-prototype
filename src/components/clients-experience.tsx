@@ -76,12 +76,12 @@ export function ClientsExperience({
     <>
       <header className="portfolio-hero">
         <div>
-          <p className="eyebrow">Client portfolio</p>
-          <h1>Who needs attention?</h1>
+          <p className="eyebrow">Client workspace</p>
+          <h1>Clients</h1>
           <p>
             {mode === "demo"
               ? "Sample client profiles demonstrate the review workflow."
-              : "Clients are ranked by their highest-priority open task. Review the client profile before acting."}
+              : "Review recorded client facts, possible regulatory impact, and open work."}
           </p>
         </div>
         <div className="portfolio-stat">

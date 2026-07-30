@@ -32,6 +32,11 @@ type RequestState = "idle" | "loading" | "error";
 type ActionReviewState = "reviewing" | "approved" | "deferred";
 
 const answerHeadings = new Set([
+  "DIRECT ANSWER",
+  "WHY IT MATTERS",
+  "SOURCES",
+  "CAVEATS AND MISSING INFORMATION",
+  "POSSIBLE NEXT STEP",
   "CONCLUSION",
   "WHAT TO VERIFY",
   "NEXT STEPS",
@@ -158,7 +163,7 @@ function ResearchTrail({
         </div>
       </div>
       <div className="research-summary">
-        <span>Source match: <strong>{retrieval.confidence}</strong></span>
+        <span>Relative search match: <strong>{retrieval.confidence}</strong></span>
         <span>{retrieval.corpus.embeddedChunkCount} source sections searched</span>
         <span>{retrieval.corpus.fullTextSourceCount} complete official documents</span>
       </div>
@@ -215,12 +220,14 @@ export function AssistantExperience({
   initialConversationId = null,
   initialMessages = [],
   initialPrompt = "",
+  publicMode = false,
   templateMode = false,
 }: Readonly<{
   conversationHistory?: readonly ConversationSummary[];
   initialConversationId?: string | null;
   initialMessages?: readonly ConversationMessage[];
   initialPrompt?: string;
+  publicMode?: boolean;
   templateMode?: boolean;
 }>) {
   const defaultConversation = templateMode ? demoConversations[0] : null;
@@ -373,7 +380,7 @@ export function AssistantExperience({
       <header className="assistant-hero">
         <span className="assistant-symbol"><SparklesIcon /></span>
         <div>
-          <p className="eyebrow">Source-linked research and drafting</p>
+          <p className="eyebrow">Source-grounded research and preparation</p>
           <h1>Assistant</h1>
           <p>Search indexed sources or draft work for internal review. Reg Mitra cannot send, file, pay, or change an external system.</p>
         </div>
@@ -409,11 +416,17 @@ export function AssistantExperience({
       ) : null}
 
       <div className="assistant-layout">
-        <aside className="conversation-library" aria-label={templateMode ? "Sample conversations" : "Recent conversations"}>
+        <aside className="conversation-library" aria-label={templateMode ? "Sample conversations" : publicMode ? "Current session" : "Recent conversations"}>
           <div className="conversation-library-heading">
-            <p className="eyebrow">{templateMode ? "Sample sessions" : "Recent conversations"}</p>
-            <h2>{templateMode ? "See the full workflow" : "Continue your work"}</h2>
-            <p>{templateMode ? "Realistic CA use cases, shown with fictional data." : "Saved securely in this firm workspace."}</p>
+            <p className="eyebrow">{templateMode ? "Sample sessions" : publicMode ? "Current session" : "Recent conversations"}</p>
+            <h2>{templateMode ? "See the full workflow" : publicMode ? "Open workspace" : "Continue your work"}</h2>
+            <p>
+              {templateMode
+                ? "Realistic CA use cases, shown with fictional data."
+                : publicMode
+                  ? "Answers remain in this browser session and are not added to a firm record."
+                  : "Saved securely in this firm workspace."}
+            </p>
           </div>
           <div className="conversation-list">
             {templateMode
@@ -453,11 +466,11 @@ export function AssistantExperience({
             <div className="assistant-welcome">
               <div>
                 <span className="mode-kicker">{mode === "ask" ? "ANSWER MODE" : "PREPARE MODE"}</span>
-                <h2>{mode === "ask" ? "What do you need to understand?" : "What should Reg Mitra prepare?"}</h2>
+                <h2>Start with a source, client, or regulatory question.</h2>
                 <p>
                   {mode === "ask"
-                    ? "Get a clear conclusion, what it means, what to check, and the official sources."
-                    : "Draft a client note, checklist, task outline, or proposed calendar change. You review and apply it yourself."}
+                    ? "The Assistant searches selected indexed sources and keeps citations, caveats, and missing facts visible."
+                    : "Prepare an internal briefing, information request, checklist, task list, or calendar proposal for professional review."}
                 </p>
                 <div className="prompt-grid">
                   {promptsByMode[mode].map((prompt) => (
@@ -487,16 +500,16 @@ export function AssistantExperience({
                     <span className="answer-icon"><CheckCircleIcon /></span>
                     <div>
                       <p className="eyebrow">
-                        {message.mode === "act" ? "Prepared draft" : "Sourced answer"} · Reg Mitra
+                        {message.mode === "act" ? "Internal draft" : "Source-grounded answer"} · Reg Mitra
                       </p>
                       <h2>
                         {message.mode === "act"
-                          ? "Prepared — awaiting your review"
-                          : "Prepared for professional review"}
+                          ? "Draft awaiting review"
+                          : "Answer with sources and caveats"}
                       </h2>
                     </div>
                     <span className={`answer-mode-badge ${message.mode}`}>
-                      {message.mode === "act" ? "Not sent" : "Official sources shown"}
+                      {message.mode === "act" ? "Professional review required" : "Official sources attached"}
                     </span>
                   </div>
                   <StructuredAnswer
@@ -652,7 +665,11 @@ export function AssistantExperience({
             />
             <div className="composer-actions">
               <span className="composer-note">
-                {templateMode ? "Sample response · no external systems queried" : "Saved to this conversation"} · ⌘ Enter
+                {templateMode
+                  ? "Sample response · no external systems queried"
+                  : publicMode
+                    ? "Current browser session · not saved to a firm record"
+                    : "Saved to this conversation"} · ⌘ Enter
               </span>
               <button
                 className="button primary"

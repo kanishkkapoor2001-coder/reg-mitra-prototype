@@ -14,7 +14,7 @@ import {
   SparklesIcon,
   TodayIcon,
 } from "@/components/icons";
-import { clients } from "@/lib/demo-data";
+import { clients, regulations } from "@/lib/demo-data";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -25,18 +25,18 @@ interface Command {
   label: string;
   detail: string;
   href: string;
-  group: "Go to" | "Clients";
+  group: "Clients" | "Sources" | "Drafts" | "Pages";
   icon: "today" | "clients" | "assistant" | "briefings" | "calendar" | "regulations" | "settings";
 }
 
 const baseCommands: readonly Command[] = [
-  { label: "Today", detail: "Your ranked work queue", href: "/", group: "Go to", icon: "today" },
-  { label: "Clients", detail: "Open the client portfolio", href: "/clients", group: "Go to", icon: "clients" },
-  { label: "Assistant", detail: "Research and prepare work", href: "/assistant", group: "Go to", icon: "assistant" },
-  { label: "Briefings", detail: "Client-ready drafts and reviews", href: "/briefings", group: "Go to", icon: "briefings" },
-  { label: "Calendar", detail: "Deadlines and obligations", href: "/calendar", group: "Go to", icon: "calendar" },
-  { label: "Regulations", detail: "Source-aware regulatory updates", href: "/regulations", group: "Go to", icon: "regulations" },
-  { label: "Settings", detail: "Sources and review policy", href: "/settings", group: "Go to", icon: "settings" },
+  { label: "Today", detail: "Prioritised review queue", href: "/today", group: "Pages", icon: "today" },
+  { label: "Clients", detail: "Recorded facts, possible impact, and open work", href: "/clients", group: "Pages", icon: "clients" },
+  { label: "Assistant", detail: "Source-grounded answers and internal drafts", href: "/assistant", group: "Pages", icon: "assistant" },
+  { label: "Internal drafts and review", detail: "Briefings, requests, and checklists", href: "/briefings", group: "Pages", icon: "briefings" },
+  { label: "Source-linked calendar", detail: "Recurring obligations and effective dates", href: "/calendar", group: "Pages", icon: "calendar" },
+  { label: "Official sources and updates", detail: "Selected indexed regulatory publications", href: "/regulations", group: "Pages", icon: "regulations" },
+  { label: "Settings", detail: "Sources, team, and review policy", href: "/settings", group: "Pages", icon: "settings" },
 ] as const;
 
 const iconMap = {
@@ -55,7 +55,6 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
 
   const commands = useMemo<Command[]>(() => [
-    ...baseCommands,
     ...clients.map((client) => ({
       label: client.shortName,
       detail: `${client.sector} · ${client.location}`,
@@ -63,6 +62,21 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       group: "Clients" as const,
       icon: "clients" as const,
     })),
+    ...regulations.map((regulation) => ({
+      label: regulation.title,
+      detail: `${regulation.authority} · ${regulation.published}`,
+      href: `/regulations?q=${encodeURIComponent(regulation.title)}`,
+      group: "Sources" as const,
+      icon: "regulations" as const,
+    })),
+    {
+      label: "IGST rate change: client impact note",
+      detail: "Sharma Pharma · Internal draft",
+      href: "/briefings",
+      group: "Drafts" as const,
+      icon: "briefings" as const,
+    },
+    ...baseCommands,
   ], []);
 
   const results = useMemo(() => {
@@ -107,12 +121,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         <div className="command-search">
           <SearchIcon />
           <input
-            aria-label="Search pages and clients"
+            aria-label="Search clients, sources, drafts, and pages"
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter" && results[0]) navigate(results[0].href);
             }}
-            placeholder="Where do you want to go?"
+            placeholder="Search clients, sources, and drafts"
             ref={inputRef}
             value={query}
           />
@@ -138,7 +152,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             <div className="command-empty">
               <SearchIcon />
               <strong>No match for “{query}”</strong>
-              <small>Try a client name or workspace area.</small>
+              <small>Try a client, authority, source title, draft, or page.</small>
             </div>
           )}
         </div>

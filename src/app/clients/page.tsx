@@ -23,7 +23,7 @@ export default async function ClientsPage() {
           risk: client.risk,
           pending: client.pending,
           nextDeadline: client.dueThisWeek ? "This week" : "No deadline",
-          sourceStatus: "Illustrative",
+          sourceStatus: "Sample data",
         }))}
         mode="public"
       />

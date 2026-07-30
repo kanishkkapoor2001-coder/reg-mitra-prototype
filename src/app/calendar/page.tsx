@@ -16,11 +16,11 @@ export default async function CalendarPage() {
   return (
     <>
       <PageHeading
-        eyebrow={mode === "demo" ? "Static template calendar" : "Daily official-source calendar"}
-        title={mode === "demo" ? "Sample compliance calendar" : "Live compliance calendar"}
+        eyebrow={mode === "demo" ? "Sample calendar" : "Official sources and recurring obligations"}
+        title={mode === "demo" ? "Sample source-linked calendar" : "Source-linked calendar"}
         description={mode === "demo"
           ? "A fixed sample of recurring obligations. It does not refresh or represent a live client workspace."
-          : "Recurring obligations and regulatory effective dates, recalculated and source-checked every day."}
+          : "Review recurring obligations and selected effective dates alongside their supporting sources."}
         actions={<Link className="button primary" href="/assistant?prompt=Help%20me%20review%20which%20upcoming%20compliances%20apply%20to%20a%20client"><SparklesIcon /> Check applicability</Link>}
       />
       <ComplianceCalendar initialSnapshot={initialSnapshot} mode={mode} />
