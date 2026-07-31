@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ClientEditorDialog, type ClientEditorValue } from "@/components/client-editor-dialog";
+import { ClientMemoryManager } from "@/components/client-memory-manager";
 import { CheckCircleIcon, ChevronRightIcon, SparklesIcon } from "@/components/icons";
 import {
   readManagedClients,
   useManagedClients,
   writeManagedClients,
+  type ClientMemory,
   type ManagedClient,
   type ManagedClientTask,
 } from "@/lib/public-client-store";
@@ -35,7 +37,6 @@ export function PublicClientWorkspace({ id }: Readonly<{ id: string }>) {
   const client = managedClients.find((candidate) => candidate.id === id && !candidate.archived) ?? null;
   const [editing, setEditing] = useState(false);
   const [newTask, setNewTask] = useState("");
-  const memoryRef = useRef<HTMLTextAreaElement>(null);
 
   const openTasks = useMemo(
     () => (client?.tasks ?? [])
@@ -93,9 +94,9 @@ export function PublicClientWorkspace({ id }: Readonly<{ id: string }>) {
     setNewTask("");
   }
 
-  function saveMemory() {
+  function saveMemories(memories: ClientMemory[]) {
     if (!client) return;
-    persist({ ...client, notes: memoryRef.current?.value.trim() ?? "", updatedAt: new Date().toISOString() });
+    persist({ ...client, memories, updatedAt: new Date().toISOString() });
   }
 
   if (!client) {
@@ -231,21 +232,7 @@ export function PublicClientWorkspace({ id }: Readonly<{ id: string }>) {
         </main>
 
         <aside className="client-context-rail">
-          <section>
-            <p className="eyebrow">Assistant memory</p>
-            <h2>What Reg Mitra should remember</h2>
-            <p>These notes are supplied only when you ask about this client. They are never shared with another client context.</p>
-            <textarea
-              aria-label="Client-specific Assistant memory"
-              defaultValue={client.notes}
-              key={`${client.id}-${client.notes}`}
-              placeholder="Example: Monthly GST filer. Exports under LUT. Partner prefers a one-page brief."
-              ref={memoryRef}
-              rows={7}
-            />
-            <button className="button" onClick={saveMemory} type="button">Save memory</button>
-            <small>Open product: stored in this browser and sent with client-specific questions.</small>
-          </section>
+          <ClientMemoryManager memories={client.memories} onChange={saveMemories} />
           <section>
             <p className="eyebrow">Client record</p>
             <dl>

@@ -26,12 +26,33 @@ test.describe("open client workspace", () => {
     await page.getByRole("button", { name: "Add task" }).click();
     await expect(page.getByText("Review GST reconciliation")).toBeVisible();
 
-    await page.getByLabel("Client-specific Assistant memory").fill("Monthly GST filer. Partner prefers one-page briefs.");
-    await page.getByRole("button", { name: "Save memory" }).click();
+    const memories = [
+      "Monthly GST filer.",
+      "Partner prefers one-page briefs.",
+      "Exports are reviewed under LUT.",
+      "Finance contact is available after 2 PM.",
+      "Management wants open questions shown first.",
+    ];
+    for (const memory of memories) {
+      await page.getByLabel("Add memory").fill(memory);
+      await page.getByRole("button", { name: "Save memory" }).click();
+      await expect(page.getByText(memory, { exact: true })).toBeVisible();
+    }
+    await expect(page.getByText("5 / 5")).toBeVisible();
+    await expect(page.getByText("Five included memories are in use")).toBeVisible();
+    await expect(page.getByLabel("Add memory")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Edit", exact: true }).first().click();
+    await page.getByLabel("Edit memory 1").fill("Monthly GST filer with quarterly reconciliation.");
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(page.getByText("Monthly GST filer with quarterly reconciliation.")).toBeVisible();
+
+    await page.getByRole("button", { name: "Remove", exact: true }).last().click();
+    await page.getByRole("button", { name: "Remove?" }).click();
+    await expect(page.getByText("4 / 5")).toBeVisible();
     await page.reload();
-    await expect(page.getByLabel("Client-specific Assistant memory")).toHaveValue(
-      "Monthly GST filer. Partner prefers one-page briefs.",
-    );
+    await expect(page.getByText("Monthly GST filer with quarterly reconciliation.")).toBeVisible();
+    await expect(page.getByText("Partner prefers one-page briefs.")).toBeVisible();
 
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])

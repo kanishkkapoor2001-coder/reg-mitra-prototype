@@ -18,7 +18,7 @@ export function ProductClientActions({
     location: "",
     identifiers: [],
     risk: "low",
-    notes: "",
+    memories: [],
     facts: [],
     tasks: [],
     archived: false,

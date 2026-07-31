@@ -27,7 +27,7 @@ interface IncomingClientContext {
   location?: string;
   identifiers?: string[];
   facts?: string[];
-  memory?: string;
+  memories?: string[];
   openTasks?: Array<{ title: string; authority?: string; due?: string; priority?: string }>;
 }
 
@@ -143,7 +143,7 @@ function safeClientContext(value: unknown): IncomingClientContext | null {
     location: cleanText(record.location, 120),
     identifiers: strings(record.identifiers, 12),
     facts: strings(record.facts, 30),
-    memory: cleanText(record.memory, 2_000),
+    memories: strings(record.memories, 5).map((memory) => memory.slice(0, 500)),
     openTasks,
   };
 }

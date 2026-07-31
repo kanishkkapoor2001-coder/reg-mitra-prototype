@@ -4,7 +4,7 @@ import { PublicShell } from "@/components/public-shell";
 
 export const metadata: Metadata = {
   title: "Open access",
-  description: "Use the Reg Mitra regulatory workspace without a sign-in, trial, or payment.",
+  description: "Use the core Reg Mitra workspace without a sign-in, trial, or payment.",
 };
 
 export default function PricingPage() {
@@ -13,8 +13,8 @@ export default function PricingPage() {
       <main className="editorial-page">
         <header className="editorial-hero narrow">
           <p className="marketing-kicker">Open access</p>
-          <h1>The full Reg Mitra workspace is free to use.</h1>
-          <p>No account, access code, trial request, card, or subscription is required.</p>
+          <h1>The core Reg Mitra workspace is free to use.</h1>
+          <p>No account, access code, trial request, card, or subscription is required. Five memories per client are included; more capacity is optional.</p>
         </header>
         <section className="pricing-comparison">
           <article>
@@ -30,18 +30,18 @@ export default function PricingPage() {
             </ul>
             <Link className="marketing-button primary" href="/today">Open the product</Link>
           </article>
-          <article className="pricing-future">
-            <p className="pricing-label">Access</p>
-            <h2>No gatekeeping</h2>
-            <strong>One public link</strong>
-            <p>Share the product URL with anyone. It opens directly into the workspace without email authentication or a founder bypass code.</p>
+          <article className="pricing-future" id="client-memory">
+            <p className="pricing-label">Client intelligence</p>
+            <h2>Memory capacity</h2>
+            <strong>5 client memories included</strong>
+            <p>Keep the most useful client facts and working preferences visible and available to client-specific Assistant conversations.</p>
             <ul>
-              <li>No expiring magic links</li>
-              <li>No one-time access codes</li>
-              <li>No organization trial restriction</li>
-              <li>No billing interruption</li>
+              <li>Five separate memories for every client</li>
+              <li>Every memory remains visible and editable</li>
+              <li>Strict client-by-client context separation</li>
+              <li>Additional capacity as a paid add-on</li>
             </ul>
-            <Link className="marketing-button quiet" href="/assistant">Try the Assistant</Link>
+            <p className="pricing-note">Add-on pricing is confirmed before activation. No automatic charge.</p>
           </article>
         </section>
       </main>

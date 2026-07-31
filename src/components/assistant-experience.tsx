@@ -37,7 +37,7 @@ export interface AssistantClientContext {
   location?: string;
   identifiers?: readonly string[];
   facts?: readonly string[];
-  memory?: string;
+  memories?: readonly string[];
   openTasks?: readonly { title: string; authority?: string; due?: string; priority?: string }[];
 }
 
@@ -275,7 +275,7 @@ export function AssistantExperience({
       location: client.location || client.stateCode,
       identifiers: client.identifiers,
       facts: client.facts,
-      memory: client.notes,
+      memories: client.memories.map((memory) => memory.content),
       openTasks: client.tasks
         .filter((task) => task.state !== "complete")
         .map((task) => ({
@@ -458,7 +458,7 @@ export function AssistantExperience({
             <strong>Working for {clientContext.name}</strong>
             <small>
               This conversation uses only this client&apos;s recorded profile
-              {clientContext.memory ? " and saved memory" : ""}.
+              {clientContext.memories?.length ? ` and ${clientContext.memories.length} saved ${clientContext.memories.length === 1 ? "memory" : "memories"}` : ""}.
             </small>
           </div>
           <Link href={`/clients/${encodeURIComponent(clientContext.id)}`}>Open client</Link>
