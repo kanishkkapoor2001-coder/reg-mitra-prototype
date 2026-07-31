@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, KeyboardEvent, useRef, useState } from "react";
+import { FormEvent, KeyboardEvent, useMemo, useRef, useState } from "react";
 import { ArrowUpIcon, CheckCircleIcon, SparklesIcon } from "@/components/icons";
 import { ReviewGate } from "@/components/review-gate";
 import { TrustBadge } from "@/components/trust-badge";
@@ -13,6 +13,7 @@ import {
   type DemoConversation,
 } from "@/lib/assistant-demo";
 import type { ChatRetrievalPayload, RetrievedSource } from "@/lib/rag/types";
+import { useManagedClients } from "@/lib/public-client-store";
 
 export interface ConversationMessage {
   id: string;
@@ -26,6 +27,18 @@ export interface ConversationSummary {
   id: string;
   title: string;
   updatedAt: string;
+}
+
+export interface AssistantClientContext {
+  id: string;
+  name: string;
+  legalName?: string;
+  sector?: string;
+  location?: string;
+  identifiers?: readonly string[];
+  facts?: readonly string[];
+  memory?: string;
+  openTasks?: readonly { title: string; authority?: string; due?: string; priority?: string }[];
 }
 
 type RequestState = "idle" | "loading" | "error";
@@ -216,6 +229,8 @@ function ResearchTrail({
 }
 
 export function AssistantExperience({
+  clientContext: initialClientContext = null,
+  clientId = null,
   conversationHistory = [],
   initialConversationId = null,
   initialMessages = [],
@@ -223,6 +238,8 @@ export function AssistantExperience({
   publicMode = false,
   templateMode = false,
 }: Readonly<{
+  clientContext?: AssistantClientContext | null;
+  clientId?: string | null;
   conversationHistory?: readonly ConversationSummary[];
   initialConversationId?: string | null;
   initialMessages?: readonly ConversationMessage[];
@@ -244,6 +261,31 @@ export function AssistantExperience({
   const [requestState, setRequestState] = useState<RequestState>("idle");
   const [actionStates, setActionStates] = useState<Record<string, ActionReviewState>>({});
   const [error, setError] = useState("");
+  const managedClients = useManagedClients();
+  const clientContext = useMemo<AssistantClientContext | null>(() => {
+    if (initialClientContext) return initialClientContext;
+    if (!publicMode || !clientId) return null;
+    const client = managedClients.find((candidate) => candidate.id === clientId && !candidate.archived);
+    if (!client) return null;
+    return {
+      id: client.id,
+      name: client.displayName,
+      legalName: client.legalName,
+      sector: client.sector,
+      location: client.location || client.stateCode,
+      identifiers: client.identifiers,
+      facts: client.facts,
+      memory: client.notes,
+      openTasks: client.tasks
+        .filter((task) => task.state !== "complete")
+        .map((task) => ({
+          title: task.title,
+          authority: task.authority,
+          due: task.due,
+          priority: task.urgency,
+        })),
+    };
+  }, [clientId, initialClientContext, managedClients, publicMode]);
   const composerRef = useRef<HTMLTextAreaElement>(null);
 
   async function requestAnswer(prompt: string) {
@@ -286,6 +328,8 @@ export function AssistantExperience({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           conversationId: activeConversationId,
+          clientContext,
+          clientId: clientContext?.id ?? clientId,
           mode: requestMode,
           messages: nextMessages.map(({ role, content }) => ({ role, content })),
         }),
@@ -406,6 +450,20 @@ export function AssistantExperience({
           ) : null}
         </div>
       </header>
+
+      {clientContext ? (
+        <div className="assistant-client-context" role="status">
+          <span><SparklesIcon /></span>
+          <div>
+            <strong>Working for {clientContext.name}</strong>
+            <small>
+              This conversation uses only this client&apos;s recorded profile
+              {clientContext.memory ? " and saved memory" : ""}.
+            </small>
+          </div>
+          <Link href={`/clients/${encodeURIComponent(clientContext.id)}`}>Open client</Link>
+        </div>
+      ) : null}
 
       {templateMode ? (
         <div className="assistant-template-note" role="note">

@@ -5,6 +5,8 @@ import { DemoNotice } from "@/components/demo-notice";
 import { DemoIntegrationCenter } from "@/components/demo-integration-center";
 import { EvidencePanel } from "@/components/evidence-panel";
 import { ReviewGate } from "@/components/review-gate";
+import { PublicClientWorkspace } from "@/components/public-client-workspace";
+import { ProductClientActions } from "@/components/product-client-actions";
 import { clients, getClient, workItems } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -31,6 +33,9 @@ export default async function ClientPage({ params }: ClientPageProps) {
   }
 
   const client = getClient(id);
+  if (!isDemo) {
+    return <PublicClientWorkspace id={id} />;
+  }
   if (!client) notFound();
   const items = workItems.filter((item) => item.client === client.shortName);
   const clientEvidence: EvidenceRecord = {
@@ -123,6 +128,17 @@ async function ProductClientPage({
           <p className="page-subtitle">
             {[client.legal_name, client.sector, client.state_code].filter(Boolean).join(" · ")}
           </p>
+        </div>
+        <div style={{ marginLeft: "auto" }}>
+          <ProductClientActions
+            client={{
+              id: client.id,
+              legalName: client.legal_name,
+              displayName: client.display_name,
+              sector: client.sector ?? "",
+              stateCode: client.state_code ?? "",
+            }}
+          />
         </div>
       </section>
       <div className="notice">

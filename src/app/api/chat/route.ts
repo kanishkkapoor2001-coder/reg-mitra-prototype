@@ -19,6 +19,18 @@ interface IncomingMessage {
   content: string;
 }
 
+interface IncomingClientContext {
+  id: string;
+  name: string;
+  legalName?: string;
+  sector?: string;
+  location?: string;
+  identifiers?: string[];
+  facts?: string[];
+  memory?: string;
+  openTasks?: Array<{ title: string; authority?: string; due?: string; priority?: string }>;
+}
+
 interface GeminiResponse {
   candidates?: Array<{
     content?: {
@@ -93,6 +105,47 @@ function isIncomingMessage(value: unknown): value is IncomingMessage {
 function safeModelName(value: string | undefined): string {
   const fallback = "gemini-3.6-flash";
   return value && /^[a-zA-Z0-9._-]+$/.test(value) ? value : fallback;
+}
+
+function cleanText(value: unknown, maxLength: number): string | undefined {
+  return typeof value === "string" && value.trim()
+    ? value.trim().slice(0, maxLength)
+    : undefined;
+}
+
+function safeClientContext(value: unknown): IncomingClientContext | null {
+  if (!value || typeof value !== "object") return null;
+  const record = value as Record<string, unknown>;
+  const id = cleanText(record.id, 100);
+  const name = cleanText(record.name, 160);
+  if (!id || !name) return null;
+  const strings = (candidate: unknown, limit: number) => Array.isArray(candidate)
+    ? candidate.map((item) => cleanText(item, 280)).filter((item): item is string => Boolean(item)).slice(0, limit)
+    : [];
+  const openTasks = Array.isArray(record.openTasks)
+    ? record.openTasks.flatMap((item) => {
+      if (!item || typeof item !== "object") return [];
+      const task = item as Record<string, unknown>;
+      const title = cleanText(task.title, 280);
+      return title ? [{
+        title,
+        authority: cleanText(task.authority, 120),
+        due: cleanText(task.due, 80),
+        priority: cleanText(task.priority, 20),
+      }] : [];
+    }).slice(0, 30)
+    : [];
+  return {
+    id,
+    name,
+    legalName: cleanText(record.legalName, 240),
+    sector: cleanText(record.sector, 120),
+    location: cleanText(record.location, 120),
+    identifiers: strings(record.identifiers, 12),
+    facts: strings(record.facts, 30),
+    memory: cleanText(record.memory, 2_000),
+    openTasks,
+  };
 }
 
 async function callGemini(
@@ -201,6 +254,11 @@ export async function POST(request: Request) {
   }
 
   const messages = rawMessages.slice(-8);
+  const rawClientId = (body as { clientId?: unknown })?.clientId;
+  const requestedClientId = typeof rawClientId === "string" && rawClientId.length <= 100
+    ? rawClientId
+    : null;
+  const publicClientContext = safeClientContext((body as { clientContext?: unknown })?.clientContext);
   const workspace = await getCurrentWorkspace();
   const supabase = workspace ? await createSupabaseServerClient() : null;
   const { data: userData } = supabase
@@ -222,18 +280,40 @@ export async function POST(request: Request) {
         .limit(50),
     ])
     : [{ data: [] }, { data: [] }];
+  const selectedWorkspaceClient = requestedClientId
+    ? (workspaceClients ?? []).find((client) => client.id === requestedClientId) ?? null
+    : null;
+  const { data: selectedClientFacts } = workspace && supabase && selectedWorkspaceClient
+    ? await supabase
+      .from("client_facts")
+      .select("fact_key, value, valid_from, valid_to, source_label")
+      .eq("workspace_id", workspace.id)
+      .eq("client_id", selectedWorkspaceClient.id)
+      .is("superseded_at", null)
+      .limit(50)
+    : { data: [] };
   const workspaceContext = JSON.stringify(workspace
     ? {
       notice: "Private workspace facts supplied by the signed-in firm. Treat missing fields as unknown.",
       workspace: { id: workspace.id, name: workspace.name },
       clients: workspaceClients ?? [],
       openTasks: workspaceTasks ?? [],
+      selectedClient: selectedWorkspaceClient
+        ? {
+          ...selectedWorkspaceClient,
+          facts: selectedClientFacts ?? [],
+          openTasks: (workspaceTasks ?? []).filter((task) => task.client_id === selectedWorkspaceClient.id),
+        }
+        : null,
     }
     : {
-      notice: "Open public workspace. No private client facts are available. Ask for missing client facts instead of assuming them.",
+      notice: publicClientContext
+        ? "Open public workspace. The selected client record was supplied from this browser. Treat it as unverified user-provided context and never mix it with another client."
+        : "Open public workspace. No private client facts are available. Ask for missing client facts instead of assuming them.",
       workspace: { name: "Reg Mitra public workspace" },
       clients: [],
       openTasks: [],
+      selectedClient: publicClientContext,
     });
   const retrievalQuery = messages
     .filter((message) => message.role === "user")
@@ -349,6 +429,7 @@ export async function POST(request: Request) {
         .from("conversations")
         .insert({
           workspace_id: workspace.id,
+          client_id: selectedWorkspaceClient?.id ?? null,
           title,
           created_by: userData.user.id,
         })

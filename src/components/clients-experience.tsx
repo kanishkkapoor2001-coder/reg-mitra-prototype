@@ -2,8 +2,16 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { ClientEditorDialog, type ClientEditorValue } from "@/components/client-editor-dialog";
 import { SearchIcon } from "@/components/icons";
+import {
+  createManagedClient,
+  managedClientHref,
+  readManagedClients,
+  useManagedClients,
+  writeManagedClients,
+} from "@/lib/public-client-store";
 import type { RiskLevel } from "@/lib/types";
 
 export interface PortfolioClient {
@@ -35,6 +43,24 @@ export function ClientsExperience({
   const risk = searchParams.get("risk") ?? "all";
   const sort = (searchParams.get("sort") ?? "risk") as SortKey;
   const direction = searchParams.get("direction") === "asc" ? "asc" : "desc";
+  const browserClients = useManagedClients();
+  const [editorOpen, setEditorOpen] = useState(false);
+
+  const sourceClients = useMemo(() => {
+    if (mode !== "public") return clients;
+    return browserClients
+      .filter((client) => !client.archived)
+      .map((client) => ({
+        id: client.id,
+        name: client.displayName,
+        identifier: client.identifiers[0] ?? "Not recorded",
+        sector: [client.sector, client.location || client.stateCode].filter(Boolean).join(" · ") || "Profile incomplete",
+        risk: client.risk,
+        pending: client.tasks.filter((task) => task.state !== "complete").length,
+        nextDeadline: client.tasks.find((task) => task.state !== "complete")?.due ?? "No deadline",
+        sourceStatus: client.source === "sample" ? "Sample record" : "Browser record",
+      }));
+  }, [browserClients, clients, mode]);
 
   function updateParams(changes: Record<string, string | null>) {
     const next = new URLSearchParams(searchParams.toString());
@@ -54,7 +80,7 @@ export function ClientsExperience({
 
   const visibleClients = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return [...clients]
+    return [...sourceClients]
       .filter((client) => risk === "all" || client.risk === risk)
       .filter((client) =>
         !normalized
@@ -68,9 +94,15 @@ export function ClientsExperience({
           : String(leftValue).localeCompare(String(rightValue), "en-IN", { numeric: true });
         return direction === "asc" ? comparison : -comparison;
       });
-  }, [clients, direction, query, risk, sort]);
+  }, [direction, query, risk, sort, sourceClients]);
 
-  const highRiskCount = clients.filter((client) => client.risk === "high").length;
+  const highRiskCount = sourceClients.filter((client) => client.risk === "high").length;
+
+  function savePublicClient(value: ClientEditorValue) {
+    const next = [...(browserClients ?? readManagedClients()), createManagedClient(value)];
+    writeManagedClients(next);
+    setEditorOpen(false);
+  }
 
   return (
     <>
@@ -116,7 +148,11 @@ export function ClientsExperience({
           </select>
         </label>
         <span className="result-count">{visibleClients.length} {visibleClients.length === 1 ? "client" : "clients"}</span>
-        {mode === "product" ? <Link className="button primary" href="/clients/new">Add client</Link> : null}
+        {mode === "product" ? (
+          <Link className="button primary" href="/clients/new">Add client</Link>
+        ) : mode === "public" ? (
+          <button className="button primary" onClick={() => setEditorOpen(true)} type="button">Add client</button>
+        ) : null}
       </div>
 
       {visibleClients.length ? (
@@ -136,7 +172,7 @@ export function ClientsExperience({
               {visibleClients.map((client) => (
                 <tr key={client.id}>
                   <th scope="row">
-                    <Link href={`/clients/${client.id}`}>{client.name}</Link>
+                    <Link href={managedClientHref(client.id)}>{client.name}</Link>
                     <small>{client.sector}</small>
                   </th>
                   <td className="client-identifier">{client.identifier}</td>
@@ -152,15 +188,29 @@ export function ClientsExperience({
       ) : (
         <section className="empty-state portfolio-empty">
           <SearchIcon />
-          <h2>{clients.length ? "No clients match" : "Add your first client"}</h2>
-          <p>{clients.length ? "Change the search or priority filter." : "Create a client profile before mapping regulatory impact or assigning work."}</p>
-          {clients.length ? (
+          <h2>{sourceClients.length ? "No clients match" : "Add your first client"}</h2>
+          <p>{sourceClients.length ? "Change the search or priority filter." : "Create a client profile before mapping regulatory impact or assigning work."}</p>
+          {sourceClients.length ? (
             <button className="button" onClick={() => router.replace(pathname)} type="button">Clear filters</button>
           ) : mode === "product" ? (
             <Link className="button primary" href="/clients/new">Add client</Link>
+          ) : mode === "public" ? (
+            <button className="button primary" onClick={() => setEditorOpen(true)} type="button">Add client</button>
           ) : null}
         </section>
       )}
+      {mode === "public" ? (
+        <>
+          <p className="browser-storage-note">
+            Open-product client records stay in this browser. Use a firm workspace before adding confidential client information.
+          </p>
+          <ClientEditorDialog
+            onClose={() => setEditorOpen(false)}
+            onSave={savePublicClient}
+            open={editorOpen}
+          />
+        </>
+      ) : null}
     </>
   );
 }
