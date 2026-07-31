@@ -1,5 +1,7 @@
 import { cookies } from "next/headers";
 import { ConnectorControlCenter } from "@/components/connector-control-center";
+import { EfficiencyValuePanel } from "@/components/efficiency-value-panel";
+import { InfoTip } from "@/components/info-tip";
 import { PageHeading } from "@/components/page-heading";
 import { TrustBadge } from "@/components/trust-badge";
 import { getCorpusHealth } from "@/lib/rag/corpus";
@@ -14,6 +16,7 @@ export default async function SettingsPage() {
     <>
       <PageHeading eyebrow="Workspace policy" title="Settings" description="Manage your firm, selected sources, reviewer roles, and workspace policy." />
       <ConnectorControlCenter productMode={productMode} />
+      <EfficiencyValuePanel />
       <section style={{ marginTop: 26 }}>
         <div className="page-heading" style={{ marginBottom: 14 }}>
           <div>
@@ -33,9 +36,33 @@ export default async function SettingsPage() {
               </p>
             </div>
             <dl>
-              <div><dt>Official sources</dt><dd>{corpus.sourceCount}</dd></div>
-              <div><dt>Searchable sections</dt><dd>{corpus.chunkCount}</dd></div>
-              <div><dt>Meaning-indexed sections</dt><dd>{corpus.embeddedChunkCount}</dd></div>
+              <div>
+                <dt className="label-with-tip">
+                  Official sources
+                  <InfoTip label="Explain official sources">
+                    Publications with an identifiable government or regulator source in the indexed library.
+                  </InfoTip>
+                </dt>
+                <dd>{corpus.sourceCount}</dd>
+              </div>
+              <div>
+                <dt className="label-with-tip">
+                  Searchable sections
+                  <InfoTip label="Explain searchable sections">
+                    Document sections Reg Mitra can retrieve by exact wording or related terms.
+                  </InfoTip>
+                </dt>
+                <dd>{corpus.chunkCount}</dd>
+              </div>
+              <div>
+                <dt className="label-with-tip">
+                  Meaning-indexed sections
+                  <InfoTip label="Explain meaning-indexed sections">
+                    Sections with semantic embeddings, allowing retrieval by meaning rather than exact words alone.
+                  </InfoTip>
+                </dt>
+                <dd>{corpus.embeddedChunkCount}</dd>
+              </div>
               <div><dt>Full text</dt><dd>{corpus.fullTextSourceCount}</dd></div>
             </dl>
             <div className="corpus-authorities" aria-label="Authorities in corpus">

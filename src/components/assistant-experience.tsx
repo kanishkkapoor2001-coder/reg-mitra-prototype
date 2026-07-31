@@ -12,6 +12,11 @@ import {
   type AssistantMode,
   type DemoConversation,
 } from "@/lib/assistant-demo";
+import {
+  finishEfficiencyTimer,
+  recordEfficiencyEvent,
+  startEfficiencyTimer,
+} from "@/lib/efficiency-store";
 import type { ChatRetrievalPayload, RetrievedSource } from "@/lib/rag/types";
 import { useManagedClients } from "@/lib/public-client-store";
 
@@ -306,6 +311,7 @@ export function AssistantExperience({
     setDraft("");
     setError("");
     setRequestState("loading");
+    const requestStartedAt = startEfficiencyTimer();
 
     try {
       if (templateMode) {
@@ -319,6 +325,10 @@ export function AssistantExperience({
             content: createTemplateAnswer(normalizedPrompt, requestMode),
           },
         ]);
+        recordEfficiencyEvent(
+          requestMode === "act" ? "assistant-draft" : "assistant-answer",
+          finishEfficiencyTimer(requestStartedAt),
+        );
         setRequestState("idle");
         return;
       }
@@ -357,6 +367,10 @@ export function AssistantExperience({
           retrieval: payload.retrieval,
         },
       ]);
+      recordEfficiencyEvent(
+        requestMode === "act" ? "assistant-draft" : "assistant-answer",
+        finishEfficiencyTimer(requestStartedAt),
+      );
       if (payload.conversationId) setActiveConversationId(payload.conversationId);
       setRequestState("idle");
     } catch (requestError) {

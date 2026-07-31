@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { InfoTip } from "@/components/info-tip";
 import { CheckCircleIcon, ChevronRightIcon, SparklesIcon } from "@/components/icons";
 import { TrustBadge } from "@/components/trust-badge";
+import { recordEfficiencyEvent } from "@/lib/efficiency-store";
 import type { EvidenceState, RiskLevel } from "@/lib/types";
 
 export interface TodayItem {
@@ -54,6 +56,7 @@ export function TodayExperience({
     }
 
     setReviewedIds((current) => [...current, id]);
+    recordEfficiencyEvent("review-recorded");
     const nextItem = openItems.find((item) => item.id !== id);
     setFocusedId(nextItem?.id ?? null);
   }
@@ -93,7 +96,12 @@ export function TodayExperience({
             <section className="today-focus-card" aria-labelledby="today-focus-title">
               <header>
                 <div>
-                  <p className="eyebrow">Start here · 1 of {openItems.length}</p>
+                  <p className="eyebrow">
+                    Start here · 1 of {openItems.length}
+                    <InfoTip label="Explain how Start here is selected">
+                      The highest-priority unreviewed item is shown first. Selecting an item below moves it into focus.
+                    </InfoTip>
+                  </p>
                   <h2 id="today-focus-title">{focusedItem.title}</h2>
                 </div>
                 <span className={`today-focus-due ${focusedItem.urgency}`}>{focusedItem.due}</span>
@@ -106,7 +114,12 @@ export function TodayExperience({
               </div>
 
               <div className="today-focus-reason">
-                <strong>Why this needs you</strong>
+                <strong className="label-with-tip">
+                  Why this needs you
+                  <InfoTip label="Explain why this item needs review">
+                    Reg Mitra has found an unresolved source, applicability, or professional-review state. It does not mean a filing is automatically due.
+                  </InfoTip>
+                </strong>
                 <p>
                   {focusedItem.evidenceState === "verified"
                     ? "The applicability has been reviewed. Confirm the current client facts and intended action before execution."
@@ -166,11 +179,32 @@ export function TodayExperience({
 
         <aside className="today-side-column" aria-label="Today at a glance">
           <section className="today-glance-card">
-            <p className="eyebrow">At a glance</p>
+            <p className="eyebrow">
+              At a glance
+              <InfoTip label="Explain the Today summary">
+                A live count of the work still visible in this review session.
+              </InfoTip>
+            </p>
             <dl>
               <div><dt>Open work</dt><dd>{openItems.length}</dd></div>
-              <div><dt>Needs your decision</dt><dd>{decisionCount}</dd></div>
-              <div><dt>Reviewed sources</dt><dd>{verifiedSourceCount}</dd></div>
+              <div>
+                <dt className="label-with-tip">
+                  Needs your decision
+                  <InfoTip label="Explain needs your decision">
+                    Items without an approved client-impact decision. They require professional judgement before advice or action.
+                  </InfoTip>
+                </dt>
+                <dd>{decisionCount}</dd>
+              </div>
+              <div>
+                <dt className="label-with-tip">
+                  Reviewed sources
+                  <InfoTip label="Explain reviewed sources">
+                    Items whose attached source and applicability have already passed the recorded review gate.
+                  </InfoTip>
+                </dt>
+                <dd>{verifiedSourceCount}</dd>
+              </div>
             </dl>
             <div className="today-trust-note">
               <TrustBadge kind="evidence" state={mode === "demo" ? "demo" : verifiedSourceCount ? "verified" : "unverified"} />
