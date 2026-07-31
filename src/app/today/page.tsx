@@ -27,7 +27,7 @@ export default async function TodayPage() {
           needsDecision: item.state === "needs-review",
           evidenceState: "unverified",
         }))}
-        mode="public"
+        mode={isDemo ? "demo" : "public"}
         verifiedSourceCount={0}
       />
     );
