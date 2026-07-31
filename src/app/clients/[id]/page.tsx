@@ -7,6 +7,7 @@ import { EvidencePanel } from "@/components/evidence-panel";
 import { ReviewGate } from "@/components/review-gate";
 import { PublicClientWorkspace } from "@/components/public-client-workspace";
 import { ProductClientActions } from "@/components/product-client-actions";
+import { ClientTabActions } from "@/components/client-tab-actions";
 import { clients, getClient, workItems } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -57,6 +58,13 @@ export default async function ClientPage({ params }: ClientPageProps) {
           <h1>{client.name}</h1>
           <p className="page-subtitle">{client.sector} · {client.location}</p>
           <div className="identifier-list">{client.identifiers.map((identifier) => <span className="identifier" key={identifier}>{identifier}</span>)}</div>
+        </div>
+        <div style={{ marginLeft: "auto" }}>
+          <ClientTabActions
+            clientId={client.id}
+            name={client.name}
+            subtitle={`${client.sector} · ${client.location}`}
+          />
         </div>
       </section>
       <DemoNotice />
@@ -130,15 +138,22 @@ async function ProductClientPage({
           </p>
         </div>
         <div style={{ marginLeft: "auto" }}>
-          <ProductClientActions
-            client={{
-              id: client.id,
-              legalName: client.legal_name,
-              displayName: client.display_name,
-              sector: client.sector ?? "",
-              stateCode: client.state_code ?? "",
-            }}
-          />
+          <div className="button-row">
+            <ClientTabActions
+              clientId={client.id}
+              name={client.display_name}
+              subtitle={[client.sector, client.state_code].filter(Boolean).join(" · ")}
+            />
+            <ProductClientActions
+              client={{
+                id: client.id,
+                legalName: client.legal_name,
+                displayName: client.display_name,
+                sector: client.sector ?? "",
+                stateCode: client.state_code ?? "",
+              }}
+            />
+          </div>
         </div>
       </section>
       <div className="notice">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { CommandPalette } from "@/components/command-palette";
+import { ClientWorkspaceDock } from "@/components/client-workspace-dock";
 import {
   AppearanceIcon,
   CalendarIcon,
@@ -140,6 +141,7 @@ export function AppShell({
         ) : null}
         <main className="main-content">{children}</main>
       </div>
+      <ClientWorkspaceDock />
       <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} />
     </div>
   );

@@ -5,7 +5,9 @@ import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ClientEditorDialog, type ClientEditorValue } from "@/components/client-editor-dialog";
 import { ClientMemoryManager } from "@/components/client-memory-manager";
+import { ClientTabActions } from "@/components/client-tab-actions";
 import { CheckCircleIcon, ChevronRightIcon, SparklesIcon } from "@/components/icons";
+import { closeClientTab } from "@/lib/client-tabs-store";
 import {
   readManagedClients,
   useManagedClients,
@@ -64,6 +66,7 @@ export function PublicClientWorkspace({ id }: Readonly<{ id: string }>) {
   function archiveClient() {
     if (!client) return;
     persist({ ...client, archived: true, updatedAt: new Date().toISOString() });
+    closeClientTab(client.id);
     router.push("/clients");
   }
 
@@ -130,6 +133,11 @@ export function PublicClientWorkspace({ id }: Readonly<{ id: string }>) {
           </div>
         </div>
         <div className="client-header-actions">
+          <ClientTabActions
+            clientId={client.id}
+            name={client.displayName}
+            subtitle={[client.sector, client.location || client.stateCode].filter(Boolean).join(" · ")}
+          />
           <button className="button" onClick={() => setEditing(true)} type="button">Edit client</button>
           <Link className="button primary" href={assistantHref(client, `What needs attention for ${client.displayName}?`)}>
             <SparklesIcon /> Ask Assistant

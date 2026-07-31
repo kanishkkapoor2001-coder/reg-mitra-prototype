@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ClientEditorDialog, type ClientEditorValue } from "@/components/client-editor-dialog";
+import { closeClientTab } from "@/lib/client-tabs-store";
 import type { ManagedClient } from "@/lib/public-client-store";
 
 export function ProductClientActions({
@@ -47,7 +48,10 @@ export function ProductClientActions({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "archive" }),
     });
-    if (response.ok) router.push("/clients");
+    if (response.ok) {
+      closeClientTab(client.id);
+      router.push("/clients");
+    }
     else setWorking(false);
   }
 

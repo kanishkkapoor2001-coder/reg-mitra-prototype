@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { ClientEditorDialog, type ClientEditorValue } from "@/components/client-editor-dialog";
 import { SearchIcon } from "@/components/icons";
+import { openClientTab } from "@/lib/client-tabs-store";
 import {
   createManagedClient,
   managedClientHref,
@@ -172,7 +173,16 @@ export function ClientsExperience({
               {visibleClients.map((client) => (
                 <tr key={client.id}>
                   <th scope="row">
-                    <Link href={managedClientHref(client.id)}>{client.name}</Link>
+                    <Link
+                      href={managedClientHref(client.id)}
+                      onClick={() => openClientTab({
+                        id: client.id,
+                        name: client.name,
+                        subtitle: client.sector,
+                      })}
+                    >
+                      {client.name}
+                    </Link>
                     <small>{client.sector}</small>
                   </th>
                   <td className="client-identifier">{client.identifier}</td>
