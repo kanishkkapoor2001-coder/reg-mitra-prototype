@@ -2,70 +2,147 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { CommandPalette } from "@/components/command-palette";
+import { ClientWorkspaceDock } from "@/components/client-workspace-dock";
+import {
+  AppearanceIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  ClientsIcon,
+  FileIcon,
+  MoreIcon,
+  RegulationsIcon,
+  SearchIcon,
+  SettingsIcon,
+  SparklesIcon,
+  TodayIcon,
+} from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
+const publicPaths = ["/", "/about", "/pricing", "/faq", "/demo"];
+
 function isActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
+export function AppShell({
+  children,
+  sessionMode,
+}: Readonly<{ children: ReactNode; sessionMode: "demo" | "product" | null }>) {
   const pathname = usePathname();
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    function onShortcut(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setCommandOpen((current) => !current);
+      }
+    }
+    window.addEventListener("keydown", onShortcut);
+    return () => window.removeEventListener("keydown", onShortcut);
+  }, []);
+
+  function toggleTheme() {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
+    document.documentElement.dataset.theme = nextTheme;
+  }
+
+  const primaryIcons = {
+    today: TodayIcon,
+    clients: ClientsIcon,
+    assistant: SparklesIcon,
+  } as const;
+
+  if (publicPaths.includes(pathname)) {
+    return children;
+  }
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <Link className="brand" href="/" aria-label="Reg Mitra home">
-          <span className="brand-mark" aria-hidden="true">✓</span>
+        <Link className="brand" href="/today" aria-label="Reg Mitra workspace home">
+          <span className="brand-mark"><CheckCircleIcon /></span>
           <span>
             <strong>Reg Mitra</strong>
-            <small>Regulatory intelligence</small>
+            <small>Regulatory research</small>
           </span>
         </Link>
 
         <nav className="primary-nav" aria-label="Primary navigation">
-          {navigation.map((item, index) => (
-            <div className="nav-group" key={item.href}>
-              {item.section ? <p className="nav-section">{item.section}</p> : null}
-              <Link
-                className={`nav-link ${isActive(pathname, item.href) ? "active" : ""}`}
-                href={item.href}
-                aria-current={isActive(pathname, item.href) ? "page" : undefined}
-              >
-                <span className="nav-icon" aria-hidden="true">{item.icon}</span>
-                <span>{item.label}</span>
-                {item.badge ? <span className="nav-badge">{item.badge}</span> : null}
-              </Link>
-              {index === 4 ? <span className="nav-spacer" /> : null}
-            </div>
-          ))}
+          {navigation.map((item) => {
+            const Icon = primaryIcons[item.icon];
+            return (
+              <div className="nav-group" key={item.href}>
+                <Link
+                  className={`nav-link ${isActive(pathname, item.href) ? "active" : ""}`}
+                  href={item.href}
+                  aria-current={isActive(pathname, item.href) ? "page" : undefined}
+                >
+                  <span className="nav-icon"><Icon /></span>
+                  <span>{item.label}</span>
+                </Link>
+              </div>
+            );
+          })}
         </nav>
 
+        <details className="more-menu">
+          <summary aria-label="More workspace options"><MoreIcon /><span>More</span></summary>
+          <div className="more-menu-panel">
+            <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Internal drafts and review</small></span></Link>
+            <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Official sources and updates</small></span></Link>
+            <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources, team, and review policy</small></span></Link>
+            <button className="appearance-button" onClick={toggleTheme} type="button">
+              <AppearanceIcon /><span><strong>Appearance</strong><small>Use {theme === "light" ? "dark" : "light"} mode</small></span>
+            </button>
+          </div>
+        </details>
+
         <div className="firm-card">
-          <span className="firm-avatar">MS</span>
+          <span className="firm-avatar">{sessionMode === "demo" ? "MS" : "RM"}</span>
           <span>
-            <strong>Mehta Shah & Associates</strong>
-            <small>Demo workspace · 6 clients</small>
+            <strong>{sessionMode === "demo" ? "Mehta Shah & Associates" : "Reg Mitra"}</strong>
+            <small>{sessionMode === "demo" ? "Sample workspace" : "Open workspace"}</small>
           </span>
         </div>
       </aside>
 
       <div className="workspace">
         <header className="topbar">
-          <label className="global-search">
-            <span aria-hidden="true">⌕</span>
-            <input aria-label="Search workspace" placeholder="Search clients, regulations, filings…" />
+          <button className="global-search" onClick={() => setCommandOpen(true)} type="button">
+            <SearchIcon />
+            <span>Search clients, sources, and drafts</span>
             <kbd>⌘ K</kbd>
-          </label>
+          </button>
           <div className="topbar-actions">
-            <span className="demo-pill"><i /> Demo data</span>
-            <button className="icon-button" type="button" aria-label="Notifications">○</button>
-            <span className="user-avatar" aria-label="Mehta Shah, Partner">MS</span>
+            <Link
+              className={`topbar-calendar-link ${isActive(pathname, "/calendar") ? "active" : ""}`}
+              href="/calendar"
+              aria-current={isActive(pathname, "/calendar") ? "page" : undefined}
+              aria-label="Open compliance calendar"
+            >
+              <CalendarIcon />
+              <span>Calendar</span>
+            </Link>
+            <span className="user-avatar" aria-label={sessionMode === "demo" ? "Mehta Shah, Partner" : "Open workspace"}>
+              {sessionMode === "demo" ? "MS" : "RM"}
+            </span>
           </div>
         </header>
+        {sessionMode === "demo" ? (
+          <div className="template-demo-banner" role="note">
+            <strong>Sample workspace</strong>
+            <span>Sample clients and regulatory data · no live connections or external actions</span>
+          </div>
+        ) : null}
         <main className="main-content">{children}</main>
       </div>
+      <ClientWorkspaceDock />
+      <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} />
     </div>
   );
 }

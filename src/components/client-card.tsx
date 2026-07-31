@@ -16,9 +16,9 @@ export function ClientCard({ client }: Readonly<{ client: Client }>) {
       <div className="client-metrics">
         <span className="client-metric"><strong>{client.pending}</strong><span>Pending</span></span>
         <span className="client-metric"><strong>{client.dueThisWeek}</strong><span>This week</span></span>
-        <span className="client-metric"><strong>{client.compliant}</strong><span>Compliant</span></span>
+        <span className="client-metric"><strong>{client.compliant}</strong><span>Marked complete</span></span>
       </div>
-      <span className="source-line"><TrustBadge kind="evidence" state="demo" /> Connect sources to verify</span>
+      <span className="source-line"><TrustBadge kind="evidence" state="demo" /> Sample data · source not connected</span>
     </Link>
   );
 }

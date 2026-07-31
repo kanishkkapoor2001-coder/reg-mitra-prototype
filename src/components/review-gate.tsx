@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { CheckCircleIcon } from "@/components/icons";
 import { TrustBadge } from "@/components/trust-badge";
 
 interface ReviewGateProps {
@@ -10,7 +11,7 @@ interface ReviewGateProps {
 export function ReviewGate({ title, description, children }: ReviewGateProps) {
   return (
     <section className="review-gate" aria-label="Professional review required">
-      <span className="review-gate-icon" aria-hidden="true">✓</span>
+      <span className="review-gate-icon"><CheckCircleIcon /></span>
       <div className="review-gate-copy">
         <div className="review-gate-title">
           <h3>{title}</h3>

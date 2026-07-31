@@ -4,11 +4,11 @@ export function WorkspaceTrustSummary() {
   return (
     <section className="trust-summary" aria-label="Workspace trust summary">
       <div>
-        <p className="eyebrow">Data confidence</p>
-        <h2>Nothing here is represented as live or verified</h2>
+        <p className="eyebrow">Sample data</p>
+        <h2>This workspace contains sample data</h2>
         <p>
-          This workspace contains illustrative client profiles and regulatory claims.
-          Connect authoritative sources and record a reviewer before relying on an item.
+          Client profiles and regulatory claims are sample data. Attach current official
+          sources and record a reviewer before relying on any item.
         </p>
       </div>
       <div className="trust-summary-states">

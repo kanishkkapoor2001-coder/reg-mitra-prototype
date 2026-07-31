@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { EvidenceRecord } from "@/lib/types";
 import { TrustBadge } from "@/components/trust-badge";
 
@@ -12,7 +13,7 @@ export function EvidencePanel({ evidence, compact = false }: EvidencePanelProps)
       <div className="evidence-heading">
         <div>
           <p className="eyebrow">Evidence</p>
-          <h3>{evidence.source ? evidence.source.title : "No authoritative source attached"}</h3>
+          <h3>{evidence.source ? evidence.source.title : "No official source attached"}</h3>
         </div>
         <div className="trust-badge-row">
           <TrustBadge kind="evidence" state={evidence.state} />
@@ -44,10 +45,10 @@ export function EvidencePanel({ evidence, compact = false }: EvidencePanelProps)
       <p className="evidence-caveat">{evidence.caveat}</p>
       {evidence.source ? (
         <a className="text-link" href={evidence.source.url} target="_blank" rel="noreferrer">
-          Open authoritative source ↗
+          Open official source ↗
         </a>
       ) : (
-        <button className="button small" type="button">Attach official source</button>
+        <Link className="button small" href="/settings">Review source setup</Link>
       )}
     </section>
   );

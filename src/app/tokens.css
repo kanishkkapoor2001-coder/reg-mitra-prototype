@@ -1,0 +1,68 @@
+:root {
+  /* Neutral foundation */
+  --ink-950: #17201c;
+  --ink-800: #2e3934;
+  --ink-600: #5b6862;
+  --ink-500: #56635d;
+  --ink-400: #65716b;
+  --paper: #f7f8f6;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-muted: #f1f3f0;
+  --surface-hover: #ecefeb;
+  --line: #e1e5e2;
+  --line-strong: #cfd6d1;
+
+  /* One restrained product accent */
+  --forest-950: #10231c;
+  --forest-900: #152d24;
+  --forest-800: #1d3b30;
+  --green-700: #23734a;
+  --green-600: #2f8b59;
+  --green-100: #e3f1e8;
+
+  /* Semantic only */
+  --amber-700: #965c1c;
+  --amber-100: #f8ecd9;
+  --red-700: #a53b35;
+  --red-100: #f8e5e3;
+  --blue-700: #386795;
+  --blue-100: #e8eff6;
+
+  /* Type scale */
+  --text-2xs: 0.75rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.5rem;
+
+  /* 4px spacing rhythm */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Shape and depth */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 10px;
+  --radius-xl: 10px;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-overlay: 0 24px 80px -28px rgb(16 35 28 / 44%), 0 8px 24px rgb(16 35 28 / 8%);
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-standard: 160ms;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+}

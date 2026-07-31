@@ -1,6 +1,6 @@
 export type RiskLevel = "low" | "medium" | "high";
 export type VerificationState = "demo" | "unverified" | "connected";
-export type EvidenceState = "verified" | "unverified" | "demo" | "stale" | "not-connected";
+export type EvidenceState = "verified" | "unverified" | "demo" | "stale" | "not-connected" | "connected";
 export type ReviewState = "not-reviewed" | "in-review" | "approved";
 
 export interface SourceRecord {
@@ -39,6 +39,7 @@ export interface Client {
 export interface WorkItem {
   id: string;
   title: string;
+  clientId: string;
   client: string;
   authority: string;
   due: string;

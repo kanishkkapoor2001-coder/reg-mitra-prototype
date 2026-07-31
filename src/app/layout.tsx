@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Newsreader, Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/app-shell";
+import "./tokens.css";
 import "./globals.css";
+import "./marketing.css";
+import "./calendar.css";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -10,19 +13,25 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-editorial",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
-    default: "Reg Mitra",
-    template: "%s · Reg Mitra",
+    default: "Reg Mitra | Regulatory research for Indian CA firms",
+    template: "%s | Reg Mitra",
   },
-  description: "Regulatory intelligence workspace for Indian CA firms.",
+  description: "Review official regulatory sources, check which clients may be affected, and prepare review-ready client work in one workspace for Indian CA firms.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en" className={jakarta.variable}>
+    <html lang="en" className={`${jakarta.variable} ${newsreader.variable}`}>
       <body>
-        <AppShell>{children}</AppShell>
+        <AppShell sessionMode="product">{children}</AppShell>
       </body>
     </html>
   );

@@ -1,25 +1,77 @@
-import Link from "next/link";
-import { DemoNotice } from "@/components/demo-notice";
-import { PageHeading } from "@/components/page-heading";
+import { cookies } from "next/headers";
+import { TodayExperience } from "@/components/today-experience";
 import { workItems } from "@/lib/demo-data";
+import { getSupabasePublicConfig } from "@/lib/supabase/config";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentWorkspace } from "@/lib/workspace";
 
-export default function TodayPage() {
+export default async function TodayPage() {
+  const isDemo = (await cookies()).get("reg_mitra_session")?.value === "demo";
+
+  const workspace = isDemo || !getSupabasePublicConfig()
+    ? null
+    : await getCurrentWorkspace();
+
+  if (!workspace) {
+    return (
+      <TodayExperience
+        items={workItems.map((item) => ({
+          id: item.id,
+          title: item.title,
+          clientId: item.clientId,
+          client: item.client,
+          authority: item.authority,
+          due: item.due,
+          dueAt: null,
+          urgency: item.urgency,
+          needsDecision: item.state === "needs-review",
+          evidenceState: "unverified",
+        }))}
+        mode={isDemo ? "demo" : "public"}
+        verifiedSourceCount={0}
+      />
+    );
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("tasks")
+    .select("id, title, priority, due_at, state, reviewed_at, client_id, clients(display_name), client_regulatory_impacts(review_state, regulatory_sources(authority))")
+    .eq("workspace_id", workspace.id)
+    .is("reviewed_at", null)
+    .not("state", "in", '("completed","dismissed")')
+    .order("priority", { ascending: false })
+    .order("due_at", { ascending: true, nullsFirst: false });
+
+  const items = (data ?? []).map((task) => {
+    const clientValue = task.clients;
+    const client = Array.isArray(clientValue) ? clientValue[0] : clientValue;
+    const impactValue = task.client_regulatory_impacts;
+    const impact = Array.isArray(impactValue) ? impactValue[0] : impactValue;
+    const sourceValue = impact?.regulatory_sources;
+    const source = Array.isArray(sourceValue) ? sourceValue[0] : sourceValue;
+
+    return {
+      id: task.id,
+      title: task.title,
+      clientId: task.client_id,
+      client: client?.display_name ?? "Firm-wide",
+      authority: source?.authority ?? "Source not attached",
+      due: task.due_at
+        ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" }).format(new Date(task.due_at))
+        : "No due date",
+      dueAt: task.due_at,
+      urgency: task.priority >= 3 ? "high" as const : task.priority === 2 ? "medium" as const : "low" as const,
+      needsDecision: !impact || impact.review_state !== "approved",
+      evidenceState: impact?.review_state === "approved" ? "verified" as const : "unverified" as const,
+    };
+  });
+
   return (
-    <>
-      <PageHeading eyebrow="Work queue" title="Today" description="A single, ordered queue for work that needs attention now." actions={<Link className="button primary" href="/assistant">Prepare with Assistant</Link>} />
-      <DemoNotice />
-      <section className="panel">
-        <div className="panel-header"><div><h2>4 items in the demo queue</h2><p>High urgency first, then nearest due date</p></div><button className="button" type="button">Filter</button></div>
-        <ul className="work-list">
-          {workItems.map((item) => (
-            <li className="work-item" key={item.id}>
-              <i className={`urgency-dot ${item.urgency}`} />
-              <div><p className="work-title">{item.title}</p><span className="work-meta">{item.client} · {item.authority} · {item.state.replace("-", " ")}</span></div>
-              <span className="due">{item.due}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </>
+    <TodayExperience
+      items={items}
+      mode="product"
+      verifiedSourceCount={items.filter((item) => item.evidenceState === "verified").length}
+    />
   );
 }

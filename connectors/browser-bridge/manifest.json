@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Reg Mitra Portal Bridge",
+  "description": "User-initiated, read-only status bridge for supported Indian compliance portals.",
+  "version": "0.1.0",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": [
+    "https://www.mca.gov.in/*",
+    "https://services.gst.gov.in/*",
+    "https://www.incometax.gov.in/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Reg Mitra Portal Bridge"
+  },
+  "background": {
+    "service_worker": "service-worker.js"
+  }
+}

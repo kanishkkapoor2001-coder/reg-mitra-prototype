@@ -94,10 +94,10 @@ export const clients: readonly Client[] = [
 ] as const;
 
 export const workItems: readonly WorkItem[] = [
-  { id: "w1", title: "Verify IGST rate changes for pharma intermediates", client: "Sharma Pharma", authority: "CBIC", due: "Immediate", urgency: "high", state: "needs-review" },
-  { id: "w2", title: "Review overdue FSSAI transition confirmation", client: "Royal Spice", authority: "FSSAI", due: "Overdue", urgency: "high", state: "needs-review" },
-  { id: "w3", title: "Prepare TDS return 26Q working papers", client: "Sharma Pharma", authority: "CBDT", due: "15 May", urgency: "medium", state: "draft-ready" },
-  { id: "w4", title: "Review Karnataka overtime policy amendment", client: "NexGen IT", authority: "Karnataka Labour", due: "1 Jul", urgency: "medium", state: "upcoming" },
+  { id: "w1", title: "Verify IGST rate changes for pharma intermediates", clientId: "sharma", client: "Sharma Pharma", authority: "CBIC", due: "Immediate", urgency: "high", state: "needs-review" },
+  { id: "w2", title: "Review overdue FSSAI transition confirmation", clientId: "royal", client: "Royal Spice", authority: "FSSAI", due: "Overdue", urgency: "high", state: "needs-review" },
+  { id: "w3", title: "Prepare TDS return 26Q working papers", clientId: "sharma", client: "Sharma Pharma", authority: "CBDT", due: "15 May", urgency: "medium", state: "draft-ready" },
+  { id: "w4", title: "Review Karnataka overtime policy amendment", clientId: "nexgen", client: "NexGen IT", authority: "Karnataka Labour", due: "1 Jul", urgency: "medium", state: "upcoming" },
 ] as const;
 
 export const regulations: readonly Regulation[] = [
@@ -107,12 +107,12 @@ export const regulations: readonly Regulation[] = [
     authority: "CBIC",
     published: "28 Apr 2026",
     effective: "1 May 2026",
-    impact: "3 demo clients",
+    impact: "3 illustrative clients",
     verification: "unverified",
     evidence: {
       state: "unverified",
       source: null,
-      applicability: "Illustrative mapping to three demo client profiles.",
+      applicability: "Illustrative mapping to three client profiles.",
       reviewState: "not-reviewed",
       reviewedBy: null,
       caveat: "The prototype did not include an official circular or notification. Verify on CBIC before use.",
@@ -124,12 +124,12 @@ export const regulations: readonly Regulation[] = [
     authority: "MCA",
     published: "24 Apr 2026",
     effective: "Immediate",
-    impact: "5 demo clients",
+    impact: "5 illustrative clients",
     verification: "unverified",
     evidence: {
       state: "unverified",
       source: null,
-      applicability: "Illustrative mapping to five demo company profiles.",
+      applicability: "Illustrative mapping to five company profiles.",
       reviewState: "not-reviewed",
       reviewedBy: null,
       caveat: "No MCA notification or rule text is attached. Confirm the requirement and effective date before advising a client.",
@@ -141,7 +141,7 @@ export const regulations: readonly Regulation[] = [
     authority: "FSSAI",
     published: "10 Mar 2026",
     effective: "10 Mar 2026",
-    impact: "1 demo client",
+    impact: "1 illustrative client",
     verification: "unverified",
     evidence: {
       state: "unverified",
