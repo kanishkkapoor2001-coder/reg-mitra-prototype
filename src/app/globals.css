@@ -2028,3 +2028,19 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .notice-chip button:hover { background: var(--surface-hover); color: var(--ink-800); }
 .notice-attach { margin-right: auto; }
 .notice-attach svg { width: 15px; height: 15px; }
+
+/* --- Context panel rows: badge must not squeeze its description --- */
+/*
+ * .context-item is a flex row of [badge or number] + [description]. A trust badge
+ * carries white-space: nowrap, so it claims its full text width and leaves the
+ * description a sliver — in a ~270px panel that wraps to one word per line.
+ * Allowing the row to wrap, with a flex-basis floor on the description, keeps the
+ * badge inline when there is room and drops it to its own line when there is not.
+ */
+.context-item { flex-wrap: wrap; }
+.context-item > .trust-badge { flex: 0 0 auto; }
+.context-item > :last-child {
+  flex: 1 1 165px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
