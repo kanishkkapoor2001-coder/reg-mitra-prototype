@@ -9,18 +9,22 @@ export default function HomePage() {
       <main>
         <section className="marketing-hero">
           <div className="marketing-hero-copy">
-            <p className="marketing-kicker">Source-grounded regulatory research for Indian CA firms</p>
+            <p className="marketing-kicker">Regulatory intelligence for Indian CA firms</p>
             <h1>Turn regulatory updates into review-ready client work.</h1>
             <p className="marketing-lede">
-              Bring the official source, recorded client facts, and the next draft into one
-              workspace. Reg Mitra helps your team check what may apply and prepare a brief,
-              checklist, or calendar update for professional review.
+              The official source, your client&rsquo;s recorded facts, and the next draft —
+              together in one workspace. Reg Mitra prepares the brief, checklist, or calendar
+              update. Your team keeps the final call.
             </p>
             <div className="marketing-actions">
-              <Link className="marketing-button primary" href="/demo">Open the live demo</Link>
-              <Link className="marketing-button quiet" href="/today">Open the product</Link>
+              <Link className="marketing-button primary" href="/today">Open the product</Link>
+              <Link className="marketing-button quiet" href="/demo">Watch the live demo</Link>
             </div>
-            <p className="marketing-proof">Selected official sources · Evidence gaps shown · Nothing sent or filed</p>
+            <ul className="marketing-proof-row" aria-label="How Reg Mitra keeps work reviewable">
+              <li>Official sources only</li>
+              <li>Evidence gaps shown</li>
+              <li>Nothing sent or filed</li>
+            </ul>
           </div>
 
           <MarketingImpactPreview />

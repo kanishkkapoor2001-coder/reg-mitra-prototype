@@ -17,7 +17,6 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
           <Link href="/demo">Live demo</Link>
         </nav>
         <div className="public-header-actions">
-          <Link className="header-signin-link" href="/demo">View demo</Link>
           <Link className="header-demo-link" href="/today">Open product <span>↗</span></Link>
         </div>
       </header>
