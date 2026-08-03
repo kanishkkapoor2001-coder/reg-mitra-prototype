@@ -19,7 +19,7 @@ import {
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
-const publicPaths = ["/", "/about", "/pricing", "/faq", "/demo", "/login", "/founder", "/start", "/onboarding"];
+const publicPaths = ["/", "/about", "/pricing", "/faq", "/demo", "/features", "/login", "/founder", "/start", "/onboarding"];
 
 function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);

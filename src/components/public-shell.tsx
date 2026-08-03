@@ -10,7 +10,7 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
           <strong>Reg Mitra</strong>
         </Link>
         <nav aria-label="Public navigation">
-          <Link href="/#product">Product</Link>
+          <Link href="/features">Features</Link>
           <Link href="/about">About</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/faq">FAQ</Link>
@@ -25,7 +25,7 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
         <Link className="public-brand" href="/"><span>R/M</span><strong>Reg Mitra</strong></Link>
         <p>Source-grounded regulatory research and client-impact review for Indian CA firms.</p>
         <nav>
-          <Link href="/#product">Product</Link>
+          <Link href="/features">Features</Link>
           <Link href="/about">About</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/faq">FAQ</Link>

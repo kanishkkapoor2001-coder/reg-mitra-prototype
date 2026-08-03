@@ -24,8 +24,8 @@ export default function DemoPage() {
         <section className="login-panel">
           <div className="login-mark">R/M</div>
           <p className="access-label">Live product demo</p>
-          <h2>Explore Mehta Shah &amp; Associates</h2>
-          <p>Sample clients and pre-built conversations let you inspect the review flow in a few minutes. Start with “Circular to client note” to see Answer and Prepare together.</p>
+          <h2>Explore the sample workspace</h2>
+          <p>A sample workspace with fictional clients and pre-built conversations lets you inspect the review flow in a few minutes. Start with “Circular to client note” to see Answer and Prepare together.</p>
           <form action="/api/auth/demo" method="post">
             <button className="marketing-button primary wide" type="submit">Open the sample workspace <span>→</span></button>
           </form>
