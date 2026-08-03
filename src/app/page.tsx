@@ -28,9 +28,9 @@ export default function HomePage() {
             </div>
             <div className="hero-contact">
               <span className="hero-contact-label">Contact sales</span>
-              <a className="hero-contact-link" href="mailto:sales@regmitra.in">
+              <a className="hero-contact-link" href="mailto:kanishk@5avenures.in">
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12v8H2z" fill="none" stroke="currentColor" strokeWidth="1.3"/><path d="M2.5 4.5 8 8.5l5.5-4" fill="none" stroke="currentColor" strokeWidth="1.3"/></svg>
-                sales@regmitra.in
+                kanishk@5avenures.in
               </a>
               <a className="hero-contact-link" href="https://wa.me/919711017316" target="_blank" rel="noreferrer" aria-label="Message sales on WhatsApp">
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 0 0-5.2 9L2 14l3.1-.8A6 6 0 1 0 8 2Z" fill="none" stroke="currentColor" strokeWidth="1.3"/></svg>
