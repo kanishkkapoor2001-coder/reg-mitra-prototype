@@ -62,6 +62,18 @@ export function TodayExperience({
 
   return (
     <>
+      {/* Public mode shows a worked example so the page is legible on a first
+          visit, but it must never read as the professional's own work. */}
+      {mode === "public" ? (
+        <div className="sample-banner" role="note">
+          <span className="sample-banner-tag">Sample</span>
+          <p>
+            <strong>This is an example queue.</strong> Sharma Pharma and Royal Spice are
+            fictional clients, shown so you can see how the review queue works.
+          </p>
+          <Link className="button primary" href="/practice">Add your clients</Link>
+        </div>
+      ) : null}
       <header className="today-hero">
         <div>
           <p className="eyebrow">Today · Review queue</p>

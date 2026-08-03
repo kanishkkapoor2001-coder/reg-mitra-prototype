@@ -2046,6 +2046,55 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   Sample-data banner
+   ---------------------------------------------------------------------------
+   Shown wherever example content stands in for the firm's own. Deliberately
+   plain rather than alarming: the sample data is useful, it just must never be
+   mistaken for the professional's real work.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.sample-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border: 1px solid #e3d3a8;
+  border-radius: var(--radius-md);
+  background: #faf5e6;
+}
+.sample-banner-tag {
+  flex: 0 0 auto;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #8a6d1a;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.sample-banner p {
+  flex: 1 1 240px;
+  min-width: 0;
+  margin: 0;
+  color: #6b5514;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.sample-banner strong { color: #57450f; }
+.sample-banner .button { flex: 0 0 auto; }
+[data-theme="dark"] .sample-banner {
+  border-color: rgba(210, 185, 110, .38);
+  background: rgba(190, 160, 60, .14);
+}
+[data-theme="dark"] .sample-banner p { color: #d8c07a; }
+[data-theme="dark"] .sample-banner strong { color: #e8d9a8; }
+[data-theme="dark"] .sample-banner-tag { background: #d8c07a; color: #2a2109; }
+@media (max-width: 720px) {
+  .sample-banner { flex-wrap: wrap; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    Compliance calculators
    ═══════════════════════════════════════════════════════════════════════════ */
 .calc-page { max-width: 1080px; margin: 0 auto; padding: 8px 0 64px; }
