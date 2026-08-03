@@ -8,6 +8,7 @@ import {
   CloseIcon,
   EditIcon,
   FileIcon,
+  MoreIcon,
   SparklesIcon,
   StopIcon,
   SyncIcon,
@@ -486,6 +487,9 @@ export function AssistantExperience({
   const [draftNotice, setDraftNotice] = useState<ExtractedNotice | null>(null);
   const [attachedNotice, setAttachedNotice] = useState<ExtractedNotice | null>(null);
   const [noticeBusy, setNoticeBusy] = useState(false);
+  // History and reference material live in an on-demand drawer so the conversation
+  // itself gets the whole canvas.
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -826,6 +830,14 @@ export function AssistantExperience({
               </button>
             ))}
           </div>
+          <button
+            aria-expanded={drawerOpen}
+            className="button assistant-drawer-toggle"
+            onClick={() => setDrawerOpen((open) => !open)}
+            type="button"
+          >
+            <MoreIcon /> History &amp; sources
+          </button>
           {hasConversation ? (
             <button className="button assistant-reset" onClick={startAgain} type="button">
               New conversation
@@ -842,7 +854,15 @@ export function AssistantExperience({
         </div>
       ) : null}
 
-      <div className="assistant-layout">
+      <div className="assistant-layout" data-drawer-open={drawerOpen}>
+        {drawerOpen ? (
+          <button
+            aria-label="Close history and sources"
+            className="assistant-drawer-scrim"
+            onClick={() => setDrawerOpen(false)}
+            type="button"
+          />
+        ) : null}
         <aside className="conversation-library" aria-label={templateMode ? "Sample conversations" : publicMode ? "Current session" : "Recent conversations"}>
           <div className="conversation-library-heading">
             <p className="eyebrow">{templateMode ? "Sample sessions" : publicMode ? "Current session" : "Recent conversations"}</p>
