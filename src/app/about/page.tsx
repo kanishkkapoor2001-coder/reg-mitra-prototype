@@ -9,24 +9,24 @@ export const metadata: Metadata = {
 
 const principles = [
   {
-    num: "01",
+    num: "1",
     title: "Start with the source",
-    body: "Every answer shows the authority behind it, when it was checked, and any gap that prevents a conclusion.",
+    body: "Every answer shows its authority, when it was checked, and any gap.",
   },
   {
-    num: "02",
-    title: "Make the client part of the question",
-    body: "A change matters only in the context of a client's facts — so we bring recorded context and open work into the review, not generic news.",
+    num: "2",
+    title: "Make the client the question",
+    body: "A change matters only against a client's facts — so their context is in the review.",
   },
   {
-    num: "03",
-    title: "Prepare the work, not completion",
-    body: "Draft a brief, checklist, calendar update, or client note. Approval — and any sending or filing — stays explicit and yours.",
+    num: "3",
+    title: "Prepare, don't fake done",
+    body: "Draft the brief or note. Approval and any sending stay explicit and yours.",
   },
   {
-    num: "04",
-    title: "Where Reg Mitra is today",
-    body: "A private pilot: a selected official-source library, source-linked answers, client and task workspaces, and a source-linked calendar. Automated discovery and portal filing are not yet live.",
+    num: "4",
+    title: "Where we are today",
+    body: "A private pilot: source library, answers, workspaces, and a calendar. Portal filing isn't live yet.",
   },
 ];
 
@@ -48,14 +48,16 @@ export default function AboutPage() {
           </p>
         </section>
 
-        <section className="about-principles" aria-label="How Reg Mitra is built">
-          {principles.map((p) => (
-            <article className="about-principle" key={p.num}>
-              <span className="about-principle-num">{p.num}</span>
-              <h2>{p.title}</h2>
-              <p>{p.body}</p>
-            </article>
-          ))}
+        <section className="about-flow" aria-label="How Reg Mitra is built">
+          <ol className="flow">
+            {principles.map((p) => (
+              <li className="flow-step" key={p.num}>
+                <span className="flow-num">{p.num}</span>
+                <h3>{p.title}</h3>
+                <p>{p.body}</p>
+              </li>
+            ))}
+          </ol>
         </section>
 
         <section className="about-callout">
