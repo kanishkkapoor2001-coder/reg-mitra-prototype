@@ -1614,3 +1614,79 @@
 }
 .hero-contact-link svg { width: 15px; height: 15px; color: var(--green-700); }
 .hero-contact-link:hover { color: var(--ink-950); border-color: var(--ink-800); }
+
+/* ============================================================
+   Pricing — three tiers (Free / Pro / Unlimited)
+   ============================================================ */
+.pricing-tiers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+.tier {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(28px, 3vw, 40px);
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.tier.featured { border-color: var(--forest-950); background: var(--forest-950); color: var(--paper); }
+.tier.soon { background: var(--surface-muted); }
+.tier-label { margin: 0 0 18px; color: var(--green-700); font-size: 12px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+.tier.featured .tier-label { color: color-mix(in srgb, var(--paper) 66%, transparent); }
+.tier.soon .tier-label { color: var(--ink-500); }
+.tier-name { margin: 0; font-family: var(--font-editorial), Georgia, serif; font-size: 32px; font-weight: 400; letter-spacing: -.02em; }
+.tier-price {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin: 12px 0 4px;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 46px;
+  font-weight: 400;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+}
+.tier-cur { font-size: 26px; }
+.tier-price small { margin-left: 4px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--ink-500); }
+.tier.featured .tier-price small { color: color-mix(in srgb, var(--paper) 60%, transparent); }
+.tier-note { margin: 0 0 22px; color: var(--ink-500); font-size: 14px; }
+.tier.featured .tier-note { color: color-mix(in srgb, var(--paper) 62%, transparent); }
+.tier-features {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 30px;
+  padding: 22px 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+.tier.featured .tier-features { border-color: rgb(255 255 255 / 14%); }
+.tier-features li { position: relative; padding-left: 26px; font-size: 14.5px; line-height: 1.5; }
+.tier-features li::before { position: absolute; left: 0; color: var(--green-600); font-weight: 700; content: "✓"; }
+.tier.featured .tier-features li::before { color: #a8d5b7; }
+.tier-features strong { font-weight: 750; }
+.tier-cta { width: 100%; margin-top: auto; justify-content: center; }
+.tier.featured .tier-cta { border-color: var(--paper); background: var(--paper); color: var(--forest-950); }
+.tier.featured .tier-cta:hover { background: color-mix(in srgb, var(--paper) 88%, transparent); }
+.tier-soon-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  margin-top: auto;
+  border: 1px dashed var(--line-strong);
+  border-radius: 10px;
+  color: var(--ink-500);
+  font-size: 15px;
+  font-weight: 700;
+}
+.pricing-foot { margin: 44px 0 0; color: var(--ink-600); font-size: 15px; }
+.pricing-foot a { color: var(--green-700); font-weight: 650; border-bottom: 1px solid transparent; }
+.pricing-foot a:hover { border-color: var(--green-700); }
+
+@media (max-width: 900px) {
+  .pricing-tiers { grid-template-columns: 1fr; }
+}
