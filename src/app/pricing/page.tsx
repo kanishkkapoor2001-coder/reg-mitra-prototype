@@ -26,7 +26,7 @@ export default function PricingPage() {
             <ul className="tier-features">
               <li>Source-linked regulatory research &amp; compliance calendar</li>
               <li>Weekly regulatory newsletter</li>
-              <li>Personalize up to <strong>2 companies</strong></li>
+              <li>Match changes to up to <strong>2 client companies</strong></li>
               <li>Assistant chat, rate-limited</li>
             </ul>
             <Link className="marketing-button quiet tier-cta" href="/today">Open the product</Link>
@@ -40,7 +40,7 @@ export default function PricingPage() {
             <ul className="tier-features">
               <li>Everything in Free</li>
               <li><strong>Higher</strong> assistant chat limits</li>
-              <li>Personalize up to <strong>10 companies</strong></li>
+              <li>Match changes to up to <strong>10 client companies</strong></li>
               <li>Priority email &amp; WhatsApp support</li>
             </ul>
             <a className="marketing-button light tier-cta" href="mailto:kanishk@5avenures.in?subject=Reg%20Mitra%20Pro">Talk to us</a>
@@ -54,7 +54,7 @@ export default function PricingPage() {
             <ul className="tier-features">
               <li>Everything in Pro</li>
               <li><strong>Unlimited</strong> assistant chat</li>
-              <li><strong>Unlimited</strong> companies</li>
+              <li><strong>Unlimited</strong> client companies</li>
               <li>Everything, without limits</li>
             </ul>
             <span className="tier-cta tier-soon-pill">Coming soon</span>
