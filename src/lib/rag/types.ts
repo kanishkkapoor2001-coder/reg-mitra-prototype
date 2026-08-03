@@ -3,6 +3,13 @@ export type SourceKind = "curated-summary" | "official-full-text" | "official-in
 export type RetrievalConfidence = "high" | "medium" | "low";
 export type CitationState = "locked" | "partial" | "unsupported";
 
+export interface SupersessionRef {
+  sourceId: string;
+  documentNumber: string | null;
+  title: string;
+  effectiveFrom: string | null;
+}
+
 export interface RegulatoryChunk {
   id: string;
   sourceId: string;
@@ -19,6 +26,13 @@ export interface RegulatoryChunk {
   topics: string[];
   canonicalUrl: string;
   sourceKind: SourceKind;
+  /** Statutory unit within the document, e.g. "Section 47" or "para 4.2". Schema v2. */
+  sectionPath?: string | null;
+  /** Deterministic identity header used for scoring/embedding, not display. Schema v2. */
+  contextHeader?: string;
+  supersedes?: string[];
+  supersededBy?: SupersessionRef | null;
+  amendedBy?: SupersessionRef[];
   checkedAt: string;
   content: string;
   contentHash: string;
@@ -39,6 +53,11 @@ export interface RegulatorySource {
   applicability: string;
   topics: string[];
   canonicalUrl: string;
+  mirrorUrls?: string[];
+  supersedes?: string[];
+  supersededBy?: SupersessionRef | null;
+  amends?: string[];
+  amendedBy?: SupersessionRef[];
   checkedAt: string;
   fetchedUrl: string | null;
   contentType: string | null;
@@ -78,6 +97,10 @@ export interface RetrievedSource {
   applicability: string;
   canonicalUrl: string;
   sourceKind: SourceKind;
+  sectionPaths?: string[];
+  supersededBy?: SupersessionRef | null;
+  /** The source's curated summary — always supplied to the model AND the verifier. */
+  summary?: string;
   relevance: number;
   excerpts: string[];
 }
@@ -96,6 +119,13 @@ export interface RetrievalResult {
   };
 }
 
+export interface ChatVerificationPayload {
+  state: "verified" | "partial" | "unverified" | "unchecked";
+  supportedCount: number;
+  claimCount: number;
+  flagged: Array<{ claim: string; citations: string[]; verdict: "supported" | "partial" | "unsupported" }>;
+}
+
 export interface ChatRetrievalPayload {
   strategy: RetrievalResult["strategy"];
   confidence: RetrievalConfidence;
@@ -103,4 +133,5 @@ export interface ChatRetrievalPayload {
   citedSourceIds: string[];
   corpus: RetrievalResult["corpus"];
   sources: RetrievedSource[];
+  verification?: ChatVerificationPayload;
 }

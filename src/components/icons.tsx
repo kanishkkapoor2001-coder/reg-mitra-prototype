@@ -83,3 +83,11 @@ export function CloseIcon(props: IconProps) {
 export function CheckCircleIcon(props: IconProps) {
   return <IconBase {...props}><circle cx="12" cy="12" r="9" {...strokeProps} /><path d="m8 12 2.6 2.6L16.5 9" {...strokeProps} /></IconBase>;
 }
+
+export function StopIcon(props: IconProps) {
+  return <IconBase {...props}><rect height="10" rx="2" width="10" x="7" y="7" {...strokeProps} /></IconBase>;
+}
+
+export function EditIcon(props: IconProps) {
+  return <IconBase {...props}><path d="M12 20h9" {...strokeProps} /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" {...strokeProps} /></IconBase>;
+}

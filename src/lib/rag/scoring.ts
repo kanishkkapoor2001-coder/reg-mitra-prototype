@@ -103,6 +103,7 @@ function metadataBoost(query: string, chunk: RegulatoryChunk) {
     chunk.documentNumber,
     chunk.title,
     chunk.applicability,
+    chunk.sectionPath,
     ...chunk.topics,
   ].filter(Boolean).join(" ").toLowerCase();
   const queryTokens = tokenize(query);
@@ -113,6 +114,14 @@ function metadataBoost(query: string, chunk: RegulatoryChunk) {
   const circularNumber = normalised.match(/\b(?:circular\s*(?:no\.?)?\s*)?(\d{1,3})\s*\/\s*(\d{2,4})\b/);
   if (circularNumber && haystack.includes(`${circularNumber[1]}/${circularNumber[2]}`)) score += 0.32;
   if (normalised.includes(chunk.title.toLowerCase())) score += 0.2;
+
+  // Exact statutory-unit reference: "section 47", "rule 142" → chunk whose
+  // sectionPath is that unit ranks decisively higher than passing mentions.
+  const unitReference = normalised.match(/\b(section|rule|regulation)\s+(\d{1,3}[a-z]{0,3})\b/);
+  if (unitReference && chunk.sectionPath
+    && chunk.sectionPath.toLowerCase() === `${unitReference[1]} ${unitReference[2]}`) {
+    score += 0.3;
+  }
 
   const asksCurrent = /\b(current|currently|today|latest|now|effective|applicable)\b/.test(normalised);
   if (chunk.status === "active") score += asksCurrent ? 0.08 : 0.035;
@@ -136,7 +145,7 @@ export function scoreRegulatoryChunks(
   }
 
   const documentTokens = chunks.map((chunk) => tokenize(
-    `${chunk.title} ${chunk.documentNumber ?? ""} ${chunk.applicability} ${chunk.topics.join(" ")} ${chunk.content}`,
+    `${chunk.contextHeader ?? `${chunk.title} ${chunk.documentNumber ?? ""} ${chunk.applicability}`} ${chunk.sectionPath ?? ""} ${chunk.topics.join(" ")} ${chunk.content}`,
   ));
   const documentFrequency = new Map<string, number>();
   for (const tokens of documentTokens) {
@@ -150,25 +159,39 @@ export function scoreRegulatoryChunks(
 
   const averageLength =
     documentTokens.reduce((total, tokens) => total + tokens.length, 0) / Math.max(1, chunks.length);
-  const lexicalRaw = chunks.map((chunk, index) => {
+  // IDF weight per query token, reused for the absolute coverage signal below.
+  const idfByToken = new Map<string, number>();
+  for (const token of queryTokens) {
+    idfByToken.set(token, Math.log(1 + (chunks.length - (documentFrequency.get(token) ?? 0) + 0.5)
+      / ((documentFrequency.get(token) ?? 0) + 0.5)));
+  }
+  const totalQueryIdf = queryTokens.reduce((total, token) => total + (idfByToken.get(token) ?? 0), 0);
+
+  const lexicalRaw = chunks.map((_, index) => {
     const tokens = documentTokens[index] ?? [];
     const frequencies = new Map<string, number>();
     for (const token of tokens) frequencies.set(token, (frequencies.get(token) ?? 0) + 1);
     let score = 0;
+    let matchedIdf = 0;
     for (const token of queryTokens) {
       const frequency = frequencies.get(token) ?? 0;
       if (!frequency) continue;
-      const idf = Math.log(1 + (chunks.length - (documentFrequency.get(token) ?? 0) + 0.5)
-        / ((documentFrequency.get(token) ?? 0) + 0.5));
+      const idf = idfByToken.get(token) ?? 0;
+      matchedIdf += idf;
       const denominator = frequency + 1.2 * (0.25 + 0.75 * tokens.length / Math.max(1, averageLength));
       score += idf * (frequency * 2.2 / denominator);
     }
-    return score;
+    // Coverage is ABSOLUTE: the IDF-weighted share of query terms this chunk
+    // matches. Unlike the per-query-normalised lexical score (whose top hit is
+    // always ~1), coverage separates a real regulatory match from the best of a
+    // bad lot — it is the basis for retrieval confidence and empty-result gating.
+    return { score, coverage: totalQueryIdf > 0 ? matchedIdf / totalQueryIdf : 0 };
   });
-  const maxLexical = Math.max(...lexicalRaw, 0.0001);
+  const maxLexical = Math.max(...lexicalRaw.map((entry) => entry.score), 0.0001);
 
   return chunks.map((chunk, index) => {
-    const lexical = (lexicalRaw[index] ?? 0) / maxLexical;
+    const lexical = (lexicalRaw[index]?.score ?? 0) / maxLexical;
+    const coverage = lexicalRaw[index]?.coverage ?? 0;
     const rawSemantic = queryEmbedding && chunk.embedding.length === queryEmbedding.length
       ? cosineSimilarity(queryEmbedding, chunk.embedding)
       : 0;
@@ -184,6 +207,7 @@ export function scoreRegulatoryChunks(
       lexical,
       semantic,
       metadata,
+      coverage,
     };
   }).sort((left, right) => right.score - left.score);
 }

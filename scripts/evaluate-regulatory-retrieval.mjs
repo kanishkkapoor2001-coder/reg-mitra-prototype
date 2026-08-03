@@ -1,8 +1,5 @@
 import { readFile } from "node:fs/promises";
-import {
-  hasSupportedRegulatorySignal,
-  scoreRegulatoryChunks,
-} from "../src/lib/rag/scoring.ts";
+import { scoreRegulatoryChunks } from "../src/lib/rag/scoring.ts";
 
 const corpus = JSON.parse(await readFile(new URL("../data/regulatory/corpus.json", import.meta.url)));
 const evaluation = JSON.parse(
@@ -13,14 +10,17 @@ let failures = 0;
 const results = [];
 
 for (const testCase of evaluation.cases) {
-  const scored = hasSupportedRegulatorySignal(testCase.query)
-    ? scoreRegulatoryChunks(testCase.query, corpus.chunks, null)
-    : [];
+  // Mirrors production: no keyword gate — absolute query coverage decides whether
+  // anything in the corpus meaningfully matches (see NO_RESULT_COVERAGE in retrieval).
+  const scored = scoreRegulatoryChunks(testCase.query, corpus.chunks, null);
+  const topCoverage = Math.max(...scored.slice(0, 8).map((result) => result.coverage ?? 0), 0);
   const sources = [];
-  for (const result of scored) {
-    if (result.score < 0.08) continue;
-    if (!sources.includes(result.chunk.sourceId)) sources.push(result.chunk.sourceId);
-    if (sources.length >= 8) break;
+  if (topCoverage >= 0.22) {
+    for (const result of scored) {
+      if (result.score < 0.08) continue;
+      if (!sources.includes(result.chunk.sourceId)) sources.push(result.chunk.sourceId);
+      if (sources.length >= 8) break;
+    }
   }
   const topK = testCase.topK ?? 3;
   const topSources = sources.slice(0, topK);

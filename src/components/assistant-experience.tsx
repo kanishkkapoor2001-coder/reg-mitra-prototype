@@ -1,8 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, KeyboardEvent, useRef, useState } from "react";
-import { ArrowUpIcon, CheckCircleIcon, SparklesIcon } from "@/components/icons";
+import { FormEvent, Fragment, KeyboardEvent, useEffect, useRef, useState } from "react";
+import {
+  ArrowUpIcon,
+  CheckCircleIcon,
+  CloseIcon,
+  EditIcon,
+  FileIcon,
+  SparklesIcon,
+  StopIcon,
+  SyncIcon,
+} from "@/components/icons";
 import { ReviewGate } from "@/components/review-gate";
 import { TrustBadge } from "@/components/trust-badge";
 import {
@@ -12,14 +21,21 @@ import {
   type AssistantMode,
   type DemoConversation,
 } from "@/lib/assistant-demo";
-import type { ChatRetrievalPayload, RetrievedSource } from "@/lib/rag/types";
+import type { ExtractedNotice } from "@/lib/notices/extraction";
+import type { ChatRetrievalPayload, ChatVerificationPayload, RetrievedSource } from "@/lib/rag/types";
+
+type Completeness = "complete" | "partial";
 
 export interface ConversationMessage {
   id: string;
+  serverId?: string;
   role: "user" | "assistant";
   mode: AssistantMode;
   content: string;
   retrieval?: ChatRetrievalPayload;
+  streaming?: boolean;
+  stopped?: boolean;
+  completeness?: Completeness;
 }
 
 export interface ConversationSummary {
@@ -31,12 +47,26 @@ export interface ConversationSummary {
 type RequestState = "idle" | "loading" | "error";
 type ActionReviewState = "reviewing" | "approved" | "deferred";
 
+interface StreamEvent {
+  type: "retrieval" | "delta" | "verification" | "done" | "error";
+  text?: string;
+  error?: string;
+  retrieval?: ChatRetrievalPayload;
+  verification?: ChatVerificationPayload;
+  completeness?: Completeness;
+  conversationId?: string;
+  messageId?: string;
+}
+
 const answerHeadings = new Set([
   "DIRECT ANSWER",
   "WHY IT MATTERS",
   "SOURCES",
   "CAVEATS AND MISSING INFORMATION",
+  "CAVEATS",
+  "MISSING INFORMATION",
   "POSSIBLE NEXT STEP",
+  "NEXT STEP",
   "CONCLUSION",
   "WHAT TO VERIFY",
   "NEXT STEPS",
@@ -51,7 +81,7 @@ function createId(role: ConversationMessage["role"]) {
   return `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function messagesFromDemo(conversation: DemoConversation): readonly ConversationMessage[] {
+function messagesFromDemo(conversation: DemoConversation): ConversationMessage[] {
   return conversation.messages.map((message, index) => ({
     ...message,
     id: `${conversation.id}-${index}`,
@@ -68,13 +98,17 @@ function formatSourceDate(value: string | null) {
   }).format(new Date(`${value}T00:00:00Z`));
 }
 
-function CitationText({
-  line,
-  messageId,
-  sources,
-}: Readonly<{ line: string; messageId: string; sources: readonly RetrievedSource[] }>) {
-  return line.split(/(\[S\d+\])/g).map((part, index) => {
-    const citation = part.match(/^\[(S\d+)\]$/)?.[1];
+function renderCitations(
+  text: string,
+  messageId: string,
+  sources: readonly RetrievedSource[],
+) {
+  // Tolerates marker variants like "[S1, Excerpt 2]" — the link targets the first
+  // source id found inside the bracket group.
+  return text.split(/(\[[^\]]*?\bS\d+\b[^\]]*?\])/g).map((part, index) => {
+    const citation = /^\[[^\]]*?\bS\d+\b[^\]]*?\]$/.test(part)
+      ? part.match(/\bS\d+\b/)?.[0]
+      : null;
     const source = citation
       ? sources.find((candidate) => candidate.citationId === citation)
       : null;
@@ -84,57 +118,251 @@ function CitationText({
         className="inline-citation"
         href={`#source-${messageId}-${source.citationId}`}
         key={`${part}-${index}`}
+        title={`${source.citationId} · ${source.authority}: ${source.title}`}
       >
         {part}
       </a>
-    ) : <span key={`${part}-${index}`}>{part}</span>;
+    ) : (
+      <Fragment key={`${part}-${index}`}>{part}</Fragment>
+    );
   });
+}
+
+function renderInline(
+  text: string,
+  messageId: string,
+  sources: readonly RetrievedSource[],
+) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
+    const bold = part.match(/^\*\*([^*]+)\*\*$/);
+    if (bold) {
+      return (
+        <strong key={`b-${index}`}>{renderCitations(bold[1] ?? "", messageId, sources)}</strong>
+      );
+    }
+    return <Fragment key={`t-${index}`}>{renderCitations(part, messageId, sources)}</Fragment>;
+  });
+}
+
+type Block =
+  | { type: "heading"; text: string }
+  | { type: "paragraph"; text: string }
+  | { type: "ul" | "ol"; items: string[] };
+
+function parseBlocks(content: string): Block[] {
+  const blocks: Block[] = [];
+  let list: { type: "ul" | "ol"; items: string[] } | null = null;
+  const flush = () => {
+    if (list) {
+      blocks.push(list);
+      list = null;
+    }
+  };
+
+  for (const rawLine of content.split("\n")) {
+    const trimmed = rawLine.trim();
+    if (!trimmed || trimmed === "---") {
+      flush();
+      continue;
+    }
+
+    const cleaned = trimmed
+      .replace(/^#{1,6}\s*/, "")
+      .replace(/\*\*/g, "")
+      .replace(/:$/, "")
+      .trim();
+    const isMarkdownHeading = /^#{1,6}\s+/.test(trimmed);
+    const isKnownLabel = answerHeadings.has(cleaned.toUpperCase()) && cleaned.length <= 48;
+    if (isMarkdownHeading || isKnownLabel) {
+      flush();
+      blocks.push({ type: "heading", text: cleaned });
+      continue;
+    }
+
+    const bullet = trimmed.match(/^[-*]\s+(.*)$/);
+    if (bullet) {
+      if (!list || list.type !== "ul") {
+        flush();
+        list = { type: "ul", items: [] };
+      }
+      list.items.push(bullet[1] ?? "");
+      continue;
+    }
+    const numbered = trimmed.match(/^\d+[.)]\s+(.*)$/);
+    if (numbered) {
+      if (!list || list.type !== "ol") {
+        flush();
+        list = { type: "ol", items: [] };
+      }
+      list.items.push(numbered[1] ?? "");
+      continue;
+    }
+
+    flush();
+    blocks.push({ type: "paragraph", text: trimmed });
+  }
+  flush();
+  return blocks;
 }
 
 function StructuredAnswer({
   content,
   messageId,
   retrieval,
-}: Readonly<{ content: string; messageId: string; retrieval?: ChatRetrievalPayload }>) {
-  const sections: Array<{ heading: string; lines: string[] }> = [];
-  let current = { heading: "RESPONSE", lines: [] as string[] };
-
-  for (const rawLine of content.split("\n")) {
-    const line = rawLine
-      .trim()
-      .replace(/\*\*([^*]+)\*\*/g, "$1")
-      .replace(/`([^`]+)`/g, "$1");
-    const normalisedHeading = line
-      .replace(/^#{1,6}\s*/, "")
-      .replace(/:$/, "")
-      .trim();
-    if (line === "---") continue;
-    if (answerHeadings.has(normalisedHeading)) {
-      if (current.lines.length) sections.push(current);
-      current = { heading: normalisedHeading, lines: [] };
-    } else if (line) {
-      current.lines.push(line);
-    }
-  }
-  if (current.lines.length) sections.push(current);
+  streaming,
+}: Readonly<{
+  content: string;
+  messageId: string;
+  retrieval?: ChatRetrievalPayload;
+  streaming?: boolean;
+}>) {
+  const sources = retrieval?.sources ?? [];
+  const blocks = parseBlocks(content);
 
   return (
     <div className="structured-answer">
-      {sections.map((section) => (
-        <section key={`${section.heading}-${section.lines[0] ?? ""}`}>
-          {section.heading === "RESPONSE" ? null : <h3>{section.heading}</h3>}
-          {section.lines.map((line, index) => (
-            <p className={/^\d+\./.test(line) ? "structured-step" : undefined} key={`${line}-${index}`}>
-              <CitationText
-                line={line}
-                messageId={messageId}
-                sources={retrieval?.sources ?? []}
-              />
-            </p>
-          ))}
-        </section>
-      ))}
+      {blocks.map((block, index) => {
+        if (block.type === "heading") {
+          return <h3 key={`h-${index}`}>{renderInline(block.text, messageId, sources)}</h3>;
+        }
+        if (block.type === "paragraph") {
+          return <p key={`p-${index}`}>{renderInline(block.text, messageId, sources)}</p>;
+        }
+        const items = block.items.map((item, itemIndex) => (
+          <li key={itemIndex}>{renderInline(item, messageId, sources)}</li>
+        ));
+        return block.type === "ul"
+          ? <ul key={`ul-${index}`}>{items}</ul>
+          : <ol key={`ol-${index}`}>{items}</ol>;
+      })}
+      {streaming ? <span className="stream-cursor" aria-hidden="true" /> : null}
     </div>
+  );
+}
+
+/** Fields a professional most often needs to correct after an automated read. */
+const NOTICE_FIELDS: ReadonlyArray<{ key: keyof ExtractedNotice; label: string; placeholder: string }> = [
+  { key: "noticeType", label: "Notice type", placeholder: "e.g. GST DRC-01" },
+  { key: "sectionInvoked", label: "Provision invoked", placeholder: "e.g. Section 73, CGST Act" },
+  { key: "taxpayerName", label: "Client", placeholder: "Client name on the notice" },
+  { key: "taxPeriod", label: "Tax period", placeholder: "e.g. Apr 2025 – Mar 2026" },
+  { key: "issueDate", label: "Issued on", placeholder: "YYYY-MM-DD" },
+  { key: "replyDueDate", label: "Reply due", placeholder: "YYYY-MM-DD" },
+];
+
+function daysUntilDate(value: string | null): number | null {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const due = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(due.getTime())) return null;
+  const now = new Date();
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  return Math.round((due.getTime() - today) / 86_400_000);
+}
+
+function NoticeReview({
+  notice,
+  onChange,
+  onAttach,
+  onDiscard,
+}: Readonly<{
+  notice: ExtractedNotice;
+  onChange: (next: ExtractedNotice) => void;
+  onAttach: () => void;
+  onDiscard: () => void;
+}>) {
+  const remaining = daysUntilDate(notice.replyDueDate);
+
+  return (
+    <section className="notice-review" aria-label="Notice read from the uploaded document">
+      <div className="notice-review-head">
+        <div>
+          <p className="eyebrow">Read from your document</p>
+          <h3>{notice.noticeType ?? "Notice"}{notice.sectionInvoked ? ` · ${notice.sectionInvoked}` : ""}</h3>
+        </div>
+        {remaining !== null ? (
+          <span className={`notice-clock ${remaining < 0 ? "overdue" : remaining <= 7 ? "urgent" : ""}`}>
+            {remaining < 0
+              ? `Reply deadline passed ${Math.abs(remaining)} day${Math.abs(remaining) === 1 ? "" : "s"} ago`
+              : `${remaining} day${remaining === 1 ? "" : "s"} to reply`}
+          </span>
+        ) : null}
+      </div>
+
+      <p className="notice-review-note">
+        Check every field against the document before using it. Nothing was sent, filed, or saved.
+      </p>
+
+      <div className="notice-field-grid">
+        {NOTICE_FIELDS.map((field) => (
+          <label key={field.key}>
+            <span>{field.label}</span>
+            <input
+              onChange={(event) => onChange({ ...notice, [field.key]: event.target.value || null })}
+              placeholder={field.placeholder}
+              type="text"
+              value={(notice[field.key] as string | null) ?? ""}
+            />
+          </label>
+        ))}
+      </div>
+
+      {notice.amounts.total || notice.amounts.tax ? (
+        <p className="notice-amounts">
+          {notice.amounts.tax ? <span>Tax ₹{notice.amounts.tax}</span> : null}
+          {notice.amounts.interest ? <span>Interest ₹{notice.amounts.interest}</span> : null}
+          {notice.amounts.penalty ? <span>Penalty ₹{notice.amounts.penalty}</span> : null}
+          {notice.amounts.total ? <span><strong>Total ₹{notice.amounts.total}</strong></span> : null}
+        </p>
+      ) : null}
+
+      {notice.summary ? <p className="notice-summary">{notice.summary}</p> : null}
+
+      {notice.missingFields.length ? (
+        <p className="notice-missing">
+          Not found in the document: {notice.missingFields.join(", ")}. Fill these in if you need them.
+        </p>
+      ) : null}
+
+      <div className="notice-review-actions">
+        <button className="button primary" onClick={onAttach} type="button">Use this notice</button>
+        <button className="button" onClick={onDiscard} type="button">Discard</button>
+      </div>
+    </section>
+  );
+}
+
+function VerificationBadge({ verification }: Readonly<{ verification: ChatVerificationPayload }>) {
+  if (verification.state === "unchecked" || verification.claimCount === 0) return null;
+  const label = {
+    verified: `Verified against sources · ${verification.supportedCount}/${verification.claimCount} claims`,
+    partial: `Partially verified · ${verification.supportedCount}/${verification.claimCount} claims`,
+    unverified: `Verification failed · check flagged claims`,
+  }[verification.state];
+
+  return (
+    <div className="verification-block">
+      <span className={`verification-chip ${verification.state}`}>{label}</span>
+      {verification.flagged.length ? (
+        <ul className="verification-flags">
+          {verification.flagged.map((flag, index) => (
+            <li key={index}>
+              <strong>{flag.verdict === "unsupported" ? "Not supported" : "Partly supported"}</strong>
+              {" by "}{flag.citations.join(", ")}: “{flag.claim}”
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+function AnswerTimestamp({ corpusGeneratedAt }: Readonly<{ corpusGeneratedAt?: string }>) {
+  const formatter = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  return (
+    <p className="answer-timestamp">
+      Law as in force on {formatter.format(new Date())}
+      {corpusGeneratedAt ? ` · sources last checked ${formatter.format(new Date(corpusGeneratedAt))}` : ""}
+    </p>
   );
 }
 
@@ -183,6 +411,14 @@ function ResearchTrail({
               </div>
               <h4>{source.title}</h4>
               <p>{source.applicability}</p>
+              {source.supersededBy ? (
+                <p className="source-superseded-note">
+                  Superseded by {source.supersededBy.documentNumber ?? source.supersededBy.title}
+                  {source.supersededBy.effectiveFrom
+                    ? ` w.e.f. ${formatSourceDate(source.supersededBy.effectiveFrom)}`
+                    : ""}
+                </p>
+              ) : null}
               <div className="source-card-status">
                 <span className={`source-status ${source.status}`}>{source.status}</span>
                 <span>
@@ -190,7 +426,7 @@ function ResearchTrail({
                     ? "Full official text"
                     : source.sourceKind === "official-index-text"
                       ? "Official index"
-                    : "Source summary"}
+                      : "Source summary"}
                 </span>
                 <span>{Math.round(source.relevance * 100)}% relative search score</span>
               </div>
@@ -238,14 +474,59 @@ export function AssistantExperience({
   const [activeConversationId, setActiveConversationId] = useState<string | null>(
     defaultConversation?.id ?? initialConversationId,
   );
-  const [messages, setMessages] = useState<readonly ConversationMessage[]>(
-    defaultConversation ? messagesFromDemo(defaultConversation) : initialMessages,
+  const [messages, setMessages] = useState<ConversationMessage[]>(
+    defaultConversation ? messagesFromDemo(defaultConversation) : [...initialMessages],
   );
   const [requestState, setRequestState] = useState<RequestState>("idle");
   const [actionStates, setActionStates] = useState<Record<string, ActionReviewState>>({});
   const [error, setError] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [status, setStatus] = useState("");
+  // A notice moves through: read → review (editable) → attached to the conversation.
+  const [draftNotice, setDraftNotice] = useState<ExtractedNotice | null>(null);
+  const [attachedNotice, setAttachedNotice] = useState<ExtractedNotice | null>(null);
+  const [noticeBusy, setNoticeBusy] = useState(false);
   const composerRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  function autoGrowComposer() {
+    const element = composerRef.current;
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${Math.min(element.scrollHeight, 220)}px`;
+  }
+
+  useEffect(() => {
+    autoGrowComposer();
+  }, [draft]);
+
+  async function readNotice(file: File) {
+    setNoticeBusy(true);
+    setError("");
+    setStatus("Reading the notice");
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const response = await fetch("/api/notices/extract", { method: "POST", body });
+      const payload = await response.json() as { notice?: ExtractedNotice; error?: string };
+      if (!response.ok || !payload.notice) {
+        throw new Error(payload.error || "The notice could not be read.");
+      }
+      setDraftNotice(payload.notice);
+      setStatus("Notice read — check the fields");
+    } catch (readError) {
+      setError(readError instanceof Error ? readError.message : "The notice could not be read.");
+      setStatus("");
+    } finally {
+      setNoticeBusy(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  function updateMessage(id: string, patch: Partial<ConversationMessage>) {
+    setMessages((current) => current.map((message) => (message.id === id ? { ...message, ...patch } : message)));
+  }
 
   async function copyAnswer(messageId: string, content: string) {
     try {
@@ -254,6 +535,166 @@ export function AssistantExperience({
       window.setTimeout(() => setCopiedId((current) => (current === messageId ? null : current)), 2_000);
     } catch {
       setError("Couldn’t copy the answer. Select the text and copy manually.");
+    }
+  }
+
+  async function revealTemplateAnswer(assistantId: string, text: string, signal: AbortSignal) {
+    const tokens = text.match(/\S+\s*/g) ?? [text];
+    let buffer = "";
+    for (const token of tokens) {
+      if (signal.aborted) return;
+      buffer += token;
+      updateMessage(assistantId, { content: buffer });
+      await new Promise((resolve) => window.setTimeout(resolve, 18));
+    }
+  }
+
+  async function runStream(transcript: ConversationMessage[], requestMode: AssistantMode) {
+    const assistantId = createId("assistant");
+    setMessages([
+      ...transcript,
+      { id: assistantId, role: "assistant", mode: requestMode, content: "", streaming: true },
+    ]);
+    setRequestState("loading");
+    setError("");
+    setStatus(requestMode === "ask" ? "Searching indexed sources" : "Preparing a draft for review");
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      if (templateMode) {
+        const lastUser = [...transcript].reverse().find((message) => message.role === "user");
+        const text = createTemplateAnswer(lastUser?.content ?? "", requestMode);
+        await revealTemplateAnswer(assistantId, text, controller.signal);
+        if (!controller.signal.aborted) {
+          updateMessage(assistantId, { streaming: false, completeness: "complete" });
+          setStatus("Answer ready");
+        } else {
+          updateMessage(assistantId, { streaming: false, stopped: true });
+        }
+        setRequestState("idle");
+        return;
+      }
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: activeConversationId,
+          mode: requestMode,
+          notice: attachedNotice ?? undefined,
+          messages: transcript.map(({ role, content }) => ({ role, content })),
+        }),
+        signal: controller.signal,
+      });
+
+      const contentType = response.headers.get("content-type") ?? "";
+      if (!response.ok || !response.body || !contentType.includes("text/event-stream")) {
+        const payload = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(payload.error || "Reg Mitra could not prepare an answer.");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let streamError: string | null = null;
+      let done: StreamEvent | null = null;
+
+      for (;;) {
+        const { done: finished, value } = await reader.read();
+        if (finished) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let boundary: number;
+        while ((boundary = buffer.indexOf("\n\n")) !== -1) {
+          const rawEvent = buffer.slice(0, boundary);
+          buffer = buffer.slice(boundary + 2);
+          const dataLine = rawEvent.split("\n").find((line) => line.startsWith("data:"));
+          if (!dataLine) continue;
+          const json = dataLine.slice(5).trim();
+          if (!json) continue;
+          let event: StreamEvent;
+          try {
+            event = JSON.parse(json) as StreamEvent;
+          } catch {
+            continue;
+          }
+          if (event.type === "retrieval" && event.retrieval) {
+            updateMessage(assistantId, { retrieval: event.retrieval });
+          } else if (event.type === "verification" && event.verification) {
+            const verification = event.verification;
+            setMessages((current) =>
+              current.map((message) =>
+                message.id === assistantId && message.retrieval
+                  ? { ...message, retrieval: { ...message.retrieval, verification } }
+                  : message,
+              ),
+            );
+          } else if (event.type === "delta" && event.text) {
+            const delta = event.text;
+            setMessages((current) =>
+              current.map((message) =>
+                message.id === assistantId
+                  ? { ...message, content: message.content + delta }
+                  : message,
+              ),
+            );
+          } else if (event.type === "done") {
+            done = event;
+          } else if (event.type === "error") {
+            streamError = event.error ?? "Reg Mitra could not prepare an answer.";
+          }
+        }
+      }
+
+      if (streamError) {
+        setMessages((current) => {
+          const message = current.find((item) => item.id === assistantId);
+          if (message && message.content.trim()) {
+            return current.map((item) =>
+              item.id === assistantId ? { ...item, streaming: false, stopped: true } : item,
+            );
+          }
+          return current.filter((item) => item.id !== assistantId);
+        });
+        setError(streamError);
+        setRequestState("error");
+        setStatus("");
+        return;
+      }
+
+      updateMessage(assistantId, {
+        streaming: false,
+        completeness: done?.completeness ?? "complete",
+        retrieval: done?.retrieval,
+        serverId: done?.messageId,
+      });
+      if (done?.conversationId) setActiveConversationId(done.conversationId);
+      setRequestState("idle");
+      setStatus(done?.completeness === "partial" ? "Answer cut short" : "Answer ready");
+    } catch (requestError) {
+      if (controller.signal.aborted) {
+        setMessages((current) => {
+          const message = current.find((item) => item.id === assistantId);
+          if (message && message.content.trim()) {
+            return current.map((item) =>
+              item.id === assistantId ? { ...item, streaming: false, stopped: true } : item,
+            );
+          }
+          return current.filter((item) => item.id !== assistantId);
+        });
+        setRequestState("idle");
+        setStatus("Stopped");
+        return;
+      }
+      setMessages((current) => current.filter((item) => !(item.id === assistantId && !item.content.trim())));
+      updateMessage(assistantId, { streaming: false });
+      setError(requestError instanceof Error ? requestError.message : "Reg Mitra could not prepare an answer.");
+      setRequestState("error");
+      setStatus("");
+    } finally {
+      abortRef.current = null;
     }
   }
 
@@ -268,72 +709,36 @@ export function AssistantExperience({
       mode: requestMode,
       content: normalizedPrompt,
     };
-    const nextMessages = [...messages, userMessage];
-
-    setMessages(nextMessages);
-    setActiveConversationId(null);
     setDraft("");
+    await runStream([...messages, userMessage], requestMode);
+  }
+
+  function stopStreaming() {
+    abortRef.current?.abort();
+  }
+
+  function regenerate() {
+    if (requestState === "loading") return;
+    const lastUserIndex = messages.map((message) => message.role).lastIndexOf("user");
+    const lastUser = lastUserIndex === -1 ? undefined : messages[lastUserIndex];
+    if (!lastUser) return;
+    void runStream(messages.slice(0, lastUserIndex + 1), lastUser.mode);
+  }
+
+  function editLastQuestion() {
+    if (requestState === "loading") return;
+    const lastUserIndex = messages.map((message) => message.role).lastIndexOf("user");
+    const lastUser = lastUserIndex === -1 ? undefined : messages[lastUserIndex];
+    if (!lastUser) return;
+    setDraft(lastUser.content);
+    setMode(lastUser.mode);
+    setMessages(messages.slice(0, lastUserIndex));
     setError("");
-    setRequestState("loading");
-
-    try {
-      if (templateMode) {
-        await new Promise((resolve) => window.setTimeout(resolve, 420));
-        setMessages((current) => [
-          ...current,
-          {
-            id: createId("assistant"),
-            role: "assistant",
-            mode: requestMode,
-            content: createTemplateAnswer(normalizedPrompt, requestMode),
-          },
-        ]);
-        setRequestState("idle");
-        return;
-      }
-
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          conversationId: activeConversationId,
-          mode: requestMode,
-          messages: nextMessages.map(({ role, content }) => ({ role, content })),
-        }),
-      });
-      const payload = await response.json() as {
-        text?: string;
-        model?: string;
-        error?: string;
-        retrieval?: ChatRetrievalPayload;
-        conversationId?: string;
-        messageId?: string;
-      };
-
-      if (!response.ok || !payload.text) {
-        throw new Error(payload.error || "Reg Mitra could not prepare an answer.");
-      }
-
-      setMessages((current) => [
-        ...current,
-        {
-          id: payload.messageId ?? createId("assistant"),
-          role: "assistant",
-          mode: requestMode,
-          content: payload.text ?? "",
-          retrieval: payload.retrieval,
-        },
-      ]);
-      if (payload.conversationId) setActiveConversationId(payload.conversationId);
-      setRequestState("idle");
-    } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "Reg Mitra could not prepare an answer.",
-      );
-      setRequestState("error");
-    }
+    setStatus("");
+    window.requestAnimationFrame(() => {
+      composerRef.current?.focus();
+      autoGrowComposer();
+    });
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -349,41 +754,52 @@ export function AssistantExperience({
   }
 
   function startAgain() {
+    abortRef.current?.abort();
     setMessages([]);
     setActiveConversationId(null);
     setMode("ask");
     setDraft("");
     setActionStates({});
     setError("");
+    setStatus("");
     setRequestState("idle");
     window.requestAnimationFrame(() => composerRef.current?.focus());
   }
 
   function loadConversation(conversation: DemoConversation) {
+    abortRef.current?.abort();
     setMessages(messagesFromDemo(conversation));
     setActiveConversationId(conversation.id);
     setMode(conversation.finalMode);
     setDraft("");
     setActionStates({});
     setError("");
+    setStatus("");
     setRequestState("idle");
   }
 
-  async function approveMessage(messageId: string) {
+  async function approveMessage(message: ConversationMessage) {
     if (!templateMode) {
-      const response = await fetch(`/api/messages/${encodeURIComponent(messageId)}/review`, { method: "POST" });
+      const reviewId = message.serverId ?? message.id;
+      const response = await fetch(`/api/messages/${encodeURIComponent(reviewId)}/review`, { method: "POST" });
       if (!response.ok) {
         setError("This draft could not be approved. Reviewer access is required.");
         return;
       }
     }
-    setActionStates((current) => ({ ...current, [messageId]: "approved" }));
+    setActionStates((current) => ({ ...current, [message.id]: "approved" }));
   }
 
   const hasConversation = messages.length > 0;
+  const lastUserId = [...messages].reverse().find((message) => message.role === "user")?.id ?? null;
+  const lastAssistantId = [...messages].reverse().find((message) => message.role === "assistant")?.id ?? null;
   const latestRetrieval = [...messages]
     .reverse()
-    .find((message) => message.role === "assistant" && message.retrieval)
+    .find((message) =>
+      message.role === "assistant"
+      && message.retrieval
+      && message.retrieval.sources.length > 0
+      && message.retrieval.citationState !== "unsupported")
     ?.retrieval;
 
   return (
@@ -499,70 +915,113 @@ export function AssistantExperience({
               </div>
             </div>
           ) : (
-            <div className="assistant-response" aria-live="polite">
+            <div className="assistant-response">
               {messages.map((message) => message.role === "user" ? (
                 <div className="assistant-query" key={message.id}>
                   <span>You · {message.mode === "ask" ? "Answer" : "Prepare"}</span>
                   <p>{message.content}</p>
+                  {message.id === lastUserId && requestState !== "loading" ? (
+                    <button className="query-edit" onClick={editLastQuestion} type="button">
+                      <EditIcon /> Edit
+                    </button>
+                  ) : null}
                 </div>
               ) : (
                 <article className={`assistant-answer ${message.mode === "act" ? "act-answer" : ""}`} key={message.id}>
                   <div className="answer-heading">
                     <span className="answer-icon"><CheckCircleIcon /></span>
-                    <div>
-                      <p className="eyebrow">
-                        {message.mode === "act" ? "Internal draft" : "Source-grounded answer"} · Reg Mitra
-                      </p>
-                      <h2>
-                        {message.mode === "act"
-                          ? "Draft awaiting review"
-                          : "Answer with sources and caveats"}
-                      </h2>
-                    </div>
-                    <span className={`answer-mode-badge ${message.mode}`}>
-                      {message.mode === "act" ? "Professional review required" : "Official sources attached"}
-                    </span>
+                    <p className="eyebrow">
+                      {message.mode === "act" ? "Internal draft" : "Source-grounded answer"} · Reg Mitra
+                    </p>
+                    {!message.streaming ? (
+                      <span className={`answer-mode-badge ${message.mode}`}>
+                        {message.mode === "act" ? "Professional review required" : "Official sources attached"}
+                      </span>
+                    ) : null}
                   </div>
-                  <StructuredAnswer
-                    content={message.content}
-                    messageId={message.id}
-                    retrieval={message.retrieval}
-                  />
-                  {message.retrieval ? (
+
+                  {message.streaming && !message.content.trim() ? (
+                    <div className="assistant-thinking" aria-hidden="true">
+                      <span className="thinking-mark"><SparklesIcon /></span>
+                      <span>
+                        <strong>{message.mode === "ask" ? "Searching indexed sources" : "Preparing a draft for review"}</strong>
+                        <small>Checking context, evidence gaps, and approval boundaries…</small>
+                      </span>
+                    </div>
+                  ) : (
+                    <StructuredAnswer
+                      content={message.content}
+                      messageId={message.id}
+                      retrieval={message.retrieval}
+                      streaming={message.streaming}
+                    />
+                  )}
+
+                  {!message.streaming && message.retrieval?.verification ? (
+                    <VerificationBadge verification={message.retrieval.verification} />
+                  ) : null}
+
+                  {message.retrieval
+                    && message.retrieval.sources.length > 0
+                    && (message.streaming || message.retrieval.citationState !== "unsupported") ? (
                     <ResearchTrail messageId={message.id} retrieval={message.retrieval} />
                   ) : null}
-                  <div className="answer-actions">
-                    {message.mode === "act" ? (
-                      <>
-                        <button
-                          className="button primary"
-                          onClick={() => setActionStates((current) => ({ ...current, [message.id]: "reviewing" }))}
-                          type="button"
-                        >
-                          Review draft
-                        </button>
-                        <button
-                          className="button"
-                          onClick={() => setActionStates((current) => ({ ...current, [message.id]: "deferred" }))}
-                          type="button"
-                        >
-                          Not now
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          className="button"
-                          onClick={() => void copyAnswer(message.id, message.content)}
-                          type="button"
-                        >
-                          {copiedId === message.id ? "Copied" : "Copy for file note"}
-                        </button>
-                        <Link className="button" href="/clients">{templateMode ? "Review sample clients" : "Review clients"}</Link>
-                        <button className="button primary" onClick={() => setMode("act")} type="button">Prepare the next step</button>
-                      </>
-                    )}
-                  </div>
+
+                  {!message.streaming && message.retrieval ? (
+                    <AnswerTimestamp corpusGeneratedAt={message.retrieval.corpus.generatedAt} />
+                  ) : null}
+
+                  {message.stopped ? (
+                    <p className="answer-note">Answer stopped. The text above is incomplete.</p>
+                  ) : message.completeness === "partial" ? (
+                    <p className="answer-note">This answer was cut short. Regenerate for the full response.</p>
+                  ) : null}
+
+                  {!message.streaming ? (
+                    <div className="answer-actions">
+                      {message.mode === "act" ? (
+                        <>
+                          <button
+                            className="button primary"
+                            onClick={() => setActionStates((current) => ({ ...current, [message.id]: "reviewing" }))}
+                            type="button"
+                          >
+                            Review draft
+                          </button>
+                          <button
+                            className="button"
+                            onClick={() => setActionStates((current) => ({ ...current, [message.id]: "deferred" }))}
+                            type="button"
+                          >
+                            Not now
+                          </button>
+                          {message.id === lastAssistantId ? (
+                            <button className="button subtle" onClick={regenerate} type="button">
+                              <SyncIcon /> Regenerate
+                            </button>
+                          ) : null}
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="button"
+                            onClick={() => void copyAnswer(message.id, message.content)}
+                            type="button"
+                          >
+                            {copiedId === message.id ? "Copied" : "Copy for file note"}
+                          </button>
+                          {message.id === lastAssistantId ? (
+                            <button className="button subtle" onClick={regenerate} type="button">
+                              <SyncIcon /> Regenerate
+                            </button>
+                          ) : null}
+                          <Link className="button" href="/clients">{templateMode ? "Review sample clients" : "Review clients"}</Link>
+                          <button className="button primary" onClick={() => setMode("act")} type="button">Prepare the next step</button>
+                        </>
+                      )}
+                    </div>
+                  ) : null}
+
                   {message.mode === "act" && actionStates[message.id] === "reviewing" ? (
                     <div className="action-review-sheet" role="status">
                       <div>
@@ -580,7 +1039,7 @@ export function AssistantExperience({
                       <div className="action-review-buttons">
                         <button
                           className="button primary"
-                          onClick={() => void approveMessage(message.id)}
+                          onClick={() => void approveMessage(message)}
                           type="button"
                         >
                           Record internal approval
@@ -630,23 +1089,16 @@ export function AssistantExperience({
                 </article>
               ))}
 
-              {requestState === "loading" ? (
-                <div className="assistant-thinking">
-                  <span className="thinking-mark"><SparklesIcon /></span>
-                  <span>
-                    <strong>{mode === "ask" ? "Searching indexed sources" : "Preparing a draft for review"}</strong>
-                    <small>Checking context, evidence gaps, and approval boundaries…</small>
-                  </span>
-                </div>
-              ) : null}
-
               {error ? (
                 <div className="assistant-error" role="alert">
                   <strong>Couldn’t prepare the answer</strong>
                   <span>{error}</span>
                   <button
                     className="text-link"
-                    onClick={() => void requestAnswer(draft || messages.filter((message) => message.role === "user").at(-1)?.content || "")}
+                    onClick={() => {
+                      const lastUser = [...messages].reverse().find((message) => message.role === "user");
+                      if (lastUser) void runStream(messages, lastUser.mode);
+                    }}
                     type="button"
                   >
                     Try again
@@ -663,6 +1115,25 @@ export function AssistantExperience({
             </div>
           )}
 
+          <p aria-live="polite" className="visually-hidden">{status}</p>
+
+          {draftNotice ? (
+            <NoticeReview
+              notice={draftNotice}
+              onAttach={() => {
+                setAttachedNotice(draftNotice);
+                setDraftNotice(null);
+                setStatus("Notice attached to this conversation");
+                window.requestAnimationFrame(() => composerRef.current?.focus());
+              }}
+              onChange={setDraftNotice}
+              onDiscard={() => {
+                setDraftNotice(null);
+                setStatus("");
+              }}
+            />
+          ) : null}
+
           <form className="composer" onSubmit={submit}>
             <div className="composer-mode-line">
               <span className={`composer-mode ${mode}`}>{mode === "ask" ? "Answer" : "Prepare"}</span>
@@ -674,14 +1145,54 @@ export function AssistantExperience({
             </div>
             <textarea
               aria-label={`${mode === "ask" ? "Get an answer from" : "Prepare with"} Reg Mitra`}
-              disabled={requestState === "loading"}
               onChange={(event) => setDraft(event.target.value)}
+              onInput={autoGrowComposer}
               onKeyDown={handleComposerKeyDown}
               placeholder={mode === "ask" ? "Ask a compliance question…" : "Describe what you want prepared…"}
               ref={composerRef}
+              rows={1}
               value={draft}
             />
+            {attachedNotice ? (
+              <div className="notice-chip">
+                <span>
+                  <strong>{attachedNotice.noticeType ?? "Notice"}</strong>
+                  {attachedNotice.taxpayerName ? ` · ${attachedNotice.taxpayerName}` : ""}
+                  {attachedNotice.replyDueDate ? ` · reply due ${attachedNotice.replyDueDate}` : ""}
+                </span>
+                <button
+                  aria-label="Remove the attached notice"
+                  onClick={() => {
+                    setAttachedNotice(null);
+                    setStatus("Notice removed");
+                  }}
+                  type="button"
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+            ) : null}
             <div className="composer-actions">
+              <input
+                accept="application/pdf"
+                className="visually-hidden"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) void readNotice(file);
+                }}
+                ref={fileInputRef}
+                type="file"
+              />
+              {!templateMode ? (
+                <button
+                  className="button subtle notice-attach"
+                  disabled={noticeBusy || requestState === "loading"}
+                  onClick={() => fileInputRef.current?.click()}
+                  type="button"
+                >
+                  <FileIcon /> {noticeBusy ? "Reading…" : "Attach notice"}
+                </button>
+              ) : null}
               <span className="composer-note">
                 {templateMode
                   ? "Sample response · no external systems queried"
@@ -689,13 +1200,19 @@ export function AssistantExperience({
                     ? "Current browser session · not saved to a firm record"
                     : "Saved to this conversation"} · ⌘ Enter
               </span>
-              <button
-                className="button primary"
-                disabled={!draft.trim() || requestState === "loading"}
-                type="submit"
-              >
-                {requestState === "loading" ? "Preparing…" : mode === "ask" ? "Get answer" : "Prepare"} <ArrowUpIcon />
-              </button>
+              {requestState === "loading" ? (
+                <button className="button stop-button" onClick={stopStreaming} type="button">
+                  <StopIcon /> Stop
+                </button>
+              ) : (
+                <button
+                  className="button primary"
+                  disabled={!draft.trim()}
+                  type="submit"
+                >
+                  {mode === "ask" ? "Get answer" : "Prepare"} <ArrowUpIcon />
+                </button>
+              )}
             </div>
           </form>
         </section>

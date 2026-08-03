@@ -1,8 +1,9 @@
-import { execFile } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { promisify } from "node:util";
+// Query embeddings for hybrid retrieval.
+//
+// The AI Gateway does not proxy embeddings, so these use the direct Google API.
+// The key is optional: when GOOGLE_GENERATIVE_AI_API_KEY is absent, retrieval
+// degrades to lexical-only (see rag/scoring). Any failure returns null rather
+// than throwing, so a transient embedding error never breaks an answer.
 
 interface EmbeddingResponse {
   embedding?: { values?: number[] };
@@ -14,43 +15,8 @@ function safeEmbeddingModel(value: string | undefined) {
   return value && /^[a-zA-Z0-9._-]+$/.test(value) ? value : fallback;
 }
 
-async function callWithSystemTransport(
-  endpoint: string,
-  apiKey: string,
-  requestBody: unknown,
-) {
-  const directory = await mkdtemp(join(tmpdir(), "regmitra-query-embedding-"));
-  const configPath = join(directory, "curl.conf");
-  const requestPath = join(directory, "request.json");
-  const responsePath = join(directory, "response.json");
-  try {
-    await writeFile(requestPath, JSON.stringify(requestBody), { mode: 0o600 });
-    await writeFile(
-      configPath,
-      [
-        `url = "${endpoint}"`,
-        'request = "POST"',
-        'header = "Content-Type: application/json"',
-        `header = "x-goog-api-key: ${apiKey}"`,
-        `data-binary = "@${requestPath}"`,
-        `output = "${responsePath}"`,
-        'write-out = "%{http_code}"',
-        "silent",
-        "show-error",
-      ].join("\n"),
-      { mode: 0o600 },
-    );
-    const { stdout } = await promisify(execFile)("curl", ["--config", configPath], {
-      timeout: 12_000,
-      maxBuffer: 1024 * 1024,
-    });
-    return {
-      status: Number(stdout.trim()),
-      payload: JSON.parse(await readFile(responsePath, "utf8")) as EmbeddingResponse,
-    };
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
+export function getEmbeddingApiKey(): string | null {
+  return process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() || null;
 }
 
 export async function embedRegulatoryQuery(query: string, apiKey: string) {
@@ -75,18 +41,11 @@ export async function embedRegulatoryQuery(query: string, apiKey: string) {
       body: JSON.stringify(requestBody),
       signal: AbortSignal.timeout(10_000),
     });
-    const payload = await response.json() as EmbeddingResponse;
+    const payload = (await response.json()) as EmbeddingResponse;
     if (response.ok && Array.isArray(payload.embedding?.values)) {
       return payload.embedding.values;
     }
-    if (response.status !== 401 && response.status !== 403) return null;
-
-    const fallback = await callWithSystemTransport(endpoint, apiKey, requestBody);
-    return fallback.status >= 200
-      && fallback.status < 300
-      && Array.isArray(fallback.payload.embedding?.values)
-      ? fallback.payload.embedding.values
-      : null;
+    return null;
   } catch {
     return null;
   }
