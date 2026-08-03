@@ -40,6 +40,7 @@ const STEPS = [
   { label: "Flagged", caption: "It flags who may be affected — and clears the rest." },
   { label: "Why", caption: "Each flag shows why, linked to the official circular." },
   { label: "Prepare", caption: "A client-ready brief — edit it, then send by email or WhatsApp. You decide when." },
+  { label: "Tracked", caption: "Every brief is tracked to closure — sent, marked done, and logged to your audit trail." },
 ];
 
 const STEP_MS = 3800;
@@ -131,7 +132,20 @@ export function HeroRadar() {
         </div>
 
         <div className="hero-radar-detail">
-          {step === 4 ? (
+          {step === 5 ? (
+            <div className="hero-radar-track" key="track">
+              <span className="hero-radar-track-head">Sent &amp; tracked</span>
+              <div className="hero-radar-track-row">
+                <i className="hero-radar-track-tick" aria-hidden="true" />
+                Royal Spice Foods<span>sent · done</span>
+              </div>
+              <div className="hero-radar-track-row">
+                <i className="hero-radar-track-tick" aria-hidden="true" />
+                Annapurna Foods<span>sent · done</span>
+              </div>
+              <span className="hero-radar-track-note">Logged to your audit trail.</span>
+            </div>
+          ) : step === 4 ? (
             <div className="hero-radar-brief" key="brief">
               <div className="hero-radar-brief-head">
                 <span className="hero-radar-brief-title">Client brief · {DETAIL.name}</span>
