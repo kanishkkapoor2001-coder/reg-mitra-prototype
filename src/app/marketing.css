@@ -738,15 +738,28 @@
 .marketing-cta h2 { max-width: 800px; margin: 0 auto 36px; }
 .marketing-cta > p:not(.marketing-kicker) { max-width: 620px; margin: -16px auto 30px; color: color-mix(in srgb, var(--paper) 68%, transparent); font-size: 16px; line-height: 1.7; }
 .public-footer {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr auto;
-  align-items: center;
-  gap: 24px;
-  padding: 60px clamp(24px, 5vw, 76px) 36px;
+  max-width: 1344px;
+  margin: 0 auto;
+  padding: clamp(56px, 6vw, 80px) clamp(24px, 5vw, 76px) 36px;
   border-top: 1px solid var(--line-strong);
 }
-.public-footer p { margin: 0; color: var(--ink-600); font-size: 14px; }
-.public-footer small { grid-column: 1 / -1; margin-top: 38px; color: var(--ink-600); font-size: 14px; }
+.footer-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(40px, 8vw, 120px);
+  align-items: start;
+}
+.footer-brand-col { max-width: 400px; }
+.footer-brand-col .public-brand { margin-bottom: 16px; }
+.footer-brand-col p { margin: 0 0 18px; color: var(--ink-600); font-size: 14px; line-height: 1.6; }
+.footer-contact { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.footer-contact a { color: var(--ink-800); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; border-bottom: 1px solid transparent; transition: border-color var(--duration-standard) var(--ease-out); }
+.footer-contact a:hover { border-color: var(--ink-800); }
+.footer-nav { display: grid; gap: 13px; justify-items: end; }
+.footer-nav a { color: var(--ink-800); font-size: 15px; font-weight: 600; }
+.footer-nav a:hover { color: var(--ink-950); }
+.footer-bottom { margin-top: clamp(40px, 6vw, 64px); padding-top: 22px; border-top: 1px solid var(--line); }
+.footer-bottom small { color: var(--ink-500); font-size: 13px; }
 
 .editorial-page { max-width: 1280px; min-height: calc(100vh - 86px); margin: 0 auto; padding: 92px clamp(24px, 6vw, 90px) 150px; }
 .editorial-hero { max-width: 1000px; padding-bottom: 110px; }
@@ -873,8 +886,8 @@
   .marketing-calendar-preview { min-height: auto; }
   .pricing-comparison { grid-template-columns: 1fr; }
   .pricing-comparison article + article { border-top: 1px solid var(--line-strong); border-left: 0; }
-  .public-footer { grid-template-columns: 1fr auto; }
-  .public-footer p { display: none; }
+  .footer-top { grid-template-columns: 1fr; gap: 36px; }
+  .footer-nav { justify-items: start; }
   .editorial-callout { align-items: flex-start; flex-direction: column; }
   .login-page { gap: 60px; }
 }
@@ -912,7 +925,6 @@
   .calendar-proof-grid > span { min-height: 96px; padding: 12px 9px; }
   .calendar-proof-detail dl { grid-template-columns: 1fr; }
   .public-footer { padding-inline: 20px; }
-  .public-footer nav { gap: 14px; }
   .editorial-page { padding: 60px 20px 100px; }
   .editorial-hero { padding-bottom: 70px; }
   .editorial-hero h1 { font-size: 50px; }

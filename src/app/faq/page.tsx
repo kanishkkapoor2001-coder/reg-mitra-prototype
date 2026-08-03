@@ -32,7 +32,7 @@ export default function FaqPage() {
             <p>Follow a source-linked question, client check, and prepared draft using sample records.</p>
           </div>
           <div className="faq-contact-actions">
-            <Link className="marketing-button" href="/demo">Explore the sample workspace</Link>
+            <Link className="marketing-button" href="/today">Explore the sample workspace</Link>
             <Link className="marketing-button primary" href="/today">Open the product</Link>
           </div>
         </section>
