@@ -1437,3 +1437,89 @@
 @media (max-width: 560px) {
   .hero-radar-steps { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ============================================================
+   Workflow — simple linear four-step flow (replaces the branch diagram)
+   ============================================================ */
+.flow {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(28px, 4vw, 64px);
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.flow::before {
+  content: "";
+  position: absolute;
+  top: 21px;
+  left: 21px;
+  right: 21px;
+  height: 1px;
+  background: color-mix(in srgb, var(--paper) 16%, transparent);
+}
+.flow::after {
+  content: "";
+  position: absolute;
+  top: 21px;
+  left: 21px;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #a8d5b7;
+  box-shadow: 0 0 12px 1px rgb(168 213 183 / 70%);
+  animation: flow-run 6.5s var(--ease-out) infinite;
+}
+.flow-step { position: relative; }
+.flow-num {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  margin-bottom: 20px;
+  border: 1px solid color-mix(in srgb, var(--paper) 28%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--paper) 6%, var(--forest-950));
+  color: var(--paper);
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.flow-step h3 {
+  margin: 0 0 9px;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: clamp(21px, 2vw, 25px);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  color: var(--paper);
+}
+.flow-step p {
+  margin: 0;
+  max-width: 26ch;
+  color: color-mix(in srgb, var(--paper) 66%, transparent);
+  font-size: 15px;
+  line-height: 1.6;
+}
+@keyframes flow-run {
+  0% { left: 21px; opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { left: calc(100% - 21px); opacity: 0; }
+}
+
+@media (max-width: 900px) {
+  .flow { grid-template-columns: 1fr; gap: 26px; }
+  .flow::before { top: 21px; bottom: 21px; left: 21px; right: auto; width: 1px; height: auto; }
+  .flow::after { display: none; }
+  .flow-step { padding-left: 62px; }
+  .flow-num { position: absolute; top: 0; left: 0; margin-bottom: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow::after { animation: none; opacity: 0; }
+}

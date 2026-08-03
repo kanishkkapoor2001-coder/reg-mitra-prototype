@@ -103,7 +103,7 @@ export function HeroRadar() {
       >
         <div className="hero-radar-bar">
           <span className="hero-radar-book">Client book</span>
-          <span className="hero-radar-fresh"><i />28 sources · updated 29 Jul</span>
+          <span className="hero-radar-fresh"><i />28 sources · updated just now</span>
         </div>
 
         <div className="hero-radar-change">
