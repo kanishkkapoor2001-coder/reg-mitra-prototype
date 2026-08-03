@@ -39,7 +39,7 @@ const STEPS = [
   { label: "Checking", caption: "Reg Mitra checks it against every client in your book." },
   { label: "Flagged", caption: "It flags who may be affected — and clears the rest." },
   { label: "Why", caption: "Each flag shows why, linked to the official circular." },
-  { label: "Prepare", caption: "Draft the client note and mark it done — nothing goes out without you." },
+  { label: "Prepare", caption: "A client-ready brief — edit it, then send by email or WhatsApp. You decide when." },
 ];
 
 const STEP_MS = 3800;
@@ -132,15 +132,27 @@ export function HeroRadar() {
 
         <div className="hero-radar-detail">
           {step === 4 ? (
-            <div className="hero-radar-act" key="act">
-              <div className="hero-radar-act-head">
-                <span className="hero-radar-act-name">Client note · {DETAIL.name}</span>
-                <span className="hero-radar-act-btns">
-                  <span className="hero-radar-btn primary">Draft note</span>
-                  <span className="hero-radar-btn">Mark done</span>
-                </span>
+            <div className="hero-radar-brief" key="brief">
+              <div className="hero-radar-brief-head">
+                <span className="hero-radar-brief-title">Client brief · {DETAIL.name}</span>
+                <span className="hero-radar-brief-edit" aria-hidden="true">Edit</span>
               </div>
-              <span className="hero-radar-gate">Prepared for your review — nothing sent or filed.</span>
+              <p className="hero-radar-brief-body">
+                Following the FSSAI Second Amendment (1 Jun 2026), your production and storage
+                records now need to be maintained in the revised format. We&rsquo;ve prepared the
+                checklist — please confirm your current process so we can update your file.
+              </p>
+              <div className="hero-radar-brief-send">
+                <span className="hero-radar-send email">
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12v8H2z" fill="none" stroke="currentColor" strokeWidth="1.3"/><path d="M2.5 4.5 8 8.5l5.5-4" fill="none" stroke="currentColor" strokeWidth="1.3"/></svg>
+                  Email
+                </span>
+                <span className="hero-radar-send wa">
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 0 0-5.2 9L2 14l3.1-.8A6 6 0 1 0 8 2Z" fill="none" stroke="currentColor" strokeWidth="1.3"/></svg>
+                  WhatsApp
+                </span>
+                <span className="hero-radar-brief-note">Sends from your firm — only when you click.</span>
+              </div>
             </div>
           ) : step === 3 ? (
             <div className="hero-radar-detail-body" key="why">
