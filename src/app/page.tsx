@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MarketingImpactPreview } from "@/components/marketing-impact-preview";
+import { HeroRadar } from "@/components/hero-radar";
 import { MarketingWorkflow } from "@/components/marketing-workflow";
 import { PublicShell } from "@/components/public-shell";
 
@@ -9,21 +9,58 @@ export default function HomePage() {
       <main>
         <section className="marketing-hero">
           <div className="marketing-hero-copy">
-            <p className="marketing-kicker">Source-grounded regulatory research for Indian CA firms</p>
-            <h1>Turn regulatory updates into review-ready client work.</h1>
+            <p className="marketing-kicker">Personalized regulatory intelligence · Indian CA firms</p>
+            <h1>Every regulatory change, matched to the clients it affects.</h1>
             <p className="marketing-lede">
-              Bring the official source, recorded client facts, and the next draft into one
-              workspace. Reg Mitra helps your team check what may apply and prepare a brief,
-              checklist, or calendar update for professional review.
+              Reg Mitra reads the official sources, flags which of <em>your</em> clients each
+              change touches, ranks what needs a decision, and prepares review-ready work — every
+              claim tied to its circular. Not a chatbot you have to prompt: a system that knows
+              your book.
             </p>
             <div className="marketing-actions">
               <Link className="marketing-button primary" href="/demo">Open the live demo</Link>
-              <Link className="marketing-button quiet" href="/today">Open the product</Link>
+              <Link className="marketing-button quiet" href="/features">See how it works</Link>
             </div>
-            <p className="marketing-proof">Selected official sources · Evidence gaps shown · Nothing sent or filed</p>
+            <p className="marketing-proof">Matched to your clients · Every claim sourced · Nothing sent or filed</p>
           </div>
 
-          <MarketingImpactPreview />
+          <HeroRadar />
+        </section>
+
+        <section className="compare-section" id="why" aria-label="Why Reg Mitra is more than a chatbot">
+          <div className="compare-intro">
+            <p className="marketing-kicker">Beyond a chatbot</p>
+            <h2>A general chatbot answers. Reg Mitra does the work.</h2>
+            <p>
+              ChatGPT and Claude are brilliant generalists — but they don’t know your clients,
+              can’t promise the source, and stop at the reply. Reg Mitra is built for the whole
+              compliance workflow of an Indian CA firm.
+            </p>
+          </div>
+          <div className="compare-grid">
+            <div className="compare-card generic">
+              <p className="compare-label">A general AI chatbot</p>
+              <span className="compare-sub">ChatGPT, Claude, and the rest</span>
+              <ul>
+                <li>Answers whatever you type — as plausibly as it can</li>
+                <li>Has no idea who your clients are</li>
+                <li>No guarantee the answer traces to an official source</li>
+                <li>Can quietly invent a circular, section, or date</li>
+                <li>Stops at the answer — you do the mapping, the ranking, and the work</li>
+              </ul>
+            </div>
+            <div className="compare-card ours">
+              <p className="compare-label">Reg Mitra</p>
+              <span className="compare-sub">Built for CA firms</span>
+              <ul>
+                <li>Reads and indexes official Indian regulatory sources</li>
+                <li>Matches each change to your specific clients and their facts</li>
+                <li>Every claim tied to its circular — gaps and stale sources shown</li>
+                <li>Refuses to answer beyond the evidence instead of guessing</li>
+                <li>Ranks the decision and prepares the note, checklist, or calendar update</li>
+              </ul>
+            </div>
+          </div>
         </section>
 
         <section className="marketing-principle" id="product">
