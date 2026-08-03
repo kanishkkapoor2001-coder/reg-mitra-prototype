@@ -11,7 +11,15 @@ function redirect(request: Request, query: string) {
 }
 
 export async function POST(request: Request) {
-  const formData = await request.formData();
+  // A body that is not form-encoded (a bot, a stray JSON POST) makes formData()
+  // throw. That is a bad request, not a server fault — answer 400, never 500.
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
+    return NextResponse.json({ error: "invalid_request" }, { status: 400 });
+  }
+
   const contactName = String(formData.get("contact_name") ?? "").trim();
   const organizationName = String(formData.get("organization_name") ?? "").trim();
   const email = normalizeEmail(String(formData.get("email") ?? ""));

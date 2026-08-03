@@ -20,7 +20,7 @@ import {
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
-const publicPaths = ["/", "/about", "/pricing", "/faq", "/demo", "/features", "/login", "/founder", "/start", "/onboarding"];
+const publicPaths = ["/", "/about", "/pricing", "/faq", "/features", "/login", "/founder", "/start", "/onboarding"];
 
 function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -119,7 +119,11 @@ export function AppShell({
           <div className="more-menu-panel">
             <Link href="/calculators"><CalculatorIcon /><span><strong>Calculators</strong><small>Interest, late fee and due dates</small></span></Link>
             <Link href="/practice"><ClientsIcon /><span><strong>Your practice</strong><small>Tune answers to your clients</small></span></Link>
-            <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Internal drafts and review</small></span></Link>
+            {/* Briefings is sample-only and duplicates Assistant · Prepare, so it
+                stays out of a firm's navigation until it runs on real drafts. */}
+            {sessionMode === "product" ? null : (
+              <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Internal drafts and review</small></span></Link>
+            )}
             <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Official sources and updates</small></span></Link>
             <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources, team, and review policy</small></span></Link>
             <button className="appearance-button" onClick={toggleTheme} type="button">
@@ -176,7 +180,7 @@ export function AppShell({
         ) : null}
         <main className="main-content">{children}</main>
       </div>
-      <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} />
+      <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} sessionMode={sessionMode} />
     </div>
   );
 }

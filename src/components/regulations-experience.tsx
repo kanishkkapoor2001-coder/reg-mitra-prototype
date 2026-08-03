@@ -1,33 +1,61 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { EvidencePanel } from "@/components/evidence-panel";
 import { SearchIcon } from "@/components/icons";
 import { WorkspaceTrustSummary } from "@/components/workspace-trust-summary";
-import { regulations } from "@/lib/demo-data";
+import type { EvidenceRecord } from "@/lib/types";
 
-export function RegulationsExperience() {
-  const [query, setQuery] = useState("");
+export interface RegulationItem {
+  id: string;
+  title: string;
+  authority: string;
+  published: string;
+  effective: string;
+  /** Raw ISO date used for ordering; never displayed. */
+  sortKey: string;
+  /** Document number where the authority issues one, else the document type. */
+  reference: string;
+  status: string;
+  superseded: boolean;
+  topics: readonly string[];
+  evidence: EvidenceRecord;
+}
+
+export function RegulationsExperience({
+  items,
+  mode,
+}: Readonly<{ items: readonly RegulationItem[]; mode: "product" | "sample" }>) {
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [authority, setAuthority] = useState("all");
-  const authorities = [...new Set(regulations.map((item) => item.authority))];
+  const authorities = useMemo(
+    () => [...new Set(items.map((item) => item.authority))].sort(),
+    [items],
+  );
 
   const visibleRegulations = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return regulations.filter((regulation) => {
+    return items.filter((regulation) => {
       const matchesAuthority = authority === "all" || regulation.authority === authority;
-      const matchesQuery = !normalized
-        || `${regulation.title} ${regulation.authority}`.toLowerCase().includes(normalized);
+      const haystack = `${regulation.title} ${regulation.authority} ${regulation.reference} ${regulation.topics.join(" ")}`;
+      const matchesQuery = !normalized || haystack.toLowerCase().includes(normalized);
       return matchesAuthority && matchesQuery;
     });
-  }, [authority, query]);
+  }, [authority, items, query]);
 
   return (
     <>
       <header className="page-heading">
         <div>
-          <p className="eyebrow">Selected regulatory publications</p>
+          <p className="eyebrow">{mode === "product" ? "Indexed official sources" : "Selected regulatory publications"}</p>
           <h1>Official sources and updates</h1>
-          <p className="page-subtitle">Search selected indexed publications, review source details, and trace updates into client work.</p>
+          <p className="page-subtitle">
+            {mode === "product"
+              ? "Every document Reg Mitra can cite. The assistant answers only from what is indexed here."
+              : "Sample publications shown so the page is legible before you sign in."}
+          </p>
         </div>
       </header>
       <WorkspaceTrustSummary />
@@ -38,7 +66,7 @@ export function RegulationsExperience() {
           <input
             aria-label="Search regulatory items"
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search official sources"
+            placeholder="Search title, authority, document number, or topic"
             value={query}
           />
         </label>
@@ -51,7 +79,9 @@ export function RegulationsExperience() {
           <option value="all">All authorities</option>
           {authorities.map((item) => <option value={item} key={item}>{item}</option>)}
         </select>
-        <span className="result-count">{visibleRegulations.length} sources</span>
+        <span className="result-count">
+          {visibleRegulations.length} of {items.length} sources
+        </span>
       </div>
 
       {visibleRegulations.length ? (
@@ -60,11 +90,18 @@ export function RegulationsExperience() {
             <article className="regulation-card" key={regulation.id}>
               <div className="regulation-card-head">
                 <div>
-                  <p className="eyebrow">{regulation.authority}</p>
+                  <p className="eyebrow">{regulation.authority} · {regulation.reference}</p>
                   <h2>{regulation.title}</h2>
                   <span className="regulation-meta">
-                    Claimed publication: {regulation.published} · Claimed effective date: {regulation.effective} · {regulation.impact}
+                    Published: {regulation.published} · Effective: {regulation.effective} · {regulation.status}
                   </span>
+                  {regulation.topics.length ? (
+                    <div className="identifier-list">
+                      {regulation.topics.map((topic) => (
+                        <span className="identifier" key={topic}>{topic}</span>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </div>
               <EvidencePanel evidence={regulation.evidence} />
@@ -75,7 +112,7 @@ export function RegulationsExperience() {
         <section className="empty-state portfolio-empty">
           <SearchIcon />
           <h2>No sources match</h2>
-          <p>Try another publication title, term, or authority.</p>
+          <p>Try another publication title, document number, topic, or authority.</p>
           <button className="button" onClick={() => { setQuery(""); setAuthority("all"); }} type="button">
             Clear filters
           </button>

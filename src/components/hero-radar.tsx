@@ -53,8 +53,9 @@ export function HeroRadar() {
   useEffect(() => {
     const root = ref.current;
     if (!root) return;
+    // Reduced motion: leave the walkthrough on its initial resting step (3) and
+    // never start the interval. No setState needed — that is already the state.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setStep(3);
       return;
     }
     const clear = () => {

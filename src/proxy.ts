@@ -4,9 +4,9 @@ import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
 
 // Hybrid access model:
-// - Anonymous and demo-cookie visitors keep full public/demo access. The pages
-//   themselves fall back to a read-only sample workspace when no firm workspace
-//   is available, so nothing here forces a login.
+// - Anonymous visitors keep public access. The pages themselves fall back to a
+//   read-only sample workspace when no firm workspace is available, so nothing
+//   here forces a login.
 // - A signed-in user with no workspace is funnelled to onboarding so the real
 //   product becomes reachable.
 // - Billing is intentionally not gated during the pilot (no live Stripe).

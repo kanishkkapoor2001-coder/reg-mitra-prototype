@@ -14,18 +14,20 @@ import {
   SparklesIcon,
   TodayIcon,
 } from "@/components/icons";
-import { clients, regulations } from "@/lib/demo-data";
+import { clients as sampleClients, regulations as sampleRegulations } from "@/lib/demo-data";
+import type { SearchIndexPayload } from "@/app/api/search-index/route";
 
 interface CommandPaletteProps {
   open: boolean;
   onClose: () => void;
+  sessionMode: "demo" | "product" | null;
 }
 
 interface Command {
   label: string;
   detail: string;
   href: string;
-  group: "Clients" | "Sources" | "Drafts" | "Pages";
+  group: "Clients" | "Sources" | "Actions" | "Pages" | "Sample";
   icon: "today" | "clients" | "assistant" | "briefings" | "calendar" | "regulations" | "settings";
 }
 
@@ -33,10 +35,14 @@ const baseCommands: readonly Command[] = [
   { label: "Today", detail: "Prioritised review queue", href: "/today", group: "Pages", icon: "today" },
   { label: "Clients", detail: "Recorded facts, possible impact, and open work", href: "/clients", group: "Pages", icon: "clients" },
   { label: "Assistant", detail: "Source-grounded answers and internal drafts", href: "/assistant", group: "Pages", icon: "assistant" },
-  { label: "Internal drafts and review", detail: "Briefings, requests, and checklists", href: "/briefings", group: "Pages", icon: "briefings" },
   { label: "Source-linked calendar", detail: "Recurring obligations and effective dates", href: "/calendar", group: "Pages", icon: "calendar" },
   { label: "Official sources and updates", detail: "Selected indexed regulatory publications", href: "/regulations", group: "Pages", icon: "regulations" },
   { label: "Settings", detail: "Sources, team, and review policy", href: "/settings", group: "Pages", icon: "settings" },
+] as const;
+
+const productActions: readonly Command[] = [
+  { label: "Add client", detail: "Record a new client and its applicability facts", href: "/clients/new", group: "Actions", icon: "clients" },
+  { label: "Add work item", detail: "Create a task in the review queue", href: "/tasks/new", group: "Actions", icon: "today" },
 ] as const;
 
 const iconMap = {
@@ -49,35 +55,70 @@ const iconMap = {
   settings: SettingsIcon,
 } as const;
 
-export function CommandPalette({ open, onClose }: CommandPaletteProps) {
+export function CommandPalette({ open, onClose, sessionMode }: CommandPaletteProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
+  const [index, setIndex] = useState<SearchIndexPayload | null>(null);
 
-  const commands = useMemo<Command[]>(() => [
-    ...clients.map((client) => ({
-      label: client.shortName,
-      detail: `${client.sector} · ${client.location}`,
-      href: `/clients/${client.id}`,
-      group: "Clients" as const,
-      icon: "clients" as const,
-    })),
-    ...regulations.map((regulation) => ({
-      label: regulation.title,
-      detail: `${regulation.authority} · ${regulation.published}`,
-      href: `/regulations?q=${encodeURIComponent(regulation.title)}`,
-      group: "Sources" as const,
-      icon: "regulations" as const,
-    })),
-    {
-      label: "IGST rate change: client impact note",
-      detail: "Sharma Pharma · Internal draft",
-      href: "/briefings",
-      group: "Drafts" as const,
-      icon: "briefings" as const,
-    },
-    ...baseCommands,
-  ], []);
+  const isProduct = sessionMode === "product";
+
+  // A real firm must never see fictional clients or sources here. The index is
+  // workspace-scoped and fetched once, the first time the palette is opened.
+  useEffect(() => {
+    if (!open || !isProduct || index) return;
+    let cancelled = false;
+    void fetch("/api/search-index")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload: SearchIndexPayload | null) => {
+        if (!cancelled && payload) setIndex(payload);
+      })
+      .catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [index, isProduct, open]);
+
+  const commands = useMemo<Command[]>(() => {
+    if (isProduct) {
+      return [
+        ...(index?.clients ?? []).map((client) => ({
+          label: client.name,
+          detail: client.detail,
+          href: `/clients/${client.id}`,
+          group: "Clients" as const,
+          icon: "clients" as const,
+        })),
+        ...(index?.sources ?? []).map((source) => ({
+          label: source.title,
+          detail: source.detail,
+          href: `/regulations?q=${encodeURIComponent(source.title)}`,
+          group: "Sources" as const,
+          icon: "regulations" as const,
+        })),
+        ...productActions,
+        ...baseCommands,
+      ];
+    }
+
+    // Signed-out and sample workspaces: the demo records stay, but they are
+    // grouped as "Sample" so they can never be mistaken for firm data.
+    return [
+      ...sampleClients.map((client) => ({
+        label: client.shortName,
+        detail: `${client.sector} · ${client.location}`,
+        href: `/clients/${client.id}`,
+        group: "Sample" as const,
+        icon: "clients" as const,
+      })),
+      ...sampleRegulations.map((regulation) => ({
+        label: regulation.title,
+        detail: `${regulation.authority} · ${regulation.published}`,
+        href: `/regulations?q=${encodeURIComponent(regulation.title)}`,
+        group: "Sample" as const,
+        icon: "regulations" as const,
+      })),
+      ...baseCommands,
+    ];
+  }, [index, isProduct]);
 
   const results = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -121,12 +162,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         <div className="command-search">
           <SearchIcon />
           <input
-            aria-label="Search clients, sources, drafts, and pages"
+            aria-label="Search clients, official sources, actions, and pages"
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter" && results[0]) navigate(results[0].href);
             }}
-            placeholder="Search clients, sources, and drafts"
+            placeholder="Search clients, official sources, and actions"
             ref={inputRef}
             value={query}
           />
@@ -138,7 +179,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
           {results.length ? results.map((command) => {
             const Icon = iconMap[command.icon];
             return (
-              <button className="command-result" key={command.href} onClick={() => navigate(command.href)} type="button">
+              <button className="command-result" key={`${command.group}:${command.label}:${command.href}`} onClick={() => navigate(command.href)} type="button">
                 <span className="command-result-icon"><Icon /></span>
                 <span>
                   <strong>{command.label}</strong>
@@ -152,7 +193,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             <div className="command-empty">
               <SearchIcon />
               <strong>No match for “{query}”</strong>
-              <small>Try a client, authority, source title, draft, or page.</small>
+              <small>Try a client, authority, source title, or page.</small>
             </div>
           )}
         </div>
