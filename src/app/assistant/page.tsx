@@ -1,5 +1,6 @@
 import { AssistantExperience } from "@/components/assistant-experience";
 import { cookies } from "next/headers";
+import { getGatewayConfig } from "@/lib/ai/gateway";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentWorkspace } from "@/lib/workspace";
@@ -16,10 +17,20 @@ export default async function AssistantPage({ searchParams }: AssistantPageProps
   const requestedConversation = Array.isArray(params.conversation)
     ? params.conversation[0]
     : params.conversation;
-  const templateMode = sessionMode === "demo" || !getSupabasePublicConfig();
+  // Answering needs the AI gateway; Supabase only governs whether the conversation
+  // is persisted. Tying template mode to the database meant a deployment without
+  // one served canned sample answers even with a fully working assistant behind it.
+  const liveAiReady = Boolean(getGatewayConfig())
+    && (process.env.NODE_ENV !== "production" || process.env.REGMITRA_ENABLE_LIVE_AI === "true");
+  const templateMode = sessionMode === "demo" || !liveAiReady;
 
   if (templateMode) {
     return <AssistantExperience initialPrompt={initialPrompt} templateMode />;
+  }
+
+  // No database configured: run the real assistant, just without saved history.
+  if (!getSupabasePublicConfig()) {
+    return <AssistantExperience initialPrompt={initialPrompt} publicMode templateMode={false} />;
   }
 
   const workspace = await getCurrentWorkspace();
