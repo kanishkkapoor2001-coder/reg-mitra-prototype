@@ -2,22 +2,22 @@ const flowSteps = [
   {
     num: "1",
     title: "Start from the source",
-    body: "The official rule itself — authority, date, and exact text. Never a summary.",
+    body: "The exact official circular — never a summary.",
   },
   {
     num: "2",
     title: "See who it affects",
-    body: "Reg Mitra matches it to your client book and flags who may be affected.",
+    body: "We match it to your clients and flag who's affected.",
   },
   {
     num: "3",
     title: "Prepare the work",
-    body: "A brief, checklist, calendar update, or client note — drafted for your review.",
+    body: "A brief, checklist, or client note — ready for you.",
   },
   {
     num: "4",
     title: "You approve",
-    body: "Nothing is sent, filed, or paid. A person signs off before anything is used.",
+    body: "Nothing goes out until you sign off.",
   },
 ] as const;
 

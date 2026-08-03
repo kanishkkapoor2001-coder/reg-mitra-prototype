@@ -32,7 +32,13 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
           <Link href="/demo">Live demo</Link>
           <Link href="/today">Open product</Link>
         </nav>
-        <small>© 2026 Reg Mitra · Open access</small>
+        <small className="footer-legal">
+          © 2026 Reg Mitra
+          <span className="footer-contact">
+            <a href="mailto:kanishk@5avenures.in">kanishk@5avenures.in</a>
+            <a href="https://wa.me/919711017316" target="_blank" rel="noreferrer">+91 97110 17316</a>
+          </span>
+        </small>
       </footer>
     </div>
   );
