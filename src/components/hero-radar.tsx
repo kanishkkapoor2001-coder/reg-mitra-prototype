@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // A slow, click-through walkthrough of the product's client-impact view.
-// One real regulatory change is matched across a sample client book in four
-// plain steps. Auto-advances gently; the viewer can click any step to drive it.
+// One real regulatory change is matched across a sample client book, then
+// prepared into review-ready work. Auto-advances gently; the viewer can click
+// any step to drive it.
 
 type Client = { id: string; name: string; tag: string };
 
@@ -23,6 +24,7 @@ const CHANGE = {
   authority: "FSSAI",
   title: "Licensing & Registration — Second Amendment, 2026",
   date: "1 Jun 2026",
+  summary: "New production and storage-record rules for FSSAI-licensed food businesses.",
 };
 
 const DETAIL = {
@@ -33,13 +35,14 @@ const DETAIL = {
 };
 
 const STEPS = [
-  { label: "New rule", caption: "A new rule is published." },
+  { label: "New rule", caption: "A new FSSAI rule is published — here's exactly what changed." },
   { label: "Checking", caption: "Reg Mitra checks it against every client in your book." },
   { label: "Flagged", caption: "It flags who may be affected — and clears the rest." },
-  { label: "Why & source", caption: "Open a flag to see why, linked to the official circular." },
+  { label: "Why", caption: "Each flag shows why, linked to the official circular." },
+  { label: "Prepare", caption: "Draft the client note and mark it done — nothing goes out without you." },
 ];
 
-const STEP_MS = 3600;
+const STEP_MS = 3800;
 
 export function HeroRadar() {
   const ref = useRef<HTMLDivElement>(null);
@@ -92,13 +95,12 @@ export function HeroRadar() {
 
   const scanning = step === 1;
   const resolved = step >= 2;
-  const showDetail = step >= 3;
   const clearedCount = CLIENTS.length - AFFECTED.size;
 
   return (
     <div className="hero-radar-wrap">
       <div
-        className={`hero-radar tone-fssai step-${step}${scanning ? " is-scan" : ""}${resolved ? " is-resolved" : ""}${showDetail ? " is-detail" : ""}`}
+        className={`hero-radar tone-fssai step-${step}${scanning ? " is-scan" : ""}${resolved ? " is-resolved" : ""}`}
         ref={ref}
       >
         <div className="hero-radar-bar">
@@ -129,20 +131,33 @@ export function HeroRadar() {
         </div>
 
         <div className="hero-radar-detail">
-          {showDetail ? (
-            <div className="hero-radar-detail-body">
+          {step === 4 ? (
+            <div className="hero-radar-act" key="act">
+              <div className="hero-radar-act-head">
+                <span className="hero-radar-act-name">Client note · {DETAIL.name}</span>
+                <span className="hero-radar-act-btns">
+                  <span className="hero-radar-btn primary">Draft note</span>
+                  <span className="hero-radar-btn">Mark done</span>
+                </span>
+              </div>
+              <span className="hero-radar-gate">Prepared for your review — nothing sent or filed.</span>
+            </div>
+          ) : step === 3 ? (
+            <div className="hero-radar-detail-body" key="why">
               <span className="hero-radar-detail-name">{DETAIL.name}</span>
               <p className="hero-radar-detail-reason">{DETAIL.reason}</p>
               <a className="hero-radar-cite" href={DETAIL.url} target="_blank" rel="noreferrer">
                 {DETAIL.cite} <i aria-hidden="true">↗</i>
               </a>
             </div>
-          ) : resolved ? (
-            <p className="hero-radar-hint">2 clients flagged — open one to see why.</p>
-          ) : (
-            <p className="hero-radar-scanning">
+          ) : step === 2 ? (
+            <p className="hero-radar-hint" key="hint">2 clients flagged — open one to see why.</p>
+          ) : scanning ? (
+            <p className="hero-radar-scanning" key="scan">
               Checking your client book<span className="hero-radar-ell"><i>.</i><i>.</i><i>.</i></span>
             </p>
+          ) : (
+            <p className="hero-radar-rule-summary" key="rule">{CHANGE.summary}</p>
           )}
         </div>
 
@@ -158,7 +173,7 @@ export function HeroRadar() {
         </div>
       </div>
 
-      <div className="hero-radar-steps" role="tablist" aria-label="How Reg Mitra works, in four steps">
+      <div className="hero-radar-steps" role="tablist" aria-label="How Reg Mitra works, step by step">
         {STEPS.map((s, i) => (
           <button
             key={s.label}

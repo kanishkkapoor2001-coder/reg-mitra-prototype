@@ -1370,8 +1370,8 @@
 /* step rail — the click-through workflow under the panel */
 .hero-radar-steps {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
   margin-top: 16px;
 }
 .hero-radar-step {
@@ -1522,4 +1522,65 @@
 
 @media (prefers-reduced-motion: reduce) {
   .flow::after { animation: none; opacity: 0; }
+}
+
+/* ============================================================
+   Hero walkthrough — new-rule focus, prepare/act step, rotating headline
+   ============================================================ */
+
+/* Step 1 (New rule): spotlight the change, ease back the book */
+.hero-radar.step-0 .hero-radar-list { opacity: .5; transition: opacity var(--duration-standard) var(--ease-out); }
+.hero-radar.step-0 .hero-radar-change { box-shadow: 0 0 0 1px var(--tone-line); }
+.hero-radar-rule-summary { margin: 0; color: var(--ink-600); font-size: 12.5px; line-height: 1.5; }
+
+/* Step 5 (Prepare): communicate + mark done, review-gated */
+.hero-radar-act { display: grid; gap: 10px; animation: hero-fade 260ms var(--ease-out) both; }
+.hero-radar-act-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.hero-radar-act-name { min-width: 0; overflow: hidden; color: var(--ink-950); font-size: 12.5px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.hero-radar-act-btns { display: inline-flex; flex: 0 0 auto; gap: 6px; }
+.hero-radar-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink-800);
+  font-size: 11.5px;
+  font-weight: 650;
+}
+.hero-radar-btn.primary { border-color: var(--forest-950); background: var(--forest-950); color: var(--paper); }
+.hero-radar-gate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--amber-700);
+  font-size: 11px;
+  font-weight: 650;
+}
+.hero-radar-gate::before { width: 6px; height: 6px; border-radius: 50%; background: var(--amber-700); content: ""; }
+
+/* Compact 5-step rail */
+.hero-radar-step { gap: 7px; padding: 8px 9px; }
+.hero-radar-step-num { width: 19px; height: 19px; font-size: 10.5px; }
+.hero-radar-step-label { font-size: 11.5px; }
+
+/* Rotating headline */
+.hero-rotating-h1 .hero-h1-line { display: block; }
+.hero-rotator { display: inline-block; }
+.hero-rotator-word {
+  display: inline-block;
+  color: var(--green-700);
+  animation: hero-word-in 480ms var(--ease-out) both;
+}
+@keyframes hero-word-in {
+  from { opacity: 0; transform: translateY(0.26em); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 560px) {
+  .hero-radar-steps { grid-template-columns: repeat(3, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-rotator-word, .hero-radar-act { animation: none; }
 }
