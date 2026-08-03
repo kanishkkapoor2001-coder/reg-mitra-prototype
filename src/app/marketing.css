@@ -1587,3 +1587,30 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-rotator-word, .hero-radar-act { animation: none; }
 }
+
+/* Hero contact-sales row */
+.hero-contact {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 22px;
+}
+.hero-contact-label {
+  color: var(--ink-500);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.hero-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ink-800);
+  font-size: 14px;
+  font-weight: 650;
+  border-bottom: 1px solid transparent;
+  transition: color var(--duration-standard) var(--ease-out), border-color var(--duration-standard) var(--ease-out);
+}
+.hero-contact-link svg { width: 15px; height: 15px; color: var(--green-700); }
+.hero-contact-link:hover { color: var(--ink-950); border-color: var(--ink-800); }

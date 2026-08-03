@@ -23,8 +23,19 @@ export default function HomePage() {
               your book.
             </p>
             <div className="marketing-actions">
-              <Link className="marketing-button primary" href="/demo">Open the live demo</Link>
+              <Link className="marketing-button primary" href="/pricing">Talk to us</Link>
               <Link className="marketing-button quiet" href="/features">See how it works</Link>
+            </div>
+            <div className="hero-contact">
+              <span className="hero-contact-label">Contact sales</span>
+              <a className="hero-contact-link" href="mailto:sales@regmitra.in">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12v8H2z" fill="none" stroke="currentColor" strokeWidth="1.3"/><path d="M2.5 4.5 8 8.5l5.5-4" fill="none" stroke="currentColor" strokeWidth="1.3"/></svg>
+                sales@regmitra.in
+              </a>
+              <a className="hero-contact-link" href="https://wa.me/919711017316" target="_blank" rel="noreferrer" aria-label="Message sales on WhatsApp">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 0 0-5.2 9L2 14l3.1-.8A6 6 0 1 0 8 2Z" fill="none" stroke="currentColor" strokeWidth="1.3"/></svg>
+                WhatsApp
+              </a>
             </div>
             <p className="marketing-proof">Matched to your clients · Every claim sourced · Nothing sent or filed</p>
           </div>
@@ -99,7 +110,7 @@ export default function HomePage() {
               regulatory effective dates. Each item shows the authority and source status.
               Extensions and client applicability remain review-gated.
             </p>
-            <Link className="marketing-text-link" href="/demo">Open the live demo →</Link>
+            <Link className="marketing-text-link" href="/features">See how it works →</Link>
           </div>
           <div className="calendar-proof" aria-label="Sample July 2026 compliance calendar">
             <div className="calendar-proof-head">
