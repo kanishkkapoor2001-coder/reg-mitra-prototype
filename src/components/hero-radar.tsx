@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // A slow, click-through walkthrough of the product's client-impact view.
-// One real regulatory change is matched across a sample client book in four
-// plain steps. Auto-advances gently; the viewer can click any step to drive it.
+// One real regulatory change is matched across a sample client book, then
+// prepared into review-ready work. Auto-advances gently; the viewer can click
+// any step to drive it.
 
 type Client = { id: string; name: string; tag: string };
 
@@ -23,6 +24,7 @@ const CHANGE = {
   authority: "FSSAI",
   title: "Licensing & Registration — Second Amendment, 2026",
   date: "1 Jun 2026",
+  summary: "New production and storage-record rules for FSSAI-licensed food businesses.",
 };
 
 const DETAIL = {
@@ -33,13 +35,14 @@ const DETAIL = {
 };
 
 const STEPS = [
-  { label: "New rule", caption: "A new rule is published." },
+  { label: "New rule", caption: "A new FSSAI rule is published — here's exactly what changed." },
   { label: "Checking", caption: "Reg Mitra checks it against every client in your book." },
   { label: "Flagged", caption: "It flags who may be affected — and clears the rest." },
-  { label: "Why & source", caption: "Open a flag to see why, linked to the official circular." },
+  { label: "Why", caption: "Each flag shows why, linked to the official circular." },
+  { label: "Prepare", caption: "A client-ready brief — edit it, then send by email or WhatsApp. You decide when." },
 ];
 
-const STEP_MS = 3600;
+const STEP_MS = 3800;
 
 export function HeroRadar() {
   const ref = useRef<HTMLDivElement>(null);
@@ -92,18 +95,17 @@ export function HeroRadar() {
 
   const scanning = step === 1;
   const resolved = step >= 2;
-  const showDetail = step >= 3;
   const clearedCount = CLIENTS.length - AFFECTED.size;
 
   return (
     <div className="hero-radar-wrap">
       <div
-        className={`hero-radar tone-fssai step-${step}${scanning ? " is-scan" : ""}${resolved ? " is-resolved" : ""}${showDetail ? " is-detail" : ""}`}
+        className={`hero-radar tone-fssai step-${step}${scanning ? " is-scan" : ""}${resolved ? " is-resolved" : ""}`}
         ref={ref}
       >
         <div className="hero-radar-bar">
           <span className="hero-radar-book">Client book</span>
-          <span className="hero-radar-fresh"><i />28 sources · updated 29 Jul</span>
+          <span className="hero-radar-fresh"><i />28 sources · updated just now</span>
         </div>
 
         <div className="hero-radar-change">
@@ -129,20 +131,45 @@ export function HeroRadar() {
         </div>
 
         <div className="hero-radar-detail">
-          {showDetail ? (
-            <div className="hero-radar-detail-body">
+          {step === 4 ? (
+            <div className="hero-radar-brief" key="brief">
+              <div className="hero-radar-brief-head">
+                <span className="hero-radar-brief-title">Client brief · {DETAIL.name}</span>
+                <span className="hero-radar-brief-edit" aria-hidden="true">Edit</span>
+              </div>
+              <p className="hero-radar-brief-body">
+                Following the FSSAI Second Amendment (1 Jun 2026), your production and storage
+                records now need to be maintained in the revised format. We&rsquo;ve prepared the
+                checklist — please confirm your current process so we can update your file.
+              </p>
+              <div className="hero-radar-brief-send">
+                <span className="hero-radar-send email">
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12v8H2z" fill="none" stroke="currentColor" strokeWidth="1.3"/><path d="M2.5 4.5 8 8.5l5.5-4" fill="none" stroke="currentColor" strokeWidth="1.3"/></svg>
+                  Email
+                </span>
+                <span className="hero-radar-send wa">
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 0 0-5.2 9L2 14l3.1-.8A6 6 0 1 0 8 2Z" fill="none" stroke="currentColor" strokeWidth="1.3"/></svg>
+                  WhatsApp
+                </span>
+                <span className="hero-radar-brief-note">Sends from your firm — only when you click.</span>
+              </div>
+            </div>
+          ) : step === 3 ? (
+            <div className="hero-radar-detail-body" key="why">
               <span className="hero-radar-detail-name">{DETAIL.name}</span>
               <p className="hero-radar-detail-reason">{DETAIL.reason}</p>
               <a className="hero-radar-cite" href={DETAIL.url} target="_blank" rel="noreferrer">
                 {DETAIL.cite} <i aria-hidden="true">↗</i>
               </a>
             </div>
-          ) : resolved ? (
-            <p className="hero-radar-hint">2 clients flagged — open one to see why.</p>
-          ) : (
-            <p className="hero-radar-scanning">
+          ) : step === 2 ? (
+            <p className="hero-radar-hint" key="hint">2 clients flagged — open one to see why.</p>
+          ) : scanning ? (
+            <p className="hero-radar-scanning" key="scan">
               Checking your client book<span className="hero-radar-ell"><i>.</i><i>.</i><i>.</i></span>
             </p>
+          ) : (
+            <p className="hero-radar-rule-summary" key="rule">{CHANGE.summary}</p>
           )}
         </div>
 
@@ -158,7 +185,7 @@ export function HeroRadar() {
         </div>
       </div>
 
-      <div className="hero-radar-steps" role="tablist" aria-label="How Reg Mitra works, in four steps">
+      <div className="hero-radar-steps" role="tablist" aria-label="How Reg Mitra works, step by step">
         {STEPS.map((s, i) => (
           <button
             key={s.label}

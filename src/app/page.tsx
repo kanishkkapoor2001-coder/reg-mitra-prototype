@@ -2,6 +2,7 @@ import Link from "next/link";
 import { HeroRadar } from "@/components/hero-radar";
 import { MarketingWorkflow } from "@/components/marketing-workflow";
 import { PublicShell } from "@/components/public-shell";
+import { RotatingWord } from "@/components/rotating-word";
 
 export default function HomePage() {
   return (
@@ -10,7 +11,11 @@ export default function HomePage() {
         <section className="marketing-hero">
           <div className="marketing-hero-copy">
             <p className="marketing-kicker">Personalized regulatory intelligence · Indian CA firms</p>
-            <h1>Every regulatory change, matched to the clients it affects.</h1>
+            <h1 className="hero-rotating-h1">
+              <span className="hero-h1-line">Every</span>
+              <span className="hero-h1-line"><RotatingWord />,</span>
+              <span className="hero-h1-line">matched to the clients it affects.</span>
+            </h1>
             <p className="marketing-lede">
               Reg Mitra reads the official sources, flags which of <em>your</em> clients each
               change touches, ranks what needs a decision, and prepares review-ready work — every
