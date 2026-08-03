@@ -23,6 +23,8 @@ import {
   type DemoConversation,
 } from "@/lib/assistant-demo";
 import type { ExtractedNotice } from "@/lib/notices/extraction";
+import { selectRelevantClients } from "@/lib/practice/context";
+import { loadProfile } from "@/lib/practice/store";
 import type { ChatRetrievalPayload, ChatVerificationPayload, RetrievedSource } from "@/lib/rag/types";
 
 type Completeness = "complete" | "partial";
@@ -505,6 +507,26 @@ export function AssistantExperience({
     autoGrowComposer();
   }, [draft]);
 
+  /**
+   * Practice facts for this question: the profile, plus only the clients it names.
+   * Read from storage at send time rather than held in state — it avoids an
+   * SSR/hydration mismatch and always reflects edits made in another tab.
+   */
+  function practicePayload(query: string) {
+    const profile = loadProfile();
+    const clients = selectRelevantClients(profile, query);
+    if (!profile.states.length && !profile.sectors.length
+      && !profile.regulators.length && !clients.length) {
+      return undefined;
+    }
+    return {
+      regulators: profile.regulators,
+      states: profile.states,
+      sectors: profile.sectors,
+      clients,
+    };
+  }
+
   async function readNotice(file: File) {
     setNoticeBusy(true);
     setError("");
@@ -588,6 +610,9 @@ export function AssistantExperience({
           conversationId: activeConversationId,
           mode: requestMode,
           notice: attachedNotice ?? undefined,
+          practice: practicePayload(
+            [...transcript].reverse().find((message) => message.role === "user")?.content ?? "",
+          ),
           messages: transcript.map(({ role, content }) => ({ role, content })),
         }),
         signal: controller.signal,

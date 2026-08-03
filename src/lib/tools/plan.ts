@@ -30,7 +30,15 @@ export function mightNeedComputation(query: string): boolean {
   const hasComputeVerb = /\b(comput|calculat|work out|how much|what will|quantum|total|payable|liable to pay|arrive at)\w*\b/.test(normalised);
   const hasStatutoryHook = /\b(234a|234b|234c|234f|201\(1a\)|section 50|section 47|late fee|interest|penalty|due date|instal?ment|advance tax|deadline|by when)\b/.test(normalised);
   const hasFigureOrDate = /(₹|rs\.?\s*\d|\b\d{4,}\b|\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b|\b\d{4}-\d{2}-\d{2}\b)/.test(normalised);
-  return (hasComputeVerb && hasStatutoryHook) || (hasStatutoryHook && hasFigureOrDate);
+  // "When is GSTR-3B due for the July quarter?" has neither a compute verb nor the
+  // literal phrase "due date", but is squarely a due-date question.
+  const asksWhenDue = /\b(when|last date|cut ?off)\b/.test(normalised)
+    && /\b(due|file|filing|furnish|pay|deposit|deadline)\w*\b/.test(normalised);
+  const namesAReturn = /\b(gstr[- ]?\d[ab]?|itr|form \d+[a-z]{0,2}|advance tax|tds return)\b/.test(normalised);
+  return (hasComputeVerb && hasStatutoryHook)
+    || (hasStatutoryHook && hasFigureOrDate)
+    || asksWhenDue
+    || (namesAReturn && /\b(due|deadline|when)\b/.test(normalised));
 }
 
 export interface ComputationPlan {
@@ -46,6 +54,9 @@ export async function planComputations(
   model: string,
   query: string,
   today: string,
+  /** Practice/client facts, so a parameter the question omits but the roster holds
+   *  (State, filing frequency, presumptive status) can still populate a calculator. */
+  practiceContext?: string | null,
 ): Promise<ComputationPlan> {
   if (!mightNeedComputation(query)) return EMPTY_PLAN;
 
@@ -59,10 +70,18 @@ export async function planComputations(
             "Call a function ONLY when the question asks for a figure or date that a listed calculator produces AND the question supplies the required parameters.",
             "If a required parameter is missing or must be assumed, do NOT call the function — reply with the single word NONE so the assistant can ask for the missing fact.",
             "If the question is conceptual (what the rule is, whether something applies), reply NONE.",
+            "Parameters may come from the question OR from the supplied client facts — a State, filing frequency or presumptive-taxation status on record is a known parameter, not an assumption.",
           ].join(" "),
         }],
       },
-      contents: [{ role: "user", parts: [{ text: query.slice(0, 2_000) }] }],
+      contents: [{
+        role: "user",
+        parts: [{
+          text: practiceContext
+            ? `${query.slice(0, 2_000)}\n\n---\nKnown client facts on record:\n${practiceContext.slice(0, 1_500)}`
+            : query.slice(0, 2_000),
+        }],
+      }],
       tools: [{ functionDeclarations: calculatorDeclarations }],
       generationConfig: {
         temperature: 0,

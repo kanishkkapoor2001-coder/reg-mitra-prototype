@@ -15,6 +15,7 @@ import { rerankRetrievedSources } from "@/lib/rag/rerank";
 import { formatRetrievedEvidence, retrieveRegulatorySources } from "@/lib/rag/retrieval";
 import { verifyAnswerGroundedness } from "@/lib/rag/verify";
 import { noticeAsContext, sanitizeNotice } from "@/lib/notices/extraction";
+import { practiceAsContext, sanitizePracticeContext } from "@/lib/practice/context";
 import { planComputations } from "@/lib/tools/plan";
 import type { ChatRetrievalPayload } from "@/lib/rag/types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -102,6 +103,7 @@ export async function POST(request: Request) {
     ? rawConversationId
     : null;
   const notice = sanitizeNotice((body as { notice?: unknown })?.notice);
+  const practice = sanitizePracticeContext((body as { practice?: unknown })?.practice);
   const rawMessages = (body as { messages?: unknown })?.messages;
   if (!Array.isArray(rawMessages) || !rawMessages.length || !rawMessages.every(isIncomingMessage)) {
     return Response.json({ error: "Enter a valid compliance question." }, { status: 400 });
@@ -198,7 +200,8 @@ export async function POST(request: Request) {
         // Reranking and computation planning are independent pre-stream passes.
         const [reranked, computation] = await Promise.all([
           rerankRetrievedSources(gatewayConfig, model, retrievalQuery, lexicalRetrieval, 6),
-          planComputations(gatewayConfig, model, retrievalQuery, today),
+          planComputations(gatewayConfig, model, retrievalQuery, today,
+            practice ? practiceAsContext(practice) : null),
         ]);
         const retrieval = reranked.result;
         const baseRetrieval: Omit<ChatRetrievalPayload, "citationState" | "citedSourceIds"> = {
@@ -222,6 +225,7 @@ export async function POST(request: Request) {
                 retrievalContextInstruction(retrieval.confidence, retrieval.strategy),
                 "AUTHORITATIVE RETRIEVED EVIDENCE:",
                 formatRetrievedEvidence(retrieval),
+                ...(practice ? [practiceAsContext(practice)] : []),
                 ...(notice ? [noticeAsContext(notice)] : []),
                 ...(computation.evidence ? [computation.evidence] : []),
                 "PRIVATE WORKSPACE CONTEXT:",
@@ -330,12 +334,17 @@ export async function POST(request: Request) {
           return;
         }
         const status = (streamError as { status?: number })?.status;
-        console.error("[chat] stream failed", { status, message: (streamError as Error)?.message });
+        const detail = (streamError as Error)?.message;
+        console.error("[chat] stream failed", { status, message: detail });
         send({
           type: "error",
           error: status === 429
             ? "AI assistance is at its current usage limit. Please try again shortly."
             : "Reg Mitra could not prepare an answer. Please try again.",
+          // Upstream status and message carry no secrets and are the only way to
+          // tell a bad credential from an unreachable gateway once deployed.
+          upstreamStatus: status ?? null,
+          upstreamDetail: typeof detail === "string" ? detail.slice(0, 300) : null,
         });
         close();
       }
