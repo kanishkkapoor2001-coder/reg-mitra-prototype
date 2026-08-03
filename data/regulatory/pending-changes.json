@@ -1,0 +1,63 @@
+{
+  "checkedAt": "2026-07-31T08:45:20.184Z",
+  "corpusGeneratedAt": "2026-07-31T07:57:44.298Z",
+  "totals": {
+    "sources": 40,
+    "changed": 2,
+    "unreachable": 5
+  },
+  "changed": [
+    {
+      "id": "epfo-employer-faq",
+      "authority": "EPFO",
+      "status": "changed",
+      "url": "https://www.epfindia.gov.in/site_en/FAQ.php",
+      "textLength": 165661
+    },
+    {
+      "id": "rbi-nbfc-compliance-function-cco-2022",
+      "authority": "RBI",
+      "status": "changed",
+      "url": "https://www.rbi.org.in/Scripts/NotificationUser.aspx?Id=12290",
+      "textLength": 20809
+    }
+  ],
+  "unreachable": [
+    {
+      "id": "fssai-advisories-index",
+      "authority": "FSSAI",
+      "status": "unreachable",
+      "url": "https://www.fssai.gov.in/advisories.php",
+      "error": "no extractable text (bot challenge or scanned document?)"
+    },
+    {
+      "id": "fssai-gazette-index",
+      "authority": "FSSAI",
+      "status": "unreachable",
+      "url": "https://www.fssai.gov.in/view-gazette.php",
+      "error": "no extractable text (bot challenge or scanned document?)"
+    },
+    {
+      "id": "fssai-artificial-ripening-advisory-2026",
+      "authority": "FSSAI",
+      "status": "unreachable",
+      "url": "https://fssai.gov.in/upload/advisories/2026/04/69f1fd75afea7Advisory%20dated%2016.04.2026.pdf",
+      "error": "no extractable text (bot challenge or scanned document?)"
+    },
+    {
+      "id": "fssai-licensing-amendment-2026",
+      "authority": "FSSAI",
+      "status": "unreachable",
+      "url": "https://www.fssai.gov.in/upload/notifications/2026/03/69b2a2c804123Notification%20dt%2010.03.2026.pdf",
+      "error": "no extractable text (bot challenge or scanned document?)"
+    },
+    {
+      "id": "fssai-licensing-second-amendment-2026",
+      "authority": "FSSAI",
+      "status": "unreachable",
+      "url": "https://www.fssai.gov.in/upload/notifications/2026/06/6a3c0a8fbaf61273797.pdf",
+      "error": "no extractable text (bot challenge or scanned document?)"
+    }
+  ],
+  "nextSteps": "Review each changed source, classify the change (new / amending / superseding), update source-registry.json (status, supersedes/amends, new entries), then run: npm run corpus:build && npm run rag:evaluate"
+}
