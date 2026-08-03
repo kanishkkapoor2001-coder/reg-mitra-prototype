@@ -1128,13 +1128,16 @@
 /* ============================================================
    Hero radar — light "match" panel (calm, source-grounded)
    ============================================================ */
+.hero-radar-wrap {
+  width: min(100%, 540px);
+  justify-self: end;
+}
 .hero-radar {
   --tone: var(--green-700);
   --tone-soft: color-mix(in srgb, var(--tone) 9%, var(--surface));
   --tone-line: color-mix(in srgb, var(--tone) 24%, transparent);
   position: relative;
-  width: min(100%, 540px);
-  justify-self: end;
+  width: 100%;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -1172,48 +1175,56 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--green-600) 16%, transparent);
 }
 
-/* incoming change */
+/* incoming change — always visible, the subject of the match */
 .hero-radar-change {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: 6px 12px;
-  margin: 16px 20px 4px;
+  gap: 8px 10px;
+  margin: 16px 20px 6px;
   padding: 12px 14px;
   border: 1px solid var(--tone-line);
   border-radius: 12px;
   background: var(--tone-soft);
-  transition: opacity var(--duration-standard) var(--ease-out), transform var(--duration-standard) var(--ease-out);
 }
-.phase-idle .hero-radar-change { opacity: 0; transform: translateY(-5px); }
-.hero-radar-auth {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .04em;
+.hero-radar.step-0 .hero-radar-change { animation: hero-fade 420ms var(--ease-out) both; }
+.hero-radar-change-eyebrow {
+  grid-area: 1 / 1;
   color: var(--tone);
-}
-.hero-radar-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tone); }
-.hero-radar-change-title {
-  grid-column: 2;
-  grid-row: 1;
-  min-width: 0;
-  overflow: hidden;
-  color: var(--ink-950);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: -.01em;
-  text-overflow: ellipsis;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 .hero-radar-change-date {
-  grid-column: 2;
-  grid-row: 2;
+  grid-area: 1 / 2;
+  justify-self: end;
   color: var(--ink-500);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
+}
+.hero-radar-auth {
+  grid-area: 2 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: var(--ink-950);
+}
+.hero-radar-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tone); }
+.hero-radar-change-title {
+  grid-area: 2 / 2;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink-600);
+  font-size: 12.5px;
+  font-weight: 550;
+  letter-spacing: -.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* the book */
@@ -1230,7 +1241,7 @@
   opacity: 0;
   pointer-events: none;
 }
-.phase-scan .hero-radar-scan { animation: hero-scan 2.1s var(--ease-out) both; }
+.hero-radar.is-scan .hero-radar-scan { animation: hero-scan 3s var(--ease-out) both; }
 
 .hero-radar-row {
   display: grid;
@@ -1291,30 +1302,30 @@
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5'/%3E%3C/svg%3E") center / 12px 12px no-repeat;
 }
 
-/* revealed detail for one match (stacked with a scanning placeholder) */
+/* detail area — one state at a time, fixed height so the panel never jumps */
 .hero-radar-detail {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   margin: 2px 20px 0;
   padding: 13px 15px;
   border-top: 1px solid var(--line);
-  min-height: 78px;
+  min-height: 104px;
 }
-.hero-radar-detail > * { grid-area: 1 / 1; }
-.hero-radar-scanning {
-  align-self: center;
+.hero-radar-scanning,
+.hero-radar-hint {
   margin: 0;
   color: var(--ink-500);
   font-size: 12.5px;
   font-weight: 550;
+  animation: hero-fade 240ms var(--ease-out) both;
 }
-.hero-radar-detail-body { display: none; }
-.phase-resolved .hero-radar-scanning { display: none; }
-.phase-resolved .hero-radar-detail-body { display: block; animation: hero-fade 240ms var(--ease-out) both; }
+.hero-radar-detail-body { animation: hero-fade 260ms var(--ease-out) both; }
 .hero-radar-ell i { animation: hero-ell 1.4s steps(1) infinite; opacity: 0; }
 .hero-radar-ell i:nth-child(2) { animation-delay: .35s; }
 .hero-radar-ell i:nth-child(3) { animation-delay: .7s; }
 .hero-radar-detail-name { display: block; color: var(--ink-950); font-size: 13px; font-weight: 700; }
-.hero-radar-detail-reason { margin: 5px 0 8px; color: var(--ink-600); font-size: 12.5px; line-height: 1.5; }
+.hero-radar-detail-reason { margin: 5px 0 9px; color: var(--ink-600); font-size: 12.5px; line-height: 1.5; }
 .hero-radar-cite {
   display: inline-flex;
   align-items: center;
@@ -1323,18 +1334,21 @@
   font-size: 12px;
   font-weight: 650;
 }
+.hero-radar-cite:hover { text-decoration: underline; text-underline-offset: 2px; }
 .hero-radar-cite i { font-style: normal; }
 
-/* footer count */
+/* footer — factual count of the book, then the verdict once flagged */
 .hero-radar-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 46px;
   padding: 13px 20px;
   border-top: 1px solid var(--line);
   background: var(--surface-muted);
 }
-.hero-radar-count { color: var(--ink-700, var(--ink-800)); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.hero-radar-status { color: var(--ink-500); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.hero-radar-count { color: var(--ink-800); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .hero-radar-count strong { color: var(--tone); font-size: 14px; font-weight: 800; }
 .hero-radar-cleared { color: var(--ink-500); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
@@ -1353,12 +1367,73 @@
   to { opacity: 1; transform: none; }
 }
 
+/* step rail — the click-through workflow under the panel */
+.hero-radar-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+.hero-radar-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--duration-standard) var(--ease-out), background-color var(--duration-standard) var(--ease-out);
+}
+.hero-radar-step:hover { border-color: var(--line-strong); }
+.hero-radar-step-num {
+  display: grid;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--ink-500);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transition: background-color var(--duration-standard) var(--ease-out), border-color var(--duration-standard) var(--ease-out), color var(--duration-standard) var(--ease-out);
+}
+.hero-radar-step-label {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink-500);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hero-radar-step.done .hero-radar-step-num { border-color: var(--green-700); background: var(--green-700); color: var(--paper); }
+.hero-radar-step.active { border-color: var(--green-700); background: color-mix(in srgb, var(--green-700) 8%, var(--surface)); }
+.hero-radar-step.active .hero-radar-step-num { border-color: var(--green-700); background: var(--green-700); color: var(--paper); }
+.hero-radar-step.active .hero-radar-step-label { color: var(--ink-950); }
+.hero-radar-step:focus-visible { outline: 3px solid rgb(29 141 86 / 28%); outline-offset: 2px; }
+
+.hero-radar-caption {
+  margin: 12px 4px 0;
+  color: var(--ink-600);
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .hero-radar-change, .hero-radar-detail-body { opacity: 1; transform: none; }
-  .hero-radar-scanning { opacity: 0; }
+  .hero-radar-change, .hero-radar-detail-body, .hero-radar-scanning, .hero-radar-hint { animation: none; }
   .hero-radar-scan, .hero-radar-ell { display: none; }
 }
 
 @media (max-width: 1100px) {
-  .hero-radar { width: min(100%, 620px); justify-self: start; margin-top: 8px; }
+  .hero-radar-wrap { width: min(100%, 620px); justify-self: start; margin-top: 8px; }
+}
+@media (max-width: 560px) {
+  .hero-radar-steps { grid-template-columns: repeat(2, 1fr); }
 }
