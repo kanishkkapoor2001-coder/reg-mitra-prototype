@@ -1371,8 +1371,8 @@
 /* step rail — the click-through workflow under the panel */
 .hero-radar-steps {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
   margin-top: 16px;
 }
 .hero-radar-step {
@@ -1545,10 +1545,12 @@
 .hero-radar-send.wa { border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-800); }
 .hero-radar-brief-note { margin-left: auto; color: var(--ink-500); font-size: 10.5px; font-weight: 550; }
 
-/* Compact 6-step rail */
-.hero-radar-step { flex-direction: column; gap: 6px; padding: 9px 6px; text-align: center; }
-.hero-radar-step-num { width: 20px; height: 20px; font-size: 10.5px; }
-.hero-radar-step-label { font-size: 11px; line-height: 1.15; white-space: normal; }
+/* Compact 5-step rail */
+.hero-radar-step { gap: 7px; padding: 8px 9px; }
+.hero-radar-step-num { width: 19px; height: 19px; font-size: 10.5px; }
+.hero-radar-step-label { font-size: 11.5px; }
+/* inline tracking line inside the Prepare card */
+.hero-radar-brief-track { display: flex; align-items: center; gap: 7px; margin-top: 2px; color: var(--ink-500); font-size: 11px; font-weight: 550; }
 
 /* Rotating headline */
 .hero-rotating-h1 .hero-h1-line { display: block; }
@@ -1699,3 +1701,77 @@
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5'/%3E%3C/svg%3E") center / 11px 11px no-repeat;
 }
 .hero-radar-track-note { color: var(--ink-500); font-size: 10.5px; font-weight: 550; }
+
+/* ============================================================
+   About page — balanced lead, 2x2 principles, aligned callout
+   ============================================================ */
+.about-lead {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: clamp(64px, 8vw, 100px) 0;
+  border-block: 1px solid var(--line);
+}
+.about-lead .marketing-kicker { margin-bottom: 20px; }
+.about-lead-line {
+  margin: 0;
+  max-width: 900px;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: clamp(28px, 3.6vw, 46px);
+  font-weight: 400;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+  text-wrap: balance;
+  color: var(--ink-950);
+}
+
+.about-principles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(44px, 5vw, 80px) clamp(48px, 6vw, 96px);
+  padding: clamp(64px, 8vw, 100px) 0;
+}
+.about-principle { max-width: 480px; }
+.about-principle-num {
+  display: block;
+  margin-bottom: 16px;
+  color: var(--green-700);
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.about-principle h2 {
+  margin: 0 0 12px;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: clamp(23px, 2.3vw, 30px);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  color: var(--ink-950);
+}
+.about-principle p { margin: 0; color: var(--ink-600); font-size: 16px; line-height: 1.65; }
+
+.about-callout {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(40px, 6vw, 80px);
+  padding-top: clamp(64px, 8vw, 100px);
+  border-top: 1px solid var(--line);
+}
+.about-callout blockquote {
+  max-width: 880px;
+  margin: 0;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: clamp(36px, 4.6vw, 62px);
+  font-weight: 400;
+  letter-spacing: -.04em;
+  line-height: 1.02;
+  text-wrap: balance;
+  color: var(--ink-950);
+}
+.about-callout .marketing-button { flex: 0 0 auto; }
+
+@media (max-width: 760px) {
+  .about-principles { grid-template-columns: 1fr; }
+  .about-callout { flex-direction: column; align-items: flex-start; }
+}
