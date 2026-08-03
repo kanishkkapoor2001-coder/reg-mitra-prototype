@@ -17,6 +17,12 @@ import { verifyAnswerGroundedness } from "@/lib/rag/verify";
 import { noticeAsContext, sanitizeNotice } from "@/lib/notices/extraction";
 import { practiceAsContext, sanitizePracticeContext } from "@/lib/practice/context";
 import { planComputations } from "@/lib/tools/plan";
+import {
+  ASSISTANT_BURST,
+  ASSISTANT_HOURLY,
+  callerKey,
+  checkRateLimit,
+} from "@/lib/rate-limit";
 import type { ChatRetrievalPayload } from "@/lib/rag/types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentWorkspace } from "@/lib/workspace";
@@ -78,6 +84,17 @@ export async function POST(request: Request) {
       { error: "Live AI is disabled in the public template demo." },
       { status: 503 },
     );
+  }
+
+  // Throttle before any gateway work: one question costs several model calls.
+  for (const [scope, rule] of [["chat-burst", ASSISTANT_BURST], ["chat-hour", ASSISTANT_HOURLY]] as const) {
+    const verdict = checkRateLimit(callerKey(request, scope), rule);
+    if (!verdict.allowed) {
+      return Response.json(
+        { error: "You have reached the question limit for now. Please try again shortly." },
+        { status: 429, headers: { "Retry-After": String(verdict.retryAfterSeconds) } },
+      );
+    }
   }
 
   const gatewayConfig = getGatewayConfig();

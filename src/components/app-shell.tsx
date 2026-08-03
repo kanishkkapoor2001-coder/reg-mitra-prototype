@@ -8,6 +8,7 @@ import {
   AppearanceIcon,
   CalendarIcon,
   CheckCircleIcon,
+  CalculatorIcon,
   ClientsIcon,
   FileIcon,
   MoreIcon,
@@ -116,6 +117,8 @@ export function AppShell({
         <details className="more-menu">
           <summary aria-label="More workspace options"><MoreIcon /><span>More</span></summary>
           <div className="more-menu-panel">
+            <Link href="/calculators"><CalculatorIcon /><span><strong>Calculators</strong><small>Interest, late fee and due dates</small></span></Link>
+            <Link href="/practice"><ClientsIcon /><span><strong>Your practice</strong><small>Tune answers to your clients</small></span></Link>
             <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Internal drafts and review</small></span></Link>
             <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Official sources and updates</small></span></Link>
             <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources, team, and review policy</small></span></Link>

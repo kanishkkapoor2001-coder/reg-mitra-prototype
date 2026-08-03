@@ -20,7 +20,8 @@
     "connectors:test": "node --experimental-strip-types --test src/lib/connectors/truth.test.ts",
     "trials:test": "node --experimental-strip-types --test src/lib/trials/domain.test.ts",
     "founder:test": "node --experimental-strip-types --test src/lib/auth/founder-access.test.ts",
-    "test:a11y": "playwright test tests/e2e/accessibility.spec.ts"
+    "test:a11y": "playwright test tests/e2e/accessibility.spec.ts",
+    "ratelimit:test": "node --experimental-strip-types --test src/lib/rate-limit.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

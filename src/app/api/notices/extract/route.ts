@@ -4,6 +4,7 @@ import {
   NOTICE_MIME_TYPES,
   extractNotice,
 } from "@/lib/notices/extraction";
+import { UPLOAD_HOURLY, callerKey, checkRateLimit } from "@/lib/rate-limit";
 
 export const maxDuration = 60;
 export const runtime = "nodejs";
@@ -21,6 +22,14 @@ export async function POST(request: Request) {
     return Response.json(
       { error: "Document reading is disabled in the public template demo." },
       { status: 503 },
+    );
+  }
+
+  const uploadVerdict = checkRateLimit(callerKey(request, "notice-upload"), UPLOAD_HOURLY);
+  if (!uploadVerdict.allowed) {
+    return Response.json(
+      { error: "You have reached the document limit for now. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(uploadVerdict.retryAfterSeconds) } },
     );
   }
 

@@ -84,6 +84,10 @@ export function CheckCircleIcon(props: IconProps) {
   return <IconBase {...props}><circle cx="12" cy="12" r="9" {...strokeProps} /><path d="m8 12 2.6 2.6L16.5 9" {...strokeProps} /></IconBase>;
 }
 
+export function CalculatorIcon(props: IconProps) {
+  return <IconBase {...props}><rect height="18" rx="2" width="14" x="5" y="3" {...strokeProps} /><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h4.01M8 19h.01M12 19h.01" {...strokeProps} /></IconBase>;
+}
+
 export function StopIcon(props: IconProps) {
   return <IconBase {...props}><rect height="10" rx="2" width="10" x="7" y="7" {...strokeProps} /></IconBase>;
 }
