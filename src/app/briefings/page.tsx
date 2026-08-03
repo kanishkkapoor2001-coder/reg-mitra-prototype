@@ -1,7 +1,11 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { FileIcon, SparklesIcon } from "@/components/icons";
 import { PageHeading } from "@/components/page-heading";
 import { ReviewGate } from "@/components/review-gate";
+import { getSupabasePublicConfig } from "@/lib/supabase/config";
+import { getCurrentWorkspace } from "@/lib/workspace";
 
 const demoBriefings = [
   {
@@ -24,7 +28,16 @@ const demoBriefings = [
   },
 ] as const;
 
-export default function BriefingsPage() {
+// Briefings runs on sample records only. A firm reaching it by URL would see
+// fictional clients, so signed-in workspaces go to the surface that does the
+// same job for real: Assistant · Prepare (launch plan §3.1).
+export default async function BriefingsPage() {
+  const isDemo = (await cookies()).get("reg_mitra_session")?.value === "demo";
+  const workspace = isDemo || !getSupabasePublicConfig() ? null : await getCurrentWorkspace();
+  if (workspace) {
+    redirect("/assistant?prompt=Prepare%20an%20internal%20client%20briefing");
+  }
+
   return (
     <>
       <PageHeading
