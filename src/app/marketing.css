@@ -1254,7 +1254,8 @@
   opacity: 0;
   pointer-events: none;
 }
-.hero-radar.is-scan .hero-radar-scan { animation: hero-scan 3s var(--ease-out) both; }
+/* a scanner reads at constant pace — symmetric easing, not ease-out */
+.hero-radar.is-scan .hero-radar-scan { animation: hero-scan 3s cubic-bezier(.4, 0, .6, 1) both; }
 
 .hero-radar-row {
   display: grid;
@@ -1263,8 +1264,15 @@
   gap: 12px;
   padding: 11px 12px;
   border-radius: 10px;
-  transition: opacity var(--duration-standard) var(--ease-out), background-color var(--duration-standard) var(--ease-out);
+  transition: opacity 240ms var(--ease-out), background-color 240ms var(--ease-out), box-shadow 240ms var(--ease-out);
+  transition-delay: var(--stagger, 0ms);
 }
+/* verdicts land top-to-bottom, trailing the scan line down the book */
+.hero-radar.is-resolved .hero-radar-row:nth-of-type(2) { --stagger: 45ms; }
+.hero-radar.is-resolved .hero-radar-row:nth-of-type(3) { --stagger: 90ms; }
+.hero-radar.is-resolved .hero-radar-row:nth-of-type(4) { --stagger: 135ms; }
+.hero-radar.is-resolved .hero-radar-row:nth-of-type(5) { --stagger: 180ms; }
+.hero-radar.is-resolved .hero-radar-row:nth-of-type(6) { --stagger: 225ms; }
 .hero-radar-name {
   min-width: 0;
   overflow: hidden;
@@ -1283,7 +1291,8 @@
   justify-self: end;
   border: 1.5px solid var(--line-strong);
   border-radius: 50%;
-  transition: border-color var(--duration-standard) var(--ease-out), background-color var(--duration-standard) var(--ease-out);
+  transition: border-color 240ms var(--ease-out), background-color 240ms var(--ease-out);
+  transition-delay: var(--stagger, 0ms);
 }
 
 /* cleared */
@@ -1296,6 +1305,8 @@
   background:
     linear-gradient(45deg, transparent 45%, var(--ink-400) 45%, var(--ink-400) 55%, transparent 55%) center / 9px 1.5px no-repeat;
   opacity: .6;
+  animation: hero-pop 220ms var(--ease-out) both;
+  animation-delay: calc(var(--stagger, 0ms) + 70ms);
 }
 
 /* affected */
@@ -1313,6 +1324,8 @@
   content: "";
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5'/%3E%3C/svg%3E") center / 12px 12px no-repeat;
+  animation: hero-pop 220ms var(--ease-out) both;
+  animation-delay: calc(var(--stagger, 0ms) + 70ms);
 }
 
 /* detail area — one state at a time, fixed height so the panel never jumps */
@@ -1360,10 +1373,10 @@
   border-top: 1px solid var(--line);
   background: var(--surface-muted);
 }
-.hero-radar-status { color: var(--ink-500); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.hero-radar-count { color: var(--ink-800); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.hero-radar-status { color: var(--ink-500); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; animation: hero-fade 240ms var(--ease-out) both; }
+.hero-radar-count { color: var(--ink-800); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; animation: hero-fade 240ms var(--ease-out) both; animation-delay: 180ms; }
 .hero-radar-count strong { color: var(--tone); font-size: 14px; font-weight: 800; }
-.hero-radar-cleared { color: var(--ink-500); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.hero-radar-cleared { color: var(--ink-500); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; animation: hero-fade 240ms var(--ease-out) both; animation-delay: 260ms; }
 
 @keyframes hero-scan {
   0% { top: 4px; opacity: 0; }
@@ -1376,8 +1389,12 @@
   50.01%, 100% { opacity: 0; }
 }
 @keyframes hero-fade {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translateY(4px); filter: blur(3px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+/* no `to` block: settles at each element's own computed opacity (1 for hits, .6 for cleared) */
+@keyframes hero-pop {
+  from { opacity: 0; transform: scale(.55); }
 }
 
 /* step rail — the click-through workflow under the panel */
@@ -1399,9 +1416,12 @@
   color: inherit;
   text-align: left;
   cursor: pointer;
-  transition: border-color var(--duration-standard) var(--ease-out), background-color var(--duration-standard) var(--ease-out);
+  transition: border-color var(--duration-standard) var(--ease-out), background-color var(--duration-standard) var(--ease-out), transform var(--duration-standard) var(--ease-out);
 }
-.hero-radar-step:hover { border-color: var(--line-strong); }
+@media (hover: hover) and (pointer: fine) {
+  .hero-radar-step:hover { border-color: var(--line-strong); }
+}
+.hero-radar-step:active { transform: scale(.97); }
 .hero-radar-step-num {
   display: grid;
   flex: 0 0 auto;
@@ -1434,14 +1454,20 @@
 
 .hero-radar-caption {
   margin: 12px 4px 0;
+  min-height: 3em; /* two lines — captions of different lengths must not shift the page */
   color: var(--ink-600);
   font-size: 14.5px;
   line-height: 1.5;
+  animation: hero-fade 280ms var(--ease-out) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-radar-change, .hero-radar-detail-body, .hero-radar-scanning, .hero-radar-hint { animation: none; }
+  .hero-radar-change, .hero-radar-detail-body, .hero-radar-scanning, .hero-radar-hint,
+  .hero-radar-caption, .hero-radar-status, .hero-radar-count, .hero-radar-cleared,
+  .hero-radar-row.hit .hero-radar-state::after, .hero-radar-row.cleared .hero-radar-state::after { animation: none; }
   .hero-radar-scan, .hero-radar-ell { display: none; }
+  .hero-radar-row, .hero-radar-state { --stagger: 0ms !important; }
+  .hero-radar-step:active { transform: none; }
 }
 
 @media (max-width: 1100px) {
