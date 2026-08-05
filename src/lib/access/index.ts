@@ -13,7 +13,13 @@ export type AccessIdentity = {
   requestedTier?: PlanTier;
 };
 
-const NOTIFY_TO = process.env.SIGNUP_NOTIFY_TO?.trim() || "kanishk@learno.ai";
+// Comma-separated so alerts can go to more than one mailbox. Note that
+// kanishk@learno.ai bounces and is suppressed at Resend — use a mailbox that
+// actually accepts mail or the approval alert silently never arrives.
+const NOTIFY_TO = (process.env.SIGNUP_NOTIFY_TO?.trim() || "kanishk@outreach.learno.ai")
+  .split(",")
+  .map((address) => address.trim())
+  .filter(Boolean);
 // Must be an address on a Resend-verified domain; the shared test sender can
 // only deliver to the Resend account owner.
 const NOTIFY_FROM = process.env.SIGNUP_NOTIFY_FROM?.trim() || "Reg Mitra <signups@updates.sigil91.com>";
@@ -85,7 +91,7 @@ export async function notifyOperatorOfSignup(identity: AccessIdentity): Promise<
       },
       body: JSON.stringify({
         from: NOTIFY_FROM,
-        to: [NOTIFY_TO],
+        to: NOTIFY_TO,
         subject: `Reg Mitra signup — ${tierInfo.name}${tier === "ultra" ? " (waitlist)" : ""} — ${identity.email}`,
         text: [
           "Someone requested access to Reg Mitra.",

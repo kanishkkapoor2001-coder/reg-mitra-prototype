@@ -119,6 +119,11 @@ export default async function NewsletterPage({
               <li key={name}>{name}</li>
             ))}
           </ul>
+          <p className="newsletter-archive-link">
+            <a href={NEWSLETTER_ARCHIVE} target="_blank" rel="noreferrer">
+              Read past issues ↗
+            </a>
+          </p>
         </section>
 
         <section className="compare-section" aria-label="What the brief will and will not claim">
