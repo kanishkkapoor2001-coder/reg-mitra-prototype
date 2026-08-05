@@ -65,7 +65,7 @@ export default async function LoginPage({
           <small>This page never asks for portal passwords, OTPs, or client records.</small>
           {founderEntry
             ? <Link href={`/founder?from=${encodeURIComponent(from)}`}>Use my founder code instead →</Link>
-            : <Link href="/start">Need a workspace? Request pilot access →</Link>}
+            : <Link href="/signup">Need a workspace? Start your free trial →</Link>}
         </section>
       </main>
     </PublicShell>

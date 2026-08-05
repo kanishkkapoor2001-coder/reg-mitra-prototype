@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { readAccessStatus } from "@/lib/access";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
 
@@ -24,6 +25,22 @@ export async function proxy(request: NextRequest) {
   // Anonymous (or demo) visitors keep public access.
   if (!data.user) {
     return response;
+  }
+
+  // Payment is handled offline, so authentication alone does not grant access.
+  // An account only reaches the product once an operator approves it; anything
+  // else (pending, rejected, or a status we cannot read) waits at /pending.
+  // Deliberately fails closed — an unreadable status must not open the product.
+  if (data.user.email) {
+    let approved = false;
+    try {
+      approved = (await readAccessStatus(data.user.email)) === "approved";
+    } catch (statusError) {
+      console.error("[proxy] could not read access status", statusError);
+    }
+    if (!approved) {
+      return NextResponse.redirect(new URL("/pending", request.url));
+    }
   }
 
   const onboardingPath =

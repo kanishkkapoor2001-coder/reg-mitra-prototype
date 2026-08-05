@@ -1399,58 +1399,75 @@
 
 /* step rail — the click-through workflow under the panel */
 .hero-radar-steps {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
   margin-top: 16px;
 }
 .hero-radar-step {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   min-width: 0;
-  padding: 9px 10px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface);
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
   color: inherit;
   text-align: left;
   cursor: pointer;
-  transition: border-color var(--duration-standard) var(--ease-out), background-color var(--duration-standard) var(--ease-out), transform var(--duration-standard) var(--ease-out);
+  transition: transform var(--duration-standard) var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
-  .hero-radar-step:hover { border-color: var(--line-strong); }
+  .hero-radar-step:hover .hero-radar-step-label { color: var(--ink-800); }
 }
-.hero-radar-step:active { transform: scale(.97); }
+.hero-radar-step:active { transform: scale(.96); }
 .hero-radar-step-num {
+  position: relative;
   display: grid;
   flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
   place-items: center;
   border: 1px solid var(--line-strong);
   border-radius: 50%;
   color: var(--ink-500);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   transition: background-color var(--duration-standard) var(--ease-out), border-color var(--duration-standard) var(--ease-out), color var(--duration-standard) var(--ease-out);
 }
 .hero-radar-step-label {
   min-width: 0;
-  overflow: hidden;
   color: var(--ink-500);
   font-size: 12px;
   font-weight: 650;
   letter-spacing: -.01em;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color var(--duration-standard) var(--ease-out);
 }
-.hero-radar-step.done .hero-radar-step-num { border-color: var(--green-700); background: var(--green-700); color: var(--paper); }
-.hero-radar-step.active { border-color: var(--green-700); background: color-mix(in srgb, var(--green-700) 8%, var(--surface)); }
-.hero-radar-step.active .hero-radar-step-num { border-color: var(--green-700); background: var(--green-700); color: var(--paper); }
+/* done: the number gives way to a tick — the rail reads as progress, not decoration */
+.hero-radar-step.done .hero-radar-step-num {
+  border-color: color-mix(in srgb, var(--green-700) 30%, transparent);
+  background: color-mix(in srgb, var(--green-700) 12%, transparent);
+  color: transparent;
+}
+.hero-radar-step.done .hero-radar-step-num::after {
+  position: absolute;
+  content: "";
+  width: 19px;
+  height: 19px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%231d8d56' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 8.5l2.5 2.5L11.5 5.5'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+}
+.hero-radar-step.active .hero-radar-step-num {
+  border-color: var(--green-700);
+  background: var(--green-700);
+  color: var(--paper);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--green-700) 14%, transparent);
+}
 .hero-radar-step.active .hero-radar-step-label { color: var(--ink-950); }
-.hero-radar-step:focus-visible { outline: 3px solid rgb(29 141 86 / 28%); outline-offset: 2px; }
+.hero-radar-step:focus-visible { outline: 3px solid rgb(29 141 86 / 28%); outline-offset: 3px; border-radius: 8px; }
 
 .hero-radar-caption {
   margin: 12px 4px 0;
@@ -1474,7 +1491,10 @@
   .hero-radar-wrap { width: min(100%, 620px); justify-self: start; margin-top: 8px; }
 }
 @media (max-width: 560px) {
-  .hero-radar-steps { grid-template-columns: repeat(2, 1fr); }
+  /* labels would truncate at this width — the numbered circles carry it alone */
+  .hero-radar-steps { justify-content: flex-start; gap: 10px; }
+  .hero-radar-step-label { display: none; }
+  .hero-radar-step.active .hero-radar-step-label { display: block; }
 }
 
 /* ============================================================
@@ -1730,6 +1750,104 @@
   font-size: 15px;
   font-weight: 700;
 }
+/* custom enterprise band — sits under the three tiers */
+.pricing-enterprise {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  padding: 26px 30px;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  background: var(--surface-muted);
+}
+.pricing-enterprise h2 {
+  margin: 0;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -.02em;
+}
+.pricing-enterprise p {
+  max-width: 62ch;
+  margin: 8px 0 0;
+  color: var(--ink-600);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.pricing-enterprise .marketing-button { flex: 0 0 auto; }
+
+/* OAuth sign-up */
+.oauth-stack { display: grid; gap: 12px; margin-top: 28px; }
+.oauth-stack form { display: block; margin: 0; }
+.oauth-button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  min-height: 52px;
+  padding: 0 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink-950);
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: border-color var(--duration-standard) var(--ease-out), background-color var(--duration-standard) var(--ease-out), transform var(--duration-standard) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .oauth-button:hover { border-color: var(--ink-950); background: var(--surface-muted); }
+}
+.oauth-button:active { transform: scale(.985); }
+.oauth-button:focus-visible { outline: 3px solid rgb(29 141 86 / 28%); outline-offset: 2px; }
+.oauth-logo { width: 18px; height: 18px; flex: 0 0 auto; }
+.login-panel-note { margin: 12px 0 0 !important; color: var(--ink-600); font-size: 15px; }
+.login-error {
+  margin: 20px 0 0;
+  padding: 11px 14px;
+  border: 1px solid color-mix(in srgb, var(--red-700) 30%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--red-700) 7%, transparent);
+  color: var(--red-700);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.oauth-foot { margin: 26px 0 0; color: var(--ink-600); font-size: 15px; }
+.oauth-foot a { color: var(--green-700); font-weight: 650; }
+.oauth-fine { margin: 14px 0 0; color: var(--ink-500); font-size: 13px; line-height: 1.55; }
+
+/* awaiting-approval page */
+.pending-card {
+  max-width: 620px;
+  margin: 8px 0 0;
+  padding: 26px 30px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-muted);
+}
+.pending-card-title {
+  margin: 0 0 18px;
+  color: var(--ink-500);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.pending-steps { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.pending-steps li { color: var(--ink-700); font-size: 15.5px; line-height: 1.55; }
+.pending-steps li span {
+  display: inline-block;
+  width: 34px;
+  color: var(--green-700);
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 15px;
+}
+
 .pricing-foot { margin: 44px 0 0; color: var(--ink-600); font-size: 15px; }
 .pricing-foot a { color: var(--green-700); font-weight: 650; border-bottom: 1px solid transparent; }
 .pricing-foot a:hover { border-color: var(--green-700); }

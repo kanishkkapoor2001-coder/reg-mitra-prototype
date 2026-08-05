@@ -22,7 +22,7 @@ export default function FeaturesPage() {
           </p>
           <div className="marketing-actions">
             <Link className="marketing-button primary" href="/today">Open the interactive demo</Link>
-            <Link className="marketing-button quiet" href="/start">Request pilot access</Link>
+            <Link className="marketing-button quiet" href="/signup">Start free trial</Link>
           </div>
         </section>
 
@@ -34,7 +34,7 @@ export default function FeaturesPage() {
           <p className="marketing-kicker">Private pilot · seven days · no card</p>
           <h2>Put it to work on one of your own workflows.</h2>
           <p>We confirm the pilot scope and start date before creating your workspace.</p>
-          <Link className="marketing-button light" href="/start">Request pilot access</Link>
+          <Link className="marketing-button light" href="/signup">Start free trial</Link>
         </section>
       </main>
     </PublicShell>
