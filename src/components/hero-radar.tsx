@@ -205,7 +205,7 @@ export function HeroRadar() {
           </button>
         ))}
       </div>
-      <p className="hero-radar-caption" aria-live="polite">{STEPS[step]?.caption}</p>
+      <p className="hero-radar-caption" aria-live="polite" key={step}>{STEPS[step]?.caption}</p>
     </div>
   );
 }
