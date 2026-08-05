@@ -24,9 +24,14 @@ const riskRank: Record<RiskLevel, number> = { high: 3, medium: 2, low: 1 };
 export function ClientsExperience({
   clients,
   mode,
+  planName,
+  clientLimit = null,
 }: Readonly<{
   clients: readonly PortfolioClient[];
   mode: "demo" | "public" | "product";
+  planName?: string;
+  /** null means unlimited. */
+  clientLimit?: number | null;
 }>) {
   const router = useRouter();
   const pathname = usePathname();
@@ -116,7 +121,20 @@ export function ClientsExperience({
           </select>
         </label>
         <span className="result-count">{visibleClients.length} {visibleClients.length === 1 ? "client" : "clients"}</span>
-        {mode === "product" ? <Link className="button primary" href="/clients/new">Add client</Link> : null}
+        {mode === "product" && clientLimit !== null ? (
+          <span className={`plan-usage${clients.length >= clientLimit ? " is-full" : ""}`}>
+            {clients.length} of {clientLimit} used{planName ? ` · ${planName}` : ""}
+          </span>
+        ) : null}
+        {mode === "product" ? (
+          clientLimit !== null && clients.length >= clientLimit ? (
+            <Link className="button" href="/billing" title={`Your plan covers ${clientLimit} client companies`}>
+              Plan full — upgrade
+            </Link>
+          ) : (
+            <Link className="button primary" href="/clients/new">Add client</Link>
+          )
+        ) : null}
       </div>
 
       {visibleClients.length ? (

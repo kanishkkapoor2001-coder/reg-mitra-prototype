@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { notifyOperatorOfSignup, recordAccessRequest } from "@/lib/access";
+import { parseTier } from "@/lib/billing/tiers";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
 
@@ -48,7 +49,9 @@ export async function GET(request: NextRequest) {
     fullName: (metadata.full_name ?? metadata.name ?? null) as string | null,
     avatarUrl: (metadata.avatar_url ?? metadata.picture ?? null) as string | null,
     provider: (user.app_metadata?.provider ?? null) as string | null,
+    requestedTier: parseTier(request.cookies.get("reg_mitra_plan")?.value),
   };
+  response.cookies.set("reg_mitra_plan", "", { maxAge: 0, path: "/" });
 
   let status: string;
   try {

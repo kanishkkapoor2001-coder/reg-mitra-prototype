@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { parseTier } from "@/lib/billing/tiers";
 import { getAppUrl, getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
 
@@ -46,5 +47,13 @@ export async function POST(request: NextRequest) {
   // actually leaves for the provider; dropping them breaks the PKCE exchange.
   const redirect = NextResponse.redirect(data.url, 303);
   response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+  // The provider redirects straight to the callback, so the chosen plan travels
+  // in a cookie rather than the URL.
+  redirect.cookies.set("reg_mitra_plan", parseTier(formData.get("plan")), {
+    maxAge: 60 * 60,
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+  });
   return redirect;
 }

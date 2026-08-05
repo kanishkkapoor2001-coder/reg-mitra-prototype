@@ -22,14 +22,14 @@ export default function PricingPage() {
             <p className="tier-label">Start here</p>
             <h2 className="tier-name">Free trial</h2>
             <p className="tier-price">7<small>days</small></p>
-            <p className="tier-note">Full access, no card</p>
+            <p className="tier-note">Full Pro access, no card</p>
             <ul className="tier-features">
-              <li>Everything in Pro, unrestricted</li>
-              <li>Match changes across <strong>your real client book</strong></li>
+              <li>Everything in <strong>Pro</strong>, for 7 days</li>
+              <li>Match changes to up to <strong>6 client companies</strong></li>
               <li>Source-linked research &amp; compliance calendar</li>
               <li>Weekly regulatory newsletter</li>
             </ul>
-            <Link className="marketing-button quiet tier-cta" href="/signup">Start free trial</Link>
+            <Link className="marketing-button quiet tier-cta" href="/signup?plan=pro">Start free trial</Link>
           </article>
 
           <article className="tier featured">
@@ -39,11 +39,11 @@ export default function PricingPage() {
             <p className="tier-note">For a growing practice</p>
             <ul className="tier-features">
               <li>Everything in the trial, continued</li>
-              <li>Match changes to up to <strong>10 client companies</strong></li>
+              <li>Match changes to up to <strong>6 client companies</strong></li>
               <li>Assistant chat for research and drafting</li>
               <li>Priority email &amp; WhatsApp support</li>
             </ul>
-            <a className="marketing-button light tier-cta" href="mailto:kanishk@5avenures.in?subject=Reg%20Mitra%20Pro">Talk to us</a>
+            <Link className="marketing-button light tier-cta" href="/signup?plan=pro">Start with Pro</Link>
           </article>
 
           <article className="tier soon">
@@ -57,7 +57,7 @@ export default function PricingPage() {
               <li><strong>Unlimited</strong> assistant chat</li>
               <li>Everything, without limits</li>
             </ul>
-            <span className="tier-cta tier-soon-pill">Coming soon</span>
+            <Link className="marketing-button quiet tier-cta" href="/signup?plan=ultra">Join the waitlist</Link>
           </article>
         </section>
 

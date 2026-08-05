@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { PublicShell } from "@/components/public-shell";
+import { TIERS, parseTier } from "@/lib/billing/tiers";
 
 export const metadata: Metadata = {
   title: "Create your account",
@@ -30,10 +31,13 @@ function enabledProviders(): { google: boolean; microsoft: boolean } {
 
 export default async function SignupPage({
   searchParams,
-}: Readonly<{ searchParams: Promise<{ error?: string; from?: string; sent?: string }> }>) {
+}: Readonly<{
+  searchParams: Promise<{ error?: string; from?: string; sent?: string; plan?: string }>;
+}>) {
   const params = await searchParams;
   const error = params.error ? errors[params.error] ?? errors.provider_failed : null;
   const sent = params.sent === "1";
+  const plan = parseTier(params.plan);
   const from = params.from?.startsWith("/") && !params.from.startsWith("//") ? params.from : "/today";
   const providers = enabledProviders();
   const anyOauth = providers.google || providers.microsoft;
@@ -105,6 +109,24 @@ export default async function SignupPage({
           {anyOauth ? <p className="oauth-divider"><span>or</span></p> : null}
 
           <form className="signup-email-form" action="/api/auth/start" method="post">
+            <fieldset className="plan-choice">
+              <legend>Which plan do you want?</legend>
+              <label className="plan-option">
+                <input type="radio" name="plan" value="pro" defaultChecked={plan === "pro"} />
+                <span>
+                  <strong>{TIERS.pro.name} — 7-day free trial</strong>
+                  <small>{TIERS.pro.priceLabel} after the trial · up to {TIERS.pro.clientLimit} client companies</small>
+                </span>
+              </label>
+              <label className="plan-option">
+                <input type="radio" name="plan" value="ultra" defaultChecked={plan === "ultra"} />
+                <span>
+                  <strong>{TIERS.ultra.name} — join the waitlist</strong>
+                  <small>{TIERS.ultra.priceLabel} · unlimited client companies · not open yet</small>
+                </span>
+              </label>
+            </fieldset>
+
             <label htmlFor="signup-email">Work email</label>
             <input
               id="signup-email"

@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasFounderAccess } from "@/lib/billing/entitlements";
+import { DEFAULT_TIER, parseTier, type PlanTier } from "@/lib/billing/tiers";
 
 export interface CurrentWorkspace {
   id: string;
@@ -7,6 +8,7 @@ export interface CurrentWorkspace {
   role: "owner" | "admin" | "reviewer" | "member" | "viewer";
   subscriptionStatus: "trialing" | "active" | "past_due" | "canceled" | "expired";
   trialEndsAt: string | null;
+  tier: PlanTier;
   founderAccess: boolean;
 }
 
@@ -17,7 +19,7 @@ export async function getCurrentWorkspace(): Promise<CurrentWorkspace | null> {
 
   const { data: membership, error } = await supabase
     .from("workspace_memberships")
-    .select("workspace_id, role, workspaces(name, subscriptions(status, trial_ends_at))")
+    .select("workspace_id, role, workspaces(name, subscriptions(status, trial_ends_at, tier))")
     .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -35,6 +37,7 @@ export async function getCurrentWorkspace(): Promise<CurrentWorkspace | null> {
     role: membership.role,
     subscriptionStatus: subscription?.status ?? "expired",
     trialEndsAt: subscription?.trial_ends_at ?? null,
+    tier: subscription?.tier ? parseTier(subscription.tier) : DEFAULT_TIER,
     founderAccess: hasFounderAccess(userData.user.email),
   };
 }

@@ -1,4 +1,5 @@
 import "server-only";
+import { DEFAULT_TIER, TIERS, type PlanTier } from "@/lib/billing/tiers";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type AccessState = "pending" | "approved" | "rejected";
@@ -9,6 +10,7 @@ export type AccessIdentity = {
   fullName?: string | null;
   avatarUrl?: string | null;
   provider?: string | null;
+  requestedTier?: PlanTier;
 };
 
 const NOTIFY_TO = process.env.SIGNUP_NOTIFY_TO?.trim() || "kanishk@learno.ai";
@@ -23,7 +25,7 @@ const NOTIFY_FROM = process.env.SIGNUP_NOTIFY_FROM?.trim() || "Reg Mitra <signup
  */
 export async function recordAccessRequest(
   identity: AccessIdentity,
-): Promise<{ status: AccessState; isNew: boolean }> {
+): Promise<{ status: AccessState; isNew: boolean; requestedTier: PlanTier }> {
   const admin = createSupabaseAdminClient();
   const { data, error } = await admin.rpc("record_access_request", {
     request_auth_user_id: identity.authUserId,
@@ -31,6 +33,7 @@ export async function recordAccessRequest(
     request_full_name: identity.fullName ?? null,
     request_avatar_url: identity.avatarUrl ?? null,
     request_provider: identity.provider ?? null,
+    request_tier: identity.requestedTier ?? DEFAULT_TIER,
   });
 
   if (error) throw error;
@@ -38,6 +41,7 @@ export async function recordAccessRequest(
   return {
     status: (row?.status as AccessState) ?? "pending",
     isNew: Boolean(row?.is_new),
+    requestedTier: (row?.requested_tier as PlanTier) ?? DEFAULT_TIER,
   };
 }
 
@@ -65,7 +69,12 @@ export async function notifyOperatorOfSignup(identity: AccessIdentity): Promise<
 
   const name = identity.fullName?.trim() || "(no name given)";
   const provider = identity.provider?.trim() || "unknown";
-  const approveUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "") ?? ""}/project/_/editor`;
+  const tier = identity.requestedTier ?? DEFAULT_TIER;
+  const tierInfo = TIERS[tier];
+  const limitText = tierInfo.clientLimit === null
+    ? "unlimited client companies"
+    : `up to ${tierInfo.clientLimit} client companies`;
+  const email = identity.email.toLowerCase();
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -77,22 +86,32 @@ export async function notifyOperatorOfSignup(identity: AccessIdentity): Promise<
       body: JSON.stringify({
         from: NOTIFY_FROM,
         to: [NOTIFY_TO],
-        subject: `Reg Mitra signup — ${identity.email}`,
+        subject: `Reg Mitra signup — ${tierInfo.name}${tier === "ultra" ? " (waitlist)" : ""} — ${identity.email}`,
         text: [
           "Someone requested access to Reg Mitra.",
           "",
-          `Email:    ${identity.email}`,
-          `Name:     ${name}`,
-          `Signed in with: ${provider}`,
+          `Email:      ${identity.email}`,
+          `Name:       ${name}`,
+          `Signed in:  ${provider}`,
+          `WANTS:      ${tierInfo.name} — ${tierInfo.priceLabel}, ${limitText}`,
+          tier === "ultra"
+            ? "            (Ultra is not open yet — this is a waitlist request.)"
+            : "            (Starts with the 7-day free trial.)",
           "",
           "They are PENDING and cannot use the product yet.",
           "",
-          "To approve, set their row in public.access_requests to 'approved':",
+          "Approve them and grant that tier — run both statements:",
+          "",
           `  update public.access_requests`,
           `     set status = 'approved', decided_at = now(), decided_by = 'kanishk'`,
-          `   where normalized_email = '${identity.email.toLowerCase()}';`,
+          `   where normalized_email = '${email}';`,
           "",
-          `Supabase table editor: ${approveUrl}`,
+          "  -- once their workspace exists, set the tier it is entitled to:",
+          `  update public.subscriptions s`,
+          `     set tier = '${tier}'`,
+          `    from public.workspaces w`,
+          `   where w.id = s.workspace_id and w.created_by =`,
+          `         (select id from auth.users where lower(email) = '${email}');`,
         ].join("\n"),
       }),
     });

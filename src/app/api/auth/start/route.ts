@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { parseTier } from "@/lib/billing/tiers";
 import { getAppUrl, getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
 
@@ -26,6 +27,14 @@ export async function POST(request: NextRequest) {
   }
 
   const response = NextResponse.redirect(new URL(`${origin}?sent=1`, request.url), 303);
+  // The magic link is opened from an email, so the chosen plan cannot ride on
+  // the URL. Park it in a short-lived cookie for the callback to read.
+  response.cookies.set("reg_mitra_plan", parseTier(formData.get("plan")), {
+    maxAge: 60 * 60,
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+  });
   const supabase = createSupabaseRequestClient(request, response);
   const callback = new URL("/api/auth/callback", getAppUrl(request.url));
   callback.searchParams.set("from", destination);

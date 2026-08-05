@@ -514,6 +514,21 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .segmented-control button:hover { color: var(--ink-800); }
 .segmented-control button.active { background: var(--surface); color: var(--ink-950); }
 .result-count { margin-left: auto; color: var(--ink-500); font-size: 12px; }
+.plan-usage {
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--ink-600);
+  font-size: 11.5px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.plan-usage.is-full {
+  border-color: color-mix(in srgb, var(--red-700) 35%, transparent);
+  background: color-mix(in srgb, var(--red-700) 8%, transparent);
+  color: var(--red-700);
+}
 .portfolio-empty { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
 .portfolio-empty > svg { color: var(--ink-400); }
 .demo-footnote { margin: 18px 0 0; color: var(--ink-400); font-size: 12px; text-align: center; }

@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { ClientsExperience } from "@/components/clients-experience";
+import { TIERS, clientLimitFor } from "@/lib/billing/tiers";
 import { clients as demoClients } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -67,5 +68,12 @@ export default async function ClientsPage() {
     };
   });
 
-  return <ClientsExperience clients={clients} mode="product" />;
+  return (
+    <ClientsExperience
+      clients={clients}
+      mode="product"
+      planName={TIERS[workspace.tier].name}
+      clientLimit={clientLimitFor(workspace.tier)}
+    />
+  );
 }

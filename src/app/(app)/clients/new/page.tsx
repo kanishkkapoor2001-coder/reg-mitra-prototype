@@ -4,6 +4,7 @@ import { PageHeading } from "@/components/page-heading";
 const errors: Record<string, string> = {
   invalid_client: "Enter the legal name and the name your team uses.",
   unavailable: "The client could not be created. Check your access and try again.",
+  limit_reached: "You have used every client company on your plan. Archive one, or move to Ultra for unlimited clients.",
 };
 
 export default async function NewClientPage({

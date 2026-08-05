@@ -1827,6 +1827,27 @@
 }
 .oauth-divider::before,
 .oauth-divider::after { flex: 1; height: 1px; background: var(--line); content: ""; }
+.plan-choice { display: grid; gap: 9px; margin: 0 0 20px; padding: 0; border: 0; }
+.plan-choice legend { padding: 0 0 10px; color: var(--ink-800); font-size: 15px; font-weight: 700; }
+.plan-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color var(--duration-standard) var(--ease-out), background-color var(--duration-standard) var(--ease-out);
+}
+.plan-option:has(input:checked) {
+  border-color: var(--green-700);
+  background: color-mix(in srgb, var(--green-700) 6%, transparent);
+}
+.plan-option:focus-within { outline: 3px solid rgb(29 141 86 / 24%); outline-offset: 2px; }
+.plan-option input { margin-top: 3px; accent-color: var(--green-700); }
+.plan-option strong { display: block; color: var(--ink-950); font-size: 14.5px; font-weight: 700; }
+.plan-option small { display: block; margin-top: 3px; color: var(--ink-600); font-size: 12.5px; line-height: 1.5; }
+
 .signup-email-form { display: grid; gap: 10px; margin-top: 22px; }
 .signup-email-form label { color: var(--ink-800); font-size: 15px; font-weight: 700; }
 .signup-email-form input[type="email"] {
