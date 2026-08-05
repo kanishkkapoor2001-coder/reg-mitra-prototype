@@ -47,7 +47,12 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    return NextResponse.redirect(new URL(`${origin}?error=send_failed`, request.url), 303);
+    // Supabase's built-in mailer is rate limited; say so rather than implying
+    // the address was wrong.
+    const reason = error.status === 429 || /rate limit/i.test(error.message ?? "")
+      ? "rate_limited"
+      : "send_failed";
+    return NextResponse.redirect(new URL(`${origin}?error=${reason}`, request.url), 303);
   }
 
   return response;

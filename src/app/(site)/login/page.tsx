@@ -6,6 +6,7 @@ const errors: Record<string, string> = {
   invalid_link: "That sign-in link is incomplete. Request a new one.",
   expired_link: "That sign-in link has expired or was already used.",
   send_failed: "We could not send the sign-in link. Please try again.",
+  rate_limited: "Too many sign-in links have been sent in the last hour. Please try again shortly.",
   not_configured: "Sign-in is not available right now. Try again later.",
 };
 

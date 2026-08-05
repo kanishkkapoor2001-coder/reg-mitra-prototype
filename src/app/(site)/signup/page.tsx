@@ -13,6 +13,8 @@ const errors: Record<string, string> = {
   invalid_provider: "Choose Google or Microsoft to continue.",
   provider_failed: "We could not reach that sign-in provider. Please try again.",
   invalid_email: "Enter a valid work email address.",
+  send_failed: "We could not send the sign-up link. Please try again.",
+  rate_limited: "Too many sign-up links have been sent in the last hour. Please try again shortly, or email us and we’ll set you up directly.",
 };
 
 // Google and Microsoft appear only once their provider is configured in
