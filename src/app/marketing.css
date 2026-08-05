@@ -2116,14 +2116,13 @@
   overflow: hidden;
 }
 
-/* The public footer overflowed the viewport on narrow screens: .footer-top is a
-   two-column grid whose second track is `auto`, so the nav never shrank, and the
-   brand column held a 400px floor. Stack both below the fold instead. */
-@media (max-width: 720px) {
-  .footer-top { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+/* The public footer overflowed the viewport on narrow screens. `.public-footer
+   nav` out-specifies `.footer-nav`, so the footer links are a non-wrapping flex
+   row, and the brand column kept a 400px floor below that width. */
+@media (max-width: 900px) {
   .footer-brand-col { max-width: 100%; min-width: 0; }
   .footer-brand-col p { overflow-wrap: anywhere; }
-  .footer-nav { justify-items: start; min-width: 0; }
+  .footer-nav { flex-wrap: wrap; row-gap: 12px; min-width: 0; }
 }
 
 @media (max-width: 760px) {
