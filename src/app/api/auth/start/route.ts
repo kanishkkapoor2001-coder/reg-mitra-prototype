@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { sendMagicLink } from "@/lib/access/magic-link";
 import { parseTier } from "@/lib/billing/tiers";
 import { getAppUrl, getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
@@ -35,9 +36,26 @@ export async function POST(request: NextRequest) {
     httpOnly: true,
     sameSite: "lax",
   });
-  const supabase = createSupabaseRequestClient(request, response);
-  const callback = new URL("/api/auth/callback", getAppUrl(request.url));
+  const appUrl = getAppUrl(request.url);
+
+  // Preferred path: mint the link ourselves and deliver it over Resend, which
+  // avoids Supabase's development-only mailer and its per-hour cap.
+  const outcome = await sendMagicLink(
+    email,
+    new URL("/api/auth/confirm", appUrl).toString(),
+    destination,
+  );
+  if (outcome === "sent") return response;
+
+  if (outcome === "failed") {
+    return NextResponse.redirect(new URL(`${origin}?error=send_failed`, request.url), 303);
+  }
+
+  // Resend is not configured — fall back to Supabase's mailer so sign-in still
+  // works, rate limit and all.
+  const callback = new URL("/api/auth/callback", appUrl);
   callback.searchParams.set("from", destination);
+  const supabase = createSupabaseRequestClient(request, response);
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
@@ -47,8 +65,6 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    // Supabase's built-in mailer is rate limited; say so rather than implying
-    // the address was wrong.
     const reason = error.status === 429 || /rate limit/i.test(error.message ?? "")
       ? "rate_limited"
       : "send_failed";

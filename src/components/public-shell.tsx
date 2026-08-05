@@ -11,6 +11,7 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
         </Link>
         <nav aria-label="Public navigation">
           <Link href="/features">Features</Link>
+          <Link href="/newsletter">Newsletter</Link>
           <Link href="/about">About</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/faq">FAQ</Link>
@@ -32,6 +33,7 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
           </div>
           <nav className="footer-nav" aria-label="Footer">
             <Link href="/features">Features</Link>
+            <Link href="/newsletter">Newsletter</Link>
             <Link href="/pricing">Pricing</Link>
             <Link href="/about">About</Link>
             <Link href="/faq">FAQ</Link>

@@ -2010,6 +2010,29 @@
 }
 .about-callout .marketing-button { flex: 0 0 auto; }
 
+/* Newsletter page — the only bespoke block is the source list. */
+.newsletter-coverage { padding: clamp(64px, 8vw, 100px) 0 0; }
+.newsletter-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.newsletter-sources li {
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: var(--text-md);
+  color: var(--ink-800);
+  letter-spacing: -.01em;
+}
+@media (max-width: 720px) {
+  .newsletter-sources li { padding: var(--space-2) var(--space-4); font-size: var(--text-sm); }
+}
+
 @media (max-width: 760px) {
   .about-principles { grid-template-columns: 1fr; }
   .about-callout { flex-direction: column; align-items: flex-start; }
