@@ -12,7 +12,9 @@ export type AccessIdentity = {
 };
 
 const NOTIFY_TO = process.env.SIGNUP_NOTIFY_TO?.trim() || "kanishk@learno.ai";
-const NOTIFY_FROM = process.env.SIGNUP_NOTIFY_FROM?.trim() || "Reg Mitra <onboarding@resend.dev>";
+// Must be an address on a Resend-verified domain; the shared test sender can
+// only deliver to the Resend account owner.
+const NOTIFY_FROM = process.env.SIGNUP_NOTIFY_FROM?.trim() || "Reg Mitra <signups@updates.sigil91.com>";
 
 /**
  * Records a sign-in and returns the account's standing. A first-time email is

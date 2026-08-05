@@ -11,14 +11,32 @@ const errors: Record<string, string> = {
   not_configured: "Sign-up is not available right now. Please try again shortly.",
   invalid_provider: "Choose Google or Microsoft to continue.",
   provider_failed: "We could not reach that sign-in provider. Please try again.",
+  invalid_email: "Enter a valid work email address.",
 };
+
+// Google and Microsoft appear only once their provider is configured in
+// Supabase. Showing a button that cannot complete a sign-in is worse than not
+// offering it, so the email path is always the dependable default.
+function enabledProviders(): { google: boolean; microsoft: boolean } {
+  const configured = (process.env.NEXT_PUBLIC_OAUTH_PROVIDERS ?? "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  return {
+    google: configured.includes("google"),
+    microsoft: configured.includes("microsoft"),
+  };
+}
 
 export default async function SignupPage({
   searchParams,
-}: Readonly<{ searchParams: Promise<{ error?: string; from?: string }> }>) {
+}: Readonly<{ searchParams: Promise<{ error?: string; from?: string; sent?: string }> }>) {
   const params = await searchParams;
   const error = params.error ? errors[params.error] ?? errors.provider_failed : null;
+  const sent = params.sent === "1";
   const from = params.from?.startsWith("/") && !params.from.startsWith("//") ? params.from : "/today";
+  const providers = enabledProviders();
+  const anyOauth = providers.google || providers.microsoft;
 
   return (
     <PublicShell>
@@ -31,7 +49,7 @@ export default async function SignupPage({
             email the moment your workspace is open. No card, nothing to cancel.
           </p>
           <ul>
-            <li><span>01</span> Sign up with Google or Microsoft</li>
+            <li><span>01</span> Sign up with your work email{anyOauth ? ", Google or Microsoft" : ""}</li>
             <li><span>02</span> We approve your firm and open the workspace</li>
             <li><span>03</span> Run Reg Mitra against your real client book for 7 days</li>
           </ul>
@@ -43,8 +61,15 @@ export default async function SignupPage({
           <p className="login-panel-note">Use the work account linked to your firm.</p>
 
           {error ? <p className="login-error" role="alert">{error}</p> : null}
+          {sent ? (
+            <p className="login-sent" role="status">
+              <strong>Check your email.</strong> We’ve sent a sign-up link. Open it on this device to
+              finish — then we’ll review your request and email you when your workspace is open.
+            </p>
+          ) : null}
 
           <div className="oauth-stack">
+            {providers.google ? (
             <form action="/api/auth/oauth" method="post">
               <input type="hidden" name="provider" value="google" />
               <input type="hidden" name="from" value={from} />
@@ -58,7 +83,9 @@ export default async function SignupPage({
                 Continue with Google
               </button>
             </form>
+            ) : null}
 
+            {providers.microsoft ? (
             <form action="/api/auth/oauth" method="post">
               <input type="hidden" name="provider" value="microsoft" />
               <input type="hidden" name="from" value={from} />
@@ -72,7 +99,25 @@ export default async function SignupPage({
                 Continue with Microsoft
               </button>
             </form>
+            ) : null}
           </div>
+
+          {anyOauth ? <p className="oauth-divider"><span>or</span></p> : null}
+
+          <form className="signup-email-form" action="/api/auth/start" method="post">
+            <label htmlFor="signup-email">Work email</label>
+            <input
+              id="signup-email"
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="you@yourfirm.in"
+              required
+            />
+            <input type="hidden" name="from" value={from} />
+            <input type="hidden" name="origin" value="signup" />
+            <button className="marketing-button primary" type="submit">Email me a sign-up link</button>
+          </form>
 
           <p className="oauth-foot">
             Already approved? <Link href="/login">Sign in</Link>

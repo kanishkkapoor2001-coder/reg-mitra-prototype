@@ -17,12 +17,15 @@ export async function POST(request: NextRequest) {
   const emailValue = formData.get("email");
   const email = typeof emailValue === "string" ? emailValue.trim().toLowerCase() : "";
   const destination = safeDestination(formData.get("from"));
+  // Send the visitor back where they started, so someone who came from /signup
+  // is not answered by the sign-in page.
+  const origin = formData.get("origin") === "signup" ? "/signup" : "/login";
 
   if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.redirect(new URL("/login?error=invalid_email", request.url), 303);
+    return NextResponse.redirect(new URL(`${origin}?error=invalid_email`, request.url), 303);
   }
 
-  const response = NextResponse.redirect(new URL("/login?sent=1", request.url), 303);
+  const response = NextResponse.redirect(new URL(`${origin}?sent=1`, request.url), 303);
   const supabase = createSupabaseRequestClient(request, response);
   const callback = new URL("/api/auth/callback", getAppUrl(request.url));
   callback.searchParams.set("from", destination);
@@ -35,7 +38,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    return NextResponse.redirect(new URL("/login?error=send_failed", request.url), 303);
+    return NextResponse.redirect(new URL(`${origin}?error=send_failed`, request.url), 303);
   }
 
   return response;
