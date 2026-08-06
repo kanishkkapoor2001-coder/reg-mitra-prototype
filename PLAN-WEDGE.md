@@ -1,4 +1,9 @@
-# Plan: build the wedge (change → client matching)
+# The wedge (change → client matching) — BUILT
+
+**Status 2026-08-06: all five phases built and live.** Verified in production:
+11 real rules imported, matched against the live client book, decisions stored
+with their evidence. See the phase notes below for what each one landed.
+
 
 **Goal.** Make the homepage promise true: every circular matched to the clients it
 affects, with evidence, inside the signed-in product. Kill "Not assessed".
@@ -27,7 +32,7 @@ proposes with cited evidence; the CA approves. Nothing auto-marks "applies".
 
 ---
 
-## Phase 1 — Client facts foundation (~1–2 days)
+## ✅ Phase 1 — Client facts foundation (~1–2 days)
 
 The matcher can't run on `sector` + `state_code` alone.
 
@@ -46,7 +51,7 @@ The matcher can't run on `sector` + `state_code` alone.
 **Done when:** a CA can answer the profile questions on a client and the answers
 persist with provenance.
 
-## Phase 2 — Rules flow from newsletter → product (~1–2 days)
+## ✅ Phase 2 — Rules flow from newsletter → product (~1–2 days)
 
 The newsletter ingestion already mints verified rules Mon/Wed/Fri. The product
 needs them.
@@ -60,7 +65,7 @@ needs them.
 
 **Done when:** product DB holds the same rule set the radar demo evaluates.
 
-## Phase 3 — The matcher (~1–2 days)
+## ✅ Phase 3 — The matcher (~1–2 days)
 
 1. `matchWorkspace(workspaceId)`: for each active client × each current rule →
    `evaluateApplicability(facts, rule)` → upsert `client_regulatory_impacts`:
@@ -78,7 +83,7 @@ needs them.
 proposed FSSAI impact with quoted evidence, and a consultancy profile produces
 cleared rows. Verified in prod DB, rolled back.
 
-## Phase 4 — Surface it in the product (~2–3 days)
+## ✅ Phase 4 — Surface it in the product (~2–3 days)
 
 This phase is the visible wedge — the hero animation, for real.
 
@@ -99,7 +104,7 @@ This phase is the visible wedge — the hero animation, for real.
 **Done when:** the /today flow for a real workspace walks: new rule → flagged
 client → why + evidence → approve → prepared task. Screenshot-verifiable.
 
-## Phase 5 — Close the loop (~1 day)
+## ✅ Phase 5 — Close the loop (~1 day)
 
 1. Digest email via Resend (infra proven): "3 new circulars this week — 2 affect
    your clients, 1 needs a fact" → deep links. Respects approval gate.
