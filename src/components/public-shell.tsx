@@ -17,7 +17,19 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
           <Link href="/faq">FAQ</Link>
         </nav>
         <div className="public-header-actions">
-          <Link className="header-demo-link" href="/today">Open product <span>↗</span></Link>
+          <Link className="header-demo-link" href="/today">
+            Open product
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path
+                d="M3.75 8.25 8.25 3.75M4.9 3.75h3.35V7.1"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Link>
         </div>
       </header>
       {children}

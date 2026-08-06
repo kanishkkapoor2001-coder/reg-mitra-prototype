@@ -50,16 +50,30 @@
   display: inline-flex;
   align-items: center;
   justify-self: end;
-  min-height: 42px;
-  gap: 22px;
-  padding: 0 17px;
-  border: 1px solid var(--ink-950);
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 700;
-  transition: background-color 160ms ease, color 160ms ease;
+  min-height: 38px;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -.006em;
+  transition: background-color var(--duration-standard) var(--ease-out),
+    border-color var(--duration-standard) var(--ease-out),
+    color var(--duration-standard) var(--ease-out);
 }
-.header-demo-link:hover { background: var(--ink-950); color: var(--paper); }
+.header-demo-link svg {
+  width: 12px;
+  height: 12px;
+  transition: transform var(--duration-standard) var(--ease-out);
+}
+.header-demo-link:hover {
+  border-color: var(--ink-950);
+  background: var(--ink-950);
+  color: var(--paper);
+}
+.header-demo-link:hover svg { transform: translate(1px, -1px); }
+.header-demo-link:focus-visible { outline: 2px solid var(--green-600); outline-offset: 2px; }
 
 .marketing-hero {
   display: grid;
@@ -90,6 +104,17 @@
   letter-spacing: -.055em;
   line-height: .92;
 }
+/* Statement headline — a full sentence rather than the short rotating hook, so it
+   sizes down and balances its own line breaks instead of using manual spans. */
+.marketing-hero h1.hero-statement {
+  max-width: 100%;
+  font-size: clamp(36px, 3.6vw, 50px);
+  letter-spacing: -.038em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.hero-statement-accent { color: var(--green-700); }
+
 .marketing-lede {
   max-width: 560px;
   margin: 28px 0 0;
@@ -102,24 +127,39 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 52px;
-  gap: 16px;
-  padding: 0 22px;
+  min-height: 44px;
+  gap: 8px;
+  padding: 0 18px;
   border: 1px solid var(--ink-950);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink-950);
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -.006em;
   cursor: pointer;
-  transition: transform 140ms ease, background-color 160ms ease, color 160ms ease;
+  transition: background-color var(--duration-standard) var(--ease-out),
+    border-color var(--duration-standard) var(--ease-out),
+    color var(--duration-standard) var(--ease-out);
 }
-.marketing-button:hover { transform: translateY(-1px); }
-.marketing-button.primary { background: var(--forest-950); color: var(--paper); }
-.marketing-button.primary:hover { background: var(--forest-800); }
+/* Press, don't hop — the old hover lifted the whole button, which reads as a
+   template default and jitters against text set this tight. */
+.marketing-button:hover { background: var(--surface-hover); }
+.marketing-button:active { transform: translateY(.5px); }
+.marketing-button:focus-visible { outline: 2px solid var(--green-600); outline-offset: 2px; }
+.marketing-button.primary {
+  border-color: var(--forest-950);
+  background: var(--forest-950);
+  color: var(--paper);
+}
+.marketing-button.primary:hover { border-color: var(--forest-800); background: var(--forest-800); }
 .marketing-button.quiet { border-color: var(--line-strong); }
+.marketing-button.quiet:hover { border-color: var(--ink-950); }
 .marketing-button.light { border-color: var(--paper); color: var(--paper); }
-.marketing-button.wide { width: 100%; justify-content: space-between; }
+.marketing-button.light:hover { background: color-mix(in srgb, var(--paper) 12%, transparent); }
+/* Used only by the four auth form submits. space-between stranded the arrow at
+   the far edge, which is the same hollow look the header CTA had. */
+.marketing-button.wide { width: 100%; justify-content: center; }
 .marketing-proof { margin: 20px 0 0; color: var(--ink-600); font-size: 15px; line-height: 1.55; letter-spacing: .005em; }
 
 .impact-preview {
@@ -841,12 +881,14 @@
   margin: 0 auto;
   padding: 70px clamp(24px, 6vw, 90px) 120px;
 }
-.login-copy h1 { max-width: 760px; margin: 0; font-family: var(--font-editorial), Georgia, serif; font-size: clamp(56px, 7vw, 94px); font-weight: 400; letter-spacing: -.055em; line-height: .92; }
+/* These headlines are full sentences, so they sit on the same scale as the home,
+   features and newsletter heroes rather than the short editorial ones. */
+.login-copy h1 { max-width: 22ch; margin: 0; font-family: var(--font-editorial), Georgia, serif; font-size: clamp(34px, 4vw, 52px); font-weight: 400; letter-spacing: -.038em; line-height: 1.05; text-wrap: balance; }
 .login-copy > p:not(.marketing-kicker) { max-width: 590px; margin: 30px 0; color: var(--ink-600); font-size: 17px; line-height: 1.7; }
 .login-copy ul { display: grid; gap: 16px; margin: 38px 0 0; padding: 0; list-style: none; }
 .login-copy li { color: var(--ink-600); font-size: 17px; line-height: 1.55; }
 .login-copy li span { display: inline-block; width: 38px; color: var(--ink-600); font-family: var(--font-editorial), Georgia, serif; font-size: 16px; }
-.login-panel { padding: clamp(28px, 4vw, 48px); border: 1px solid var(--line-strong); background: var(--surface); }
+.login-panel { padding: clamp(28px, 4vw, 48px); border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface); }
 .login-mark { display: grid; width: 54px; height: 54px; margin-bottom: 48px; place-items: center; border: 1px solid var(--ink-950); border-radius: 50%; font-size: 12px; font-weight: 800; }
 .access-label { margin: -28px 0 12px !important; color: var(--green-700) !important; font-size: 14px !important; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
 .login-panel h2 { font-family: var(--font-editorial), Georgia, serif; font-size: 38px; font-weight: 400; line-height: 1.05; }
@@ -896,7 +938,7 @@
   .header-signin-link { display: none; }
   .public-header { padding-inline: 16px; }
   .public-brand strong { display: none; }
-  .header-demo-link { min-height: 38px; gap: 12px; padding-inline: 14px; }
+  .header-demo-link { min-height: 36px; gap: 7px; padding-inline: 12px; }
   .marketing-hero { padding: 40px 20px 64px; }
   .marketing-hero h1 { font-size: 52px; line-height: .95; }
   .marketing-lede { margin-top: 26px; font-size: 16px; }
@@ -933,7 +975,7 @@
   .faq-list details p { margin-left: 50px; }
   .faq-cta { align-items: stretch; flex-direction: column; }
   .login-page { padding: 50px 20px 90px; }
-  .login-copy h1 { font-size: 54px; }
+  .login-copy h1 { max-width: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -964,7 +1006,7 @@
   letter-spacing: -.03em;
   color: var(--ink-950);
 }
-.marketing-demo-intro > p:not(.marketing-kicker) { max-width: 46ch; margin: 0; color: var(--ink-600); font-size: 16px; line-height: 1.6; }
+.marketing-demo-intro > p:not(.marketing-kicker) { max-width: 48ch; margin: 0; color: var(--ink-600); font-size: 17px; line-height: 1.68; }
 
 .rm-demo-stack { display: flex; flex-direction: column; gap: clamp(56px, 8vw, 112px); }
 .rm-demo-block { display: grid; grid-template-columns: 0.82fr 1fr; align-items: center; gap: clamp(32px, 5vw, 80px); }
@@ -979,8 +1021,8 @@
   letter-spacing: -.03em;
   color: var(--ink-950);
 }
-.rm-demo-block-copy > p:not(.marketing-kicker) { max-width: 42ch; margin: 0; color: var(--ink-600); font-size: 16px; line-height: 1.6; }
-.rm-demo-watch { margin: 16px 0 0 !important; max-width: 40ch; color: var(--green-700) !important; font-size: 13.5px !important; font-weight: 600; line-height: 1.5 !important; }
+.rm-demo-block-copy > p:not(.marketing-kicker) { max-width: 44ch; margin: 0; color: var(--ink-600); font-size: 17px; line-height: 1.68; }
+.rm-demo-watch { margin: 18px 0 0 !important; max-width: 42ch; color: var(--green-700) !important; font-size: 15px !important; font-weight: 600; line-height: 1.6 !important; }
 .rm-demo-watch span { margin-right: 4px; }
 .rm-demo-block-stage { display: flex; justify-content: center; }
 
@@ -2010,8 +2052,79 @@
 }
 .about-callout .marketing-button { flex: 0 0 auto; }
 
-/* Newsletter page — the only bespoke block is the source list. */
-.newsletter-coverage { padding: clamp(64px, 8vw, 100px) 0 0; }
+/* Newsletter page — the subscribe form sits in the hero, so the page converts
+   without a scroll. Copy left, action card right. */
+.newsletter-page { padding-bottom: clamp(72px, 8vw, 96px); }
+/* Grid areas rather than two columns of stacked copy: on a phone the signup card
+   has to come straight after the headline, ahead of the supporting lede. */
+.newsletter-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(340px, .95fr);
+  grid-template-areas:
+    "head signup"
+    "rest signup";
+  align-content: start;
+  column-gap: clamp(32px, 5vw, 72px);
+  row-gap: var(--space-8);
+  padding-bottom: clamp(40px, 4.5vw, 56px);
+}
+.newsletter-hero-head { grid-area: head; }
+.newsletter-hero-rest { grid-area: rest; }
+.newsletter-hero h1 {
+  margin: 0;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: clamp(38px, 4vw, 56px);
+  font-weight: 400;
+  letter-spacing: -.042em;
+  line-height: 1;
+  text-wrap: balance;
+}
+.newsletter-hero-lede {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--ink-600);
+  font-size: 17px;
+  line-height: 1.7;
+}
+.newsletter-signup {
+  grid-area: signup;
+  align-self: start;
+  padding: clamp(24px, 2.6vw, 32px);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+/* Once subscribed the green panel is the card — drop the outer chrome so it is
+   not a box inside a box. */
+.newsletter-signup.is-done { padding: 0; border: 0; background: none; }
+.newsletter-signup-title {
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -.015em;
+  color: var(--ink-950);
+}
+.newsletter-signup .marketing-button { width: 100%; justify-content: center; }
+@media (max-width: 900px) {
+  .newsletter-hero {
+    grid-template-columns: 1fr;
+    grid-template-areas: "head" "signup" "rest";
+    row-gap: var(--space-8);
+  }
+  .newsletter-hero h1 { font-size: clamp(32px, 8.4vw, 40px); }
+  .newsletter-hero-lede { font-size: 16px; }
+}
+
+.newsletter-coverage { padding: clamp(36px, 4vw, 48px) 0 0; }
+.newsletter-coverage .marketing-kicker { margin-bottom: var(--space-5); }
+/* The shared callout is sized for the About page, where it is the largest type
+   on the screen. Here it follows an h1, so it has to sit under it. */
+.newsletter-page .about-callout { padding-top: clamp(48px, 5vw, 64px); }
+.newsletter-page .about-callout blockquote {
+  max-width: 46ch;
+  font-size: clamp(26px, 2.8vw, 36px);
+  line-height: 1.14;
+}
 .newsletter-sources {
   display: flex;
   flex-wrap: wrap;
@@ -2039,8 +2152,7 @@
   text-underline-offset: 4px;
 }
 
-.newsletter-subscribe { padding: clamp(64px, 8vw, 100px) 0 clamp(48px, 6vw, 72px); }
-.newsletter-form { max-width: 520px; }
+.newsletter-form { max-width: none; }
 .newsletter-form label { display: block; }
 .newsletter-form > label {
   margin-bottom: var(--space-2);

@@ -58,7 +58,7 @@ test("product vocabularies are a superset of the newsletter's", (t) => {
     const canonical = canonicalAttribute(source, definition.key);
     if (!canonical.found || canonical.values.length === 0) continue;
 
-    const ours = new Set(definition.allowedValues ?? []);
+    const ours = new Set("allowedValues" in definition ? definition.allowedValues : []);
     const missing = canonical.values.filter((value) => !ours.has(value));
     if (missing.length) problems.push(`${definition.key}: missing ${missing.join(", ")}`);
   }
