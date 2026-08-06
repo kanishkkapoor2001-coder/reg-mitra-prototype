@@ -110,25 +110,10 @@ export default async function SignupPage({
 
           {anyOauth ? <p className="oauth-divider"><span>or</span></p> : null}
 
+          {/* One field to sign up. The plan is a detail we can settle later, so
+              it sits below the button as a default the visitor can change,
+              rather than a decision blocking the thing they came to do. */}
           <form className="signup-email-form" action="/api/auth/start" method="post">
-            <fieldset className="plan-choice">
-              <legend>Which plan do you want?</legend>
-              <label className="plan-option">
-                <input type="radio" name="plan" value="pro" defaultChecked={plan === "pro"} />
-                <span>
-                  <strong>{TIERS.pro.name} — 7-day free trial</strong>
-                  <small>{TIERS.pro.priceLabel} after the trial · up to {TIERS.pro.clientLimit} client companies</small>
-                </span>
-              </label>
-              <label className="plan-option">
-                <input type="radio" name="plan" value="ultra" defaultChecked={plan === "ultra"} />
-                <span>
-                  <strong>{TIERS.ultra.name} — join the waitlist</strong>
-                  <small>{TIERS.ultra.priceLabel} · unlimited client companies · not open yet</small>
-                </span>
-              </label>
-            </fieldset>
-
             <label htmlFor="signup-email">Work email</label>
             <input
               id="signup-email"
@@ -137,10 +122,34 @@ export default async function SignupPage({
               autoComplete="email"
               placeholder="you@yourfirm.in"
               required
+              autoFocus
             />
             <input type="hidden" name="from" value={from} />
             <input type="hidden" name="origin" value="signup" />
             <button className="marketing-button primary" type="submit">Email me a sign-up link</button>
+
+            <details className="plan-detail" open={plan === "ultra"}>
+              <summary>
+                Plan: <strong>{TIERS[plan].name}</strong>
+                {plan === "pro" ? " — 7-day free trial" : " — waitlist"}
+              </summary>
+              <div className="plan-choice">
+                <label className="plan-option">
+                  <input type="radio" name="plan" value="pro" defaultChecked={plan === "pro"} />
+                  <span>
+                    <strong>{TIERS.pro.name} — 7-day free trial</strong>
+                    <small>{TIERS.pro.priceLabel} after the trial · up to {TIERS.pro.clientLimit} client companies</small>
+                  </span>
+                </label>
+                <label className="plan-option">
+                  <input type="radio" name="plan" value="ultra" defaultChecked={plan === "ultra"} />
+                  <span>
+                    <strong>{TIERS.ultra.name} — join the waitlist</strong>
+                    <small>{TIERS.ultra.priceLabel} · unlimited client companies · not open yet</small>
+                  </span>
+                </label>
+              </div>
+            </details>
           </form>
 
           <p className="oauth-foot">
