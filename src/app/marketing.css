@@ -105,17 +105,6 @@
   line-height: var(--leading-display);
   text-wrap: balance;
 }
-/* Statement headline — a full sentence rather than the short rotating hook, so it
-   sizes down and balances its own line breaks instead of using manual spans. */
-.marketing-hero h1.hero-statement {
-  max-width: 100%;
-  font-size: var(--display-md);
-  letter-spacing: var(--tracking-display);
-  line-height: var(--leading-display);
-  text-wrap: balance;
-}
-.hero-statement-accent { color: var(--green-700); }
-
 .marketing-lede {
   max-width: 560px;
   margin: 28px 0 0;
@@ -1693,11 +1682,26 @@
 
 /* Rotating headline */
 
+/* Rotating headline — the object of the hero sentence cycles through the rule
+   types Reg Mitra actually tracks. Kept on its own line so the width change
+   never reflows the rest of the headline. */
+.hero-rotating-h1 .hero-h1-line { display: block; }
+.hero-rotator { display: inline-block; }
+.hero-rotator-word {
+  display: inline-block;
+  color: var(--green-700);
+  animation: hero-word-in var(--duration-slow) var(--ease-out) both;
+}
+@keyframes hero-word-in {
+  from { opacity: 0; transform: translateY(0.26em); }
+  to { opacity: 1; transform: none; }
+}
+
 @media (max-width: 560px) {
   .hero-radar-steps { grid-template-columns: repeat(3, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-radar-act { animation: none; }
+  .hero-rotator-word, .hero-radar-act { animation: none; }
 }
 
 /* Hero contact-sales row */
