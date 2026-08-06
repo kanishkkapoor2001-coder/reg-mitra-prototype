@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { ClientProfile } from "@/components/client-profile";
 import { DemoNotice } from "@/components/demo-notice";
 import { DemoIntegrationCenter } from "@/components/demo-integration-center";
 import { EvidencePanel } from "@/components/evidence-panel";
 import { ReviewGate } from "@/components/review-gate";
+import { deriveFactsFromIdentifiers, readClientFactMap } from "@/lib/radar/client-facts";
+import { ATTRIBUTE_DEFINITIONS, type CompanyFact } from "@/lib/radar/facts";
 import { clients, getClient, workItems } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -13,26 +16,77 @@ import type { EvidenceRecord } from "@/lib/types";
 
 interface ClientPageProps {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ saved?: string; error?: string }>;
 }
 
 export function generateStaticParams() {
   return clients.map((client) => ({ id: client.id }));
 }
 
-export default async function ClientPage({ params }: ClientPageProps) {
+// Sample-workspace profile, inferred from the demo client's own description.
+// Only facts the sample data actually evidences are filled in — the rest stay
+// unanswered, so the sample shows the same honest gaps a real book would.
+function sampleFactsFor(
+  sector: string,
+  location: string,
+  identifiers: readonly string[],
+): Map<string, CompanyFact> {
+  const observedAt = new Date().toISOString();
+  const facts = new Map<string, CompanyFact>();
+  const add = (key: string, value: CompanyFact["value"], derivedFrom?: string) => {
+    facts.set(key, {
+      key,
+      value,
+      source: derivedFrom ? "derived" : "ca_confirmed",
+      observedAt,
+      expiresAt: null,
+      derivedFrom,
+    });
+  };
+
+  const sectorKey = /pharma|manufact/i.test(sector)
+    ? "MANUFACTURING"
+    : /food/i.test(sector)
+      ? "FOOD"
+      : /tech|it\b/i.test(sector)
+        ? "TECHNOLOGY"
+        : /textile|retail|trading/i.test(sector)
+          ? "RETAIL"
+          : /trust|charit/i.test(sector)
+            ? "CHARITABLE"
+            : "OTHER";
+  add("company.sector", sectorKey);
+
+  const state = location.split(",").pop()?.trim();
+  if (state) add("company.registered_state", state);
+
+  if (identifiers.some((id) => id.startsWith("GSTIN"))) {
+    add("company.gst_registered", true, "GSTIN on file");
+  }
+  if (identifiers.some((id) => id.startsWith("CIN"))) {
+    add("company.entity_type", "PRIVATE_LIMITED");
+  }
+  return facts;
+}
+
+export default async function ClientPage({ params, searchParams }: ClientPageProps) {
   const { id } = await params;
+  const query = (await searchParams) ?? {};
   const isDemo = (await cookies()).get("reg_mitra_session")?.value === "demo";
   const workspace = !isDemo && getSupabasePublicConfig()
     ? await getCurrentWorkspace()
     : null;
 
   if (workspace) {
-    return <ProductClientPage id={id} workspace={workspace} />;
+    return <ProductClientPage id={id} workspace={workspace} saved={query.saved === "1"} />;
   }
 
   const client = getClient(id);
   if (!client) notFound();
   const items = workItems.filter((item) => item.client === client.shortName);
+  // Sample facts so a visitor can see what the matcher runs on. Read-only:
+  // there is no workspace to record anything against.
+  const sampleFacts = sampleFactsFor(client.sector, client.location, client.identifiers);
   const clientEvidence: EvidenceRecord = {
     state: "demo",
     source: null,
@@ -59,6 +113,7 @@ export default async function ClientPage({ params }: ClientPageProps) {
       <div style={{ marginBottom: 18 }}>
         <EvidencePanel evidence={clientEvidence} />
       </div>
+      <ClientProfile clientId={client.id} facts={sampleFacts} editable={false} />
       <section className="kpi-grid">
         <article className="kpi-card"><span className="kpi-label">Open work</span><div className="kpi-value">{client.pending}</div><div className="kpi-meta"><span>Needs review</span></div></article>
         <article className="kpi-card"><span className="kpi-label">Items due this week</span><div className="kpi-value">{client.dueThisWeek}</div><div className="kpi-meta"><span>Sample dates</span></div></article>
@@ -91,7 +146,8 @@ export default async function ClientPage({ params }: ClientPageProps) {
 async function ProductClientPage({
   id,
   workspace,
-}: Readonly<{ id: string; workspace: CurrentWorkspace }>) {
+  saved,
+}: Readonly<{ id: string; workspace: CurrentWorkspace; saved: boolean }>) {
   const supabase = await createSupabaseServerClient();
   const { data: client } = await supabase
     .from("clients")
@@ -102,10 +158,27 @@ async function ProductClientPage({
     .maybeSingle();
   if (!client) notFound();
 
+  // Facts the firm already proved by holding a document cost the CA nothing to
+  // confirm, so they are recorded before the profile is rendered.
+  const { data: userData } = await supabase.auth.getUser();
+  if (userData.user) {
+    try {
+      await deriveFactsFromIdentifiers(supabase, {
+        workspaceId: workspace.id,
+        clientId: client.id,
+        recordedBy: userData.user.id,
+      });
+    } catch (error) {
+      console.error("[client] fact derivation failed", error);
+    }
+  }
+  const facts = await readClientFactMap(supabase, client.id);
+
   const openTasks = (client.tasks ?? [])
     .filter((task) => task.state !== "completed" && task.state !== "dismissed")
     .sort((left, right) => right.priority - left.priority);
   const highPriorityTasks = openTasks.filter((task) => task.priority >= 3).length;
+  const answeredFacts = ATTRIBUTE_DEFINITIONS.filter((d) => facts.has(d.key)).length;
   const initials = client.display_name
     .split(/\s+/)
     .slice(0, 2)
@@ -125,16 +198,30 @@ async function ProductClientPage({
           </p>
         </div>
       </section>
-      <div className="notice">
-        <strong>This client profile needs more information.</strong>
-        Add registrations and applicability facts before relying on client-specific regulatory conclusions.
-      </div>
+      {answeredFacts < ATTRIBUTE_DEFINITIONS.length ? (
+        <div className="notice">
+          <strong>
+            {answeredFacts === 0
+              ? "This client has no company profile yet."
+              : `${ATTRIBUTE_DEFINITIONS.length - answeredFacts} profile questions are unanswered.`}
+          </strong>
+          Reg Mitra only matches circulars against facts you have confirmed, so unanswered
+          questions leave applicability undecided. <a href="#profile">Complete the profile</a>.
+        </div>
+      ) : null}
       <section className="kpi-grid">
         <article className="kpi-card"><span className="kpi-label">Open work</span><div className="kpi-value">{openTasks.length}</div><div className="kpi-meta"><span>Saved in this workspace</span></div></article>
         <article className="kpi-card"><span className="kpi-label">High priority</span><div className="kpi-value">{highPriorityTasks}</div><div className="kpi-meta"><span>Based on recorded task priority</span></div></article>
-        <article className="kpi-card"><span className="kpi-label">Identifiers</span><div className="kpi-value">—</div><div className="kpi-meta"><span>Not yet recorded</span></div></article>
+        <article className="kpi-card"><span className="kpi-label">Profile</span><div className="kpi-value">{answeredFacts}/{ATTRIBUTE_DEFINITIONS.length}</div><div className="kpi-meta"><span>Facts available for matching</span></div></article>
         <article className="kpi-card"><span className="kpi-label">Source connections</span><div className="kpi-value">0</div><div className="kpi-meta"><span>No client portal connected</span></div></article>
       </section>
+
+      <ClientProfile
+        clientId={client.id}
+        facts={facts}
+        editable={workspace.role !== "viewer"}
+        saved={saved}
+      />
       <section className="panel">
         <div className="panel-header">
           <div><h2>Open work</h2><p>Tasks recorded for this client</p></div>
