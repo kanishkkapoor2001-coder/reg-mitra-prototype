@@ -1,5 +1,12 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { PublicShell } from "@/components/public-shell";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  description:
+    "Sign in to your Reg Mitra firm workspace with a one-time link sent to your work email — no password required.",
+};
 
 const errors: Record<string, string> = {
   invalid_email: "Enter a valid work email address.",

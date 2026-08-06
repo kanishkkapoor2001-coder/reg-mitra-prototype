@@ -1,7 +1,13 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { HeroRadar } from "@/components/hero-radar";
 import { MarketingWorkflow } from "@/components/marketing-workflow";
 import { PublicShell } from "@/components/public-shell";
+
+export const metadata: Metadata = {
+  description:
+    "Reg Mitra reads official Indian regulatory sources, matches each change to the clients it affects, tracks what each one owes, and prepares review-ready work — every claim tied to its circular.",
+};
 
 export default function HomePage() {
   return (

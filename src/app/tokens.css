@@ -1,19 +1,31 @@
+/* RegMitra design tokens — the single source of truth.
+ *
+ * Rules, in short: one neutral ramp, one accent, semantic colours only for
+ * meaning. Three font weights. One type scale. Four radii. Three durations.
+ * Every name resolves to a distinct value — if two steps want the same number,
+ * the scale has one step too many.
+ *
+ * See DESIGN_SYSTEM.md before adding anything here.
+ */
 :root {
-  /* Neutral foundation */
-  --ink-950: #17201c;
-  --ink-800: #2e3934;
-  --ink-600: #5b6862;
-  --ink-500: #56635d;
-  --ink-400: #65716b;
-  --paper: #f7f8f6;
-  --surface: #ffffff;
-  --surface-raised: #ffffff;
-  --surface-muted: #f1f3f0;
-  --surface-hover: #ecefeb;
-  --line: #e1e5e2;
-  --line-strong: #cfd6d1;
+  /* ---- Neutral ramp -------------------------------------------------- */
+  --ink-950: #17201c; /* primary text, and the only near-black */
+  --ink-800: #2e3934; /* secondary text on light surfaces */
+  --ink-600: #5b6862; /* body / muted text */
+  --ink-500: #56635d; /* supporting text, captions */
+  --ink-400: #65716b; /* disabled text */
+  --paper: #f7f8f6; /* page ground */
+  --surface: #ffffff; /* cards, panels */
+  --surface-raised: #ffffff; /* overlays; distinct name, same ground by design */
+  --surface-muted: #f1f3f0; /* recessed blocks */
+  --surface-hover: #ecefeb; /* hover wash on light surfaces */
+  --line: #e1e5e2; /* hairline dividers */
+  --line-strong: #cfd6d1; /* borders that must read as an edge */
 
-  /* One restrained product accent */
+  /* ---- Accent -------------------------------------------------------- */
+  /* Forest green is the brand. On marketing surfaces it is an ACCENT only —
+     buttons, kickers, numerals, one dark closing band. Never a repeated
+     full-bleed section ground. Changing these cascades into the product. */
   --forest-950: #10231c;
   --forest-900: #152d24;
   --forest-800: #1d3b30;
@@ -21,7 +33,7 @@
   --green-600: #2f8b59;
   --green-100: #e3f1e8;
 
-  /* Semantic only */
+  /* ---- Semantic — meaning only, never decoration --------------------- */
   --amber-700: #965c1c;
   --amber-100: #f8ecd9;
   --red-700: #a53b35;
@@ -29,17 +41,42 @@
   --blue-700: #386795;
   --blue-100: #e8eff6;
 
-  /* Type scale */
-  --text-2xs: 0.75rem;
-  --text-xs: 0.75rem;
-  --text-sm: 0.8125rem;
-  --text-md: 0.9375rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.5rem;
+  /* ---- Type scale ---------------------------------------------------- */
+  /* UI sizes. Display sizes are fluid and live in --display-* below. */
+  --text-3xs: 0.625rem; /* 10px — mock-up chrome only, never real copy */
+  --text-2xs: 0.6875rem; /* 11px — eyebrows, dense labels */
+  --text-xs: 0.75rem; /* 12px — captions, footnotes */
+  --text-sm: 0.8125rem; /* 13px — dense UI, table cells */
+  --text-md: 0.9375rem; /* 15px — default UI, buttons, labels */
+  --text-base: 1.0625rem; /* 17px — body copy, ledes */
+  --text-lg: 1.25rem; /* 20px — card titles, small serif headings */
+  --text-xl: 1.5rem; /* 24px — section subheads */
+  --text-2xl: 2rem; /* 32px — section heads */
 
-  /* 4px spacing rhythm */
+  /* Fluid display sizes. One h1 ramp for the whole site: --display-lg for
+     short editorial headlines, --display-md for full-sentence headlines. */
+  --display-sm: clamp(1.75rem, 2.6vw, 2.25rem); /* 28 → 36 */
+  --display-md: clamp(2.25rem, 4vw, 3.25rem); /* 36 → 52 */
+  --display-lg: clamp(2.75rem, 5.2vw, 4rem); /* 44 → 64 */
+
+  /* ---- Weights — three, and only three ------------------------------- */
+  --weight-normal: 400; /* body, and all editorial-serif display type */
+  --weight-medium: 550; /* labels, nav, secondary emphasis */
+  --weight-bold: 700; /* buttons, headings, kickers */
+
+  /* ---- Line height --------------------------------------------------- */
+  --leading-display: 1.04; /* large headlines */
+  --leading-tight: 1.25; /* small headings */
+  --leading-body: 1.6; /* prose */
+  --leading-loose: 1.7; /* long-form ledes */
+
+  /* ---- Letter spacing ------------------------------------------------ */
+  --tracking-display: -0.038em; /* large serif headlines */
+  --tracking-tight: -0.015em; /* UI headings */
+  --tracking-normal: -0.006em; /* buttons, body UI */
+  --tracking-caps: 0.16em; /* uppercase kickers and labels */
+
+  /* ---- Spacing — 4px rhythm ------------------------------------------ */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -50,19 +87,74 @@
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
 
-  /* Shape and depth */
-  --radius-xs: 6px;
-  --radius-sm: 8px;
-  --radius-md: 10px;
-  --radius-lg: 10px;
-  --radius-xl: 10px;
-  --shadow-sm: none;
-  --shadow-md: none;
+  /* ---- Page shell — one width, one gutter, every page ----------------- */
+  --shell-max: 1280px;
+  --shell-gutter: clamp(20px, 5vw, 76px);
+  --shell-top: clamp(48px, 6vw, 88px);
+  --shell-bottom: clamp(72px, 9vw, 120px);
+  --section-gap: clamp(48px, 7vw, 96px);
+
+  /* ---- Radius — four steps, each distinct ---------------------------- */
+  /* globals.css consumes --radius-md (×25) and --radius-lg (×9). Those two are
+     PINNED to their pre-migration value here so the signed-in product renders
+     byte-identically; the migrated public half runs the real scale via the
+     .public-site override below. Unpin both when AUDIT §9 is done. */
+  --radius-xs: 4px; /* chips, inline tags */
+  --radius-sm: 8px; /* buttons, inputs */
+  --radius-md: 10px; /* target 12px — pinned for the app */
+  --radius-lg: 10px; /* target 18px — pinned for the app */
+  --radius-full: 999px; /* pills, avatars */
+
+  /* ---- Depth — flat by design ---------------------------------------- */
+  /* This system uses hairline borders, not shadows. Only true overlays that
+     float above the page get elevation. */
+  --shadow-none: none;
   --shadow-overlay: 0 24px 80px -28px rgb(16 35 28 / 44%), 0 8px 24px rgb(16 35 28 / 8%);
 
-  /* Motion */
-  --duration-fast: 120ms;
-  --duration-standard: 160ms;
-  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  /* ---- Motion — three durations, one easing -------------------------- */
+  --duration-fast: 120ms; /* colour/opacity on hover */
+  --duration-standard: 160ms; /* transforms, small reveals */
+  --duration-slow: 320ms; /* panels, accordions, entrances */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* ---- Z-index — named, so stacking can be reasoned about ------------ */
+  --z-base: 1;
+  --z-sticky: 20;
+  --z-header: 40;
+  --z-dropdown: 60;
+  --z-overlay: 80;
+  --z-modal: 100;
+  --z-toast: 120;
+
+  /* ---- Focus --------------------------------------------------------- */
+  --focus-ring: 2px solid var(--green-600);
+  --focus-offset: 2px;
+}
+
+/* ---- Breakpoints (reference — CSS custom properties cannot be used in
+ * media queries, so these are the four values to type by hand):
+ *   600px   phone
+ *   900px   tablet / stacked
+ *   1100px  small laptop
+ *   1440px  large desktop
+ * Do not introduce a fifth without a reason worth writing down.
+ * -------------------------------------------------------------------- */
+
+/* The public site is fully migrated, so it runs the real radius scale. The
+ * signed-in product keeps the pinned values above until AUDIT §9 lands — this
+ * override is the migration boundary, and deleting it is the last step. */
+.public-site {
+  --radius-md: 12px;
+  --radius-lg: 18px;
+}
+
+/* Legacy aliases — kept so the untouched app stylesheet keeps compiling while
+ * it is migrated (see DESIGN_AUDIT.md §9). Do not use in new code. */
+:root {
+  --radius-xl: var(--radius-md);
+  --shadow-sm: var(--shadow-none);
+  --shadow-md: var(--shadow-none);
 }

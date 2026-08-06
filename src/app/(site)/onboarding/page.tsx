@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import { PublicShell } from "@/components/public-shell";
+
+export const metadata: Metadata = {
+  title: "Create your workspace",
+  description:
+    "Set up your firm's Reg Mitra workspace — name it, connect your domain, and invite the people who review the work.",
+};
 
 const errors: Record<string, string> = {
   invalid_workspace: "Enter a firm name, domain, and a short workspace address.",
