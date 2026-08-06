@@ -46,7 +46,7 @@ export default async function NewsletterPage({
         <section className="newsletter-hero">
           <div className="newsletter-hero-head">
             <p className="marketing-kicker">Regulatory Radar · free newsletter</p>
-            <h1>Ten regulators. Three mornings a week. One short read.</h1>
+            <h1>All your regulatory needs. One stop.</h1>
           </div>
 
           <div
@@ -110,9 +110,9 @@ export default async function NewsletterPage({
 
           <div className="newsletter-hero-rest">
             <p className="newsletter-hero-lede">
-              What India&rsquo;s regulators actually published — the change in
-              plain English, the dates that bind, and a link to the official
-              text.
+              Ten regulators, three mornings a week — what they actually
+              published, in plain English, with the dates that bind and a link
+              to the official text.
             </p>
             <p className="newsletter-archive-link">
               <a href={NEWSLETTER_ARCHIVE} target="_blank" rel="noreferrer">

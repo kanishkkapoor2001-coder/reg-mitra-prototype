@@ -2063,13 +2063,16 @@
   grid-template-areas:
     "head signup"
     "rest signup";
+  /* The card spans both rows and is the tallest item, so without an explicit
+     1fr second row its slack gets shared out and the lede drifts off the h1. */
+  grid-template-rows: auto 1fr;
   align-content: start;
   column-gap: clamp(32px, 5vw, 72px);
   row-gap: var(--space-8);
   padding-bottom: clamp(40px, 4.5vw, 56px);
 }
 .newsletter-hero-head { grid-area: head; }
-.newsletter-hero-rest { grid-area: rest; }
+.newsletter-hero-rest { grid-area: rest; align-self: start; }
 .newsletter-hero h1 {
   margin: 0;
   font-family: var(--font-editorial), Georgia, serif;
@@ -2109,6 +2112,7 @@
   .newsletter-hero {
     grid-template-columns: 1fr;
     grid-template-areas: "head" "signup" "rest";
+    grid-template-rows: auto;
     row-gap: var(--space-8);
   }
   .newsletter-hero h1 { font-size: clamp(32px, 8.4vw, 40px); }
