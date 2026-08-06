@@ -133,8 +133,9 @@ export default async function NewsletterPage({
 
         <section className="about-callout">
           <blockquote>
-            The newsletter tells you something changed. Reg Mitra tells you
-            which of your clients it lands on.
+            The newsletter tells you something changed. Reg Mitra finds which
+            of your clients it lands on, tracks what each one owes, and
+            prepares the work.
           </blockquote>
           <Link className="marketing-button primary" href="/signup?plan=pro">
             Start free trial
