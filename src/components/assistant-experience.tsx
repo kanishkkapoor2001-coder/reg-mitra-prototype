@@ -26,6 +26,8 @@ import type { ExtractedNotice } from "@/lib/notices/extraction";
 import { selectRelevantClients } from "@/lib/practice/context";
 import { loadProfile } from "@/lib/practice/store";
 import type { ChatRetrievalPayload, ChatVerificationPayload, RetrievedSource } from "@/lib/rag/types";
+import { daysFromTodayIST } from "@/lib/dates";
+import { corpusFreshness } from "@/lib/rag/freshness";
 
 type Completeness = "complete" | "partial";
 
@@ -253,13 +255,10 @@ const NOTICE_FIELDS: ReadonlyArray<{ key: keyof ExtractedNotice; label: string; 
   { key: "replyDueDate", label: "Reply due", placeholder: "YYYY-MM-DD" },
 ];
 
+// Deliberately delegates: this used to be a second UTC-based copy of the
+// server's countdown, so the two could disagree by a day for the same notice.
 function daysUntilDate(value: string | null): number | null {
-  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
-  const due = new Date(`${value}T00:00:00Z`);
-  if (Number.isNaN(due.getTime())) return null;
-  const now = new Date();
-  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  return Math.round((due.getTime() - today) / 86_400_000);
+  return value ? daysFromTodayIST(value) : null;
 }
 
 function NoticeReview({
@@ -360,12 +359,26 @@ function VerificationBadge({ verification }: Readonly<{ verification: ChatVerifi
 }
 
 function AnswerTimestamp({ corpusGeneratedAt }: Readonly<{ corpusGeneratedAt?: string }>) {
-  const formatter = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  const formatter = new Intl.DateTimeFormat("en-IN", {
+    day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata",
+  });
+  const freshness = corpusGeneratedAt ? corpusFreshness(corpusGeneratedAt) : null;
+
+  // "Law as in force on {today}" is only honest while the sources behind it are
+  // current. Once they age, the claim is softened rather than repeated, and the
+  // reader is told what the gap means.
   return (
-    <p className="answer-timestamp">
-      Law as in force on {formatter.format(new Date())}
-      {corpusGeneratedAt ? ` · sources last checked ${formatter.format(new Date(corpusGeneratedAt))}` : ""}
-    </p>
+    <div className="answer-timestamp">
+      <p>
+        {freshness && freshness.level !== "current"
+          ? `Law as in force on ${formatter.format(new Date())}, so far as these sources show`
+          : `Law as in force on ${formatter.format(new Date())}`}
+        {freshness ? ` · ${freshness.label.replace("Official sources last checked", "sources last checked")}` : ""}
+      </p>
+      {freshness?.warning ? (
+        <p className={`answer-staleness is-${freshness.level}`}>{freshness.warning}</p>
+      ) : null}
+    </div>
   );
 }
 

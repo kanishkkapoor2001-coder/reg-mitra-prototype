@@ -29,12 +29,13 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
-      - name: Test regulatory retrieval
-        run: npm run rag:test
+      # One aggregate over every src/**/*.test.ts. A per-suite list is how the
+      # calculator tests — the highest-risk logic in the product — stayed
+      # ungated while a wrong interest start date shipped.
+      - name: Run unit tests
+        run: npm test
       - name: Evaluate regulatory retrieval
         run: npm run rag:evaluate
-      - name: Test billing entitlements
-        run: npm run billing:test
       - name: Check corpus integrity
         run: npm run corpus:check
       - name: Audit accessibility

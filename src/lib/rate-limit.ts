@@ -52,7 +52,27 @@ export function callerKey(request: Request, scope: string): string {
   return `${scope}:${ip}`;
 }
 
+/**
+ * Local escape hatch for the answer-evaluation harness.
+ *
+ * `prompts.ts` requires `npm run eval:answers` before any prompt change, but the
+ * harness drives 65 cases through /api/chat and the hourly cap is 40 — so the
+ * mandated check could not actually be run, which is why it never reached CI.
+ *
+ * Deliberately impossible to enable in production: NODE_ENV must not be
+ * production AND the flag must be set explicitly. It is read per call rather
+ * than cached so a test can toggle it.
+ */
+function limitsDisabled(): boolean {
+  return process.env.NODE_ENV !== "production"
+    && process.env.REGMITRA_DISABLE_RATE_LIMIT === "true";
+}
+
 export function checkRateLimit(key: string, rule: RateLimitRule, now = Date.now()): RateLimitResult {
+  if (limitsDisabled()) {
+    return { allowed: true, remaining: rule.limit, retryAfterSeconds: 0 };
+  }
+
   // Opportunistic sweep so a long-lived instance cannot grow without bound.
   if (buckets.size > MAX_TRACKED_KEYS) {
     for (const [existingKey, bucket] of buckets) {
@@ -90,3 +110,10 @@ export function resetRateLimits() {
 export const ASSISTANT_BURST: RateLimitRule = { limit: 5, windowMs: 60_000 };
 export const ASSISTANT_HOURLY: RateLimitRule = { limit: 40, windowMs: 60 * 60_000 };
 export const UPLOAD_HOURLY: RateLimitRule = { limit: 15, windowMs: 60 * 60_000 };
+
+/** Sign-in links: unauthenticated, sends real mail, creates auth users. */
+export const AUTH_LINK_HOURLY: RateLimitRule = { limit: 10, windowMs: 60 * 60_000 };
+/** Per-address, so one mailbox cannot be flooded from many callers. */
+export const AUTH_LINK_PER_ADDRESS: RateLimitRule = { limit: 5, windowMs: 60 * 60_000 };
+/** Operator access code — brute-force resistance, not convenience. */
+export const FOUNDER_CODE_HOURLY: RateLimitRule = { limit: 8, windowMs: 60 * 60_000 };

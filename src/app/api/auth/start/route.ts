@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { AUTH_LINK_HOURLY, AUTH_LINK_PER_ADDRESS, callerKey, checkRateLimit } from "@/lib/rate-limit";
 import { sendMagicLink } from "@/lib/access/magic-link";
 import { parseTier } from "@/lib/billing/tiers";
 import { getAppUrl, getSupabasePublicConfig } from "@/lib/supabase/config";
@@ -25,6 +26,19 @@ export async function POST(request: NextRequest) {
 
   if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.redirect(new URL(`${origin}?error=invalid_email`, request.url), 303);
+  }
+
+  // This route mints a magic link, CREATES the auth user if absent, and sends
+  // mail from the firm's verified domain — unauthenticated. Without a limit it
+  // is an email cannon: unbounded spend, unbounded auth.users growth, and
+  // third-party mailbombing that would burn the sending reputation the
+  // newsletter depends on. Limited per caller AND per address, because one
+  // attacker rotating addresses and one address hammered by many callers are
+  // different abuses.
+  const byCaller = checkRateLimit(callerKey(request, "auth-start"), AUTH_LINK_HOURLY);
+  const byAddress = checkRateLimit(`auth-start-address:${email}`, AUTH_LINK_PER_ADDRESS);
+  if (!byCaller.allowed || !byAddress.allowed) {
+    return NextResponse.redirect(new URL(`${origin}?error=rate_limited`, request.url), 303);
   }
 
   const response = NextResponse.redirect(new URL(`${origin}?sent=1`, request.url), 303);

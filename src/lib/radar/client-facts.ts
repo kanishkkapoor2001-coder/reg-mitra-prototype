@@ -41,13 +41,18 @@ function toCompanyFact(row: FactRow): CompanyFact {
 export async function readClientFacts(
   supabase: SupabaseClient,
   clientId: string,
+  // Scoping by workspace as well as client matters because the matcher reads
+  // with the service role, which bypasses RLS. Without it a row carrying
+  // another workspace's client_id would be consumed as if it were ours.
+  workspaceId?: string,
 ): Promise<CompanyFact[]> {
-  const { data, error } = await supabase
+  let builder = supabase
     .from("client_facts")
     .select("fact_key, value, valid_from, valid_to, source_label, source_url, recorded_at")
     .eq("client_id", clientId)
-    .is("superseded_at", null)
-    .order("recorded_at", { ascending: false });
+    .is("superseded_at", null);
+  if (workspaceId) builder = builder.eq("workspace_id", workspaceId);
+  const { data, error } = await builder.order("recorded_at", { ascending: false });
 
   if (error) throw error;
 

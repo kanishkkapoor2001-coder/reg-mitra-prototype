@@ -4,9 +4,11 @@ import { PageHeading } from "@/components/page-heading";
 import { TrustBadge } from "@/components/trust-badge";
 import { getCorpusHealth } from "@/lib/rag/corpus";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
+import { corpusFreshness } from "@/lib/rag/freshness";
 
 export default async function SettingsPage() {
   const corpus = getCorpusHealth();
+  const freshness = corpusFreshness(corpus.generatedAt);
   const isDemo = (await cookies()).get("reg_mitra_session")?.value === "demo";
   const productMode = !isDemo && Boolean(getSupabasePublicConfig());
 
@@ -37,7 +39,11 @@ export default async function SettingsPage() {
               <div><dt>Searchable sections</dt><dd>{corpus.chunkCount}</dd></div>
               <div><dt>Meaning-indexed sections</dt><dd>{corpus.embeddedChunkCount}</dd></div>
               <div><dt>Full text</dt><dd>{corpus.fullTextSourceCount}</dd></div>
+              <div><dt>Last checked</dt><dd>{freshness.label.replace("Official sources last checked ", "")}</dd></div>
             </dl>
+            {freshness.warning ? (
+              <div className="notice"><strong>These sources are not current.</strong> {freshness.warning}</div>
+            ) : null}
             <div className="corpus-authorities" aria-label="Authorities in corpus">
               {corpus.authorities.map((authority) => <span key={authority}>{authority}</span>)}
             </div>

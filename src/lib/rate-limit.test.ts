@@ -49,3 +49,33 @@ test("a caller with no identifying headers still gets a bucket", () => {
   const request = new Request("https://example.test");
   assert.equal(callerKey(request, "chat"), "chat:unknown");
 });
+
+test("the eval escape hatch cannot be enabled in production", () => {
+  const prevEnv = process.env.NODE_ENV;
+  const prevFlag = process.env.REGMITRA_DISABLE_RATE_LIMIT;
+  try {
+    resetRateLimits();
+    // Flag set, but production: the limiter must still bite.
+    (process.env as Record<string, string | undefined>).NODE_ENV = "production";
+    process.env.REGMITRA_DISABLE_RATE_LIMIT = "true";
+    const rule = { limit: 1, windowMs: 60_000 };
+    assert.equal(checkRateLimit("prod-key", rule).allowed, true);
+    assert.equal(checkRateLimit("prod-key", rule).allowed, false);
+
+    // Same flag outside production: bypassed.
+    (process.env as Record<string, string | undefined>).NODE_ENV = "development";
+    resetRateLimits();
+    assert.equal(checkRateLimit("dev-key", rule).allowed, true);
+    assert.equal(checkRateLimit("dev-key", rule).allowed, true);
+
+    // Not set at all outside production: limiter active.
+    delete process.env.REGMITRA_DISABLE_RATE_LIMIT;
+    resetRateLimits();
+    assert.equal(checkRateLimit("dev-key2", rule).allowed, true);
+    assert.equal(checkRateLimit("dev-key2", rule).allowed, false);
+  } finally {
+    (process.env as Record<string, string | undefined>).NODE_ENV = prevEnv;
+    if (prevFlag === undefined) delete process.env.REGMITRA_DISABLE_RATE_LIMIT;
+    else process.env.REGMITRA_DISABLE_RATE_LIMIT = prevFlag;
+  }
+});

@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { RegulationsExperience, type RegulationItem } from "@/components/regulations-experience";
 import { regulations as sampleRegulations } from "@/lib/demo-data";
 import { regulatoryCorpus } from "@/lib/rag/corpus";
+import { corpusFreshness } from "@/lib/rag/freshness";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { getCurrentWorkspace } from "@/lib/workspace";
 
@@ -90,5 +91,11 @@ export default async function RegulationsPage() {
     );
   }
 
-  return <RegulationsExperience mode="product" items={corpusItems()} />;
+  return (
+    <RegulationsExperience
+      mode="product"
+      items={corpusItems()}
+      freshness={corpusFreshness(regulatoryCorpus.generatedAt)}
+    />
+  );
 }

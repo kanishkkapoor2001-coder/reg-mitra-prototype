@@ -5,6 +5,7 @@ import {
 } from "@/lib/auth/founder-access";
 import { getAppUrl, getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { FOUNDER_CODE_HOURLY, callerKey, checkRateLimit } from "@/lib/rate-limit";
 
 function safeDestination(value: FormDataEntryValue | null): string {
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
@@ -28,6 +29,14 @@ export async function POST(request: NextRequest) {
 
   if (!getSupabasePublicConfig() || !founderEmail || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return NextResponse.redirect(founderUrl(request, "not_configured", destination), 303);
+  }
+
+  // A shared secret with unlimited attempts is a guessing game the attacker
+  // eventually wins, and success grants operator access to every applicant's
+  // contact details and the approve/reject control.
+  const limited = checkRateLimit(callerKey(request, "founder-code"), FOUNDER_CODE_HOURLY);
+  if (!limited.allowed) {
+    return NextResponse.redirect(founderUrl(request, "rate_limited", destination), 303);
   }
 
   if (!isValidFounderAccessCode(code)) {

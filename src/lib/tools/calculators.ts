@@ -9,6 +9,8 @@
 // computation is even the right one (notification-based relief, caps, rate changes).
 // The assistant must present those caveats — the number alone is not advice.
 
+import { STATE_SHORT_CODES } from "../practice/types.ts";
+
 export interface CalculationStep {
   label: string;
   detail: string;
@@ -108,18 +110,36 @@ export function interest234B(input: {
   assessedTax: number;
   advanceTaxPaid: number;
   assessmentDate: string;
+  /** The 31 March that ends the financial year under assessment. Required. */
   financialYearEnd?: string;
 }): CalculationResult {
   const assessedTax = requirePositive(input.assessedTax, "assessedTax");
   const advanceTaxPaid = requirePositive(input.advanceTaxPaid, "advanceTaxPaid");
   const assessment = parseDate(input.assessmentDate, "assessmentDate");
-  // Interest runs from 1 April of the assessment year.
-  const aprilFirst = input.financialYearEnd
-    ? (() => {
-      const end = parseDate(input.financialYearEnd, "financialYearEnd");
-      return new Date(Date.UTC(end.getUTCFullYear(), 3, 1));
-    })()
-    : new Date(Date.UTC(assessment.getUTCFullYear(), 3, 1));
+
+  // Interest runs from 1 April of the assessment year — i.e. the 1 April that
+  // immediately follows the financial year under assessment.
+  //
+  // `financialYearEnd` is the 31 March closing that FY, so the AY starts the day
+  // after: 1 April of the SAME calendar year (FY end 2025-03-31 -> 1 Apr 2025).
+  //
+  // Without it we must not guess from the assessment event's own year: an
+  // assessment completed in Sep 2026 for FY 2024-25 would start interest at
+  // 1 Apr 2026 instead of 1 Apr 2025 — six months instead of eighteen, a ~3x
+  // understatement of a statutory liability. Refuse instead.
+  if (!input.financialYearEnd) {
+    throw new CalculatorInputError(
+      "financialYearEnd is required for section 234B: interest runs from 1 April of the assessment year, "
+      + "which cannot be derived from the assessment date alone. Supply the 31 March that ends the financial year under assessment.",
+    );
+  }
+  const fyEnd = parseDate(input.financialYearEnd, "financialYearEnd");
+  const aprilFirst = new Date(Date.UTC(fyEnd.getUTCFullYear(), 3, 1));
+  if (assessment < aprilFirst) {
+    throw new CalculatorInputError(
+      "assessmentDate falls before 1 April of the assessment year; check the financial year supplied.",
+    );
+  }
 
   const threshold = assessedTax * 0.9;
   const liable = advanceTaxPaid < threshold;
@@ -351,7 +371,15 @@ export function gstLateFeeSection47(input: {
     currency: "INR",
     steps: [
       { label: "Days of delay", detail: String(days) },
-      { label: "Return type", detail: nil ? "nil return" : "return with liability" },
+      {
+        label: "Return type",
+        // The nil flag deliberately does NOT change the figure. Nil-return relief
+        // comes from a notification, not from section 47, so applying a reduced
+        // rate here would be inventing the very number this file exists to avoid.
+        detail: nil
+          ? "nil return — note that the reduced nil-return fee comes from a notification, so it is NOT applied to the figure below; supply the notified rate to compute it"
+          : "return with liability",
+      },
       {
         label: "Rate used (per Act)",
         detail: rateSupplied
@@ -379,10 +407,41 @@ export function gstLateFeeSection47(input: {
 
 // ── Due dates ────────────────────────────────────────────────────────────────
 
-/** QRMP quarterly GSTR-3B due date differs by state group (22nd vs 24th). */
+// QRMP quarterly GSTR-3B is due on the 22nd for one group of States/UTs and the
+// 24th for the other. Both sets are listed explicitly rather than treating "not
+// in group X" as group Y, because an unrecognised code must be answered with a
+// hedge, not with a confident 24th.
+//
+// Category X — 22nd. Chhattisgarh is CG; it was previously written CH, which is
+// Chandigarh (a 24th State), so both were returning each other's due date.
 const QRMP_GROUP_X = new Set([
-  "CH", "TN", "KL", "KA", "AP", "TS", "PY", "AN", "LD", "GA", "MH", "GJ", "DN", "DD", "MP",
+  "CG", "MP", "GJ", "DN", "DD", "MH", "KA", "GA", "LD", "KL", "TN", "PY", "AN", "TS", "AP",
 ]);
+
+// Category Y — 24th.
+const QRMP_GROUP_Y = new Set([
+  "JK", "LA", "HP", "PB", "CH", "UK", "UT", "HR", "DL", "RJ", "UP", "BR", "SK",
+  "AR", "NL", "MN", "MZ", "TR", "ML", "AS", "WB", "JH", "OD",
+]);
+
+/**
+ * Accepts either a two-letter State code or a full State name.
+ *
+ * The practice context feeds the planner a full name ("State: Maharashtra"),
+ * so a code-only lookup silently missed every such client and fell through to
+ * the wrong default. Returns "" when nothing resolves, which callers must treat
+ * as unknown rather than as a group.
+ */
+function normaliseStateCode(value: string | null | undefined): string {
+  const raw = (value ?? "").trim();
+  if (!raw) return "";
+  const upper = raw.toUpperCase();
+  if (upper.length === 2) return upper;
+
+  const byName = Object.entries(STATE_SHORT_CODES)
+    .find(([name]) => name.toLowerCase() === raw.toLowerCase());
+  return byName ? byName[1] : upper;
+}
 
 export function gstReturnDueDate(input: {
   returnType: "GSTR-1" | "GSTR-3B";
@@ -405,12 +464,21 @@ export function gstReturnDueDate(input: {
     day = 20;
     basis = "monthly GSTR-3B: 20th of the following month";
   } else {
-    const state = (input.stateCode ?? "").toUpperCase();
-    const groupX = QRMP_GROUP_X.has(state);
-    day = groupX ? 22 : 24;
-    basis = `quarterly GSTR-3B (QRMP): ${day}th of the month following the quarter for ${groupX ? "the 22nd-day state group" : "the 24th-day state group"}`;
-    if (!state) {
-      basis = "quarterly GSTR-3B (QRMP): 22nd or 24th of the month following the quarter, depending on the State/UT — state code not supplied, 24th shown";
+    const state = normaliseStateCode(input.stateCode);
+    if (QRMP_GROUP_X.has(state)) {
+      day = 22;
+      basis = "quarterly GSTR-3B (QRMP): 22nd of the month following the quarter, for the Category X State/UT group";
+    } else if (QRMP_GROUP_Y.has(state)) {
+      day = 24;
+      basis = "quarterly GSTR-3B (QRMP): 24th of the month following the quarter, for the Category Y State/UT group";
+    } else {
+      // Neither group matched. Previously this silently returned the 24th with a
+      // confident basis line, so an unrecognised or full-name state ("Maharashtra")
+      // produced a wrong date stated as fact. Say what is unknown instead.
+      day = 24;
+      basis = state
+        ? `quarterly GSTR-3B (QRMP): the due date is the 22nd or the 24th depending on the State/UT, and "${input.stateCode}" was not recognised as a State code — confirm the State before relying on this date. The 24th is shown as the later of the two.`
+        : "quarterly GSTR-3B (QRMP): the due date is the 22nd or the 24th depending on the State/UT — no State code was supplied, so confirm it. The 24th is shown as the later of the two.";
     }
   }
   const dueDate = new Date(Date.UTC(next.getUTCFullYear(), next.getUTCMonth(), day));

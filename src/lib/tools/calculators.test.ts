@@ -47,6 +47,7 @@ test("section 234B applies only below the 90% advance-tax threshold", () => {
     assessedTax: 100_000,
     advanceTaxPaid: 50_000,
     assessmentDate: "2026-12-15",
+    financialYearEnd: "2026-03-31",
   });
   // Shortfall 50,000 × 1% × 9 months (1 Apr → 15 Dec).
   assert.equal(liable.amount, 4_500);
@@ -55,6 +56,7 @@ test("section 234B applies only below the 90% advance-tax threshold", () => {
     assessedTax: 100_000,
     advanceTaxPaid: 95_000,
     assessmentDate: "2026-12-15",
+    financialYearEnd: "2026-03-31",
   });
   assert.equal(safe.amount, 0);
   assert.match(safe.headline, /No interest/);
@@ -177,4 +179,97 @@ test("registry executes a known calculator end to end", () => {
   const outcome = runCalculator("gst_late_fee_section_47", { daysDelayed: 10 });
   assert.equal(outcome.error, null);
   assert.equal(outcome.result?.amount, 2_000); // statutory ₹100/day × 10 × 2 Acts
+});
+
+// ── Audit regressions (2026-08-06) ───────────────────────────────────────────
+// Each of these encodes a defect found in the product audit. They assert the
+// statutory position, not the previous behaviour.
+
+test("QRMP: Chhattisgarh is a 22nd state and Chandigarh is a 24th state", () => {
+  // These two were swapped: CG (Chhattisgarh) was missing and CH (Chandigarh)
+  // was in the 22nd group, so each returned the other's due date.
+  const cg = gstReturnDueDate({
+    returnType: "GSTR-3B", periodEnd: "2026-06-30", filingFrequency: "quarterly", stateCode: "CG",
+  });
+  assert.match(cg.headline, /22 Jul 2026/);
+  assert.match(cg.steps.find((x) => x.label === "Rule applied")!.detail, /Category X/);
+
+  const ch = gstReturnDueDate({
+    returnType: "GSTR-3B", periodEnd: "2026-06-30", filingFrequency: "quarterly", stateCode: "CH",
+  });
+  assert.match(ch.headline, /24 Jul 2026/);
+  assert.match(ch.steps.find((x) => x.label === "Rule applied")!.detail, /Category Y/);
+});
+
+test("QRMP: a full state name resolves instead of silently missing", () => {
+  const byName = gstReturnDueDate({
+    returnType: "GSTR-3B", periodEnd: "2026-06-30", filingFrequency: "quarterly", stateCode: "Maharashtra",
+  });
+  const byCode = gstReturnDueDate({
+    returnType: "GSTR-3B", periodEnd: "2026-06-30", filingFrequency: "quarterly", stateCode: "MH",
+  });
+  assert.equal(byName.headline, byCode.headline);
+  assert.match(byName.headline, /22 Jul 2026/);
+});
+
+test("QRMP: an unrecognised state is hedged, never stated as a group", () => {
+  for (const stateCode of ["XX", "MAH", "Atlantis"]) {
+    const result = gstReturnDueDate({
+      returnType: "GSTR-3B", periodEnd: "2026-06-30", filingFrequency: "quarterly", stateCode,
+    });
+    const rule = result.steps.find((x) => x.label === "Rule applied")!.detail;
+    assert.match(rule, /not recognised/i, `${stateCode} should be hedged`);
+    assert.doesNotMatch(rule, /Category [XY]/, `${stateCode} must not claim a group`);
+  }
+});
+
+test("QRMP: a missing state code is hedged", () => {
+  const result = gstReturnDueDate({
+    returnType: "GSTR-3B", periodEnd: "2026-06-30", filingFrequency: "quarterly",
+  });
+  assert.match(result.steps.find((x) => x.label === "Rule applied")!.detail, /no State code was supplied/i);
+});
+
+test("234B: interest runs from 1 April of the assessment year, not the assessment event year", () => {
+  // FY 2024-25 assessed on 10 Sep 2026. Interest must run from 1 Apr 2025
+  // (18 months), not 1 Apr 2026 (6 months) — the old fallback understated ~3x.
+  const result = interest234B({
+    assessedTax: 1_000_000,
+    advanceTaxPaid: 0,
+    assessmentDate: "2026-09-10",
+    financialYearEnd: "2025-03-31",
+  });
+  const period = result.steps.find((s) => s.label === "Period");
+  assert.match(period!.detail, /1 Apr 2025/);
+  assert.equal(result.steps.find((s) => s.label === "Months or part thereof")!.detail, "18");
+  assert.equal(result.amount, 180_000);
+});
+
+test("234B: refuses rather than guessing when the financial year is not supplied", () => {
+  assert.throws(
+    () => interest234B({ assessedTax: 1_000_000, advanceTaxPaid: 0, assessmentDate: "2026-09-10" }),
+    /financialYearEnd is required/,
+  );
+});
+
+test("234B: rejects an assessment date before the assessment year begins", () => {
+  assert.throws(
+    () => interest234B({
+      assessedTax: 100_000, advanceTaxPaid: 0,
+      assessmentDate: "2025-01-10", financialYearEnd: "2025-03-31",
+    }),
+    /before 1 April/,
+  );
+});
+
+test("s.47: a nil return is recorded but does not silently change the figure", () => {
+  const withLiability = gstLateFeeSection47({ daysDelayed: 10 });
+  const nil = gstLateFeeSection47({ daysDelayed: 10, nilReturn: true });
+  // Same statutory figure — the reduction is notification-based, not s.47.
+  assert.equal(nil.amount, withLiability.amount);
+  // But the user must be told why it did not change.
+  assert.match(
+    nil.steps.find((s) => s.label === "Return type")!.detail,
+    /NOT applied|not applied/,
+  );
 });

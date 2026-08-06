@@ -64,11 +64,13 @@ const CALCULATORS: CalculatorSpec[] = [
       { name: "assessedTax", label: "Assessed tax (₹)", kind: "number" },
       { name: "advanceTaxPaid", label: "Advance tax paid (₹)", kind: "number" },
       { name: "assessmentDate", label: "Date of assessment", kind: "date" },
+      { name: "financialYearEnd", label: "Financial year ended (31 March)", kind: "date" },
     ],
     run: (v) => interest234B({
       assessedTax: num(v, "assessedTax"),
       advanceTaxPaid: num(v, "advanceTaxPaid"),
       assessmentDate: v.assessmentDate ?? "",
+      financialYearEnd: v.financialYearEnd ?? "",
     }),
   },
   {
@@ -156,7 +158,7 @@ const CALCULATORS: CalculatorSpec[] = [
     basis: "Section 47, CGST Act, 2017",
     fields: [
       { name: "daysDelayed", label: "Days delayed", kind: "number" },
-      { name: "nilReturn", label: "Nil return", kind: "checkbox" },
+      { name: "nilReturn", label: "Nil return (recorded, but the reduced fee comes from a notification — supply the rate below)", kind: "checkbox" },
       { name: "perActDailyFee", label: "Notified daily fee per Act (₹)", kind: "number", hint: "leave blank for the statutory ₹100", optional: true },
       { name: "perActCap", label: "Notified cap per Act (₹)", kind: "number", optional: true },
     ],

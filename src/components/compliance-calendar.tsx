@@ -274,7 +274,7 @@ export function ComplianceCalendar({
               <dl>
                 <div><dt>Authority</dt><dd>{selected.authority}</dd></div>
                 <div><dt>Applies to</dt><dd>{selected.applicability}</dd></div>
-                <div><dt>Availability checked</dt><dd>{selected.lastVerified}</dd></div>
+                <div><dt>Source page last reached</dt><dd>{selected.lastVerified}<span className="cal-verify-note">This checks that the official page loads. It does not verify the due date, and does not detect a notified extension.</span></dd></div>
                 <div><dt>Calendar state</dt><dd>{selected.kind === "regulatory-update" ? "Regulatory effective date" : "Recurring general obligation"} · {selected.sourceState === "checked" ? "source page reachable" : "manual source review needed"}</dd></div>
               </dl>
               <a className="official-source-link" href={selected.sourceUrl} rel="noreferrer" target="_blank">

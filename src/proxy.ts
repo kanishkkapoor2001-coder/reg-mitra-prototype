@@ -31,10 +31,17 @@ export async function proxy(request: NextRequest) {
   // An account only reaches the product once an operator approves it; anything
   // else (pending, rejected, or a status we cannot read) waits at /pending.
   // Deliberately fails closed — an unreadable status must not open the product.
-  if (data.user.email) {
+  {
+    // A session with no email cannot be checked against the approval list, so
+    // it is not approved. Previously this whole block was skipped in that case,
+    // which would let such a session straight into the product.
+    const email = data.user.email;
     let approved = false;
+    if (!email) {
+      return NextResponse.redirect(new URL("/pending", request.url));
+    }
     try {
-      approved = (await readAccessStatus(data.user.email)) === "approved";
+      approved = (await readAccessStatus(email)) === "approved";
     } catch (statusError) {
       console.error("[proxy] could not read access status", statusError);
     }
@@ -90,5 +97,12 @@ export const config = {
     "/api/calendar/:path*",
     "/api/chat/:path*",
     "/api/connectors/:path*",
+    // A rejected or pending account was bounced from every page but retained
+    // API access to these, so it could still read its roster and post review
+    // decisions.
+    "/api/impacts/:path*",
+    "/api/notices/:path*",
+    "/api/search-index",
+    "/api/admin/:path*",
   ],
 };

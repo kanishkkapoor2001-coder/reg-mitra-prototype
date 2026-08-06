@@ -26,7 +26,13 @@ export interface RegulationItem {
 export function RegulationsExperience({
   items,
   mode,
-}: Readonly<{ items: readonly RegulationItem[]; mode: "product" | "sample" }>) {
+  freshness,
+}: Readonly<{
+  items: readonly RegulationItem[];
+  mode: "product" | "sample";
+  /** Corpus age, so a reader knows how current this list is. */
+  freshness?: { label: string; warning: string | null; level: string };
+}>) {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [authority, setAuthority] = useState("all");
@@ -58,6 +64,12 @@ export function RegulationsExperience({
           </p>
         </div>
       </header>
+      {freshness ? (
+        <p className={`corpus-freshness is-${freshness.level}`}>
+          {freshness.label}
+          {freshness.warning ? <span className="corpus-freshness-warning">{freshness.warning}</span> : null}
+        </p>
+      ) : null}
       <WorkspaceTrustSummary />
       <div className="portfolio-controls">
         <label className="search-field">

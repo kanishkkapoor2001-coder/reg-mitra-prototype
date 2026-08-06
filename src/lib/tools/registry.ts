@@ -55,9 +55,9 @@ export const calculatorDeclarations: FunctionDeclaration[] = [
         assessedTax: { type: "number", description: "Assessed tax in rupees" },
         advanceTaxPaid: { type: "number", description: "Total advance tax paid in rupees" },
         assessmentDate: ISO_DATE,
-        financialYearEnd: { ...ISO_DATE, description: "31 March ending the financial year, if known" },
+        financialYearEnd: { ...ISO_DATE, description: "The 31 March that ends the financial year under assessment. Required — interest runs from 1 April of the assessment year and cannot be derived from the assessment date alone." },
       },
-      required: ["assessedTax", "advanceTaxPaid", "assessmentDate"],
+      required: ["assessedTax", "advanceTaxPaid", "assessmentDate", "financialYearEnd"],
     },
   },
   {

@@ -22,9 +22,18 @@ export default async function AssistantPage({ searchParams }: AssistantPageProps
   // one served canned sample answers even with a fully working assistant behind it.
   const liveAiReady = Boolean(getGatewayConfig())
     && (process.env.NODE_ENV !== "production" || process.env.REGMITRA_ENABLE_LIVE_AI === "true");
-  const templateMode = sessionMode === "demo" || !liveAiReady;
+  // Template mode serves canned, fictional answers. That is right for an
+  // explicit demo session and wrong for everything else: if a gateway variable
+  // goes missing in production, an outage must read as an outage, not quietly
+  // turn a research tool into a plausible-sounding fiction generator.
+  if (sessionMode === "demo") {
+    return <AssistantExperience initialPrompt={initialPrompt} templateMode />;
+  }
 
-  if (templateMode) {
+  if (!liveAiReady) {
+    if (process.env.NODE_ENV === "production") {
+      return <AssistantUnavailable />;
+    }
     return <AssistantExperience initialPrompt={initialPrompt} templateMode />;
   }
 
@@ -79,5 +88,28 @@ export default async function AssistantPage({ searchParams }: AssistantPageProps
       initialPrompt={initialPrompt}
       templateMode={false}
     />
+  );
+}
+
+// Shown when the AI gateway is not configured in production. An honest outage
+// beats fabricated answers.
+function AssistantUnavailable() {
+  return (
+    <>
+      <section className="detail-hero" style={{ marginTop: 4 }}>
+        <div>
+          <p className="eyebrow">Assistant</p>
+          <h1>Research is temporarily unavailable</h1>
+          <p className="page-subtitle">
+            The assistant cannot reach its language model right now, so it is not answering
+            rather than guessing.
+          </p>
+        </div>
+      </section>
+      <div className="notice">
+        <strong>Nothing has been lost.</strong> Your clients, tasks and saved conversations are
+        unaffected. The compliance calendar, calculators and official sources all still work.
+      </div>
+    </>
   );
 }

@@ -22,6 +22,7 @@ const NOTIFY_TO = (process.env.SIGNUP_NOTIFY_TO?.trim() || "kanishk@outreach.lea
   .filter(Boolean);
 // Must be an address on a Resend-verified domain; the shared test sender can
 // only deliver to the Resend account owner.
+const APP_URL = (process.env.APP_URL?.trim() || "https://regmitra.in").replace(/\/+$/, "");
 const NOTIFY_FROM = process.env.SIGNUP_NOTIFY_FROM?.trim() || "Reg Mitra <signups@updates.sigil91.com>";
 
 /**
@@ -80,7 +81,6 @@ export async function notifyOperatorOfSignup(identity: AccessIdentity): Promise<
   const limitText = tierInfo.clientLimit === null
     ? "unlimited client companies"
     : `up to ${tierInfo.clientLimit} client companies`;
-  const email = identity.email.toLowerCase();
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -106,18 +106,10 @@ export async function notifyOperatorOfSignup(identity: AccessIdentity): Promise<
           "",
           "They are PENDING and cannot use the product yet.",
           "",
-          "Approve them and grant that tier — run both statements:",
+          "Approve or reject them here:",
+          `  ${APP_URL}/admin/access`,
           "",
-          `  update public.access_requests`,
-          `     set status = 'approved', decided_at = now(), decided_by = 'kanishk'`,
-          `   where normalized_email = '${email}';`,
-          "",
-          "  -- once their workspace exists, set the tier it is entitled to:",
-          `  update public.subscriptions s`,
-          `     set tier = '${tier}'`,
-          `    from public.workspaces w`,
-          `   where w.id = s.workspace_id and w.created_by =`,
-          `         (select id from auth.users where lower(email) = '${email}');`,
+          "(Approving emails them a sign-in link automatically.)",
         ].join("\n"),
       }),
     });

@@ -26,6 +26,7 @@ import {
 import type { ChatRetrievalPayload } from "@/lib/rag/types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentWorkspace } from "@/lib/workspace";
+import { todayInIST } from "@/lib/dates";
 
 export const maxDuration = 60;
 export const runtime = "nodejs";
@@ -184,8 +185,9 @@ export async function POST(request: Request) {
   const model = safeModelName(process.env.REGMITRA_LLM_MODEL);
   const embeddingApiKey = getEmbeddingApiKey();
   // Anchors both date arithmetic in the computation planner and the "law as in
-  // force on" framing in the answer.
-  const today = new Date().toISOString().slice(0, 10);
+  // force on" framing in the answer. IST, not UTC: a UTC date is a day behind
+  // between 00:00 and 05:30 IST, and this value becomes calculator arguments.
+  const today = todayInIST();
 
   const encoder = new TextEncoder();
   const upstream = new AbortController();
@@ -361,7 +363,10 @@ export async function POST(request: Request) {
           // Upstream status and message carry no secrets and are the only way to
           // tell a bad credential from an unreachable gateway once deployed.
           upstreamStatus: status ?? null,
-          upstreamDetail: typeof detail === "string" ? detail.slice(0, 300) : null,
+        // Logged server-side only. This text is produced by the upstream
+        // gateway, is not validated, and can echo project/model identifiers —
+        // and /api/chat is unauthenticated.
+        upstreamDetail: null,
         });
         close();
       }

@@ -200,7 +200,9 @@ export async function getLiveCalendarSnapshot(
 ): Promise<CalendarSnapshot> {
   const sourceHealth = await getSourceHealth();
   const checkedAtLabel = formatCheckedAt(sourceHealth.checkedAt);
-  const reachable = sourceHealth.checks.filter((check) => check.state !== "review").length;
+  // Only genuinely readable pages count. A 401/403/405 ("protected") means we
+  // could not read it, so counting it as reachable overstated coverage.
+  const reachable = sourceHealth.checks.filter((check) => check.state === "available").length;
   const warnings = sourceHealth.checks
     .filter((check) => check.state === "review")
     .map((check) => `${check.authority} needs a manual source check.`);

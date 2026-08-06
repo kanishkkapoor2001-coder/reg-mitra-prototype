@@ -109,7 +109,7 @@ export async function matchWorkspace(
   for (const client of (clients ?? []) as Array<{ id: string }>) {
     let facts: CompanyFact[];
     try {
-      facts = await readClientFacts(admin, client.id);
+      facts = await readClientFacts(admin, client.id, workspaceId);
     } catch (error) {
       summary.errors.push(`facts ${client.id}: ${(error as Error).message}`);
       continue;

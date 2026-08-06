@@ -14,6 +14,7 @@ import {
   gatewayGenerateContent,
   type GatewayConfig,
 } from "@/lib/ai/gateway";
+import { daysFromTodayIST } from "@/lib/dates";
 
 export interface NoticeAmounts {
   tax: string | null;
@@ -215,11 +216,9 @@ export function sanitizeNotice(value: unknown): ExtractedNotice | null {
 
 /** Days remaining until the reply deadline, or null when it is unknown. */
 export function daysUntil(dueDate: string | null, today = new Date()): number | null {
-  if (!dueDate || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) return null;
-  const due = new Date(`${dueDate}T00:00:00Z`);
-  if (Number.isNaN(due.getTime())) return null;
-  const todayUtc = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
-  return Math.round((due.getTime() - todayUtc) / 86_400_000);
+  if (!dueDate) return null;
+  // IST, not UTC — this number is rendered as "the deadline has passed".
+  return daysFromTodayIST(dueDate, today);
 }
 
 /**
