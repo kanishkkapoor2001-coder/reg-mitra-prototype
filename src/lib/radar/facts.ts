@@ -60,15 +60,19 @@ export const ATTRIBUTE_DEFINITIONS = [
     question: "What kind of legal entity is it?",
     valueType: "string",
     allowedValues: [
+      // First seven are the canonical newsletter vocabulary — real rules emit
+      // these, so they must match exactly.
       "PRIVATE_LIMITED",
       "PUBLIC_LIMITED",
       "LLP",
       "PARTNERSHIP",
-      "PROPRIETORSHIP",
+      "COOPERATIVE",
       "TRUST",
+      "OTHER",
+      // Product-only additions for CA client books.
+      "PROPRIETORSHIP",
       "SOCIETY",
       "SECTION_8",
-      "OTHER",
     ],
     expiresAfterDays: null,
     why: "MCA and Companies Act obligations depend on the entity type.",
@@ -79,18 +83,23 @@ export const ATTRIBUTE_DEFINITIONS = [
     label: "Regulated institution type",
     question: "Is it a regulated institution of a specific kind?",
     valueType: "string",
+    // Canonical newsletter vocabulary, verbatim. Real RBI rules emit
+    // ALL_INDIA_FINANCIAL_INSTITUTION and NONE; abbreviating either would make
+    // every RBI rule unmatchable.
     allowedValues: [
-      "NOT_A_REGULATED_INSTITUTION",
       "COMMERCIAL_BANK",
       "SMALL_FINANCE_BANK",
       "PAYMENTS_BANK",
       "LOCAL_AREA_BANK",
-      "URBAN_COOPERATIVE_BANK",
-      "RURAL_COOPERATIVE_BANK",
       "REGIONAL_RURAL_BANK",
+      "RURAL_COOPERATIVE_BANK",
+      "URBAN_COOPERATIVE_BANK",
       "NBFC",
-      "AIFI",
-      "OTHER",
+      "ALL_INDIA_FINANCIAL_INSTITUTION",
+      "INSURER",
+      "INSURANCE_INTERMEDIARY",
+      "OTHER_REGULATED_ENTITY",
+      "NONE",
     ],
     expiresAfterDays: 180,
     why: "RBI circulars are usually addressed to a named class of institution.",
