@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { importRules } from "@/lib/radar/import-rules";
+import { matchAllWorkspaces } from "@/lib/radar/match";
 
 // Pulls newly verified applicability rules from the newsletter.
 //
@@ -35,5 +36,17 @@ export async function GET(request: Request) {
     console.warn("[cron/rule-import] skipped rules", result.skipped);
   }
 
-  return NextResponse.json(result);
+  // New rules are worthless until they have been matched against the book, so
+  // the two always run together rather than leaving a gap where the product
+  // holds a rule it has not applied.
+  let match = null;
+  if (result.imported > 0) {
+    try {
+      match = await matchAllWorkspaces();
+    } catch (error) {
+      console.error("[cron/rule-import] matching failed", error);
+    }
+  }
+
+  return NextResponse.json({ ...result, match });
 }

@@ -2,13 +2,16 @@ import {
   getComplianceEvents,
   parseLocalDate,
   type ComplianceEvent,
-} from "@/lib/compliance-calendar";
+} from "./compliance-calendar.ts";
+import type { FactValue } from "./radar/facts.ts";
 
 export interface SeedClient {
   id: string;
   displayName: string;
   sector: string | null;
   stateCode: string | null;
+  /** Confirmed facts, used to rule obligations out. Absent = none recorded. */
+  facts?: ReadonlyMap<string, FactValue>;
 }
 
 export interface CandidateTask {
@@ -34,12 +37,48 @@ function priorityForDaysAway(daysAway: number): number {
   return 1; // low
 }
 
-// Every recurring statutory obligation in the window is a candidate for every
-// active client. Applicability is deliberately conservative and honest: the
-// task is created "to confirm applicability" rather than asserted as verified,
-// which matches how these tasks surface in the queue (evidence: unverified).
-function isApplicable(event: ComplianceEvent): boolean {
-  return event.kind === "obligation";
+// Statutory obligations that a confirmed fact can rule out for a client.
+//
+// Note the asymmetry with the regulatory radar. There, an unknown fact means
+// "we cannot say this applies" and nothing is claimed. Here, a missed filing
+// deadline is far more costly than an extra item to dismiss, so an obligation
+// is dropped only on a *confirmed contradiction* — never on a fact we were
+// simply never told.
+const EXCLUSIONS: Array<{
+  matches: (event: ComplianceEvent) => boolean;
+  factKey: string;
+  /** Excluded when the confirmed fact equals this value. */
+  excludeWhen: (value: FactValue) => boolean;
+}> = [
+  {
+    matches: (event) => /goods and services tax/i.test(event.authority),
+    factKey: "company.gst_registered",
+    excludeWhen: (value) => value === false,
+  },
+  {
+    matches: (event) => /provident fund/i.test(event.authority),
+    factKey: "company.employee_count",
+    // EPF coverage starts at 20 employees; a confirmed smaller headcount rules
+    // the obligation out.
+    excludeWhen: (value) => typeof value === "number" && value < 20,
+  },
+  {
+    matches: (event) => /tds|tcs/i.test(event.shortTitle) || /tds|tcs/i.test(event.title),
+    factKey: "company.deducts_tds",
+    excludeWhen: (value) => value === false,
+  },
+];
+
+function isApplicable(event: ComplianceEvent, facts?: ReadonlyMap<string, FactValue>): boolean {
+  if (event.kind !== "obligation") return false;
+  if (!facts) return true;
+
+  for (const exclusion of EXCLUSIONS) {
+    if (!exclusion.matches(event)) continue;
+    if (!facts.has(exclusion.factKey)) continue;
+    if (exclusion.excludeWhen(facts.get(exclusion.factKey)!)) return false;
+  }
+  return true;
 }
 
 // All obligation events that fall within [today, today + horizon].
@@ -91,7 +130,7 @@ export function generateCandidateTasks(
 
   for (const client of clients) {
     for (const event of events) {
-      if (!isApplicable(event)) continue;
+      if (!isApplicable(event, client.facts)) continue;
 
       const daysAway = Math.round(
         (parseLocalDate(event.date).getTime() - todayMs) / 86_400_000,

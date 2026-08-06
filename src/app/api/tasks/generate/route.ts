@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { FactValue } from "@/lib/radar/facts";
 import { generateCandidateTasks, type SeedClient } from "@/lib/task-generation";
 import { getCurrentWorkspace } from "@/lib/workspace";
 
@@ -25,11 +26,32 @@ export async function POST(request: Request) {
     .eq("workspace_id", workspace.id)
     .eq("status", "active");
 
+  // Confirmed facts let an obligation be ruled out for a client, so the queue
+  // stops being one identical calendar shared by the whole book.
+  const { data: factRows } = await supabase
+    .from("client_facts")
+    .select("client_id, fact_key, value, valid_to")
+    .eq("workspace_id", workspace.id)
+    .is("superseded_at", null);
+
+  const nowMs = Date.now();
+  const factsByClient = new Map<string, Map<string, FactValue>>();
+  for (const row of (factRows ?? []) as Array<{
+    client_id: string; fact_key: string; value: FactValue; valid_to: string | null;
+  }>) {
+    // An expired fact is no longer evidence and must not rule anything out.
+    if (row.valid_to && new Date(row.valid_to).getTime() < nowMs) continue;
+    const forClient = factsByClient.get(row.client_id) ?? new Map<string, FactValue>();
+    forClient.set(row.fact_key, row.value);
+    factsByClient.set(row.client_id, forClient);
+  }
+
   const clients: SeedClient[] = (clientRows ?? []).map((client) => ({
     id: client.id,
     displayName: client.display_name,
     sector: client.sector,
     stateCode: client.state_code,
+    facts: factsByClient.get(client.id),
   }));
 
   if (!clients.length) {

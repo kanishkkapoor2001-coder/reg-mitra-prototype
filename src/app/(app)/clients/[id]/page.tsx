@@ -2,11 +2,13 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { ClientProfile } from "@/components/client-profile";
+import { ClientRadar } from "@/components/client-radar";
 import { DemoNotice } from "@/components/demo-notice";
 import { DemoIntegrationCenter } from "@/components/demo-integration-center";
 import { EvidencePanel } from "@/components/evidence-panel";
 import { ReviewGate } from "@/components/review-gate";
 import { deriveFactsFromIdentifiers, readClientFactMap } from "@/lib/radar/client-facts";
+import { readClientImpacts } from "@/lib/radar/impacts";
 import { ATTRIBUTE_DEFINITIONS, type CompanyFact } from "@/lib/radar/facts";
 import { clients, getClient, workItems } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
@@ -174,6 +176,18 @@ async function ProductClientPage({
   }
   const facts = await readClientFactMap(supabase, client.id);
 
+  const [impacts, ruleCount] = await Promise.all([
+    readClientImpacts(supabase, client.id).catch((error) => {
+      console.error("[client] impacts unavailable", error);
+      return [];
+    }),
+    supabase
+      .from("regulatory_rules")
+      .select("id", { count: "exact", head: true })
+      .eq("active", true)
+      .then(({ count }) => count ?? 0),
+  ]);
+
   const openTasks = (client.tasks ?? [])
     .filter((task) => task.state !== "completed" && task.state !== "dismissed")
     .sort((left, right) => right.priority - left.priority);
@@ -215,6 +229,13 @@ async function ProductClientPage({
         <article className="kpi-card"><span className="kpi-label">Profile</span><div className="kpi-value">{answeredFacts}/{ATTRIBUTE_DEFINITIONS.length}</div><div className="kpi-meta"><span>Facts available for matching</span></div></article>
         <article className="kpi-card"><span className="kpi-label">Source connections</span><div className="kpi-value">0</div><div className="kpi-meta"><span>No client portal connected</span></div></article>
       </section>
+
+      <ClientRadar
+        impacts={impacts}
+        editable={workspace.role !== "viewer"}
+        returnTo={`/clients/${client.id}`}
+        hasRules={ruleCount > 0}
+      />
 
       <ClientProfile
         clientId={client.id}

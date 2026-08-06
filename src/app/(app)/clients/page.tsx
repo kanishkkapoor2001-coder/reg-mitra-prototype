@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { ClientsExperience } from "@/components/clients-experience";
 import { TIERS, clientLimitFor } from "@/lib/billing/tiers";
+import { readWorkspaceRadarSummary, type ClientRadarSummary } from "@/lib/radar/impacts";
 import { clients as demoClients } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -34,10 +35,15 @@ export default async function ClientsPage() {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("clients")
-    .select("id, legal_name, display_name, sector, state_code, tasks(priority, state, due_at), client_regulatory_impacts(review_state)")
+    .select("id, legal_name, display_name, sector, state_code, tasks(priority, state, due_at)")
     .eq("workspace_id", workspace.id)
     .eq("status", "active")
     .order("display_name");
+
+  const radar = await readWorkspaceRadarSummary(supabase, workspace.id).catch((error) => {
+    console.error("[clients] radar summary unavailable", error);
+    return new Map<string, ClientRadarSummary>();
+  });
 
   const clients = (data ?? []).map((client) => {
     const openTasks = (client.tasks ?? []).filter(
@@ -51,8 +57,7 @@ export default async function ClientsPage() {
       .map((task) => task.due_at)
       .filter((value): value is string => Boolean(value))
       .sort();
-    const impacts = client.client_regulatory_impacts ?? [];
-    const reviewed = impacts.length > 0 && impacts.every((impact) => impact.review_state === "approved");
+    const summary = radar.get(client.id);
 
     return {
       id: client.id,
@@ -64,7 +69,17 @@ export default async function ClientsPage() {
       nextDeadline: deadlines[0]
         ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" }).format(new Date(deadlines[0]))
         : "No deadline",
-      sourceStatus: impacts.length === 0 ? "Not assessed" : reviewed ? "Reviewed" : "Needs review",
+      // Reads what the matcher actually found, rather than the old blanket
+      // "Not assessed" that every client showed.
+      sourceStatus: !summary
+        ? "Not scanned yet"
+        : summary.flagged > 0
+          ? `${summary.flagged} to review`
+          : summary.needsFacts > 0
+            ? `${summary.needsFacts} need facts`
+            : summary.approved > 0
+              ? `${summary.approved} approved`
+              : "Nothing outstanding",
     };
   });
 

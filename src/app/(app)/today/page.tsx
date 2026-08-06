@@ -1,4 +1,6 @@
 import { cookies } from "next/headers";
+import { PendingDecisions } from "@/components/pending-decisions";
+import { readPendingDecisions } from "@/lib/radar/impacts";
 import { TodayExperience } from "@/components/today-experience";
 import { workItems } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
@@ -96,13 +98,23 @@ export default async function TodayPage({
     };
   });
 
+  // Regulatory changes waiting on a decision come before task work: deciding
+  // whether a circular applies is what unblocks everything downstream.
+  const pending = await readPendingDecisions(supabase, workspace.id).catch((error) => {
+    console.error("[today] pending decisions unavailable", error);
+    return [];
+  });
+
   return (
-    <TodayExperience
-      items={items}
-      mode="product"
-      verifiedSourceCount={items.filter((item) => item.evidenceState === "verified").length}
-      hasClients={(clientCount ?? 0) > 0}
-      notice={noticeForGenerated(params.generated)}
-    />
+    <>
+      {pending.length ? <PendingDecisions impacts={pending} /> : null}
+      <TodayExperience
+        items={items}
+        mode="product"
+        verifiedSourceCount={items.filter((item) => item.evidenceState === "verified").length}
+        hasClients={(clientCount ?? 0) > 0}
+        notice={noticeForGenerated(params.generated)}
+      />
+    </>
   );
 }

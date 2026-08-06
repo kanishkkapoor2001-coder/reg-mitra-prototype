@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ATTRIBUTE_DEFINITIONS, type FactValue, getAttributeDefinition } from "@/lib/radar/facts";
 import { readClientFactMap, recordClientFact } from "@/lib/radar/client-facts";
+import { matchWorkspace } from "@/lib/radar/match";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentWorkspace } from "@/lib/workspace";
 
@@ -69,6 +70,7 @@ export async function POST(request: Request) {
   }
 
   const existing = await readClientFactMap(supabase, clientId);
+  let changed = 0;
 
   for (const definition of ATTRIBUTE_DEFINITIONS) {
     const raw = formData.get(definition.key);
@@ -88,8 +90,17 @@ export async function POST(request: Request) {
       value,
       recordedBy: userId,
     });
-    if (!result.ok) {
-      console.error("[clients/facts] rejected", definition.key, result.errors);
+    if (result.ok) changed += 1;
+    else console.error("[clients/facts] rejected", definition.key, result.errors);
+  }
+
+  // Answering a question is only useful if it changes what is flagged, so the
+  // client is re-matched immediately rather than waiting for the next cron.
+  if (changed > 0) {
+    try {
+      await matchWorkspace(workspace.id, { clientId });
+    } catch (error) {
+      console.error("[clients/facts] rematch failed", error);
     }
   }
 
