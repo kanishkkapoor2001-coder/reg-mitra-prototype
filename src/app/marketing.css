@@ -1205,6 +1205,7 @@
     0 30px 60px -40px rgb(16 35 28 / 40%),
     0 8px 20px -18px rgb(16 35 28 / 24%);
 }
+.hero-radar.tone-rbi { --tone: var(--green-700); }
 .hero-radar.tone-fssai { --tone: var(--green-700); }
 .hero-radar.tone-cbdt { --tone: var(--blue-700); }
 

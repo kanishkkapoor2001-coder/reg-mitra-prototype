@@ -9,33 +9,38 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type Client = { id: string; name: string; tag: string };
 
+// The walkthrough uses a circular Reg Mitra has actually ingested, verified and
+// can match today — an RBI direction with a live applicability rule — rather
+// than an illustrative one. The previous FSSAI example was plausible but the
+// product held no FSSAI rule behind it, so the demo promised something the
+// system could not yet do.
 const CLIENTS: Client[] = [
   { id: "sharma", name: "Sharma Pharma", tag: "Pharma · MH" },
-  { id: "royal", name: "Royal Spice Foods", tag: "Packaged food · DL" },
-  { id: "annapurna", name: "Annapurna Foods", tag: "Food processing · MH" },
+  { id: "sahyadri", name: "Sahyadri Co-op Bank", tag: "Rural co-op bank · MH" },
+  { id: "godavari", name: "Godavari Gramin Bank", tag: "Rural co-op bank · MH" },
   { id: "asha", name: "Asha Foundation", tag: "Charitable trust · MH" },
   { id: "meridian", name: "Meridian Tech", tag: "IT services · KA" },
   { id: "gupta", name: "Gupta Textiles", tag: "Textile trading · GJ" },
 ];
 
-const AFFECTED = new Set(["royal", "annapurna"]);
+const AFFECTED = new Set(["sahyadri", "godavari"]);
 
 const CHANGE = {
-  authority: "FSSAI",
-  title: "Licensing & Registration — Second Amendment, 2026",
-  date: "1 Jun 2026",
-  summary: "New production and storage-record rules for FSSAI-licensed food businesses.",
+  authority: "RBI",
+  title: "Rural Co-operative Banks — IRACP Third Amendment Directions, 2026",
+  date: "15 Jul 2026",
+  summary: "Amended income recognition, asset classification and provisioning norms for rural co-operative banks.",
 };
 
 const DETAIL = {
-  name: "Royal Spice Foods",
-  reason: "Holds an FSSAI manufacturing licence — the amended production and storage-record rules apply.",
-  cite: "FSSAI · Second Amendment, 2026",
-  url: "https://www.fssai.gov.in/upload/notifications/2026/06/6a3c0a8fbaf61273797.pdf",
+  name: "Sahyadri Co-op Bank",
+  reason: "A rural co-operative bank — the amended income recognition and provisioning norms apply to it directly.",
+  cite: "RBI · IRACP Third Amendment Directions, 2026",
+  url: "https://www.rbi.org.in/Scripts/NotificationUser.aspx?Id=13578&Mode=0",
 };
 
 const STEPS = [
-  { label: "New rule", caption: "A new FSSAI rule is published — here's exactly what changed." },
+  { label: "New rule", caption: "A new RBI direction is published — here's exactly what changed." },
   { label: "Checking", caption: "Reg Mitra checks it against every client in your book." },
   { label: "Flagged", caption: "It flags who may be affected — and clears the rest." },
   { label: "Why", caption: "Each flag shows why, linked to the official circular." },
@@ -101,7 +106,7 @@ export function HeroRadar() {
   return (
     <div className="hero-radar-wrap">
       <div
-        className={`hero-radar tone-fssai step-${step}${scanning ? " is-scan" : ""}${resolved ? " is-resolved" : ""}`}
+        className={`hero-radar tone-rbi step-${step}${scanning ? " is-scan" : ""}${resolved ? " is-resolved" : ""}`}
         ref={ref}
       >
         <div className="hero-radar-bar">
@@ -139,9 +144,10 @@ export function HeroRadar() {
                 <span className="hero-radar-brief-edit" aria-hidden="true">Edit</span>
               </div>
               <p className="hero-radar-brief-body">
-                Following the FSSAI Second Amendment (1 Jun 2026), your production and storage
-                records now need to be maintained in the revised format. We&rsquo;ve prepared the
-                checklist — please confirm your current process so we can update your file.
+                Following the RBI IRACP Third Amendment Directions (15 Jul 2026), your income
+                recognition and provisioning norms need to be applied in the revised form. We&rsquo;ve
+                prepared the checklist — please confirm your current classification so we can
+                update your file.
               </p>
               <div className="hero-radar-brief-send">
                 <span className="hero-radar-send email">
