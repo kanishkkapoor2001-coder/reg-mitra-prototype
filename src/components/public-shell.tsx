@@ -17,7 +17,7 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
           <Link href="/faq">FAQ</Link>
         </nav>
         <div className="public-header-actions">
-          <Link className="header-demo-link" href="/today">
+          <Link className="header-demo-link" href="/login">
             Open product
             <svg viewBox="0 0 12 12" aria-hidden="true">
               <path
@@ -49,7 +49,7 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
             <Link href="/pricing">Pricing</Link>
             <Link href="/about">About</Link>
             <Link href="/faq">FAQ</Link>
-            <Link href="/today">Open product</Link>
+            <Link href="/login">Open product</Link>
           </nav>
         </div>
         <div className="footer-bottom">

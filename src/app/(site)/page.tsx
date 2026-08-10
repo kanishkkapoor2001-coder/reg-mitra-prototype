@@ -152,7 +152,7 @@ export default function HomePage() {
           <p className="marketing-kicker">Private pilot · seven days · no card</p>
           <h2>Test one compliance workflow with your team.</h2>
           <p>We confirm the pilot scope and start date before creating your workspace.</p>
-          <Link className="marketing-button light" href="/today">Open the product</Link>
+          <Link className="marketing-button light" href="/login">Open the product</Link>
         </section>
       </main>
     </PublicShell>

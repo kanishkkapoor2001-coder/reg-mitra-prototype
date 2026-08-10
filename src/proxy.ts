@@ -22,9 +22,28 @@ export async function proxy(request: NextRequest) {
   const supabase = createSupabaseRequestClient(request, response);
   const { data } = await supabase.auth.getUser();
 
-  // Anonymous (or demo) visitors keep public access.
+  // The product is behind a login.
+  //
+  // Anonymous visitors used to pass straight through to /today, /clients and
+  // /assistant in a public sample mode. That made the signed-out sample and the
+  // real product the same surface, so "Open the product" opened something that
+  // was not the product, and a prospect could wander the app never knowing
+  // which parts were real.
+  //
+  // The one exception is an explicit demo session, which is the frozen,
+  // fictional walkthrough entered deliberately from /demo — never something a
+  // visitor lands in by accident.
   if (!data.user) {
-    return response;
+    if (request.cookies.get("reg_mitra_session")?.value === "demo") {
+      return response;
+    }
+    const login = new URL("/login", request.url);
+    // Send them back where they were headed once they are in.
+    const target = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+    if (target.startsWith("/") && !target.startsWith("//")) {
+      login.searchParams.set("from", target);
+    }
+    return NextResponse.redirect(login);
   }
 
   // Payment is handled offline, so authentication alone does not grant access.

@@ -62,7 +62,7 @@ export default function AboutPage() {
 
         <section className="about-callout">
           <blockquote>Less time reconstructing the research. More time reviewing the decision.</blockquote>
-          <Link className="marketing-button primary" href="/today">Open the product</Link>
+          <Link className="marketing-button primary" href="/login">Open the product</Link>
         </section>
       </main>
     </PublicShell>

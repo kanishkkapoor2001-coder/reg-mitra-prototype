@@ -76,7 +76,7 @@ export default async function StartPage({
               </form>
             )}
             <small>One pilot per organization. No card and no automatic charge. We store these details only to manage access and prevent duplicate trials.</small>
-            <Link href="/today">Want to explore first? Open the sample workspace →</Link>
+            <a href="/api/demo">Want to look first? See the demo →</a>
           </section>
         </section>
 

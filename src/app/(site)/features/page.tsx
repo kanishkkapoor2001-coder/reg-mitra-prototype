@@ -21,7 +21,7 @@ export default function FeaturesPage() {
             own. Every demo uses sample data; nothing is sent, filed, or paid.
           </p>
           <div className="marketing-actions">
-            <Link className="marketing-button primary" href="/today">Open the interactive demo</Link>
+            <a className="marketing-button primary" href="/api/demo">See the demo</a>
             <Link className="marketing-button quiet" href="/signup">Start free trial</Link>
           </div>
         </section>
