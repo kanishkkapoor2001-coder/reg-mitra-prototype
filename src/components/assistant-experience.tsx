@@ -28,6 +28,7 @@ import { loadProfile } from "@/lib/practice/store";
 import type { ChatRetrievalPayload, ChatVerificationPayload, RetrievedSource } from "@/lib/rag/types";
 import { daysFromTodayIST } from "@/lib/dates";
 import { corpusFreshness } from "@/lib/rag/freshness";
+import { groupConversationsByRecency } from "@/lib/conversation-groups";
 
 type Completeness = "complete" | "partial";
 
@@ -901,48 +902,62 @@ export function AssistantExperience({
             type="button"
           />
         ) : null}
-        <aside className="conversation-library" aria-label={templateMode ? "Sample conversations" : publicMode ? "Current session" : "Recent conversations"}>
-          <div className="conversation-library-heading">
-            <p className="eyebrow">{templateMode ? "Sample sessions" : publicMode ? "Current session" : "Recent conversations"}</p>
-            <h2>{templateMode ? "See the full workflow" : publicMode ? "Open workspace" : "Continue your work"}</h2>
-            <p>
-              {templateMode
-                ? "Realistic CA use cases, shown with fictional data."
-                : publicMode
-                  ? "Answers remain in this browser session and are not added to a firm record."
-                  : "Saved securely in this firm workspace."}
-            </p>
+        <aside className="conversation-library" aria-label={templateMode ? "Sample conversations" : publicMode ? "Current session" : "Your chats"}>
+          {/* New chat sits at the top and is always reachable — the single most
+              used control in any chat product. */}
+          <div className="conversation-library-top">
+            <button className="new-chat-button" onClick={startAgain} type="button">
+              <span aria-hidden="true">+</span> New chat
+            </button>
           </div>
+
           <div className="conversation-list">
-            {templateMode
-              ? demoConversations.map((conversation) => (
-                <button
-                  aria-pressed={activeConversationId === conversation.id}
-                  className={`conversation-card ${activeConversationId === conversation.id ? "active" : ""}`}
-                  key={conversation.id}
-                  onClick={() => loadConversation(conversation)}
-                  type="button"
-                >
-                  <span className="conversation-mode">{conversation.modeLabel}</span>
-                  <strong>{conversation.title}</strong>
-                  <small>{conversation.description}</small>
-                </button>
+            {templateMode ? (
+              <>
+                <p className="conversation-group-label">Sample sessions</p>
+                {demoConversations.map((conversation) => (
+                  <button
+                    aria-pressed={activeConversationId === conversation.id}
+                    className={`conversation-card ${activeConversationId === conversation.id ? "active" : ""}`}
+                    key={conversation.id}
+                    onClick={() => loadConversation(conversation)}
+                    type="button"
+                  >
+                    <strong>{conversation.title}</strong>
+                    <small>{conversation.description}</small>
+                  </button>
+                ))}
+              </>
+            ) : conversationHistory.length === 0 ? (
+              <p className="conversation-empty">
+                {publicMode
+                  ? "This session is not saved to a firm record. Sign in to keep your chats."
+                  : "Your chats will appear here. Ask something to start one."}
+              </p>
+            ) : (
+              groupConversationsByRecency(conversationHistory).map((group) => (
+                <div className="conversation-group" key={group.label}>
+                  <p className="conversation-group-label">{group.label}</p>
+                  {group.items.map((conversation) => (
+                    <Link
+                      aria-current={activeConversationId === conversation.id ? "page" : undefined}
+                      className={`conversation-card ${activeConversationId === conversation.id ? "active" : ""}`}
+                      href={`/assistant?conversation=${encodeURIComponent(conversation.id)}`}
+                      key={conversation.id}
+                      title={conversation.title}
+                    >
+                      <strong>{conversation.title}</strong>
+                    </Link>
+                  ))}
+                </div>
               ))
-              : conversationHistory.map((conversation) => (
-                <Link
-                  aria-current={activeConversationId === conversation.id ? "page" : undefined}
-                  className={`conversation-card ${activeConversationId === conversation.id ? "active" : ""}`}
-                  href={`/assistant?conversation=${encodeURIComponent(conversation.id)}`}
-                  key={conversation.id}
-                >
-                  <span className="conversation-mode">Saved conversation</span>
-                  <strong>{conversation.title}</strong>
-                  <small>{new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" }).format(new Date(conversation.updatedAt))}</small>
-                </Link>
-              ))}
+            )}
           </div>
+
           <p className="conversation-library-footnote">
-            Never paste client secrets, portal passwords, or OTPs into chat.
+            {publicMode || templateMode
+              ? "Never paste client secrets, portal passwords, or OTPs into chat."
+              : "Saved in this firm workspace. Never paste client secrets, portal passwords, or OTPs."}
           </p>
         </aside>
 

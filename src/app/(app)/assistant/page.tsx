@@ -52,7 +52,8 @@ export default async function AssistantPage({ searchParams }: AssistantPageProps
     .select("id, title, updated_at")
     .eq("workspace_id", workspace.id)
     .order("updated_at", { ascending: false })
-    .limit(12);
+    // A chat list you can actually scroll back through, like any chat product.
+    .limit(60);
 
   const selectedId = requestedConversation
     ?? (initialPrompt ? null : conversations?.[0]?.id)
