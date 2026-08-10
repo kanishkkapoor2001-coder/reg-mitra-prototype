@@ -2677,3 +2677,19 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .answer-staleness.is-ageing { color: var(--ink-600); }
 .answer-staleness.is-stale { color: var(--red-700); font-weight: 600; }
 .cal-verify-note { display: block; margin-top: 3px; color: var(--ink-500); font-size: 11px; line-height: 1.45; }
+
+/* A due date moved by notification. Shows the original date and the
+   notification, so the change is auditable rather than silent. */
+.detail-extension {
+  margin: 0 0 14px;
+  padding: 11px 13px;
+  border: 1px solid color-mix(in srgb, var(--amber-700, #a86a1a) 34%, transparent);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--amber-700, #a86a1a) 7%, transparent);
+  color: var(--ink-800);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.detail-extension strong { color: var(--ink-950); }
+.detail-extension a { color: var(--green-700); font-weight: 650; }

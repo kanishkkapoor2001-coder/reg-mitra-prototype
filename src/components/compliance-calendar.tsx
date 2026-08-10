@@ -270,9 +270,24 @@ export function ComplianceCalendar({
               </div>
               <p className="detail-date">{dateLabel(selected.date)}</p>
               <h2>{selected.title}</h2>
+
+              {selected.extension ? (
+                <div className="detail-extension">
+                  <strong>Extended by notification.</strong>
+                  {" "}The statutory date was {dateLabel(selected.extension.originalDate)};
+                  {" "}{selected.extension.notification} moved it to {dateLabel(selected.date)}.
+                  {selected.extension.limitedTo ? ` This extension is limited to ${selected.extension.limitedTo}.` : ""}
+                  {" "}
+                  <a href={selected.extension.sourceUrl} rel="noreferrer" target="_blank">Read the notification ↗</a>
+                </div>
+              ) : null}
+
               <p className="detail-description">{selected.description}</p>
               <dl>
                 <div><dt>Authority</dt><dd>{selected.authority}</dd></div>
+                {selected.statutoryBasis ? (
+                  <div><dt>Statutory basis</dt><dd>{selected.statutoryBasis}</dd></div>
+                ) : null}
                 <div><dt>Applies to</dt><dd>{selected.applicability}</dd></div>
                 <div><dt>Source page last reached</dt><dd>{selected.lastVerified}<span className="cal-verify-note">This checks that the official page loads. It does not verify the due date, and does not detect a notified extension.</span></dd></div>
                 <div><dt>Calendar state</dt><dd>{selected.kind === "regulatory-update" ? "Regulatory effective date" : "Recurring general obligation"} · {selected.sourceState === "checked" ? "source page reachable" : "manual source review needed"}</dd></div>
@@ -281,7 +296,11 @@ export function ComplianceCalendar({
                 <span><small>Official source</small><strong>{selected.sourceLabel}</strong></span>
                 <span>↗</span>
               </a>
-              <p className="calendar-caveat">Check the authority portal for later notifications, extensions, holidays, and client-specific rules before filing.</p>
+              <p className="calendar-caveat">
+                {selected.extension
+                  ? "Confirm the notification still stands, and check for holidays and client-specific rules before filing."
+                  : "Reg Mitra does not currently track notified extensions — no extension is recorded for this period, which is not the same as none existing. Check the authority portal for extensions, holidays and client-specific rules before filing."}
+              </p>
             </>
           ) : (
             <div className="calendar-empty">

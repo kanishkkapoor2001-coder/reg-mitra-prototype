@@ -1,3 +1,12 @@
+import {
+  OBLIGATION_RULES,
+  dueDayFor,
+  findExtension,
+  isWithinCoverage,
+  ruleIsInForce,
+  type ObligationId,
+} from "./compliance-rules.ts";
+
 export type ComplianceCategory = "GST" | "Direct tax" | "Payroll" | "Regulatory update";
 export type CalendarMode = "demo" | "product";
 export type CalendarSourceState = "checked" | "review";
@@ -16,6 +25,18 @@ export interface ComplianceEvent {
   lastVerified: string;
   kind: "obligation" | "regulatory-update";
   sourceState: CalendarSourceState;
+  /** The provision that fixes this date. */
+  statutoryBasis?: string;
+  /**
+   * Set when a notified extension moved this date. Carries the original date
+   * and the notification, so the change is auditable rather than silent.
+   */
+  extension?: {
+    originalDate: string;
+    notification: string;
+    sourceUrl: string;
+    limitedTo?: string;
+  };
 }
 
 export interface CalendarSnapshot {
@@ -67,6 +88,47 @@ function priorMonthLabel(year: number, monthIndex: number): string {
     .format(new Date(year, monthIndex - 1, 1));
 }
 
+/**
+ * Resolves an obligation date: the statutory day, then any notified extension.
+ *
+ * Returns null when the rule was not in force for that period — the calendar
+ * shows nothing rather than projecting today's position backwards.
+ */
+function resolveDue(
+  obligationId: ObligationId,
+  year: number,
+  monthIndex: number,
+  dayOverride?: number,
+): {
+  date: string;
+  statutoryBasis: string;
+  extension?: ComplianceEvent["extension"];
+} | null {
+  const rule = OBLIGATION_RULES[obligationId];
+  const day = dayOverride ?? dueDayFor(rule, monthIndex);
+  const statutoryDate = isoDate(year, monthIndex, day);
+
+  if (!ruleIsInForce(rule, statutoryDate) || !isWithinCoverage(statutoryDate)) return null;
+
+  // The tax period is the month the obligation relates to, i.e. the prior one.
+  const periodDate = new Date(Date.UTC(year, monthIndex - 1, 1));
+  const period = `${periodDate.getUTCFullYear()}-${String(periodDate.getUTCMonth() + 1).padStart(2, "0")}`;
+  const extension = findExtension(obligationId, period);
+
+  if (!extension) return { date: statutoryDate, statutoryBasis: rule.statutoryBasis };
+
+  return {
+    date: extension.extendedTo,
+    statutoryBasis: rule.statutoryBasis,
+    extension: {
+      originalDate: statutoryDate,
+      notification: extension.notification,
+      sourceUrl: extension.sourceUrl,
+      limitedTo: extension.limitedTo,
+    },
+  };
+}
+
 export function getComplianceEvents(
   year: number,
   monthIndex: number,
@@ -76,16 +138,18 @@ export function getComplianceEvents(
   } = {},
 ): ComplianceEvent[] {
   const events: ComplianceEvent[] = [];
-  const tdsDay = monthIndex === 3 ? 30 : 7;
   const tdsPeriod = priorMonthLabel(year, monthIndex);
   const lastVerified = options.lastVerified ?? "Sample data · 28 July 2026";
   const sourceState = options.sourceState ?? "review";
 
-  events.push({
+  const tdsDue = resolveDue("tds-deposit", year, monthIndex);
+  if (tdsDue) events.push({
     id: `tds-deposit-${year}-${monthIndex}`,
     title: `TDS/TCS deposit for ${tdsPeriod}`,
     shortTitle: "TDS deposit",
-    date: isoDate(year, monthIndex, tdsDay),
+    date: tdsDue.date,
+    statutoryBasis: tdsDue.statutoryBasis,
+    extension: tdsDue.extension,
     category: "Direct tax",
     authority: "Income Tax Department",
     applicability: "Deductors or collectors with tax deducted/collected in the prior month. Government and special cases can differ.",
@@ -99,11 +163,14 @@ export function getComplianceEvents(
     sourceState,
   });
 
-  events.push({
+  const gstr1Due = resolveDue("gstr1", year, monthIndex);
+  if (gstr1Due) events.push({
     id: `gstr1-${year}-${monthIndex}`,
     title: `GSTR-1 monthly return for ${tdsPeriod}`,
     shortTitle: "GSTR-1",
-    date: isoDate(year, monthIndex, 11),
+    date: gstr1Due.date,
+    statutoryBasis: gstr1Due.statutoryBasis,
+    extension: gstr1Due.extension,
     category: "GST",
     authority: "Goods and Services Tax Network",
     applicability: "Registered taxpayers filing GSTR-1 monthly. QRMP filers generally use the quarterly timetable instead.",
@@ -115,11 +182,14 @@ export function getComplianceEvents(
     sourceState,
   });
 
-  events.push({
+  const epfDue = resolveDue("epf", year, monthIndex);
+  if (epfDue) events.push({
     id: `epf-${year}-${monthIndex}`,
     title: `EPF contribution for ${tdsPeriod}`,
     shortTitle: "EPF",
-    date: isoDate(year, monthIndex, 15),
+    date: epfDue.date,
+    statutoryBasis: epfDue.statutoryBasis,
+    extension: epfDue.extension,
     category: "Payroll",
     authority: "Employees’ Provident Fund Organisation",
     applicability: "Employers covered by the EPF scheme with contributions due for the prior wage month.",
@@ -131,11 +201,14 @@ export function getComplianceEvents(
     sourceState,
   });
 
-  events.push({
+  const gstr3bDue = resolveDue("gstr3b", year, monthIndex);
+  if (gstr3bDue) events.push({
     id: `gstr3b-${year}-${monthIndex}`,
     title: `GSTR-3B monthly return for ${tdsPeriod}`,
     shortTitle: "GSTR-3B",
-    date: isoDate(year, monthIndex, 20),
+    date: gstr3bDue.date,
+    statutoryBasis: gstr3bDue.statutoryBasis,
+    extension: gstr3bDue.extension,
     category: "GST",
     authority: "Goods and Services Tax Network",
     applicability: "Normal taxpayers on the monthly filing cycle. QRMP filers generally follow 22nd/24th state-based quarterly dates.",
@@ -154,12 +227,15 @@ export function getComplianceEvents(
     9: { day: 31, quarter: "Q2" },
   };
   const statement = statementDeadlines[monthIndex];
-  if (statement) {
+  const statementDue = statement ? resolveDue("tds-statement", year, monthIndex, statement.day) : null;
+  if (statement && statementDue) {
     events.push({
       id: `tds-statement-${year}-${monthIndex}`,
       title: `${statement.quarter} quarterly TDS statement`,
       shortTitle: "TDS statement",
-      date: isoDate(year, monthIndex, statement.day),
+      date: statementDue.date,
+      statutoryBasis: statementDue.statutoryBasis,
+      extension: statementDue.extension,
       category: "Direct tax",
       authority: "Income Tax Department",
       applicability: "Deductors required to furnish a quarterly TDS statement for the relevant form and quarter.",
@@ -172,13 +248,18 @@ export function getComplianceEvents(
     });
   }
 
-  if ([2, 5, 8, 11].includes(monthIndex)) {
+  const advanceDue = [2, 5, 8, 11].includes(monthIndex)
+    ? resolveDue("advance-tax", year, monthIndex)
+    : null;
+  if (advanceDue) {
     const instalment = monthIndex === 2 ? "fourth" : monthIndex === 5 ? "first" : monthIndex === 8 ? "second" : "third";
     events.push({
       id: `advance-tax-${year}-${monthIndex}`,
       title: `${instalment.charAt(0).toUpperCase()}${instalment.slice(1)} advance-tax instalment`,
       shortTitle: "Advance tax",
-      date: isoDate(year, monthIndex, 15),
+      date: advanceDue.date,
+      statutoryBasis: advanceDue.statutoryBasis,
+      extension: advanceDue.extension,
       category: "Direct tax",
       authority: "Income Tax Department",
       applicability: "Taxpayers liable to pay advance tax. Presumptive taxation and other cases can follow different instalment rules.",
