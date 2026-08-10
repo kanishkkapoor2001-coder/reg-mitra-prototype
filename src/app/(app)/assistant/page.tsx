@@ -22,29 +22,29 @@ export default async function AssistantPage({ searchParams }: AssistantPageProps
   // one served canned sample answers even with a fully working assistant behind it.
   const liveAiReady = Boolean(getGatewayConfig())
     && (process.env.NODE_ENV !== "production" || process.env.REGMITRA_ENABLE_LIVE_AI === "true");
-  // Template mode serves canned, fictional answers. That is right for an
-  // explicit demo session and wrong for everything else: if a gateway variable
-  // goes missing in production, an outage must read as an outage, not quietly
-  // turn a research tool into a plausible-sounding fiction generator.
-  if (sessionMode === "demo") {
+  // THE DEMO IS FROZEN.
+  //
+  // Everyone without a workspace — an explicit demo session, or anyone simply
+  // not signed in — gets canned, fictional answers. Every public "demo" link
+  // points here, so this is what a prospect sees, and a sales demo has to be
+  // the same every time: deterministic, costing nothing, and incapable of
+  // saying something unintended about Indian tax law to someone evaluating the
+  // product. Template mode labels itself as fictional, so nobody is misled.
+  //
+  // It also means anonymous traffic never reaches the paid gateway.
+  const workspace = getSupabasePublicConfig() ? await getCurrentWorkspace() : null;
+
+  if (sessionMode === "demo" || !workspace) {
     return <AssistantExperience initialPrompt={initialPrompt} templateMode />;
   }
 
+  // From here on there IS a real workspace, so a missing gateway is an outage,
+  // not an invitation to serve fiction to a paying firm.
   if (!liveAiReady) {
     if (process.env.NODE_ENV === "production") {
       return <AssistantUnavailable />;
     }
     return <AssistantExperience initialPrompt={initialPrompt} templateMode />;
-  }
-
-  // No database configured: run the real assistant, just without saved history.
-  if (!getSupabasePublicConfig()) {
-    return <AssistantExperience initialPrompt={initialPrompt} publicMode templateMode={false} />;
-  }
-
-  const workspace = await getCurrentWorkspace();
-  if (!workspace) {
-    return <AssistantExperience initialPrompt={initialPrompt} publicMode templateMode={false} />;
   }
   const supabase = await createSupabaseServerClient();
   const { data: conversations } = await supabase
