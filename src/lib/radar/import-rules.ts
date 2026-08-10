@@ -15,6 +15,8 @@ export type ImportOutcome = {
   ok: boolean;
   fetched: number;
   imported: number;
+  /** Rules switched off because their document was superseded. */
+  deactivated?: number;
   skipped: Array<{ documentId: string; reason: string }>;
   cursor: string | null;
   hasMore: boolean;
@@ -68,7 +70,12 @@ export async function importRules(options: { limit?: number } = {}): Promise<Imp
   const since = state?.last_cursor ?? null;
   const limit = options.limit ?? 100;
 
-  let payload: { items: ExportItem[]; cursor: string | null; hasMore: boolean };
+  let payload: {
+    items: ExportItem[];
+    cursor: string | null;
+    hasMore: boolean;
+    supersededDocumentIds?: Array<{ documentId: string; supersededAt: string | null }>;
+  };
   try {
     const response = await fetch(exportUrl(base, since, limit), {
       headers: { Authorization: `Bearer ${secret}` },
@@ -82,8 +89,27 @@ export async function importRules(options: { limit?: number } = {}): Promise<Imp
     return { ...empty, message: `Export unreachable: ${(error as Error).message}` };
   }
 
-  const items = Array.isArray(payload.items) ? payload.items : [];
   const skipped: ImportOutcome["skipped"] = [];
+
+  // Deactivate rules for documents that have since been superseded.
+  //
+  // Filtering them out of the feed is not enough: the product already holds a
+  // copy and would keep evaluating it, flagging clients about a circular that
+  // has been withdrawn. This runs BEFORE the import so a supersession always
+  // takes effect, even if the import below fails partway.
+  let deactivated = 0;
+  for (const tombstone of payload.supersededDocumentIds ?? []) {
+    const { data, error } = await admin
+      .from("regulatory_rules")
+      .update({ active: false })
+      .eq("external_document_id", tombstone.documentId)
+      .eq("active", true)
+      .select("id");
+    if (error) skipped.push({ documentId: tombstone.documentId, reason: `tombstone: ${error.message}` });
+    else deactivated += data?.length ?? 0;
+  }
+
+  const items = Array.isArray(payload.items) ? payload.items : [];
   let imported = 0;
 
   for (const item of items) {
@@ -182,6 +208,7 @@ export async function importRules(options: { limit?: number } = {}): Promise<Imp
     ok: true,
     fetched: items.length,
     imported,
+    deactivated,
     skipped,
     cursor,
     hasMore: Boolean(payload.hasMore),
