@@ -1973,6 +1973,16 @@
 .login-alt .oauth-fine { margin-top: 8px; }
 
 /* awaiting-approval page */
+/* Centred confirmation layout. Scoped to .pending-page so the other pages built
+   on .editorial-page keep their left-aligned editorial column. The numbered
+   steps stay left-aligned inside the centred card — centring a list with
+   leading numerals leaves a ragged left edge and is harder to read. */
+.pending-page .editorial-hero { max-width: 640px; margin: 0 auto; padding-bottom: 40px; text-align: center; }
+.pending-page .editorial-hero > p:last-child { max-width: 560px; margin-inline: auto; }
+.pending-page .pending-card { margin-inline: auto; }
+.pending-page .pending-card-title { text-align: center; }
+.pending-page .pricing-foot { margin-top: 28px; text-align: center; }
+
 .pending-card {
   max-width: 620px;
   margin: 8px 0 0;

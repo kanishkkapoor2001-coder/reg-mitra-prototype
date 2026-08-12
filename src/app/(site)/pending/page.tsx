@@ -18,7 +18,10 @@ export default async function PendingPage({
 
   return (
     <PublicShell authPage>
-      <main className="editorial-page">
+      {/* Centred: this is a confirmation, not an article. There is nothing to
+          scan down the left edge and no next action to reach for, so the copy
+          reads better as a single centred column. */}
+      <main className="editorial-page pending-page">
         <header className="editorial-hero narrow">
           <p className="marketing-kicker">
             {rejected
