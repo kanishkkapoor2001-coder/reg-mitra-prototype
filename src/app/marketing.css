@@ -1879,7 +1879,7 @@
 }
 .oauth-divider::before,
 .oauth-divider::after { flex: 1; height: 1px; background: var(--line); content: ""; }
-.plan-detail { margin-top: 16px; }
+.plan-detail { margin-top: 4px; margin-bottom: 4px; }
 .plan-detail summary {
   cursor: pointer;
   color: var(--ink-600);
@@ -1892,7 +1892,7 @@
 .plan-detail summary strong { color: var(--ink-950); }
 .plan-detail .plan-choice { margin-top: 12px; }
 
-.plan-choice { display: grid; gap: 9px; margin: 0 0 20px; padding: 0; border: 0; }
+.plan-choice { display: grid; gap: 8px; margin: 0 0 4px; padding: 0; border: 0; }
 .plan-choice legend { padding: 0 0 10px; color: var(--ink-800); font-size: var(--text-md); font-weight: var(--weight-bold); }
 .plan-option {
   display: flex;
@@ -1966,7 +1966,11 @@
 
 .oauth-foot { margin: 26px 0 0; color: var(--ink-600); font-size: var(--text-md); }
 .oauth-foot a { color: var(--green-700); font-weight: var(--weight-bold); }
-.oauth-fine { margin: 14px 0 0; color: var(--ink-500); font-size: var(--text-sm); line-height: 1.55; }
+.oauth-fine { margin: 14px 0 0; color: var(--ink-400); font-size: var(--text-xs); line-height: 1.5; text-wrap: pretty; }
+/* Inside the footer block the rule already provides the separation, and the
+   privacy note is a disclosure, not a third message competing for attention. */
+.login-alt .oauth-foot { margin-top: 0; font-size: var(--text-sm); }
+.login-alt .oauth-fine { margin-top: 8px; }
 
 /* awaiting-approval page */
 .pending-card {

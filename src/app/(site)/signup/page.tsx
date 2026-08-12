@@ -101,13 +101,14 @@ export default async function SignupPage({
                 <input type="radio" name="intent" value="paid" defaultChecked={intent === "paid"} />
                 <span>
                   <strong>Set us up as a founding firm</strong>
-                  <small>Personal onboarding, a direct line to the founder, and your price held.</small>
+                  <small>Personal onboarding, and your price held.</small>
                 </span>
               </label>
             </fieldset>
 
-            <button className="marketing-button primary" type="submit">Email me a sign-up link</button>
-
+            {/* Plan belongs with the other choices, above the button. Sitting
+                below it, it asked the visitor to reconsider something after the
+                form had already presented its final action. */}
             <details className="plan-detail" open={plan === "ultra"}>
               <summary>
                 Plan: <strong>{TIERS[plan].name}</strong>
@@ -130,15 +131,22 @@ export default async function SignupPage({
                 </label>
               </div>
             </details>
+
+            <button className="marketing-button primary" type="submit">Email me a sign-up link</button>
           </form>
 
-          <p className="oauth-foot">
-            Already approved? <Link href="/login">Sign in</Link>
-          </p>
-          <p className="oauth-fine">
-            We store your name, work email and firm to review the request — nothing else, and we
-            never post on your behalf.
-          </p>
+          {/* Everything below the button used to be three same-weight lines in a
+              row — plan, sign-in, privacy — which read as a text dump rather
+              than a footer. One rule, one secondary action, one quiet note. */}
+          <div className="login-alt">
+            <p className="oauth-foot">
+              Already approved? <Link href="/login">Sign in</Link>
+            </p>
+            <p className="oauth-fine">
+              We store your name, work email and firm to review the request — nothing else, and we
+              never post on your behalf.
+            </p>
+          </div>
         </section>
       </main>
     </PublicShell>
