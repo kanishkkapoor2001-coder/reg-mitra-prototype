@@ -1,13 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { OauthButtons } from "@/components/oauth-buttons";
+import { OauthButtons, hasAnyOauthProvider } from "@/components/oauth-buttons";
 import { PublicShell } from "@/components/public-shell";
 import { TIERS, parseTier } from "@/lib/billing/tiers";
 import { parseIntent } from "@/lib/billing/signup-intent";
 
 export const metadata: Metadata = {
   title: "Create your account",
-  description: "Sign up with Google or Microsoft to request a Reg Mitra workspace for your firm.",
+  description: "Request a Reg Mitra workspace for your firm — a 7-day trial on your real client book, or personal onboarding as a founding firm.",
 };
 
 const errors: Record<string, string> = {
@@ -30,6 +30,8 @@ export default async function SignupPage({
   const plan = parseTier(params.plan);
   const intent = parseIntent(params.intent);
   const from = params.from?.startsWith("/") && !params.from.startsWith("//") ? params.from : "/today";
+  // Only name the providers the page is actually rendering buttons for.
+  const oauth = hasAnyOauthProvider();
 
   return (
     <PublicShell authPage>
@@ -42,7 +44,7 @@ export default async function SignupPage({
             email the moment your workspace is open. No card, nothing to cancel.
           </p>
           <ul>
-            <li><span>01</span> Sign up with Google, Microsoft or your work email</li>
+            <li><span>01</span> Sign up with {oauth ? "Google, Microsoft or your work email" : "your work email"}</li>
             <li><span>02</span> We approve your firm and open the workspace</li>
             <li><span>03</span> Run Reg Mitra against your real client book for 7 days</li>
           </ul>
@@ -79,32 +81,32 @@ export default async function SignupPage({
             />
             <input type="hidden" name="from" value={from} />
             <input type="hidden" name="origin" value="signup" />
-            <button className="marketing-button primary" type="submit">Email me a sign-up link</button>
 
             {/* Paid intent is deliberately visible rather than buried in the
                 plan chooser. A firm ready to pay is the most valuable signal
                 this page can collect, and the old wording ("Ultra — join the
-                waitlist") read as a closed door to exactly those people. */}
+                waitlist") read as a closed door to exactly those people.
+                It sits above the submit button: asked after it, the form looked
+                finished and the question read as an afterthought. */}
             <fieldset className="start-choice">
               <legend>How would you like to start?</legend>
               <label className="plan-option">
                 <input type="radio" name="intent" value="trial" defaultChecked={intent === "trial"} />
                 <span>
                   <strong>Try it free for 7 days</strong>
-                  <small>Your real client book, no card, nothing to cancel.</small>
+                  <small>No card, nothing to cancel.</small>
                 </span>
               </label>
               <label className="plan-option">
                 <input type="radio" name="intent" value="paid" defaultChecked={intent === "paid"} />
                 <span>
                   <strong>Set us up as a founding firm</strong>
-                  <small>
-                    We onboard the first firms personally — your client book loaded with you, a
-                    direct line to the founder, and your price held for as long as you stay.
-                  </small>
+                  <small>Personal onboarding, a direct line to the founder, and your price held.</small>
                 </span>
               </label>
             </fieldset>
+
+            <button className="marketing-button primary" type="submit">Email me a sign-up link</button>
 
             <details className="plan-detail" open={plan === "ultra"}>
               <summary>

@@ -863,7 +863,10 @@
 .login-page {
   display: grid;
   grid-template-columns: 1.25fr .75fr;
-  align-items: center;
+  /* Top-aligned, not centred. Centring worked while both columns were a similar
+     height, but the sign-up panel is much taller than its copy — so the copy got
+     pushed halfway down the page and the layout read as broken. */
+  align-items: start;
   gap: clamp(60px, 9vw, 150px);
   min-height: calc(100vh - 86px);
   max-width: var(--shell-max);
