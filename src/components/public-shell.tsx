@@ -26,8 +26,8 @@ export function PublicShell({
           <Link href="/pricing">Pricing</Link>
           <Link href="/faq">FAQ</Link>
         </nav>
-        {authPage ? null : (
-          <div className="public-header-actions">
+        <div className="public-header-actions">
+          {authPage ? null : (
             <Link className="header-demo-link" href="/login">
               Open product
               <svg viewBox="0 0 12 12" aria-hidden="true">
@@ -41,8 +41,37 @@ export function PublicShell({
                 />
               </svg>
             </Link>
-          </div>
-        )}
+          )}
+
+          {/* Below 900px the desktop nav is hidden, and nothing replaced it — so
+              on a phone every page but this one was unreachable except by
+              scrolling to the footer. A <details> menu rather than a scripted
+              one: it opens even if the page JS fails, and the browser handles
+              the expanded/collapsed semantics for screen readers. */}
+          <details className="mobile-nav">
+            <summary aria-label="Menu">
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path
+                  d="M3 6h14M3 10h14M3 14h14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </summary>
+            <div className="mobile-nav-panel">
+              <Link href="/features">Features</Link>
+              <Link href="/newsletter">Newsletter</Link>
+              <Link href="/about">About</Link>
+              <Link href="/pricing">Pricing</Link>
+              <Link href="/faq">FAQ</Link>
+              {authPage ? null : (
+                <Link className="mobile-nav-cta" href="/login">Open product</Link>
+              )}
+            </div>
+          </details>
+        </div>
       </header>
       {children}
       <footer className="public-footer">

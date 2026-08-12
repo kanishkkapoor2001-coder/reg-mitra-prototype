@@ -39,6 +39,53 @@
   justify-self: end;
   gap: 18px;
 }
+
+/* Mobile menu. Hidden on desktop, where the real nav is visible. */
+.mobile-nav { position: relative; display: none; }
+.mobile-nav summary {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink-950);
+  cursor: pointer;
+  list-style: none;
+}
+.mobile-nav summary::-webkit-details-marker { display: none; }
+.mobile-nav summary svg { width: 18px; height: 18px; }
+.mobile-nav[open] summary { border-color: var(--ink-950); }
+.mobile-nav-panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  min-width: 200px;
+  gap: 2px;
+  padding: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: 0 12px 28px rgb(18 38 28 / 10%);
+}
+.mobile-nav-panel a {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--ink-800);
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  white-space: nowrap;
+}
+.mobile-nav-panel a:hover { background: var(--surface-muted); }
+.mobile-nav-cta {
+  margin-top: 6px;
+  border-top: 1px solid var(--line);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  color: var(--green-700) !important;
+  padding-top: 12px !important;
+}
 .header-signin-link {
   padding: 8px 0;
   border-bottom: 1px solid transparent;
@@ -921,7 +968,11 @@
 
 @media (max-width: 900px) {
   .public-header { grid-template-columns: 1fr auto; height: 72px; }
+  /* The links move into .mobile-nav, and "Open product" moves in with them —
+     a CTA plus a menu button side by side is too much at 375px. */
   .public-header nav { display: none; }
+  .public-header-actions .header-demo-link { display: none; }
+  .mobile-nav { display: block; }
   .marketing-principle,
   .section-intro,
   .process-list li,
