@@ -13,10 +13,30 @@ const securityHeaders = [
     : []),
 ];
 
+// The production alias served the whole site a second time, publicly, on a
+// vercel.app URL. Two problems: the host is the product's public face and it
+// was not the paid-for domain, and search engines will happily index the
+// duplicate instead of regmitra.in.
+//
+// Only the fixed production alias is redirected — per-deployment preview URLs
+// keep working, which is the point of previews.
+const PRODUCTION_HOST = "regmitra.in";
+const VERCEL_PRODUCTION_ALIAS = "reg-mitra-migration.vercel.app";
+
 const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: VERCEL_PRODUCTION_ALIAS }],
+        destination: `https://${PRODUCTION_HOST}/:path*`,
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
