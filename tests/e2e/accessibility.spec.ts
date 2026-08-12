@@ -46,17 +46,13 @@ test.describe("public experience", () => {
 });
 
 test.describe("demo product experience", () => {
-  test.beforeEach(async ({ request }) => {
-    await request.post("/api/auth/demo", {
-      headers: { referer: "http://127.0.0.1:4190/demo" },
-    });
-  });
-
+  // Entering the demo is GET /api/demo, which sets the reg_mitra_session cookie
+  // and redirects to /today. This used to POST /api/auth/demo — a route that does
+  // not exist — so every case in this block failed on the setup assertion before
+  // axe ever ran. The whole product half of the accessibility gate was dead.
   for (const route of productRoutes) {
     test(`${route} has no automated WCAG AA violations`, async ({ page, context }) => {
-      const demoResponse = await context.request.post("/api/auth/demo", {
-        headers: { referer: "http://127.0.0.1:4190/demo" },
-      });
+      const demoResponse = await context.request.get("/api/demo");
       expect(demoResponse.ok()).toBeTruthy();
       await page.goto(route);
       await expect(page.locator("body")).toBeVisible();

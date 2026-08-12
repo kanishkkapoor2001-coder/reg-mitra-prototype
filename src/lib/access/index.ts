@@ -1,4 +1,5 @@
 import "server-only";
+import { DEFAULT_INTENT, type SignupIntent } from "@/lib/billing/signup-intent";
 import { DEFAULT_TIER, TIERS, type PlanTier } from "@/lib/billing/tiers";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -11,6 +12,12 @@ export type AccessIdentity = {
   avatarUrl?: string | null;
   provider?: string | null;
   requestedTier?: PlanTier;
+  /**
+   * Whether they asked to start paying. Carried on the notification only — the
+   * `record_access_request` RPC has a fixed signature, so persisting this needs
+   * a migration. Until then the alert email is the record.
+   */
+  intent?: SignupIntent;
 };
 
 // Comma-separated so alerts can go to more than one mailbox. Note that
@@ -81,6 +88,9 @@ export async function notifyOperatorOfSignup(identity: AccessIdentity): Promise<
   const limitText = tierInfo.clientLimit === null
     ? "unlimited client companies"
     : `up to ${tierInfo.clientLimit} client companies`;
+  // A firm asking to pay is the one alert that must not read like the other
+  // twenty in the inbox, because there is no checkout to catch them if it does.
+  const wantsToPay = (identity.intent ?? DEFAULT_INTENT) === "paid";
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -92,20 +102,34 @@ export async function notifyOperatorOfSignup(identity: AccessIdentity): Promise<
       body: JSON.stringify({
         from: NOTIFY_FROM,
         to: NOTIFY_TO,
-        subject: `Reg Mitra signup — ${tierInfo.name}${tier === "ultra" ? " (waitlist)" : ""} — ${identity.email}`,
+        subject: wantsToPay
+          ? `💰 WANTS TO PAY — ${tierInfo.name} — ${identity.email}`
+          : `Reg Mitra signup — ${tierInfo.name} trial — ${identity.email}`,
         text: [
-          "Someone requested access to Reg Mitra.",
+          wantsToPay
+            ? "A firm asked to start on a PAID plan. Contact them yourself — there is no checkout."
+            : "Someone requested access to Reg Mitra.",
           "",
           `Email:      ${identity.email}`,
           `Name:       ${name}`,
           `Signed in:  ${provider}`,
           `WANTS:      ${tierInfo.name} — ${tierInfo.priceLabel}, ${limitText}`,
-          tier === "ultra"
-            ? "            (Ultra is not open yet — this is a waitlist request.)"
+          wantsToPay
+            ? "            READY TO PAY — onboard as a founding firm."
             : "            (Starts with the 7-day free trial.)",
           "",
           "They are PENDING and cannot use the product yet.",
           "",
+          ...(wantsToPay
+            ? [
+              "They were told they get, as a founding firm:",
+              "  - personal onboarding — their client book loaded with them",
+              "  - a direct line to you, not a support queue",
+              "  - their price held for as long as they stay",
+              "Reply within a day or that promise is the first thing you break.",
+              "",
+            ]
+            : []),
           "Approve or reject them here:",
           `  ${APP_URL}/admin/access`,
           "",

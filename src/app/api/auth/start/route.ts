@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { AUTH_LINK_HOURLY, AUTH_LINK_PER_ADDRESS, callerKey, checkRateLimit } from "@/lib/rate-limit";
 import { sendMagicLink } from "@/lib/access/magic-link";
+import { INTENT_COOKIE, parseIntent } from "@/lib/billing/signup-intent";
 import { parseTier } from "@/lib/billing/tiers";
 import { getAppUrl, getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
@@ -45,6 +46,14 @@ export async function POST(request: NextRequest) {
   // The magic link is opened from an email, so the chosen plan cannot ride on
   // the URL. Park it in a short-lived cookie for the callback to read.
   response.cookies.set("reg_mitra_plan", parseTier(formData.get("plan")), {
+    maxAge: 60 * 60,
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+  });
+  // Same reason as the plan: a firm that asked to start paying must still be
+  // flagged as such when they come back through the link in their inbox.
+  response.cookies.set(INTENT_COOKIE, parseIntent(formData.get("intent")), {
     maxAge: 60 * 60,
     path: "/",
     httpOnly: true,

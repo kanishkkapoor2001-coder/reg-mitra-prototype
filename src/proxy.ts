@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { readAccessStatus } from "@/lib/access";
+import { isDevAuthBypassEnabled } from "@/lib/auth/dev-bypass";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseRequestClient } from "@/lib/supabase/request";
 
@@ -13,6 +14,11 @@ import { createSupabaseRequestClient } from "@/lib/supabase/request";
 // - Billing is intentionally not gated during the pilot (no live Stripe).
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Local dev only, and inert in any deployment — see lib/auth/dev-bypass.
+  if (isDevAuthBypassEnabled()) {
+    return NextResponse.next({ request });
+  }
 
   if (!getSupabasePublicConfig()) {
     return NextResponse.next({ request });

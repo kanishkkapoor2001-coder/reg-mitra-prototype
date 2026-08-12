@@ -2,6 +2,7 @@ import "server-only";
 import { NextResponse, type NextRequest } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { notifyOperatorOfSignup, recordAccessRequest } from "@/lib/access";
+import { INTENT_COOKIE, parseIntent } from "@/lib/billing/signup-intent";
 import { parseTier } from "@/lib/billing/tiers";
 
 // Session cookies live on the response the Supabase client wrote to; a fresh
@@ -33,6 +34,7 @@ export async function finishSignIn(
   if (!user?.email) return response;
 
   const metadata = user.user_metadata ?? {};
+  const intent = parseIntent(request.cookies.get(INTENT_COOKIE)?.value);
   const identity = {
     authUserId: user.id,
     email: user.email,
@@ -40,8 +42,10 @@ export async function finishSignIn(
     avatarUrl: (metadata.avatar_url ?? metadata.picture ?? null) as string | null,
     provider: (user.app_metadata?.provider ?? null) as string | null,
     requestedTier: parseTier(request.cookies.get("reg_mitra_plan")?.value),
+    intent,
   };
   response.cookies.set("reg_mitra_plan", "", { maxAge: 0, path: "/" });
+  response.cookies.set(INTENT_COOKIE, "", { maxAge: 0, path: "/" });
 
   try {
     const result = await recordAccessRequest(identity);
@@ -49,7 +53,13 @@ export async function finishSignIn(
     // serverless function returns its response.
     if (result.isNew) await notifyOperatorOfSignup(identity);
     if (result.status !== "approved") {
-      return redirectPreservingSession(request, response, `/pending?status=${result.status}`);
+      // The intent rides along so /pending can answer a firm that asked to pay
+      // with what they actually get, instead of a generic "you're on the list".
+      return redirectPreservingSession(
+        request,
+        response,
+        `/pending?status=${result.status}&intent=${intent}`,
+      );
     }
   } catch (error) {
     console.error("[auth] could not record access request", error);

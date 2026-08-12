@@ -74,26 +74,66 @@ async function callEmbeddingApi(endpoint, body, apiKey) {
   }
 }
 
+const RETRYABLE_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
+const MAX_ATTEMPTS = 6;
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Embeds one chunk, retrying the failures that are actually transient.
+ *
+ * The corpus is ~1,800 chunks against a quota-limited endpoint, so a 429 partway
+ * through is the expected case, not the exceptional one. This previously threw on
+ * the first non-2xx and `main` had no handler, so a single rate-limit aborted the
+ * whole run — which is how the shipped corpus stalled at 21 of 1,826 embedded.
+ */
 async function embed(content, apiKey) {
   const endpoint =
     `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:embedContent`;
-  const result = await callEmbeddingApi(endpoint, {
+  const body = {
     model: `models/${model}`,
-    content: {
-      parts: [{ text: content }],
-    },
+    content: { parts: [{ text: content }] },
     outputDimensionality: dimensions,
-  }, apiKey);
-  if (
-    result.status < 200
-    || result.status >= 300
-    || !Array.isArray(result.payload.embedding?.values)
-  ) {
-    throw new Error(
+  };
+
+  let lastError = null;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    let result;
+    try {
+      result = await callEmbeddingApi(endpoint, body, apiKey);
+    } catch (error) {
+      // Network-level failure (socket reset, timeout) — same backoff as a 5xx.
+      lastError = error;
+      if (attempt === MAX_ATTEMPTS) break;
+      await sleep(Math.min(2 ** attempt * 500, 30_000) + Math.floor(Math.random() * 250));
+      continue;
+    }
+
+    if (
+      result.status >= 200
+      && result.status < 300
+      && Array.isArray(result.payload.embedding?.values)
+    ) {
+      return result.payload.embedding.values;
+    }
+
+    lastError = new Error(
       result.payload.error?.message || `Embedding request failed with HTTP ${result.status}`,
     );
+
+    // A malformed request or a revoked key will fail identically forever.
+    if (!RETRYABLE_STATUSES.has(result.status)) break;
+    if (attempt === MAX_ATTEMPTS) break;
+
+    // Exponential backoff with jitter, honouring Retry-After when the API sends it.
+    const retryAfter = Number(result.payload.error?.details?.retryDelay?.replace?.("s", ""));
+    const backoff = Number.isFinite(retryAfter) && retryAfter > 0
+      ? retryAfter * 1_000
+      : Math.min(2 ** attempt * 500, 30_000);
+    await sleep(backoff + Math.floor(Math.random() * 250));
   }
-  return result.payload.embedding.values;
+
+  throw lastError ?? new Error("Embedding failed for an unknown reason.");
 }
 
 async function main() {
@@ -113,25 +153,57 @@ async function main() {
     `Embedding ${pending.length} pending chunks (${completed} already complete).\n`,
   );
 
+  const failures = [];
+
   for (let offset = 0; offset < pending.length; offset += batchSize) {
     const batch = pending.slice(offset, offset + batchSize);
-    const values = await Promise.all(batch.map((chunk) => embed(
+
+    // `allSettled`, not `all`: one chunk that fails every retry must not discard
+    // the other eight in its batch, nor abandon the several hundred after it.
+    const settled = await Promise.allSettled(batch.map((chunk) => embed(
       `title: ${chunk.title} | authority: ${chunk.authority} | applicability: ${chunk.applicability} | text: ${chunk.content}`,
       apiKey,
     )));
-    const byId = new Map(batch.map((chunk, index) => [chunk.id, values[index]]));
-    corpus.chunks = corpus.chunks.map((chunk) => ({
-      ...chunk,
-      embedding: byId.get(chunk.id) ?? chunk.embedding,
-    }));
-    completed += batch.length;
-    corpus.embeddedChunkCount = completed;
-    corpus.embeddedAt = new Date().toISOString();
-    await writeFile(corpusPath, `${JSON.stringify(corpus)}\n`);
-    process.stdout.write(`Embedded ${completed}/${eligible.length} chunks.\n`);
+
+    const byId = new Map();
+    settled.forEach((outcome, index) => {
+      const chunk = batch[index];
+      if (outcome.status === "fulfilled") {
+        byId.set(chunk.id, outcome.value);
+      } else {
+        failures.push({ id: chunk.id, reason: outcome.reason?.message ?? String(outcome.reason) });
+      }
+    });
+
+    if (byId.size) {
+      corpus.chunks = corpus.chunks.map((chunk) => ({
+        ...chunk,
+        embedding: byId.get(chunk.id) ?? chunk.embedding,
+      }));
+      completed += byId.size;
+      corpus.embeddedChunkCount = completed;
+      corpus.embeddedAt = new Date().toISOString();
+      // Written every batch so an interrupted run resumes instead of restarting.
+      await writeFile(corpusPath, `${JSON.stringify(corpus)}\n`);
+    }
+
+    process.stdout.write(
+      `Embedded ${completed}/${eligible.length} chunks${failures.length ? ` (${failures.length} failed)` : ""}.\n`,
+    );
   }
 
   process.stdout.write(`Stored ${completed} embeddings using ${model}.\n`);
+
+  if (failures.length) {
+    // Loud, and a non-zero exit: a partially embedded corpus silently degrades
+    // retrieval to lexical-only for whatever did not make it in.
+    const preview = failures.slice(0, 5).map((f) => `  ${f.id}: ${f.reason}`).join("\n");
+    process.stdout.write(
+      `\n${failures.length} chunk(s) still unembedded. Re-run to retry just those.\n${preview}\n`
+      + (failures.length > 5 ? `  … and ${failures.length - 5} more\n` : ""),
+    );
+    process.exitCode = 1;
+  }
 }
 
 await main();

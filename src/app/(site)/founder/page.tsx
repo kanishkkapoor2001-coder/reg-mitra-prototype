@@ -14,6 +14,10 @@ const errors: Record<string, string> = {
   invalid_code: "That founder code is not valid.",
   not_configured: "Founder access is not configured right now.",
   unavailable: "We could not open the workspace. Please try again.",
+  // The route rate-limits code attempts (FOUNDER_CODE_HOURLY). Without this the
+  // fallback told a locked-out founder to "try again", which fails immediately
+  // and reads as a broken code rather than a cooldown.
+  rate_limited: "Too many attempts. Wait about an hour, then try again.",
 };
 
 export default async function FounderPage({
@@ -33,7 +37,7 @@ export default async function FounderPage({
   }
 
   return (
-    <PublicShell>
+    <PublicShell authPage>
       <main className="login-page">
         <section className="login-copy">
           <p className="marketing-kicker">Private founder access</p>

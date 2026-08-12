@@ -1246,8 +1246,12 @@ export function AssistantExperience({
               </div>
             ) : null}
             <div className="composer-actions">
+              {/* Visually hidden but still in the accessibility tree, so it needs
+                  its own name — a screen reader reaches it even though sighted
+                  users trigger it through the adjacent button. */}
               <input
                 accept="application/pdf"
+                aria-label="Upload a notice PDF to read"
                 className="visually-hidden"
                 onChange={(event) => {
                   const file = event.target.files?.[0];

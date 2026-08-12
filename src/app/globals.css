@@ -33,7 +33,7 @@ button { color: inherit; }
   outline-offset: 2px;
 }
 
-.app-shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+.app-shell { display: grid; grid-template-columns: 216px minmax(0, 1fr); min-height: 100vh; }
 
 .sidebar {
   position: sticky;
@@ -41,17 +41,17 @@ button { color: inherit; }
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: var(--space-6) var(--space-4) var(--space-4);
+  padding: var(--space-4) var(--space-3) var(--space-3);
   background: var(--forest-900);
   color: #dce8e2;
   border-right: 1px solid rgb(255 255 255 / 6%);
 }
 
-.brand { display: flex; align-items: center; gap: 12px; padding: 0 8px 24px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 6px 14px; }
 .brand-mark {
   display: grid;
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   place-items: center;
   border: 1px solid rgb(255 255 255 / 14%);
   border-radius: 10px;
@@ -67,11 +67,11 @@ button { color: inherit; }
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 42px;
-  gap: 11px;
-  margin: 2px 0;
-  padding: 0 12px;
-  border-radius: 10px;
+  min-height: 34px;
+  gap: 10px;
+  margin: 1px 0;
+  padding: 0 10px;
+  border-radius: 8px;
   color: #9eb1a8;
   font-size: 13px;
   font-weight: 520;
@@ -200,8 +200,8 @@ button { color: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 68px;
-  padding: 0 32px;
+  height: 54px;
+  padding: 0 22px;
   border-bottom: 1px solid var(--line);
   background: rgb(251 252 250 / 90%);
   backdrop-filter: blur(16px);
@@ -362,10 +362,24 @@ kbd { padding: 2px 6px; border: 1px solid var(--line); border-radius: 5px; backg
 @keyframes fade-in { from { opacity: 0; } }
 @keyframes palette-in { from { opacity: 0; transform: translateY(-8px) scale(.985); } }
 
-.page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
-.eyebrow { margin: 0 0 7px; color: var(--green-700); font-size: 12px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+.page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 14px; }
+.eyebrow { margin: 0 0 5px; color: var(--green-700); font-size: 12px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
 h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 7px; font-size: clamp(24px, 2.4vw, 34px); font-weight: 680; letter-spacing: -.045em; }
+
+/* App type scale.
+ *
+ * The app inherited the marketing site's display scale — viewport-fluid headings
+ * running up to 48px sitting directly on top of 12–13px body text. That 3.7x jump
+ * with nothing between it is what made the product read as heavy: a working queue
+ * looked like a landing page, and a CA clearing 40 reviews saw one item per screen.
+ *
+ * Headings here are fixed, not fluid: in a tool, widening the window should reveal
+ * more rows, not inflate the chrome. Tracking relaxes as size drops — the tight
+ * negative tracking that flatters 48px display type looks cramped at 20px.
+ *
+ * Scoped to .app-shell so the marketing site keeps its editorial scale. */
+.app-shell h1 { margin-bottom: 5px; font-size: 20px; font-weight: 680; letter-spacing: -.022em; }
 h2 { margin-bottom: 6px; font-size: 16px; font-weight: 680; letter-spacing: -.02em; }
 h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01em; }
 .page-subtitle { max-width: 680px; margin-bottom: 0; color: var(--ink-600); font-size: 12px; line-height: 1.65; }
@@ -396,31 +410,32 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 28px;
-  padding: 10px 0 30px;
+  gap: 20px;
+  padding: 2px 0 14px;
 }
-.today-hero h1 { margin-bottom: 8px; font-size: clamp(30px, 4vw, 48px); font-weight: 650; letter-spacing: -.055em; }
-.today-hero p:not(.eyebrow) { max-width: 620px; margin-bottom: 0; color: var(--ink-600); font-size: 13px; line-height: 1.6; }
+.today-hero h1 { margin-bottom: 5px; font-size: 23px; font-weight: 660; letter-spacing: -.025em; }
+.today-hero p:not(.eyebrow) { max-width: 620px; margin-bottom: 0; color: var(--ink-600); font-size: 13px; line-height: 1.55; }
 .today-summary {
   display: flex;
   align-items: center;
-  min-height: 84px;
-  gap: 22px;
-  margin-bottom: 32px;
-  padding: 16px 20px;
+  min-height: 54px;
+  gap: 18px;
+  margin-bottom: 16px;
+  padding: 9px 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);
 
 }
-.today-summary > span { display: grid; min-width: 88px; gap: 3px; }
-.today-summary strong { color: var(--ink-950); font-size: 21px; letter-spacing: -.04em; }
+.today-summary > span { display: grid; min-width: 82px; gap: 1px; }
+/* Tabular figures so the counts do not reflow as the queue changes. */
+.today-summary strong { color: var(--ink-950); font-size: 17px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .today-summary small { color: var(--ink-500); font-size: 12px; }
 .today-summary > i { width: 1px; height: 34px; background: var(--line); }
 .today-summary-note { display: flex; align-items: center; gap: 9px; margin-left: auto; }
 .focus-section { max-width: 1040px; }
-.focus-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 12px; }
-.focus-heading h2 { margin: 0; font-size: 18px; }
+.focus-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 9px; }
+.focus-heading h2 { margin: 0; font-size: 15px; letter-spacing: -.015em; }
 .focus-heading > span { color: var(--ink-500); font-size: 12px; }
 .decision-list { display: grid; gap: 9px; }
 .decision-item {
@@ -434,12 +449,14 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .decision-item.expanded { border-color: #c7d6cc; }
 .decision-trigger {
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto 22px;
+  grid-template-columns: 26px minmax(0, 1fr) auto 20px;
   align-items: center;
   width: 100%;
-  min-height: 72px;
-  gap: 13px;
-  padding: 11px 16px;
+  /* Was 72px. The queue is the one surface a CA scans dozens of times a day, so
+   * rows are sized to fit several on screen at once rather than to feel spacious. */
+  min-height: 50px;
+  gap: 12px;
+  padding: 8px 14px;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -458,21 +475,22 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
-  gap: 22px;
-  padding: 15px 16px 16px 61px;
+  gap: 18px;
+  /* Left inset tracks the trigger's 26px index column + 14px padding + 12px gap. */
+  padding: 12px 14px 13px 52px;
   border-top: 1px solid var(--line);
   background: var(--surface-muted);
 }
-.decision-why { max-width: 660px; margin-bottom: 11px; color: var(--ink-600); font-size: 12px; line-height: 1.65; }
+.decision-why { max-width: 660px; margin-bottom: 9px; color: var(--ink-600); font-size: 12px; line-height: 1.6; }
 .decision-state, .decision-actions { display: flex; flex-wrap: wrap; gap: 7px; }
-.queue-complete { display: grid; justify-items: center; gap: 5px; padding: 48px 20px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--green-700); text-align: center; }
+.queue-complete { display: grid; justify-items: center; gap: 5px; padding: 30px 20px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--green-700); text-align: center; }
 .queue-complete h2 { margin: 8px 0 0; color: var(--ink-950); }
 .queue-complete p { margin: 0; color: var(--ink-500); font-size: 12px; }
 .queue-empty-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 10px; }
 .queue-empty-actions form { display: contents; }
 .today-notice { max-width: 1040px; margin: 0 0 18px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-muted); color: var(--ink-600); font-size: 12.5px; line-height: 1.5; }
 .today-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.next-up { display: flex; align-items: center; justify-content: space-between; gap: 24px; max-width: 1040px; margin-top: 26px; padding: 22px 2px 0; border-top: 1px solid var(--line); }
+.next-up { display: flex; align-items: center; justify-content: space-between; gap: 24px; max-width: 1040px; margin-top: 18px; padding: 14px 2px 0; border-top: 1px solid var(--line); }
 .next-up h2 { margin-bottom: 5px; }
 .next-up p:not(.eyebrow) { margin: 0; color: var(--ink-500); font-size: 12px; }
 
@@ -480,14 +498,14 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 26px;
-  padding: 10px 0 4px;
+  gap: 20px;
+  margin-bottom: 14px;
+  padding: 2px 0 2px;
 }
-.portfolio-hero h1 { margin-bottom: 7px; font-size: clamp(30px, 4vw, 44px); }
+.portfolio-hero h1 { margin-bottom: 5px; font-size: 23px; letter-spacing: -.025em; }
 .portfolio-hero p:not(.eyebrow) { max-width: 580px; margin: 0; color: var(--ink-600); font-size: 12px; line-height: 1.6; }
-.portfolio-stat { display: grid; min-width: 130px; gap: 2px; text-align: right; }
-.portfolio-stat strong { font-size: 28px; letter-spacing: -.05em; }
+.portfolio-stat { display: grid; min-width: 130px; gap: 1px; text-align: right; }
+.portfolio-stat strong { font-size: 20px; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .portfolio-stat span { color: var(--ink-500); font-size: 12px; }
 .portfolio-controls {
   display: flex;
@@ -804,14 +822,14 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .client-table { width: 100%; min-width: 840px; border-collapse: collapse; table-layout: fixed; }
 .client-table thead { position: sticky; top: 0; z-index: 1; background: var(--surface-muted); }
 .client-table th,
-.client-table td { height: 58px; padding: 10px 14px; border-bottom: 1px solid var(--line); color: var(--ink-600); font-size: 12px; text-align: left; vertical-align: middle; }
-.client-table thead th { height: 42px; color: var(--ink-500); font-size: 12px; font-weight: 700; }
+.client-table td { height: 42px; padding: 7px 14px; border-bottom: 1px solid var(--line); color: var(--ink-600); font-size: 12px; text-align: left; vertical-align: middle; }
+.client-table thead th { height: 34px; color: var(--ink-500); font-size: 12px; font-weight: 700; }
 .client-table thead button { width: 100%; padding: 8px 0; border: 0; background: transparent; color: inherit; font: inherit; font-weight: inherit; text-align: inherit; cursor: pointer; }
 .client-table tbody tr:last-child > * { border-bottom: 0; }
 .client-table tbody tr:hover { background: var(--surface-hover); }
 .client-table tbody th { width: 28%; }
-.client-table tbody th a { display: block; overflow: hidden; color: var(--ink-950); font-size: 14px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-.client-table tbody th small { display: block; overflow: hidden; margin-top: 3px; color: var(--ink-500); font-size: 12px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.client-table tbody th a { display: block; overflow: hidden; color: var(--ink-950); font-size: 13px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.client-table tbody th small { display: block; overflow: hidden; margin-top: 1px; color: var(--ink-500); font-size: 11.5px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 .client-table .numeric { font-variant-numeric: tabular-nums; text-align: right; }
 .client-table .client-identifier { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
 .filter-label { display: inline-flex; }
@@ -864,7 +882,7 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .source-line { display: flex; align-items: center; gap: 6px; color: var(--ink-500); font-size: 12px; }
 .source-line i { width: 6px; height: 6px; border-radius: 50%; background: #d68a24; }
 
-.detail-hero { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; padding: 21px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.detail-hero { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; padding: 13px 15px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
 .detail-avatar { display: grid; width: 52px; height: 52px; place-items: center; border-radius: 10px; background: var(--forest-900); color: #9ce9b6; font-size: 14px; font-weight: 750; }
 .detail-hero h1 { margin-bottom: 4px; font-size: 22px; }
 .identifier-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
@@ -873,7 +891,7 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .detail-risk strong { display: block; font-size: 26px; letter-spacing: -.04em; }
 .detail-risk span { color: var(--ink-500); font-size: 12px; }
 
-.assistant-hero { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.assistant-hero { display: flex; align-items: center; gap: 12px; margin-bottom: 11px; }
 .assistant-hero .assistant-symbol { margin: 0; }
 .assistant-hero h1 { margin-bottom: 3px; }
 .assistant-hero p:not(.eyebrow) { margin: 0; color: var(--ink-500); font-size: 12px; }
@@ -1444,7 +1462,7 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 }
 .integration-center-header > div { max-width: 720px; }
 .integration-center-header > .button { flex: 0 0 auto; white-space: nowrap; }
-.integration-center-header h2 { margin: 5px 0 7px; font-size: clamp(22px, 2.3vw, 30px); letter-spacing: -.035em; }
+.integration-center-header h2 { margin: 3px 0 5px; font-size: 17px; letter-spacing: -.02em; }
 .integration-center-header > div > p:last-child { margin: 0; color: var(--ink-600); font-size: 14px; line-height: 1.6; }
 .demo-connection-notice {
   display: flex;
@@ -1638,8 +1656,12 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 }
 .trust-summary h2 { margin-bottom: 5px; font-size: 13px; }
 .trust-summary p:not(.eyebrow) { max-width: 690px; margin: 0; color: var(--ink-600); font-size: 12px; line-height: 1.6; }
-.trust-summary-states { display: grid; gap: 7px; }
-.trust-summary-states > span { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 8px; }
+/* The badge column was pinned to 110px, so the widest state ("Source not
+ * reviewed") overflowed and printed on top of its own label. The rows share one
+ * grid — via display:contents on each pair — so the column sizes to the widest
+ * badge and every label still lines up. */
+.trust-summary-states { display: grid; grid-template-columns: max-content 1fr; align-items: center; gap: 7px 8px; }
+.trust-summary-states > span { display: contents; }
 .trust-summary-states small { color: var(--ink-500); font-size: 12px; }
 
 .evidence-panel {
@@ -1703,16 +1725,22 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .source-row small { display: block; margin-top: 3px; color: var(--ink-500); font-size: 12px; }
 .source-policy { color: var(--ink-600); font-size: 12px; line-height: 1.5; }
 
-/* Reading-first product scale: dense metadata stays compact; decisions and answers do not. */
-.nav-link { font-size: 15px; }
-.more-menu summary { font-size: 14px; }
+/* Reading-first product scale: dense metadata stays compact; decisions and answers do not.
+ *
+ * Scoped to *reading* surfaces only. This block used to enlarge the chrome too —
+ * navigation, menus, the firm card — which is what made the shell feel bulky:
+ * persistent furniture was set at reading sizes it never needed. Answer text,
+ * source cards and the composer keep the larger scale; you read those. */
+.nav-link { font-size: 13px; }
+.more-menu summary { font-size: 13px; }
 .more-menu-panel strong,
-.firm-card strong { font-size: 14px; }
+.firm-card strong { font-size: 13px; }
 .more-menu-panel small,
-.firm-card small { font-size: 13px; }
-.assistant-hero p:not(.eyebrow) { max-width: 680px; font-size: 15px; line-height: 1.55; }
-.assistant-mode-switch strong { font-size: 14px; }
-.assistant-mode-switch small { font-size: 13px; }
+.firm-card small { font-size: 12px; }
+/* Page furniture, not answer text — kept at chrome scale. */
+.assistant-hero p:not(.eyebrow) { max-width: 680px; font-size: 12.5px; line-height: 1.5; }
+.assistant-mode-switch strong { font-size: 13px; }
+.assistant-mode-switch small { font-size: 12px; }
 .assistant-template-note { font-size: 14px; line-height: 1.5; }
 .conversation-library-heading h2,
 .context-section h2,
@@ -1724,8 +1752,8 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .conversation-card { gap: 6px; padding: 13px; }
 .conversation-card strong { font-size: 15px; line-height: 1.4; }
 .conversation-mode { font-size: 12px; }
-.assistant-welcome h2 { font-size: 28px; }
-.assistant-welcome p { font-size: 16px; line-height: 1.65; }
+.assistant-welcome h2 { font-size: 22px; letter-spacing: -.024em; }
+.assistant-welcome p { font-size: 15px; line-height: 1.6; }
 .prompt-card { min-height: 82px; padding: 15px; font-size: 15px; line-height: 1.5; }
 .composer textarea { min-height: 66px; font-size: 16px; line-height: 1.5; }
 .composer-mode-line,
@@ -1896,9 +1924,13 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
     left: auto;
     width: min(260px, calc(100vw - 28px));
   }
-  .topbar { height: 58px; padding: 0 16px; }
-  .global-search { width: min(330px, 64vw); }
-  .topbar-actions { gap: 7px; }
+  .topbar { height: 54px; padding: 0 14px; gap: 8px; }
+  /* Was a fixed min(330px, 64vw). At 375px that reserved 240px, which together
+   * with the calendar/avatar/sign-in cluster overran the bar and clipped
+   * "Sign in" off the right edge. The field now absorbs whatever the actions
+   * leave instead of claiming a fixed share. */
+  .global-search { width: auto; min-width: 0; flex: 1 1 auto; }
+  .topbar-actions { flex: 0 0 auto; gap: 7px; }
   .topbar-calendar-link {
     justify-content: center;
     width: 36px;
@@ -1912,7 +1944,9 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   .main-content { padding: 24px 16px 104px; }
   .today-hero, .portfolio-hero { align-items: flex-start; flex-direction: column; }
   .today-hero { padding-top: 2px; }
-  .today-hero h1 { font-size: 32px; }
+  /* Narrow screens step down from the desktop 23px, never up. This was 32px back
+   * when the desktop heading was 48px and it silently became the larger of the two. */
+  .today-hero h1 { font-size: 21px; }
   .today-summary { align-items: flex-start; flex-wrap: wrap; gap: 14px; }
   .today-summary > i { display: none; }
   .today-summary-note { width: 100%; margin-left: 0; padding-top: 10px; border-top: 1px solid var(--line); }
@@ -2271,15 +2305,18 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
    plain rather than alarming: the sample data is useful, it just must never be
    mistaken for the professional's real work.
    ═══════════════════════════════════════════════════════════════════════════ */
+/* Scaffolding, not content: it has to be unmissable but it should not be the
+ * heaviest element on a working page. Reads as a quiet strip rather than a slab. */
 .sample-banner {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-  padding: 12px 16px;
-  border: 1px solid #e3d3a8;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 7px 12px;
+  border: 1px solid #ecdfbc;
   border-radius: var(--radius-md);
-  background: #faf5e6;
+  background: #fdfaf1;
+  font-size: 12.5px;
 }
 .sample-banner-tag {
   flex: 0 0 auto;
@@ -2322,7 +2359,7 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   grid-template-columns: minmax(0, 1fr) minmax(250px, 320px);
   align-items: start; padding-bottom: 22px; border-bottom: 1px solid var(--line);
 }
-.calc-hero h1 { margin: 2px 0 8px; font-size: 26px; letter-spacing: -.028em; }
+.calc-hero h1 { margin: 2px 0 6px; font-size: 20px; letter-spacing: -.022em; }
 .calc-hero p:not(.eyebrow) { max-width: 58ch; margin: 0; color: var(--ink-600); font-size: 14.5px; line-height: 1.65; }
 .calc-assurance {
   display: flex; gap: 10px; padding: 14px;
@@ -2404,7 +2441,7 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   padding-bottom: 24px;
   border-bottom: 1px solid var(--line);
 }
-.practice-hero h1 { margin: 2px 0 8px; font-size: 26px; letter-spacing: -.028em; }
+.practice-hero h1 { margin: 2px 0 6px; font-size: 20px; letter-spacing: -.022em; }
 .practice-hero p:not(.eyebrow) { max-width: 58ch; margin: 0; color: var(--ink-600); font-size: 14.5px; line-height: 1.65; }
 .practice-privacy {
   display: flex;
@@ -2519,7 +2556,7 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   padding-top: 4px;
   row-gap: 18px;
 }
-.assistant-hero h1 { font-size: 26px; letter-spacing: -.028em; }
+.assistant-hero h1 { font-size: 19px; letter-spacing: -.022em; }
 .assistant-hero p:not(.eyebrow) { max-width: 54ch; font-size: 13.5px; line-height: 1.6; }
 /* Controls take their own row: sharing one line with the masthead squeezed the
    title block to ~330px and wrapped the eyebrow. */
@@ -2555,7 +2592,7 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 /* The active mode is already stated by the switcher above and the composer below;
    a third badge is noise. */
 .assistant-welcome .mode-kicker { display: none; }
-.assistant-welcome h2 { max-width: 18ch; font-size: 30px; line-height: 1.18; letter-spacing: -.03em; }
+.assistant-welcome h2 { max-width: 18ch; font-size: 21px; line-height: 1.22; letter-spacing: -.024em; }
 .assistant-welcome p { max-width: 60ch; font-size: 14.5px; line-height: 1.66; }
 .prompt-grid {
   display: flex;
@@ -2648,7 +2685,7 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   .assistant-main { max-width: none; }
   .assistant-response { padding: 24px 0 8px; }
   .assistant-welcome { padding: 36px 0 20px; }
-  .assistant-welcome h2 { font-size: 25px; }
+  .assistant-welcome h2 { font-size: 20px; }
   .composer { margin: 8px 0 16px; }
 }
 

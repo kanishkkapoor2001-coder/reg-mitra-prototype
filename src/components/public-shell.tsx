@@ -1,7 +1,17 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
+/**
+ * @param authPage Drops the "Open product" call to action.
+ *
+ * That link points at /login, so on the sign-in, sign-up, founder and pending
+ * pages it sends you to the page you are already on — and it competes with the
+ * one thing those pages exist to do. Marketing pages keep it.
+ */
+export function PublicShell({
+  authPage = false,
+  children,
+}: Readonly<{ authPage?: boolean; children: ReactNode }>) {
   return (
     <div className="public-site">
       <header className="public-header">
@@ -16,21 +26,23 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
           <Link href="/pricing">Pricing</Link>
           <Link href="/faq">FAQ</Link>
         </nav>
-        <div className="public-header-actions">
-          <Link className="header-demo-link" href="/login">
-            Open product
-            <svg viewBox="0 0 12 12" aria-hidden="true">
-              <path
-                d="M3.75 8.25 8.25 3.75M4.9 3.75h3.35V7.1"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Link>
-        </div>
+        {authPage ? null : (
+          <div className="public-header-actions">
+            <Link className="header-demo-link" href="/login">
+              Open product
+              <svg viewBox="0 0 12 12" aria-hidden="true">
+                <path
+                  d="M3.75 8.25 8.25 3.75M4.9 3.75h3.35V7.1"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
+        )}
       </header>
       {children}
       <footer className="public-footer">
@@ -49,7 +61,7 @@ export function PublicShell({ children }: Readonly<{ children: ReactNode }>) {
             <Link href="/pricing">Pricing</Link>
             <Link href="/about">About</Link>
             <Link href="/faq">FAQ</Link>
-            <Link href="/login">Open product</Link>
+            {authPage ? null : <Link href="/login">Open product</Link>}
           </nav>
         </div>
         <div className="footer-bottom">
