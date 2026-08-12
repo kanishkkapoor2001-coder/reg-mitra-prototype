@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { OauthButtons } from "@/components/oauth-buttons";
+import { OauthButtons, hasAnyOauthProvider } from "@/components/oauth-buttons";
 import { PublicShell } from "@/components/public-shell";
 
 export const metadata: Metadata = {
@@ -30,6 +30,9 @@ export default async function LoginPage({
   const params = await searchParams;
   const error = params.error ? errors[params.error] : null;
   const founderEntry = params.founder === "1";
+  // Only promise Google/Microsoft when the buttons are actually rendered.
+  // Otherwise the page advertises a way in that is not on the page.
+  const oauth = hasAnyOauthProvider();
   const from = params.from?.startsWith("/") && !params.from.startsWith("//")
     ? params.from
     : "/today";
@@ -40,7 +43,11 @@ export default async function LoginPage({
         <section className="login-copy">
           <p className="marketing-kicker">{founderEntry ? "Founder access" : "Firm workspace"}</p>
           <h1>{founderEntry ? "Open your Reg Mitra workspace." : "Sign in to continue your regulatory review."}</h1>
-          <p>{founderEntry ? "Use the approved work email linked to your founder account." : "Use your firm’s Google or Microsoft account, or a one-time link sent to your work email—no password to remember."}</p>
+          <p>{founderEntry
+            ? "Use the approved work email linked to your founder account."
+            : oauth
+              ? "Use your firm’s Google or Microsoft account, or a one-time link sent to your work email—no password to remember."
+              : "Use the work email linked to your firm. We will send a one-time sign-in link—no password to remember."}</p>
           <ul>
             <li><span>01</span> Your firm workspace is separate from the public sample</li>
             <li><span>02</span> Roles control who can review and approve work</li>
@@ -79,9 +86,19 @@ export default async function LoginPage({
             </>
           )}
           <small>This page never asks for portal passwords, OTPs, or client records.</small>
-          {founderEntry
-            ? <Link href={`/founder?from=${encodeURIComponent(from)}`}>Use my founder code instead →</Link>
-            : <Link href="/signup">Need a workspace? Start your free trial →</Link>}
+          {founderEntry ? (
+            <Link href={`/founder?from=${encodeURIComponent(from)}`}>Use my founder code instead →</Link>
+          ) : (
+            // Sign-in and sign-up are separate pages, so this is the only thing
+            // telling a firm without an account that it is in the wrong place.
+            // As a trailing text link it read as fine print and was missed.
+            <div className="login-alt">
+              <p className="login-alt-title">Don’t have a workspace yet?</p>
+              <Link className="marketing-button wide" href="/signup">
+                Create an account <span>→</span>
+              </Link>
+            </div>
+          )}
         </section>
       </main>
     </PublicShell>

@@ -1898,6 +1898,15 @@
 .plan-option strong { display: block; color: var(--ink-950); font-size: var(--text-md); font-weight: var(--weight-bold); }
 .plan-option small { display: block; margin-top: 3px; color: var(--ink-600); font-size: var(--text-xs); line-height: 1.5; }
 
+/* Sign-up route out of the sign-in page. Separated by a rule so it reads as a
+   second, distinct option rather than more fine print under the email form. */
+.login-alt { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.login-alt-title {
+  margin: 0 0 10px;
+  color: var(--ink-600);
+  font-size: var(--text-sm);
+}
+
 /* "How would you like to start?" — reuses the plan-option chrome, but sits
    inside the email form rather than behind the collapsed plan details, because
    a firm ready to pay should not have to go looking for the way to say so. */
