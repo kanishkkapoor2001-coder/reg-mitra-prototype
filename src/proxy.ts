@@ -56,34 +56,51 @@ export async function proxy(request: NextRequest) {
   // An account only reaches the product once an operator approves it; anything
   // else (pending, rejected, or a status we cannot read) waits at /pending.
   // Deliberately fails closed — an unreadable status must not open the product.
-  {
-    // A session with no email cannot be checked against the approval list, so
-    // it is not approved. Previously this whole block was skipped in that case,
-    // which would let such a session straight into the product.
-    const email = data.user.email;
-    let approved = false;
-    if (!email) {
-      return NextResponse.redirect(new URL("/pending", request.url));
-    }
-    try {
-      approved = (await readAccessStatus(email)) === "approved";
-    } catch (statusError) {
-      console.error("[proxy] could not read access status", statusError);
-    }
-    if (!approved) {
-      return NextResponse.redirect(new URL("/pending", request.url));
-    }
+  // A session with no email cannot be checked against the approval list, so it
+  // is not approved. Previously this whole block was skipped in that case,
+  // which would let such a session straight into the product.
+  const email = data.user.email;
+  if (!email) {
+    return NextResponse.redirect(new URL("/pending", request.url));
   }
 
+  // Approval and membership are fetched together rather than one after the
+  // other. Both depend only on the session, so making the second wait for the
+  // first added a whole database round trip to every single navigation — and
+  // this runs before the page even starts its own queries.
+  //
+  // The approval check still decides first, so an unapproved account is turned
+  // away exactly as before; the membership read is simply already in hand. The
+  // cost is one wasted query for accounts that get rejected, which is the rare
+  // path, and it buys a round trip on the common one.
   const onboardingPath =
     pathname === "/onboarding" || pathname.startsWith("/api/workspaces");
 
-  const { data: membership, error: membershipError } = await supabase
-    .from("workspace_memberships")
-    .select("workspace_id")
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+  const [statusResult, membershipResult] = await Promise.allSettled([
+    readAccessStatus(email),
+    supabase
+      .from("workspace_memberships")
+      .select("workspace_id")
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  // Deliberately fails closed — an unreadable status must not open the product.
+  if (statusResult.status === "rejected") {
+    console.error("[proxy] could not read access status", statusResult.reason);
+    return NextResponse.redirect(new URL("/pending", request.url));
+  }
+  if (statusResult.value !== "approved") {
+    return NextResponse.redirect(new URL("/pending", request.url));
+  }
+
+  if (membershipResult.status === "rejected") {
+    // Fail open on a transient lookup error: never bounce a real member to
+    // onboarding (which could mint an orphan second workspace) over a blip.
+    return response;
+  }
+  const { data: membership, error: membershipError } = membershipResult.value;
 
   // Fail open on a transient lookup error: never bounce a real member to
   // onboarding (which could mint an orphan second workspace) over a blip.

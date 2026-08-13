@@ -2,6 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "next build",
+  "//regions": "Functions ran in iad1 (Washington) while Supabase and every user are in India — x-vercel-id read bom1::iad1, meaning the request landed in Mumbai and was then sent to Virginia to talk to a database back in Mumbai. Each signed-in page makes several sequential queries, so that round trip was paid over and over. bom1 puts the function next to its data.",
+  "regions": ["bom1"],
   "crons": [
     {
       "path": "/api/cron/calendar-refresh",
