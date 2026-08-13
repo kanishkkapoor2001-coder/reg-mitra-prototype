@@ -17,6 +17,16 @@ test("the dev bypass requires the flag, not merely a non-production build", () =
   assert.equal(isDevAuthBypassEnabled("test", undefined), false);
 });
 
+// A bare `node server.js` on a VPS has no NODE_ENV. If the guard only excluded
+// "production", that host would satisfy it — so one stray .env.local copied to
+// a server would expose every firm's client roster.
+test("an unset or unexpected NODE_ENV never opens the product", () => {
+  assert.equal(isDevAuthBypassEnabled(undefined, "1"), false);
+  assert.equal(isDevAuthBypassEnabled("", "1"), false);
+  assert.equal(isDevAuthBypassEnabled("staging", "1"), false);
+  assert.equal(isDevAuthBypassEnabled("test", "1"), false);
+});
+
 test("the flag is exact — near-misses do not open the product", () => {
   assert.equal(isDevAuthBypassEnabled("development", "0"), false);
   assert.equal(isDevAuthBypassEnabled("development", "true"), false);
@@ -25,10 +35,4 @@ test("the flag is exact — near-misses do not open the product", () => {
 
 test("the dev bypass applies in local development when explicitly enabled", () => {
   assert.equal(isDevAuthBypassEnabled("development", "1"), true);
-  assert.equal(isDevAuthBypassEnabled("test", "1"), true);
-});
-
-test("an unset NODE_ENV still requires the flag", () => {
-  assert.equal(isDevAuthBypassEnabled(undefined, undefined), false);
-  assert.equal(isDevAuthBypassEnabled(undefined, "1"), true);
 });

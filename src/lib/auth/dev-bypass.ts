@@ -15,13 +15,21 @@
 // property can be asserted directly (see dev-bypass.test.ts) rather than only
 // through the proxy.
 //
-// This is deliberately impossible to enable in a deployment: Vercel builds and
-// runs with NODE_ENV="production", so the flag alone is inert there. Both
-// conditions must hold, and the flag lives only in .env.local, which is
-// gitignored.
+// Requires NODE_ENV to be exactly "development" — not merely "not production".
+//
+// The weaker test would have opened the product on any host where NODE_ENV was
+// simply unset, which is the normal state of a bare `node server.js` on a VPS.
+// That turned one careless copy of .env.local onto a server into anonymous
+// access to every firm's client roster. Self-hosting made that a real path
+// rather than a theoretical one, so the guard names the environment it wants
+// instead of excluding the one it fears.
+// `nodeEnv` is typed as a plain string, not NODE_ENV's narrow union: the value
+// this guards against is precisely one the union says cannot occur — an unset
+// or unexpected NODE_ENV on someone's server. Typing it narrowly would make the
+// dangerous cases unrepresentable in the tests.
 export function isDevAuthBypassEnabled(
-  nodeEnv = process.env.NODE_ENV,
-  flag = process.env.REGMITRA_DEV_AUTH,
+  nodeEnv: string | undefined = process.env.NODE_ENV,
+  flag: string | undefined = process.env.REGMITRA_DEV_AUTH,
 ): boolean {
-  return nodeEnv !== "production" && flag === "1";
+  return nodeEnv === "development" && flag === "1";
 }
