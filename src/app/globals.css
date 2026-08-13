@@ -833,6 +833,50 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .client-table .numeric { font-variant-numeric: tabular-nums; text-align: right; }
 .client-table .client-identifier { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
 .filter-label { display: inline-flex; }
+/* Spreadsheet import. */
+.import-panel { display: grid; gap: 18px; max-width: 760px; }
+.import-drop {
+  display: grid;
+  gap: 5px;
+  padding: 20px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  cursor: pointer;
+}
+.import-drop:hover { border-color: var(--green-700); }
+.import-drop strong { color: var(--ink-950); font-size: 14px; }
+.import-drop span { color: var(--ink-600); font-size: 12.5px; line-height: 1.5; }
+.import-drop input { margin-top: 8px; font-size: 12.5px; }
+.import-section-title { margin: 0 0 8px; color: var(--ink-600); font-size: 12px; font-weight: 700; }
+.import-mapping ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.import-mapping li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: center; gap: 10px; }
+.import-header-name { overflow: hidden; color: var(--ink-950); font-size: 12.5px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.import-mapping select {
+  width: 100%;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink-950);
+  font: inherit;
+  font-size: 12.5px;
+}
+.import-preview { display: grid; gap: 8px; }
+.import-preview-row { display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.import-preview-row strong { color: var(--ink-950); font-size: 13px; }
+.import-preview-row span { color: var(--ink-600); font-size: 12px; }
+.import-preview-row small { color: var(--amber-700, #8a6d1a); font-size: 11.5px; }
+.import-report { display: grid; justify-items: start; gap: 12px; max-width: 620px; }
+.import-report-headline { margin: 0; color: var(--ink-950); font-size: 16px; font-weight: 700; }
+.import-report-sub { margin: 0; color: var(--ink-600); font-size: 12.5px; }
+.import-skipped { display: grid; gap: 5px; margin: 0; padding: 0; list-style: none; width: 100%; }
+.import-skipped li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 10px; border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: 12.5px; }
+.import-skipped li span { color: var(--ink-500); }
+.import-foot { margin-top: 20px; color: var(--ink-600); font-size: 12.5px; }
+.import-foot a { color: var(--green-700); font-weight: 650; }
+
 /* Describe-the-client panel. Spans the create form's two columns and sits above
    the fields it fills, so the relationship reads as cause and effect. */
 .describe-panel { grid-column: 1 / -1; display: grid; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }

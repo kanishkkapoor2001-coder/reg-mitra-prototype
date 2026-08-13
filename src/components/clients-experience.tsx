@@ -132,7 +132,10 @@ export function ClientsExperience({
               Plan full — upgrade
             </Link>
           ) : (
-            <Link className="button primary" href="/clients/new">Add client</Link>
+            <>
+              <Link className="button primary" href="/clients/new">Add client</Link>
+              <Link className="button" href="/clients/import">Import a spreadsheet</Link>
+            </>
           )
         ) : null}
       </div>
@@ -175,7 +178,10 @@ export function ClientsExperience({
           {clients.length ? (
             <button className="button" onClick={() => router.replace(pathname)} type="button">Clear filters</button>
           ) : mode === "product" ? (
-            <Link className="button primary" href="/clients/new">Add client</Link>
+            <>
+              <Link className="button primary" href="/clients/new">Add client</Link>
+              <Link className="button" href="/clients/import">Import a spreadsheet</Link>
+            </>
           ) : null}
         </section>
       )}
