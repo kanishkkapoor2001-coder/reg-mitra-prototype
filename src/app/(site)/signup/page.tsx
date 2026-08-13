@@ -39,13 +39,17 @@ export default async function SignupPage({
         <section className="login-copy">
           <p className="marketing-kicker">Create your account</p>
           <h1>Start your 7-day trial.</h1>
+          {/* Trials from a firm's own domain now approve themselves, so the old
+              "we review every request by hand" is no longer true for the path
+              most visitors take. */}
           <p>
-            Sign up with your firm’s work account. We review every request by hand — you’ll get an
-            email the moment your workspace is open. No card, nothing to cancel.
+            Sign up with your firm’s work email and your workspace opens straight away — no waiting
+            on us, no card, nothing to cancel. Firms that want to start on a paid plan we set up
+            personally instead.
           </p>
           <ul>
             <li><span>01</span> Sign up with {oauth ? "Google, Microsoft or your work email" : "your work email"}</li>
-            <li><span>02</span> We approve your firm and open the workspace</li>
+            <li><span>02</span> Your workspace opens immediately</li>
             <li><span>03</span> Run Reg Mitra against your real client book for 7 days</li>
           </ul>
         </section>
@@ -69,6 +73,32 @@ export default async function SignupPage({
               as a default they can change, rather than a decision blocking the
               thing they came to do. */}
           <form className="signup-email-form" action="/api/auth/start" method="post">
+            {/* Asked here rather than chased later: without them the operator
+                alert says "(no name given)" and gives no way to tell which firm
+                is asking, which is the one thing needed to decide. */}
+            <label htmlFor="signup-name">Your name</label>
+            <input
+              id="signup-name"
+              type="text"
+              name="full_name"
+              autoComplete="name"
+              placeholder="Kanishk Kapoor"
+              maxLength={120}
+              required
+              autoFocus
+            />
+
+            <label htmlFor="signup-firm">Firm name</label>
+            <input
+              id="signup-firm"
+              type="text"
+              name="firm"
+              autoComplete="organization"
+              placeholder="Mehta Shah & Associates"
+              maxLength={160}
+              required
+            />
+
             <label htmlFor="signup-email">Work email</label>
             <input
               id="signup-email"
@@ -77,7 +107,6 @@ export default async function SignupPage({
               autoComplete="email"
               placeholder="you@yourfirm.in"
               required
-              autoFocus
             />
             <input type="hidden" name="from" value={from} />
             <input type="hidden" name="origin" value="signup" />

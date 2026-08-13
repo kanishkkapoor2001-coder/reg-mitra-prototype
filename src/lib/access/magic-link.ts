@@ -54,6 +54,12 @@ export async function sendMagicLink(
   email: string,
   confirmBaseUrl: string,
   destination: string,
+  /**
+   * Who they said they are. Stored on the auth user, which is where
+   * finishSignIn already looks — so it reaches the access request and the
+   * operator alert without a schema change.
+   */
+  profile?: { fullName?: string | null; firm?: string | null },
 ): Promise<MagicLinkOutcome> {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   if (!apiKey) return "not_configured";
@@ -73,6 +79,25 @@ export async function sendMagicLink(
     if (error || !data?.properties?.hashed_token) {
       console.error("[magic-link] generateLink failed", error);
       return "failed";
+    }
+
+    // generateLink takes no metadata for the magiclink type, so the profile is
+    // written afterwards. Only fills blanks: a later sign-in must never
+    // overwrite the name a firm already has, and the sign-in form does not ask
+    // for one, so it would otherwise blank it.
+    if (profile && data.user?.id) {
+      const existing = (data.user.user_metadata ?? {}) as Record<string, unknown>;
+      const patch: Record<string, string> = {};
+      if (profile.fullName && !existing.full_name) patch.full_name = profile.fullName;
+      if (profile.firm && !existing.firm) patch.firm = profile.firm;
+      if (Object.keys(patch).length) {
+        const { error: metaError } = await admin.auth.admin.updateUserById(data.user.id, {
+          user_metadata: { ...existing, ...patch },
+        });
+        // Losing the name is not a reason to fail the sign-up — they can still
+        // get in, and the operator alert just says the name is missing.
+        if (metaError) console.error("[magic-link] could not store profile", metaError);
+      }
     }
 
     const confirm = new URL(confirmBaseUrl);

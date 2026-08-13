@@ -18,6 +18,10 @@ export type AccessIdentity = {
    * a migration. Until then the alert email is the record.
    */
   intent?: SignupIntent;
+  /** Firm they gave at sign-up. Same caveat as `intent`. */
+  firm?: string | null;
+  /** Whether a work-domain trial let them straight in without a decision. */
+  autoApproved?: boolean;
 };
 
 // Comma-separated so alerts can go to more than one mailbox. Note that
@@ -112,13 +116,16 @@ export async function notifyOperatorOfSignup(identity: AccessIdentity): Promise<
           "",
           `Email:      ${identity.email}`,
           `Name:       ${name}`,
+          `Firm:       ${identity.firm?.trim() || "(not given)"}`,
           `Signed in:  ${provider}`,
           `WANTS:      ${tierInfo.name} — ${tierInfo.priceLabel}, ${limitText}`,
           wantsToPay
             ? "            READY TO PAY — onboard as a founding firm."
             : "            (Starts with the 7-day free trial.)",
           "",
-          "They are PENDING and cannot use the product yet.",
+          identity.autoApproved
+            ? "They are ALREADY IN — a work-domain trial approves itself. Nothing to do."
+            : "They are PENDING and cannot use the product yet.",
           "",
           ...(wantsToPay
             ? [

@@ -110,6 +110,56 @@ async function tellApplicant(
  * best-effort so a mail outage cannot leave someone approved in the database
  * but blocked in practice.
  */
+/**
+ * Approves a trial sign-up on the spot.
+ *
+ * A free trial that waits on someone reading an email is not a free trial —
+ * the firm is at their most interested in the thirty seconds after signing up,
+ * and manual approval spent that on a "you're on the list" page. Firms asking
+ * to *pay* still go through a human, because that conversation is the point.
+ *
+ * Self-serve access is bounded by requiring a work domain: a trial is for a
+ * firm, and a gmail.com address is not one. That check is the reason this can
+ * be automatic at all.
+ *
+ * Deliberately narrow — only ever moves `pending` to `approved`, so it can
+ * never resurrect an account an operator rejected.
+ */
+export async function autoApproveTrial(
+  email: string,
+): Promise<{ approved: boolean; reason?: string }> {
+  const admin = createSupabaseAdminClient();
+
+  const { data: row, error: readError } = await admin
+    .from("access_requests")
+    .select("id, email, full_name, requested_tier, status")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (readError || !row) return { approved: false, reason: readError?.message ?? "not_found" };
+  if (row.status === "approved") return { approved: true };
+  if (row.status !== "pending") return { approved: false, reason: `status_${row.status}` };
+
+  const { error } = await admin
+    .from("access_requests")
+    .update({
+      status: "approved",
+      decided_at: new Date().toISOString(),
+      decided_by: "auto:trial",
+    })
+    .eq("id", row.id)
+    // Re-checking status in the update guards the gap between reading and
+    // writing: an operator rejecting in that window must win.
+    .eq("status", "pending");
+
+  if (error) return { approved: false, reason: error.message };
+
+  // No "you're approved, come back" email here — unlike an operator approval,
+  // they are already signed in and about to land in the product. Telling them
+  // to return to something they are looking at reads as a mistake.
+  return { approved: true };
+}
+
 export async function decideAccess(
   requestId: string,
   decision: "approved" | "rejected",

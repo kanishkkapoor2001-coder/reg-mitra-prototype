@@ -63,10 +63,20 @@ export async function POST(request: NextRequest) {
 
   // Preferred path: mint the link ourselves and deliver it over Resend, which
   // avoids Supabase's development-only mailer and its per-hour cap.
+  // Only the sign-up form asks for these; the sign-in form posts here too and
+  // sends neither, which is why sendMagicLink fills blanks rather than
+  // overwriting.
+  const readField = (key: string, max: number) => {
+    const value = formData.get(key);
+    const trimmed = typeof value === "string" ? value.trim() : "";
+    return trimmed.length >= 2 && trimmed.length <= max ? trimmed : null;
+  };
+
   const outcome = await sendMagicLink(
     email,
     new URL("/api/auth/confirm", appUrl).toString(),
     destination,
+    { fullName: readField("full_name", 120), firm: readField("firm", 160) },
   );
   if (outcome === "sent") return response;
 
