@@ -10,6 +10,7 @@ import {
   EditIcon,
   FileIcon,
   MoreIcon,
+  RegulationsIcon,
   SparklesIcon,
   StopIcon,
   SyncIcon,
@@ -965,14 +966,25 @@ export function AssistantExperience({
           />
           {!templateMode ? (
             <button
-              className="button subtle notice-attach"
+              aria-busy={noticeBusy}
+              aria-label="Attach a notice or circular PDF"
+              className="composer-icon-button"
               disabled={noticeBusy || requestState === "loading"}
               onClick={() => fileInputRef.current?.click()}
+              title={noticeBusy ? "Reading the attached PDF…" : "Attach a PDF — Reg Mitra reads it into this chat"}
               type="button"
             >
-              <FileIcon /> {noticeBusy ? "Reading…" : "Notice"}
+              {noticeBusy ? <SyncIcon /> : <FileIcon />}
             </button>
           ) : null}
+          <Link
+            aria-label="Browse Reg Mitra's regulatory updates"
+            className="composer-icon-button"
+            href="/regulations"
+            title="Open the library of regulatory updates"
+          >
+            <RegulationsIcon />
+          </Link>
           <div aria-label="Assistant mode" className="composer-mode-switch" role="group">
             {(["ask", "act"] as const).map((item) => (
               <button
