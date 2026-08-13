@@ -120,12 +120,63 @@ export function CommandPalette({ open, onClose, sessionMode }: CommandPalettePro
     ];
   }, [index, isProduct]);
 
+  // What a result is worth, before the query is considered.
+  //
+  // The corpus contributes forty static circulars and a firm contributes a
+  // handful of clients, so an unweighted list is reference material with the
+  // firm's own work buried underneath it. Rank by what someone opening ⌘K is
+  // plausibly reaching for: their clients, then the things they can do, then
+  // where they can go, and only then the library.
+  const GROUP_WEIGHT: Record<Command["group"], number> = {
+    Clients: 40,
+    Actions: 30,
+    Pages: 20,
+    Sample: 15,
+    Sources: 0,
+  };
+  const GROUP_ORDER: Command["group"][] = ["Actions", "Clients", "Sample", "Pages", "Sources"];
+
+  /** 0 means no match. Prefix and word-start beat a substring buried mid-title. */
+  function score(command: Command, needle: string): number {
+    const label = command.label.toLowerCase();
+    const detail = command.detail.toLowerCase();
+    let hit = 0;
+    if (label === needle) hit = 100;
+    else if (label.startsWith(needle)) hit = 80;
+    else if (label.split(/[\s·,()/-]+/).some((word) => word.startsWith(needle))) hit = 60;
+    else if (label.includes(needle)) hit = 40;
+    else if (detail.includes(needle)) hit = 15;
+    if (!hit) return 0;
+    return hit + GROUP_WEIGHT[command.group];
+  }
+
   const results = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return commands;
-    return commands.filter((command) =>
-      `${command.label} ${command.detail}`.toLowerCase().includes(normalized),
-    );
+
+    // An empty palette suggests rather than enumerates. Forty circulars in
+    // publication order answer no question anyone has on opening it; a few of
+    // your own clients and the things you can do from here answer most of them.
+    // The library is one keystroke away — it just is not the opening screen.
+    if (!normalized) {
+      const suggested = commands.filter((command) => command.group !== "Sources");
+      const clients = suggested.filter((command) => command.group === "Clients").slice(0, 5);
+      const rest = suggested.filter((command) => command.group !== "Clients");
+      return [...clients, ...rest];
+    }
+
+    return commands
+      .map((command) => ({ command, rank: score(command, normalized) }))
+      .filter((entry) => entry.rank > 0)
+      .sort((a, b) => {
+        if (b.rank !== a.rank) return b.rank - a.rank;
+        const groupGap = GROUP_ORDER.indexOf(a.command.group) - GROUP_ORDER.indexOf(b.command.group);
+        return groupGap !== 0 ? groupGap : a.command.label.localeCompare(b.command.label);
+      })
+      .slice(0, 40)
+      .map((entry) => entry.command);
+    // GROUP_WEIGHT and GROUP_ORDER are module-stable literals; commands and
+    // query are the only inputs that change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commands, query]);
 
   useEffect(() => {

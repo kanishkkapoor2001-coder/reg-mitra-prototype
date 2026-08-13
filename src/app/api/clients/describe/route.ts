@@ -77,6 +77,15 @@ function coerce(raw: unknown): Extracted {
 }
 
 export async function POST(request: Request) {
+  // Same switch the assistant honours. Both spend on the same gateway key, so a
+  // deployment with live AI off must not have one of them still calling out.
+  if (
+    process.env.NODE_ENV === "production"
+    && process.env.REGMITRA_ENABLE_LIVE_AI !== "true"
+  ) {
+    return NextResponse.json({ error: "not_configured" }, { status: 503 });
+  }
+
   const workspace = await getCurrentWorkspace();
   if (!workspace) return NextResponse.json({ error: "no_workspace" }, { status: 403 });
 
