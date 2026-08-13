@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { CommandPalette } from "@/components/command-palette";
 import {
@@ -39,6 +39,7 @@ export function AppShell({
   workspaceName = null,
 }: Readonly<{ children: ReactNode; sessionMode: "demo" | "product" | null; workspaceName?: string | null }>) {
   const pathname = usePathname();
+  const router = useRouter();
   const [commandOpen, setCommandOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
@@ -101,10 +102,18 @@ export function AppShell({
             const Icon = primaryIcons[item.icon];
             return (
               <div className="nav-group" key={item.href}>
+                {/* Fetched on hover rather than on click. These pages are
+                    server-rendered against the database, so the work starts
+                    while the cursor is still travelling and the click renders
+                    from memory. Hover, not viewport: prefetching all of them on
+                    every page load would run their queries whether or not
+                    anyone goes there. */}
                 <Link
                   className={`nav-link ${isActive(pathname, item.href) ? "active" : ""}`}
                   href={item.href}
                   aria-current={isActive(pathname, item.href) ? "page" : undefined}
+                  onMouseEnter={() => router.prefetch(item.href)}
+                  onFocus={() => router.prefetch(item.href)}
                 >
                   <span className="nav-icon"><Icon /></span>
                   <span>{item.label}</span>
