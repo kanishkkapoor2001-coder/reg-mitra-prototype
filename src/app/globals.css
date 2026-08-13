@@ -3143,3 +3143,364 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   font-size: 12.5px;
   line-height: 1.55;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHAT SHELL — the assistant as a chat product
+   ───────────────────────────────────────────────────────────────────────────
+   The ChatGPT pattern: a flat full-height history rail on the left, one
+   centered conversation column that scrolls on its own, and the composer
+   docked at the bottom of the viewport rather than floating in the page flow.
+   The page itself no longer scrolls; the conversation does.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.main-content:has(> .chat-shell) { max-width: none; margin: 0; padding: 0; }
+
+.chat-shell {
+  display: flex;
+  height: calc(100vh - 54px);
+  min-height: 480px;
+  overflow: hidden;
+}
+
+/* ── History rail ─────────────────────────────────────────────────────── */
+.chat-shell .conversation-library {
+  position: static;
+  display: flex;
+  flex: 0 0 268px;
+  flex-direction: column;
+  width: 268px;
+  max-height: none;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface-muted);
+  animation: none;
+}
+.chat-shell .conversation-library-top { padding: 10px 10px 6px; border-bottom: 0; }
+.chat-shell .new-chat-button {
+  justify-content: flex-start;
+  padding: 9px 10px;
+  border-color: transparent;
+  background: transparent;
+  font-size: 13px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .chat-shell .new-chat-button:hover {
+    border-color: transparent;
+    background: color-mix(in srgb, var(--ink-950) 6%, transparent);
+  }
+}
+.chat-shell .conversation-list { padding: 4px 8px 10px; }
+.chat-shell .conversation-list .conversation-card { padding: 7px 10px; }
+@media (hover: hover) and (pointer: fine) {
+  .chat-shell .conversation-list .conversation-card:hover {
+    background: color-mix(in srgb, var(--ink-950) 6%, transparent);
+  }
+}
+.chat-shell .conversation-library-footnote {
+  margin: 0;
+  padding: 10px 14px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  color: var(--ink-500);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* ── Conversation column ──────────────────────────────────────────────── */
+.chat-main {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+.chat-topline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.chat-topline-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+.chat-topline-title .assistant-symbol {
+  width: 26px;
+  height: 26px;
+  margin: 0;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.chat-topline-title .assistant-symbol svg { width: 14px; height: 14px; }
+.chat-topline-title strong { font-size: 13.5px; font-weight: 650; letter-spacing: -.01em; }
+.chat-mode-hint {
+  overflow: hidden;
+  color: var(--ink-500);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-history-toggle,
+.chat-topline-new {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-800);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chat-topline-new { margin-left: auto; white-space: nowrap; }
+
+.chat-shell .assistant-template-note {
+  max-width: 780px;
+  margin: 10px auto 0;
+  width: calc(100% - 36px);
+}
+
+.chat-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 26px 18px 10px;
+  overscroll-behavior: contain;
+}
+.chat-column {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+}
+/* The old page-scroll canvas set its own measure and inner scrolling; inside
+   the shell the scroll container owns both. */
+.chat-shell .assistant-response {
+  max-width: 780px;
+  padding: 0 0 18px;
+  overflow: visible;
+}
+
+/* ── Empty canvas: centered prompt, like a fresh chat ─────────────────── */
+.chat-empty {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  overflow-y: auto;
+  padding: 24px 18px;
+}
+.chat-empty .chat-column { max-width: 680px; }
+.chat-empty h2 {
+  margin: 0 0 6px;
+  font-size: 21px;
+  letter-spacing: -.022em;
+  line-height: 1.25;
+  text-align: center;
+}
+.chat-empty > .chat-column > p {
+  margin: 0 auto 20px;
+  max-width: 52ch;
+  color: var(--ink-600);
+  font-size: 13.5px;
+  line-height: 1.6;
+  text-align: center;
+}
+.prompt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.prompt-chip {
+  padding: 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-700);
+  font-size: 12.5px;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .prompt-chip:hover { border-color: var(--ink-400); background: var(--surface-muted); }
+}
+
+/* ── Docked composer ──────────────────────────────────────────────────── */
+.chat-dock { padding: 6px 18px calc(12px + env(safe-area-inset-bottom)); }
+.chat-shell .composer.chat-composer {
+  position: static;
+  bottom: auto;
+  margin: 0;
+  padding: 12px 12px 10px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(16, 32, 24, .04), 0 8px 24px -14px rgba(16, 32, 24, .16);
+}
+.chat-shell .composer.chat-composer textarea {
+  min-height: 26px;
+  max-height: 220px;
+  padding: 4px 2px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.composer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+}
+.composer-tools { display: flex; align-items: center; gap: 8px; }
+.chat-composer .notice-attach { border-radius: 999px; padding: 6px 12px; font-size: 12.5px; }
+.composer-mode-switch {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-muted);
+}
+.composer-mode-switch button {
+  padding: 5px 13px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-600);
+  font-size: 12.5px;
+  font-weight: 620;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+.composer-mode-switch button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--ink-950);
+  box-shadow: 0 1px 2px rgba(16, 32, 24, .1);
+}
+.send-button {
+  display: grid;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: var(--forest-900);
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+.send-button svg { width: 16px; height: 16px; }
+.send-button:disabled { background: var(--surface-muted); color: var(--ink-400); cursor: default; }
+.send-button:not(:disabled):active { transform: scale(.94); }
+.send-button.stop { border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-800); }
+.chat-disclaimer {
+  margin: 7px 0 0;
+  color: var(--ink-500);
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+}
+.chat-dock .notice-review { margin-bottom: 10px; }
+
+/* ── Narrow screens: the rail becomes a slide-in sheet ────────────────── */
+@media (max-width: 899px) {
+  .chat-shell .conversation-library {
+    position: fixed;
+    top: 54px;
+    bottom: 0;
+    left: 0;
+    z-index: 60;
+    width: min(320px, 86vw);
+    border-right: 1px solid var(--line-strong);
+    transform: translateX(-100%);
+    transition: transform 180ms var(--ease-out, ease);
+  }
+  .chat-shell[data-drawer-open="true"] .conversation-library {
+    transform: none;
+    box-shadow: 0 12px 40px rgba(12, 22, 18, .3);
+  }
+  .chat-drawer-scrim {
+    position: fixed;
+    inset: 54px 0 0;
+    z-index: 59;
+    border: 0;
+    background: rgba(12, 22, 18, .34);
+    cursor: pointer;
+  }
+  .chat-history-toggle { display: inline-flex; }
+  .chat-topline-new { display: inline-flex; }
+  .chat-mode-hint { display: none; }
+  .chat-scroll { padding: 18px 14px 8px; }
+  .chat-dock { padding: 6px 12px calc(10px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-shell .conversation-library { transition: none; }
+  .prompt-chip, .composer-mode-switch button, .send-button { transition: none; }
+}
+
+/* The composer pill is the input; the textarea inside it must not draw the
+   global form-control floor (border, radius, focus ring) a second time. */
+.app-shell .chat-shell .composer.chat-composer textarea,
+.app-shell .chat-shell .composer.chat-composer textarea:hover,
+.app-shell .chat-shell .composer.chat-composer textarea:focus-visible {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: 0;
+}
+
+/* Mobile chrome around the chat: the app adds a brand banner above the topbar
+   and a fixed 3-tab nav below. The chat screen hides the banner (the tab bar
+   already carries identity and navigation, and every vertical pixel belongs to
+   the conversation) and sizes itself between topbar and tab bar. */
+@media (max-width: 899px) {
+  .app-shell:has(.chat-shell) .sidebar { display: none; }
+  .chat-shell {
+    height: calc(100dvh - 54px - 78px);
+    min-height: 320px;
+  }
+  .chat-shell .conversation-library { bottom: 78px; }
+  .chat-drawer-scrim { inset: 54px 0 78px; }
+}
+
+/* A mobile-era rule lays the composer out as a row; the chat composer is
+   always a column: textarea on top, tools bar underneath. */
+.chat-shell .composer.chat-composer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.chat-shell .composer.chat-composer textarea { width: 100%; flex: 0 0 auto; }
+
+/* Keep the mobile tab bar: hide only the brand banner half of the collapsed
+   sidebar, not the fixed nav that lives inside the same element. */
+@media (max-width: 899px) {
+  .app-shell:has(.chat-shell) .sidebar { display: block; padding: 0; }
+  .app-shell:has(.chat-shell) .sidebar .brand,
+  .app-shell:has(.chat-shell) .sidebar .more-menu { display: none; }
+}
+
+/* Older mobile rules lay the history list out as a horizontal card strip;
+   inside the chat drawer it is always a vertical list. */
+@media (max-width: 899px) {
+  .chat-shell .conversation-list {
+    display: block;
+    max-height: none;
+    overflow-x: visible;
+    overflow-y: auto;
+  }
+  .chat-shell .conversation-list .conversation-card { min-width: 0; }
+}
+
+/* In dark mode the brand-forest send disc vanishes into the canvas; flip it to
+   the light accent with dark glyph, mirroring the light theme's contrast. */
+[data-theme="dark"] .send-button { background: var(--green-700); color: #10201a; }
+[data-theme="dark"] .send-button:disabled { background: var(--surface-muted); color: var(--ink-400); }
+[data-theme="dark"] .send-button.stop { background: var(--surface); color: var(--ink-800); }

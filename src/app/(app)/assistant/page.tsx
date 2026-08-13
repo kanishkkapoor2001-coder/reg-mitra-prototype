@@ -7,7 +7,7 @@ import { getCurrentWorkspace } from "@/lib/workspace";
 import type { ChatRetrievalPayload } from "@/lib/rag/types";
 
 interface AssistantPageProps {
-  searchParams: Promise<{ prompt?: string | string[]; conversation?: string | string[] }>;
+  searchParams: Promise<{ prompt?: string | string[]; conversation?: string | string[]; new?: string | string[] }>;
 }
 
 export default async function AssistantPage({ searchParams }: AssistantPageProps) {
@@ -55,9 +55,16 @@ export default async function AssistantPage({ searchParams }: AssistantPageProps
     // A chat list you can actually scroll back through, like any chat product.
     .limit(60);
 
-  const selectedId = requestedConversation
-    ?? (initialPrompt ? null : conversations?.[0]?.id)
-    ?? null;
+  // ?new=1 is "New chat": the client resets its canvas and moves the URL here
+  // so the previous conversation's ?conversation= does not linger. It must not
+  // fall back to the latest conversation, or "New chat" would reload the very
+  // chat the user just left.
+  const wantsBlank = params.new !== undefined;
+  const selectedId = wantsBlank
+    ? null
+    : requestedConversation
+      ?? (initialPrompt ? null : conversations?.[0]?.id)
+      ?? null;
   const { data: persistedMessages } = selectedId
     ? await supabase
       .from("messages")

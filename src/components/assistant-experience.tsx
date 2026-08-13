@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, Fragment, KeyboardEvent, useEffect, useRef, useState } from "react";
 import {
   ArrowUpIcon,
@@ -14,7 +15,6 @@ import {
   SyncIcon,
 } from "@/components/icons";
 import { ReviewGate } from "@/components/review-gate";
-import { TrustBadge } from "@/components/trust-badge";
 import {
   createTemplateAnswer,
   demoConversations,
@@ -484,6 +484,7 @@ export function AssistantExperience({
   templateMode?: boolean;
 }>) {
   const defaultConversation = templateMode ? demoConversations[0] : null;
+  const router = useRouter();
   const [draft, setDraft] = useState(initialPrompt);
   const [mode, setMode] = useState<AssistantMode>(
     defaultConversation?.finalMode ?? initialMessages.at(-1)?.mode ?? "ask",
@@ -509,6 +510,50 @@ export function AssistantExperience({
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Follow the conversation the way chat products do: stay pinned to the newest
+  // message while the reader is at the bottom, never yank them back once they
+  // have scrolled up to reread something.
+  useEffect(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+    const nearBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 160;
+    if (nearBottom) element.scrollTop = element.scrollHeight;
+  }, [messages]);
+
+  // A newly opened conversation starts at its latest exchange.
+  useEffect(() => {
+    const element = scrollRef.current;
+    if (element) element.scrollTop = element.scrollHeight;
+  }, [activeConversationId]);
+
+  // Conversation state is seeded from server props once, but the sidebar cards
+  // navigate with soft <Link>s: the server re-renders this page with a different
+  // selected conversation while this component instance stays mounted. Without
+  // this sync, clicking a saved chat changed the props and nothing else — the
+  // canvas kept the old conversation, which read as chats never being saved.
+  useEffect(() => {
+    if (templateMode) return;
+    if (initialConversationId === activeConversationId) return;
+    abortRef.current?.abort();
+    /* eslint-disable react-hooks/set-state-in-effect -- adopting the server's
+       newly selected conversation replaces the canvas wholesale, and belongs
+       here alongside aborting the previous conversation's stream. */
+    setMessages([...initialMessages]);
+    setActiveConversationId(initialConversationId);
+    setMode(initialMessages.at(-1)?.mode ?? "ask");
+    setDraft("");
+    setActionStates({});
+    setError("");
+    setStatus("");
+    setRequestState("idle");
+    setDrawerOpen(false);
+    /* eslint-enable react-hooks/set-state-in-effect */
+    // Only a server-side change of selection may adopt; local state changes
+    // (sending a message, "New chat") must not re-trigger it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialConversationId, templateMode]);
 
   function autoGrowComposer() {
     const element = composerRef.current;
@@ -713,7 +758,17 @@ export function AssistantExperience({
         retrieval: done?.retrieval,
         serverId: done?.messageId,
       });
-      if (done?.conversationId) setActiveConversationId(done.conversationId);
+      if (done?.conversationId) {
+        setActiveConversationId(done.conversationId);
+        // The sidebar's history is server-rendered, so it does not know about
+        // this exchange until the server renders again. A brand-new conversation
+        // also becomes the URL, so a reload or a shared link lands on it.
+        if (done.conversationId !== activeConversationId) {
+          router.replace(`/assistant?conversation=${encodeURIComponent(done.conversationId)}`, { scroll: false });
+        } else {
+          router.refresh();
+        }
+      }
       setRequestState("idle");
       setStatus(done?.completeness === "partial" ? "Answer cut short" : "Answer ready");
     } catch (requestError) {
@@ -806,6 +861,10 @@ export function AssistantExperience({
     setError("");
     setStatus("");
     setRequestState("idle");
+    // Leave the old conversation's URL too. Without this, re-opening the chat
+    // just left is a no-op navigation (same ?conversation=), so its card would
+    // do nothing until something else changed the selection.
+    if (!templateMode) router.replace("/assistant?new=1", { scroll: false });
     window.requestAnimationFrame(() => composerRef.current?.focus());
   }
 
@@ -836,72 +895,125 @@ export function AssistantExperience({
   const hasConversation = messages.length > 0;
   const lastUserId = [...messages].reverse().find((message) => message.role === "user")?.id ?? null;
   const lastAssistantId = [...messages].reverse().find((message) => message.role === "assistant")?.id ?? null;
-  const latestRetrieval = [...messages]
-    .reverse()
-    .find((message) =>
-      message.role === "assistant"
-      && message.retrieval
-      && message.retrieval.sources.length > 0
-      && message.retrieval.citationState !== "unsupported")
-    ?.retrieval;
 
-  return (
-    <>
-      <header className="assistant-hero">
-        <span className="assistant-symbol"><SparklesIcon /></span>
-        <div>
-          <p className="eyebrow">Source-grounded research and preparation</p>
-          <h1>Assistant</h1>
-          <p>Search indexed sources or draft work for internal review. Reg Mitra cannot send, file, pay, or change an external system.</p>
+  // A notice under review replaces the composer wherever the composer lives.
+  const noticeReviewPanel = draftNotice ? (
+    <NoticeReview
+      notice={draftNotice}
+      onAttach={() => {
+        setAttachedNotice(draftNotice);
+        setDraftNotice(null);
+        setStatus("Notice attached to this conversation");
+        window.requestAnimationFrame(() => composerRef.current?.focus());
+      }}
+      onChange={setDraftNotice}
+      onDiscard={() => {
+        setDraftNotice(null);
+        setStatus("");
+      }}
+    />
+  ) : null;
+
+  // The composer renders in two homes — centered on the empty canvas, docked at
+  // the bottom once a conversation exists — so it is built once here.
+  const composerForm = (
+    <form className="composer chat-composer" onSubmit={submit}>
+      {attachedNotice ? (
+        <div className="notice-chip">
+          <span>
+            <strong>{attachedNotice.noticeType ?? "Notice"}</strong>
+            {attachedNotice.taxpayerName ? ` · ${attachedNotice.taxpayerName}` : ""}
+            {attachedNotice.replyDueDate ? ` · reply due ${attachedNotice.replyDueDate}` : ""}
+          </span>
+          <button
+            aria-label="Remove the attached notice"
+            onClick={() => {
+              setAttachedNotice(null);
+              setStatus("Notice removed");
+            }}
+            type="button"
+          >
+            <CloseIcon />
+          </button>
         </div>
-        <div className="assistant-hero-actions">
-          <div className="assistant-mode-switch" aria-label="Assistant mode">
+      ) : null}
+      <textarea
+        aria-label={`${mode === "ask" ? "Get an answer from" : "Prepare with"} Reg Mitra`}
+        onChange={(event) => setDraft(event.target.value)}
+        onInput={autoGrowComposer}
+        onKeyDown={handleComposerKeyDown}
+        placeholder={mode === "ask" ? "Ask a compliance question…" : "Describe what you want prepared…"}
+        ref={composerRef}
+        rows={1}
+        value={draft}
+      />
+      <div className="composer-bar">
+        <div className="composer-tools">
+          {/* Visually hidden but still in the accessibility tree, so it needs
+              its own name — a screen reader reaches it even though sighted
+              users trigger it through the adjacent button. */}
+          <input
+            accept="application/pdf"
+            aria-label="Upload a notice PDF to read"
+            className="visually-hidden"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) void readNotice(file);
+            }}
+            ref={fileInputRef}
+            type="file"
+          />
+          {!templateMode ? (
+            <button
+              className="button subtle notice-attach"
+              disabled={noticeBusy || requestState === "loading"}
+              onClick={() => fileInputRef.current?.click()}
+              type="button"
+            >
+              <FileIcon /> {noticeBusy ? "Reading…" : "Notice"}
+            </button>
+          ) : null}
+          <div aria-label="Assistant mode" className="composer-mode-switch" role="group">
             {(["ask", "act"] as const).map((item) => (
               <button
                 aria-pressed={mode === item}
-                className={`${mode === item ? "active" : ""} mode-${item}`}
                 key={item}
                 onClick={() => setMode(item)}
                 type="button"
               >
-                <strong>{item === "ask" ? "Answer" : "Prepare"}</strong>
-                <small>{item === "ask" ? "Research with source links" : "Draft for internal review"}</small>
+                {item === "ask" ? "Answer" : "Prepare"}
               </button>
             ))}
           </div>
-          <button
-            aria-expanded={drawerOpen}
-            className="button assistant-drawer-toggle"
-            onClick={() => setDrawerOpen((open) => !open)}
-            type="button"
-          >
-            <MoreIcon /> History &amp; sources
+        </div>
+        {requestState === "loading" ? (
+          <button aria-label="Stop generating" className="send-button stop" onClick={stopStreaming} type="button">
+            <StopIcon />
           </button>
-          {hasConversation ? (
-            <button className="button assistant-reset" onClick={startAgain} type="button">
-              New conversation
-            </button>
-          ) : null}
-        </div>
-      </header>
-
-      {templateMode ? (
-        <div className="assistant-template-note" role="note">
-          <strong>Demo only.</strong>
-          <span>All clients and conversations are fictional.</span>
-          <span>Nothing can be sent or filed.</span>
-        </div>
-      ) : null}
-
-      <div className="assistant-layout" data-drawer-open={drawerOpen}>
-        {drawerOpen ? (
+        ) : (
           <button
-            aria-label="Close history and sources"
-            className="assistant-drawer-scrim"
-            onClick={() => setDrawerOpen(false)}
-            type="button"
-          />
-        ) : null}
+            aria-label={mode === "ask" ? "Get answer" : "Prepare draft"}
+            className="send-button"
+            disabled={!draft.trim()}
+            type="submit"
+          >
+            <ArrowUpIcon />
+          </button>
+        )}
+      </div>
+    </form>
+  );
+
+  return (
+    <div className="chat-shell" data-drawer-open={drawerOpen}>
+      {drawerOpen ? (
+        <button
+          aria-label="Close chat history"
+          className="chat-drawer-scrim"
+          onClick={() => setDrawerOpen(false)}
+          type="button"
+        />
+      ) : null}
         <aside className="conversation-library" aria-label={templateMode ? "Sample conversations" : publicMode ? "Current session" : "Your chats"}>
           {/* New chat sits at the top and is always reachable — the single most
               used control in any chat product. */}
@@ -961,26 +1073,58 @@ export function AssistantExperience({
           </p>
         </aside>
 
-        <section className="assistant-main">
+        <section className="chat-main">
+          <div className="chat-topline">
+            <button
+              aria-expanded={drawerOpen}
+              className="chat-history-toggle"
+              onClick={() => setDrawerOpen((open) => !open)}
+              type="button"
+            >
+              <MoreIcon /> Chats
+            </button>
+            <div className="chat-topline-title">
+              <span className="assistant-symbol"><SparklesIcon /></span>
+              <strong>Assistant</strong>
+              <span className="chat-mode-hint">
+                {mode === "ask"
+                  ? "Sourced answers — nothing is changed"
+                  : "Drafts for your review — nothing is sent"}
+              </span>
+            </div>
+            {hasConversation ? (
+              <button className="chat-topline-new" onClick={startAgain} type="button">
+                + New
+              </button>
+            ) : null}
+          </div>
+
+          {templateMode ? (
+            <div className="assistant-template-note" role="note">
+              <strong>Demo only.</strong>
+              <span>All clients and conversations are fictional.</span>
+              <span>Nothing can be sent or filed.</span>
+            </div>
+          ) : null}
+
           {!hasConversation ? (
-            <div className="assistant-welcome">
-              <div>
-                <span className="mode-kicker">{mode === "ask" ? "ANSWER MODE" : "PREPARE MODE"}</span>
+            <div className="chat-empty">
+              <div className="chat-column">
                 <h2>Start with a source, client, or regulatory question.</h2>
                 <p>
                   {mode === "ask"
                     ? "The Assistant searches selected indexed sources and keeps citations, caveats, and missing facts visible."
                     : "Prepare an internal briefing, information request, checklist, task list, or calendar proposal for professional review."}
                 </p>
-                <div className="prompt-grid">
+                {noticeReviewPanel ?? composerForm}
+                <div className="prompt-chips">
                   {promptsByMode[mode].map((prompt) => (
                     <button
-                      className="prompt-card"
+                      className="prompt-chip"
                       onClick={() => void requestAnswer(prompt)}
                       type="button"
                       key={prompt}
                     >
-                      <span>{mode === "ask" ? "Answer" : "Prepare"}</span>
                       {prompt}
                     </button>
                   ))}
@@ -988,7 +1132,8 @@ export function AssistantExperience({
               </div>
             </div>
           ) : (
-            <div className="assistant-response">
+            <div className="chat-scroll" ref={scrollRef}>
+            <div className="assistant-response chat-column">
               {messages.map((message) => message.role === "user" ? (
                 <div className="assistant-query" key={message.id}>
                   <span>You · {message.mode === "ask" ? "Answer" : "Prepare"}</span>
@@ -1186,171 +1331,28 @@ export function AssistantExperience({
                 />
               ) : null}
             </div>
+            </div>
           )}
 
-          <p aria-live="polite" className="visually-hidden">{status}</p>
-
-          {draftNotice ? (
-            <NoticeReview
-              notice={draftNotice}
-              onAttach={() => {
-                setAttachedNotice(draftNotice);
-                setDraftNotice(null);
-                setStatus("Notice attached to this conversation");
-                window.requestAnimationFrame(() => composerRef.current?.focus());
-              }}
-              onChange={setDraftNotice}
-              onDiscard={() => {
-                setDraftNotice(null);
-                setStatus("");
-              }}
-            />
+          {hasConversation ? (
+            <div className="chat-dock">
+              <div className="chat-column">
+                {noticeReviewPanel}
+                {composerForm}
+                <p className="chat-disclaimer">
+                  {templateMode
+                    ? "Sample responses — no external systems are queried."
+                    : publicMode
+                      ? "Current browser session — not saved to a firm record."
+                      : "Saved in this firm workspace. Verify before filing — Reg Mitra cannot send, file, or pay."}
+                </p>
+              </div>
+            </div>
           ) : null}
 
-          <form className="composer" onSubmit={submit}>
-            <div className="composer-mode-line">
-              <span className={`composer-mode ${mode}`}>{mode === "ask" ? "Answer" : "Prepare"}</span>
-              <span>
-                {mode === "ask"
-                  ? "Sourced explanation — nothing is changed"
-                  : "Draft creation — your review is required"}
-              </span>
-            </div>
-            <textarea
-              aria-label={`${mode === "ask" ? "Get an answer from" : "Prepare with"} Reg Mitra`}
-              onChange={(event) => setDraft(event.target.value)}
-              onInput={autoGrowComposer}
-              onKeyDown={handleComposerKeyDown}
-              placeholder={mode === "ask" ? "Ask a compliance question…" : "Describe what you want prepared…"}
-              ref={composerRef}
-              rows={1}
-              value={draft}
-            />
-            {attachedNotice ? (
-              <div className="notice-chip">
-                <span>
-                  <strong>{attachedNotice.noticeType ?? "Notice"}</strong>
-                  {attachedNotice.taxpayerName ? ` · ${attachedNotice.taxpayerName}` : ""}
-                  {attachedNotice.replyDueDate ? ` · reply due ${attachedNotice.replyDueDate}` : ""}
-                </span>
-                <button
-                  aria-label="Remove the attached notice"
-                  onClick={() => {
-                    setAttachedNotice(null);
-                    setStatus("Notice removed");
-                  }}
-                  type="button"
-                >
-                  <CloseIcon />
-                </button>
-              </div>
-            ) : null}
-            <div className="composer-actions">
-              {/* Visually hidden but still in the accessibility tree, so it needs
-                  its own name — a screen reader reaches it even though sighted
-                  users trigger it through the adjacent button. */}
-              <input
-                accept="application/pdf"
-                aria-label="Upload a notice PDF to read"
-                className="visually-hidden"
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) void readNotice(file);
-                }}
-                ref={fileInputRef}
-                type="file"
-              />
-              {!templateMode ? (
-                <button
-                  className="button subtle notice-attach"
-                  disabled={noticeBusy || requestState === "loading"}
-                  onClick={() => fileInputRef.current?.click()}
-                  type="button"
-                >
-                  <FileIcon /> {noticeBusy ? "Reading…" : "Attach notice"}
-                </button>
-              ) : null}
-              <span className="composer-note">
-                {templateMode
-                  ? "Sample response · no external systems queried"
-                  : publicMode
-                    ? "Current browser session · not saved to a firm record"
-                    : "Saved to this conversation"} · ⌘ Enter
-              </span>
-              {requestState === "loading" ? (
-                <button className="button stop-button" onClick={stopStreaming} type="button">
-                  <StopIcon /> Stop
-                </button>
-              ) : (
-                <button
-                  className="button primary"
-                  disabled={!draft.trim()}
-                  type="submit"
-                >
-                  {mode === "ask" ? "Get answer" : "Prepare"} <ArrowUpIcon />
-                </button>
-              )}
-            </div>
-          </form>
+          <p aria-live="polite" className="visually-hidden">{status}</p>
         </section>
 
-        <aside className="context-panel" aria-label="Trust and review context">
-          <div className="context-section">
-            <p className="eyebrow">What this mode does</p>
-            <h2>{mode === "ask" ? "Answer explains. It never changes anything." : "Prepare drafts. You decide what to use."}</h2>
-            <div className="context-item">
-              <TrustBadge kind="evidence" state={templateMode ? "demo" : "unverified"} />
-              <span>
-                {mode === "ask"
-                  ? "Explains, compares, and identifies what must be verified."
-                  : "Drafts checklists, proposed calendar changes, and handoff steps."}
-              </span>
-            </div>
-            <div className="context-item">
-              <span className="context-num">✓</span>
-              <span>Stops before Submit, OTP, filing, payment, email, or WhatsApp.</span>
-            </div>
-          </div>
-          {latestRetrieval ? (
-            <div className="context-section retrieval-context">
-              <p className="eyebrow">Source search</p>
-              <h2>
-                {latestRetrieval.citationState === "locked"
-                  ? "Answer linked to its evidence"
-                  : "Evidence needs your check"}
-              </h2>
-              <div className="context-item">
-                <span className="context-num">S</span>
-                <span>{latestRetrieval.sources.length} official sources retrieved for the latest answer.</span>
-              </div>
-              <div className="context-item">
-                <span className="context-num">↗</span>
-                <span>
-                  {latestRetrieval.strategy === "hybrid"
-                    ? "Reg Mitra checked both meaning and exact regulatory terms."
-                    : "Reg Mitra used exact-term search for this answer."}
-                </span>
-              </div>
-            </div>
-          ) : null}
-          <div className="context-section">
-            <p className="eyebrow">Every answer shows</p>
-            <h2>A conclusion you can inspect</h2>
-            <div className="context-item"><span className="context-num">1</span><span>Plain-language impact and assumptions.</span></div>
-            <div className="context-item"><span className="context-num">2</span><span>An ordered evidence and verification path.</span></div>
-            <div className="context-item"><span className="context-num">3</span><span>Explicit source and execution status.</span></div>
-          </div>
-          <div className="context-section assistant-contact-box">
-            <p className="eyebrow">Human help</p>
-            <h2>Ask a question or connect with us</h2>
-            <p>Talk through source coverage, your firm’s workflow, or requesting pilot access.</p>
-            <div>
-              <Link className="button" href="/faq">View FAQs</Link>
-              <Link className="button primary" href="/today">Open the product</Link>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </>
+    </div>
   );
 }

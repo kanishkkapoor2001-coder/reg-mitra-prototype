@@ -423,7 +423,15 @@ async function persistConversation(params: {
       })
       .select("id")
       .single();
-    if (conversationError || !createdConversation) return null;
+    if (conversationError || !createdConversation) {
+      // The stream already delivered the answer, so a failure here is invisible
+      // to the user — the chat just never appears in history. Say so somewhere.
+      console.error("[chat] conversation insert failed", {
+        code: conversationError?.code,
+        message: conversationError?.message,
+      });
+      return null;
+    }
     conversationId = createdConversation.id;
   }
   if (!conversationId) return null;
@@ -453,7 +461,13 @@ async function persistConversation(params: {
       created_by: userId,
     },
   ]).select("id, role");
-  if (messageError) return { conversationId };
+  if (messageError) {
+    console.error("[chat] message insert failed", {
+      code: messageError.code,
+      message: messageError.message,
+    });
+    return { conversationId };
+  }
 
   await supabase
     .from("conversations")
