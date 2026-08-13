@@ -173,8 +173,9 @@ export default async function SignupPage({
             <p className="oauth-foot">
               Already approved? <Link href="/login">Sign in</Link>
             </p>
+            {/* "to review the request" described the old manual gate. */}
             <p className="oauth-fine">
-              We store your name, work email and firm to review the request — nothing else, and we
+              We store your email, and your name and firm if you give them — nothing else, and we
               never post on your behalf.
             </p>
           </div>
