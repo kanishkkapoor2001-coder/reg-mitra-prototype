@@ -35,6 +35,73 @@ button { color: inherit; }
 
 .app-shell { display: grid; grid-template-columns: 216px minmax(0, 1fr); min-height: 100vh; }
 
+/* ─── Form control baseline ──────────────────────────────────────────────────
+ *
+ * Every control in the app gets a correct default, once, here.
+ *
+ * Before this there was no floor: 28 separate rules styled controls by hand and
+ * 12 of them styled `input` without `select`, so any control type a component
+ * forgot fell through to the raw browser widget. That is the whole class of bug
+ * — the unstyled dropdowns on the work-item form, the native date picker beside
+ * them, the founder code field rendering as a plain box because the rule listed
+ * `email` and `text` but not `password`. Each was found by eye, one at a time,
+ * because nothing made them impossible.
+ *
+ * These are element selectors, so every existing class rule still wins on
+ * specificity — nothing is overridden, a floor is added underneath. A component
+ * that says nothing now inherits something correct instead of nothing at all.
+ *
+ * Add a new control type here rather than in a component, and it is right
+ * everywhere at once. */
+.app-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.app-shell select,
+.app-shell textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--surface);
+  color: var(--ink-950);
+  font: inherit;
+  font-size: 14px;
+}
+.app-shell textarea { min-height: 76px; padding: 10px 12px; line-height: 1.5; resize: vertical; }
+
+/* The OS triangle replaced by a chevron in the border colour, so a dropdown
+   reads as the same object as the text field beside it. */
+.app-shell select {
+  appearance: none;
+  padding-right: 34px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%235c6b63' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5 6 7.5l3-3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  cursor: pointer;
+}
+
+.app-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):hover,
+.app-shell select:hover,
+.app-shell textarea:hover { border-color: #afbeb6; }
+
+.app-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus-visible,
+.app-shell select:focus-visible,
+.app-shell textarea:focus-visible {
+  border-color: var(--green-700);
+  box-shadow: 0 0 0 3px rgb(29 141 86 / 14%);
+}
+
+.app-shell input::placeholder,
+.app-shell textarea::placeholder { color: var(--ink-400); }
+
+.app-shell input:disabled,
+.app-shell select:disabled,
+.app-shell textarea:disabled { background: var(--surface-muted); color: var(--ink-500); cursor: not-allowed; }
+
+.app-shell input[type="checkbox"],
+.app-shell input[type="radio"] { accent-color: var(--green-700); cursor: pointer; }
+
 .sidebar {
   position: sticky;
   top: 0;
