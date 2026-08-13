@@ -3561,3 +3561,43 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   background: #2e2517;
   color: var(--amber-700);
 }
+
+/* Import guidance — what to export, and from where. */
+.import-guide {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px 32px;
+  margin-top: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+}
+.import-guide p { margin: 0 0 8px; color: var(--ink-600); font-size: 13px; line-height: 1.6; }
+.import-guide strong { color: var(--ink-950); font-weight: 620; }
+.import-guide-title {
+  margin-bottom: 6px !important;
+  color: var(--ink-500) !important;
+  font-size: 11px !important;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.import-guide-sources { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.import-guide-sources li {
+  display: grid;
+  gap: 1px;
+  padding-left: 12px;
+  border-left: 2px solid var(--line-strong);
+}
+.import-guide-sources strong { font-size: 12.5px; }
+.import-guide-sources span { color: var(--ink-600); font-size: 12.5px; line-height: 1.5; }
+.import-guide-note { font-size: 12.5px !important; }
+.import-guide code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--surface);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.import-guide .button { margin-top: 4px; }

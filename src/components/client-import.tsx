@@ -30,6 +30,24 @@ const TARGET_OPTIONS = [
 
 type Report = { created: number; factsWritten: number; skipped: { name: string; reason: string }[] };
 
+// A template beats any amount of prose about what a "client CSV" is. The two
+// rows also document the formats the parser accepts — "4.5 Cr" and "₹80,00,000"
+// are both read correctly, which is not obvious from an empty header row.
+const SAMPLE_CSV = [
+  "Client name,GSTIN,PAN,State,Sector,Entity type,Annual turnover,Employees",
+  "Sharma Pharma Pvt Ltd,29ABCDE1234F1Z5,ABCDE1234F,Karnataka,Pharmaceuticals,Private limited,4.5 Cr,45",
+  "Royal Spice Foods LLP,27FGHIJ5678K1Z2,FGHIJ5678K,Maharashtra,Food processing,LLP,\"₹80,00,000\",12",
+].join("\n");
+
+function downloadSample() {
+  const url = URL.createObjectURL(new Blob([SAMPLE_CSV], { type: "text/csv;charset=utf-8" }));
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "reg-mitra-client-template.csv";
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
 export function ClientImport() {
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<string[][]>([]);
@@ -128,8 +146,7 @@ export function ClientImport() {
       <label className="import-drop" htmlFor="client-csv">
         <strong>Choose a CSV file</strong>
         <span>
-          Export from Tally, Zoho or Excel with “Save as CSV”. Any column layout — the columns are
-          read for you and shown before anything is created.
+          Any column layout — the columns are read for you and shown before anything is created.
         </span>
         <input
           id="client-csv"
@@ -141,6 +158,42 @@ export function ClientImport() {
           }}
         />
       </label>
+
+      {/* "Export from Tally, Zoho or Excel" assumed the reader already knew
+          which of the dozens of exports in those tools is the right one. The
+          answer is the customer master, never the transactions — so say that,
+          name the report in each tool, and offer a file to copy. */}
+      {!headers.length ? (
+        <div className="import-guide">
+          <div>
+            <p className="import-guide-title">What to export</p>
+            <p>
+              Your <strong>client or customer list</strong> — not invoices, vouchers or ledger
+              entries. One row per client.
+            </p>
+            <ul className="import-guide-sources">
+              <li><strong>Tally</strong><span>The ledger list under Sundry Debtors → Export (Alt&nbsp;+&nbsp;E) → CSV</span></li>
+              <li><strong>Zoho Books</strong><span>Contacts → Customers → Export</span></li>
+              <li><strong>Excel or Google Sheets</strong><span>Any sheet, one client per row → Save as CSV</span></li>
+            </ul>
+          </div>
+          <div>
+            <p className="import-guide-title">What the columns should be</p>
+            <p>
+              Only a <strong>name</strong> column is required. GSTIN, PAN, state, sector, entity
+              type, turnover and employee count are used when present — those are what decide which
+              regulatory changes match each client, so include what you have.
+            </p>
+            <p className="import-guide-note">
+              Extra columns are fine and headers can be named anything. Turnover can be written the
+              way accountants write it: <code>4.5 Cr</code>, <code>₹80,00,000</code>, <code>25 lakh</code>.
+            </p>
+            <button className="button subtle" onClick={downloadSample} type="button">
+              Download a sample CSV
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {busy === "reading" ? <p className="describe-message">Reading the columns…</p> : null}
       {message ? <p className="form-error" role="alert">{message}</p> : null}
