@@ -107,7 +107,7 @@ export async function sendPendingDigests(): Promise<DigestOutcome> {
 
   const { data, error } = await admin
     .from("client_regulatory_impacts")
-    .select("id, workspace_id, client_id, clients(display_name), regulatory_sources(authority, title, canonical_url)")
+    .select("id, workspace_id, client_id, clients!client_regulatory_impacts_client_id_fkey(display_name), regulatory_sources(authority, title, canonical_url)")
     .eq("decision", "direct_relevance")
     .eq("review_state", "not_reviewed");
 

@@ -57,10 +57,15 @@ export default async function TodayPage({
   }
 
   const supabase = await createSupabaseServerClient();
-  const [{ data }, { count: clientCount }] = await Promise.all([
+  // `clients!tasks_client_id_fkey`, not `clients`: the tenant-consistency
+  // migration added a second composite foreign key (tasks_client_in_workspace),
+  // so PostgREST can no longer guess which one an unqualified embed means. It
+  // answers PGRST201 / HTTP 300 and returns no rows — and because the error was
+  // discarded below, a full queue rendered as "You're clear for now".
+  const [{ data, error }, { count: clientCount }] = await Promise.all([
     supabase
       .from("tasks")
-      .select("id, title, priority, due_at, state, reviewed_at, client_id, metadata, clients(display_name), client_regulatory_impacts(review_state, regulatory_sources(authority))")
+      .select("id, title, priority, due_at, state, reviewed_at, client_id, metadata, clients!tasks_client_id_fkey(display_name), client_regulatory_impacts(review_state, regulatory_sources(authority))")
       .eq("workspace_id", workspace.id)
       .is("reviewed_at", null)
       .not("state", "in", '("completed","dismissed")')
@@ -72,6 +77,10 @@ export default async function TodayPage({
       .eq("workspace_id", workspace.id)
       .eq("status", "active"),
   ]);
+
+  // Never swallow this again: an empty queue and a failed query look identical
+  // on screen, and this one went unnoticed because nothing said a word.
+  if (error) console.error("[today] task query failed", error);
 
   const items = (data ?? []).map((task) => {
     const clientValue = task.clients;

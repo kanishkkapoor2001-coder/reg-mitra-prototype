@@ -39,7 +39,7 @@ export type ClientRadarSummary = {
 };
 
 const IMPACT_COLUMNS =
-  "id, client_id, decision, review_state, applicability, applicability_evidence, missing_attributes, matched_at, clients(display_name), regulatory_sources(id, authority, title, canonical_url, published_at)";
+  "id, client_id, decision, review_state, applicability, applicability_evidence, missing_attributes, matched_at, clients!client_regulatory_impacts_client_id_fkey(display_name), regulatory_sources(id, authority, title, canonical_url, published_at)";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function toImpact(row: any): ClientImpact | null {

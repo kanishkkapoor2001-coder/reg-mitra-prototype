@@ -153,7 +153,7 @@ async function ProductClientPage({
   const supabase = await createSupabaseServerClient();
   const { data: client } = await supabase
     .from("clients")
-    .select("id, legal_name, display_name, sector, state_code, created_at, tasks(id, title, state, priority, due_at)")
+    .select("id, legal_name, display_name, sector, state_code, created_at, tasks!tasks_client_id_fkey(id, title, state, priority, due_at)")
     .eq("workspace_id", workspace.id)
     .eq("id", id)
     .eq("status", "active")

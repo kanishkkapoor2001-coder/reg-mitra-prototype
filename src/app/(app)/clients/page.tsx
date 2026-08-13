@@ -33,15 +33,19 @@ export default async function ClientsPage() {
   }
 
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+  // Disambiguated embed — see the note in (app)/today/page.tsx. Unqualified,
+  // this returned PGRST201 and the roster rendered as "no clients yet".
+  const { data, error } = await supabase
     .from("clients")
-    .select("id, legal_name, display_name, sector, state_code, tasks(priority, state, due_at)")
+    .select("id, legal_name, display_name, sector, state_code, tasks!tasks_client_id_fkey(priority, state, due_at)")
     .eq("workspace_id", workspace.id)
     .eq("status", "active")
     .order("display_name");
 
-  const radar = await readWorkspaceRadarSummary(supabase, workspace.id).catch((error) => {
-    console.error("[clients] radar summary unavailable", error);
+  if (error) console.error("[clients] client query failed", error);
+
+  const radar = await readWorkspaceRadarSummary(supabase, workspace.id).catch((radarError) => {
+    console.error("[clients] radar summary unavailable", radarError);
     return new Map<string, ClientRadarSummary>();
   });
 
