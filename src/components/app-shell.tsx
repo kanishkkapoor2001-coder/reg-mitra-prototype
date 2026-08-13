@@ -11,6 +11,8 @@ import {
   CalculatorIcon,
   ClientsIcon,
   FileIcon,
+  FullscreenExitIcon,
+  FullscreenIcon,
   MoreIcon,
   RegulationsIcon,
   SearchIcon,
@@ -42,6 +44,24 @@ export function AppShell({
   const router = useRouter();
   const [commandOpen, setCommandOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [fullscreen, setFullscreen] = useState(false);
+  // Fullscreen is a browser capability, not app state: render the control only
+  // where the API exists (it does not on iPhone Safari), and track the actual
+  // fullscreen element so Esc and the button stay in sync.
+  const [fullscreenAvailable, setFullscreenAvailable] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time capability probe; document does not exist during SSR
+    setFullscreenAvailable(Boolean(document.fullscreenEnabled));
+    const onFullscreenChange = () => setFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
+  function toggleFullscreen() {
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void document.documentElement.requestFullscreen();
+  }
 
   useEffect(() => {
     function onShortcut(event: KeyboardEvent) {
@@ -158,6 +178,18 @@ export function AppShell({
             <kbd>⌘ K</kbd>
           </button>
           <div className="topbar-actions">
+            {fullscreenAvailable ? (
+              <button
+                aria-label={fullscreen ? "Exit full screen" : "Enter full screen"}
+                aria-pressed={fullscreen}
+                className="topbar-fullscreen"
+                onClick={toggleFullscreen}
+                title={fullscreen ? "Exit full screen (Esc)" : "Full screen"}
+                type="button"
+              >
+                {fullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+              </button>
+            ) : null}
             <Link
               className={`topbar-calendar-link ${isActive(pathname, "/calendar") ? "active" : ""}`}
               href="/calendar"

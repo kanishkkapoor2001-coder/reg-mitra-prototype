@@ -88,6 +88,14 @@ export function CalculatorIcon(props: IconProps) {
   return <IconBase {...props}><rect height="18" rx="2" width="14" x="5" y="3" {...strokeProps} /><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h4.01M8 19h.01M12 19h.01" {...strokeProps} /></IconBase>;
 }
 
+export function FullscreenIcon(props: IconProps) {
+  return <IconBase {...props}><path d="M9 4H5a1 1 0 0 0-1 1v4M15 4h4a1 1 0 0 1 1 1v4M9 20H5a1 1 0 0 1-1-1v-4M15 20h4a1 1 0 0 0 1-1v-4" {...strokeProps} /></IconBase>;
+}
+
+export function FullscreenExitIcon(props: IconProps) {
+  return <IconBase {...props}><path d="M9 4v4a1 1 0 0 1-1 1H4M15 4v4a1 1 0 0 0 1 1h4M9 20v-4a1 1 0 0 0-1-1H4M15 20v-4a1 1 0 0 1 1-1h4" {...strokeProps} /></IconBase>;
+}
+
 export function StopIcon(props: IconProps) {
   return <IconBase {...props}><rect height="10" rx="2" width="10" x="7" y="7" {...strokeProps} /></IconBase>;
 }

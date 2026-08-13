@@ -3530,3 +3530,21 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   .composer-icon-button { transition: none; }
   .composer-icon-button[aria-busy="true"] svg { animation: none; }
 }
+
+/* Full screen toggle — lives in the topbar so every product page carries it. */
+.topbar-fullscreen {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink-600);
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+.topbar-fullscreen svg { width: 16px; height: 16px; }
+@media (hover: hover) and (pointer: fine) {
+  .topbar-fullscreen:hover { background: var(--surface-muted); color: var(--ink-800); }
+}
