@@ -41,6 +41,12 @@ export function ClientDescribe() {
   const extracted = Object.entries(facts);
 
   async function read() {
+    // Checked here rather than by disabling the button: a dead button explains
+    // nothing, and this panel already looked broken enough.
+    if (description.trim().length < 10) {
+      setMessage("Write a line about the client first — what it does and where it is registered.");
+      return;
+    }
     setBusy(true);
     setMessage(null);
     try {
@@ -87,27 +93,28 @@ export function ClientDescribe() {
   return (
     <section className="describe-panel">
       <label htmlFor="client-description">
-        Describe the client
-        <span className="field-optional">optional — fills the fields below</span>
+        Describe the client in a sentence
+        <span className="field-optional">or skip this and type the fields yourself</span>
       </label>
       <textarea
         id="client-description"
         name="description"
         rows={3}
-        placeholder="Sharma Pharmaceuticals Pvt Ltd — pharma manufacturer in Maharashtra, about 40 crore turnover, 120 staff, regular GST scheme, deducts TDS, exports."
+        // Prefixed "e.g." and kept short. A full worked example read as text that
+        // was already in the box — next to a button greyed out until you type,
+        // the whole panel looked filled in and broken rather than empty and
+        // waiting.
+        placeholder="e.g. Sharma Pharma — pharma manufacturer in Maharashtra, 40 crore turnover, regular GST, deducts TDS"
         value={description}
         onChange={(event) => setDescription(event.target.value)}
       />
       <div className="describe-actions">
-        <button
-          className="button"
-          type="button"
-          onClick={read}
-          disabled={busy || description.trim().length < 10}
-        >
-          {busy ? "Reading…" : "Read this and fill the form"}
+        <button className="button primary" type="button" onClick={read} disabled={busy}>
+          {busy ? "Reading…" : "Fill the form from this"}
         </button>
-        {message ? <small className="describe-message">{message}</small> : null}
+        <small className="describe-message">
+          {message ?? "Whatever it finds lands in the fields below for you to check."}
+        </small>
       </div>
 
       {extracted.length ? (
