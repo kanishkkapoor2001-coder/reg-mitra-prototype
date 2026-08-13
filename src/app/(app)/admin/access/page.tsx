@@ -38,7 +38,8 @@ export default async function AdminAccessPage({
           <p className="eyebrow">Operator</p>
           <h1>Access requests</h1>
           <p className="page-subtitle">
-            Approving sends the firm a sign-in email automatically.
+            Trials from a firm’s own domain let themselves in and never appear here.
+            Approving anyone below sends them a sign-in email automatically.
           </p>
         </div>
       </section>
@@ -55,7 +56,11 @@ export default async function AdminAccessPage({
 
       <section className="panel">
         <div className="panel-header">
-          <div><h2>Waiting</h2><p>Nobody can use the product until you approve them</p></div>
+          {/* Work-domain trials approve themselves now, so this list is no
+              longer "everyone who signed up" — it is the ones that could not be
+              decided automatically. Saying otherwise implies the queue is the
+              whole funnel. */}
+          <div><h2>Waiting</h2><p>Paid requests, and trials from a personal email address</p></div>
           {pending.length ? <span className="radar-count">{pending.length}</span> : null}
         </div>
 
