@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ClientDescribe } from "@/components/client-describe";
 import { PageHeading } from "@/components/page-heading";
 
 const errors: Record<string, string> = {
@@ -18,9 +19,10 @@ export default async function NewClientPage({
       <PageHeading
         eyebrow="Client portfolio"
         title="Add a client"
-        description="Begin with the minimum profile. Applicability and identifiers are recorded separately with their own evidence."
+        description="Describe the client and the fields fill themselves in, or type them yourself. What you confirm here is what the radar matches circulars against."
       />
       <form className="record-form" action="/api/clients" method="post">
+        <ClientDescribe />
         <div className="record-form-field">
           <label htmlFor="legal-name">Legal name</label>
           <input id="legal-name" name="legalName" required type="text" />

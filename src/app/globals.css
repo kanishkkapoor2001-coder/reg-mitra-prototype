@@ -833,6 +833,36 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 .client-table .numeric { font-variant-numeric: tabular-nums; text-align: right; }
 .client-table .client-identifier { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
 .filter-label { display: inline-flex; }
+/* Describe-the-client panel. Spans the create form's two columns and sits above
+   the fields it fills, so the relationship reads as cause and effect. */
+.describe-panel { grid-column: 1 / -1; display: grid; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.describe-panel > label { display: flex; align-items: baseline; gap: 8px; color: var(--ink-800); font-size: 13px; font-weight: 700; }
+.describe-panel .field-optional { color: var(--ink-400); font-size: 12px; font-weight: 500; }
+.describe-panel textarea {
+  width: 100%;
+  min-height: 66px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--surface);
+  color: var(--ink-950);
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.describe-panel textarea:focus-visible { border-color: var(--green-700); box-shadow: 0 0 0 3px rgb(29 141 86 / 14%); }
+.describe-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.describe-message { color: var(--ink-600); font-size: 12px; line-height: 1.45; }
+.describe-found { padding: 12px 14px; border: 1px solid #cfe3d6; border-radius: var(--radius-md); background: #f2f8f4; }
+.describe-found-title { margin: 0 0 8px; color: var(--green-700); font-size: 12px; font-weight: 750; }
+.describe-found ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px 18px; margin: 0 0 8px; padding: 0; list-style: none; }
+.describe-found li { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; }
+.describe-found li strong { color: var(--ink-600); font-weight: 500; }
+.describe-found li span { color: var(--ink-950); font-weight: 650; text-align: right; }
+.describe-found small { color: var(--ink-500); font-size: 11.5px; line-height: 1.45; }
+
 /* Streaming placeholder — see (app)/loading.tsx.
    Sized to the real surfaces so the page does not jump when content replaces it. */
 .route-skeleton { max-width: 1040px; padding-top: 2px; }
