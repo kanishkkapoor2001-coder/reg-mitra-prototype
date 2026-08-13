@@ -140,26 +140,21 @@ export default async function SignupPage({
             {/* Plan belongs with the other choices, above the button. Sitting
                 below it, it asked the visitor to reconsider something after the
                 form had already presented its final action. */}
-            <details className="plan-detail" open={plan === "ultra"}>
+            <details className="plan-detail" open={plan !== "starter"}>
               <summary>
                 Plan: <strong>{TIERS[plan].name}</strong>
-                {plan === "pro" ? " — up to 6 client companies" : " — unlimited client companies"}
+                {` — ${TIERS[plan].bookLabel.toLowerCase()}`}
               </summary>
               <div className="plan-choice">
-                <label className="plan-option">
-                  <input type="radio" name="plan" value="pro" defaultChecked={plan === "pro"} />
-                  <span>
-                    <strong>{TIERS.pro.name}</strong>
-                    <small>{TIERS.pro.priceLabel} · up to {TIERS.pro.clientLimit} client companies</small>
-                  </span>
-                </label>
-                <label className="plan-option">
-                  <input type="radio" name="plan" value="ultra" defaultChecked={plan === "ultra"} />
-                  <span>
-                    <strong>{TIERS.ultra.name}</strong>
-                    <small>{TIERS.ultra.priceLabel} · unlimited client companies</small>
-                  </span>
-                </label>
+                {Object.values(TIERS).map((tier) => (
+                  <label className="plan-option" key={tier.id}>
+                    <input type="radio" name="plan" value={tier.id} defaultChecked={plan === tier.id} />
+                    <span>
+                      <strong>{tier.name}</strong>
+                      <small>{tier.priceLabel} · {tier.bookLabel.toLowerCase()}</small>
+                    </span>
+                  </label>
+                ))}
               </div>
             </details>
 

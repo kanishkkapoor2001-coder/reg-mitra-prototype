@@ -78,7 +78,7 @@ export default async function AdminAccessPage({
                   {request.fullName ? <span className="access-email">{request.email}</span> : null}
                   <span className="access-meta">
                     Wants {TIERS[request.requestedTier].name}
-                    {request.requestedTier === "ultra" ? " (waitlist)" : ""}
+                    {request.requestedTier === "enterprise" ? " (agreed directly)" : ""}
                     {" · "}via {request.provider ?? "email"}
                     {" · "}{formatWhen(request.requestedAt)}
                   </span>

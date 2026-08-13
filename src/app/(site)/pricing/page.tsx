@@ -4,8 +4,27 @@ import { PublicShell } from "@/components/public-shell";
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: "Try Reg Mitra free for 7 days. Then one simple plan — no card to start.",
+  description: "Priced on the size of your client book. Try Reg Mitra free for 7 days — no card.",
 };
+
+// kanishk@learno.ai (with the extra "a") is a dead mailbox — mail to it bounces
+// and is suppressed at the provider, so enterprise enquiries sent there were
+// never arriving.
+const CONTACT_EMAIL = "kanishk@outreach.learno.ai";
+
+const BANDS = [
+  { id: "starter", name: "Starter", book: "Up to 25", price: "₹4,000/mo", perClient: "₹160", href: "/signup?plan=starter" },
+  { id: "practice", name: "Practice", book: "Up to 100", price: "₹9,000/mo", perClient: "₹90", href: "/signup?plan=practice" },
+  { id: "firm", name: "Firm", book: "Up to 300", price: "₹18,000/mo", perClient: "₹60", href: "/signup?plan=firm" },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    book: "Above 300",
+    price: "Talk to us",
+    perClient: "—",
+    href: `mailto:${CONTACT_EMAIL}?subject=Reg%20Mitra%20enterprise%20plan`,
+  },
+] as const;
 
 export default function PricingPage() {
   return (
@@ -13,72 +32,59 @@ export default function PricingPage() {
       <main className="editorial-page">
         <header className="editorial-hero narrow">
           <p className="marketing-kicker">Pricing</p>
-          <h1>Try it free for 7 days.</h1>
-          <p>Run Reg Mitra against your real client book for a week — no card required. Keep going on one simple plan.</p>
+          <h1>Priced on the size of your book.</h1>
+          <p>Run Reg Mitra against your real client book free for 7 days — no card required. Then pay for the band your practice actually is.</p>
         </header>
 
-        <section className="pricing-tiers" aria-label="Reg Mitra plans">
-          <article className="tier">
-            <p className="tier-label">Start here</p>
-            <h2 className="tier-name">Free trial</h2>
-            <p className="tier-price">7<small>days</small></p>
-            <p className="tier-note">Full Pro access, no card</p>
-            <ul className="tier-features">
-              <li>Everything in <strong>Pro</strong>, for 7 days</li>
-              <li>Match changes to up to <strong>6 client companies</strong></li>
-              <li>Source-linked research &amp; compliance calendar</li>
-              <li>Weekly regulatory newsletter</li>
-            </ul>
-            <Link className="marketing-button quiet tier-cta" href="/signup?plan=pro">Start free trial</Link>
-          </article>
+        {/* Priced on book size. Per-client cost falls as the book grows, so the
+            table is the argument — three cards could not show that the ₹160 a
+            small practice pays becomes ₹60 at scale. */}
+        <section className="pricing-band-section" aria-label="Reg Mitra plans">
+          <p className="pricing-band-intro">
+            One price per band, billed monthly. Every plan includes the full product — matching,
+            research, the compliance calendar and the weekly newsletter.
+          </p>
 
-          <article className="tier featured">
-            <p className="tier-label">Most popular</p>
-            <h2 className="tier-name">Pro</h2>
-            <p className="tier-price"><span className="tier-cur">₹</span>2,500<small>/month</small></p>
-            <p className="tier-note">For a growing practice</p>
-            <ul className="tier-features">
-              <li>Everything in the trial, continued</li>
-              <li>Match changes to up to <strong>6 client companies</strong></li>
-              <li>Assistant chat for research and drafting</li>
-              <li>Priority email &amp; WhatsApp support</li>
-            </ul>
-            <Link className="marketing-button light tier-cta" href="/signup?plan=pro">Start with Pro</Link>
-          </article>
-
-          <article className="tier soon">
-            <p className="tier-label">Coming soon</p>
-            <h2 className="tier-name">Ultra</h2>
-            <p className="tier-price"><span className="tier-cur">₹</span>5,000<small>/month</small></p>
-            <p className="tier-note">For full-service firms</p>
-            <ul className="tier-features">
-              <li>Everything in Pro</li>
-              <li><strong>Unlimited</strong> client companies</li>
-              <li><strong>Unlimited</strong> assistant chat</li>
-              <li>Everything, without limits</li>
-            </ul>
-            <Link className="marketing-button quiet tier-cta" href="/signup?plan=ultra">Join the waitlist</Link>
-          </article>
-        </section>
-
-        <section className="pricing-enterprise">
-          <div>
-            <h2>Custom enterprise plans</h2>
-            <p>
-              Larger firm, multiple offices, or a workflow of your own? We build the plan around
-              your book — seats, sources, and support agreed with you directly.
-            </p>
+          <div className="pricing-band-table-wrap">
+            <table className="pricing-band-table">
+              <caption className="visually-hidden">Reg Mitra plans by client book size</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Plan</th>
+                  <th scope="col">Book</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Per client</th>
+                  <th scope="col"><span className="visually-hidden">Get started</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {BANDS.map((band) => (
+                  <tr key={band.id}>
+                    <th scope="row">{band.name}</th>
+                    <td>{band.book}</td>
+                    <td className="pricing-band-price">{band.price}</td>
+                    <td className="pricing-band-per">{band.perClient}</td>
+                    <td className="pricing-band-cta">
+                      {band.href.startsWith("mailto:") ? (
+                        <a className="marketing-button quiet" href={band.href}>Talk to us</a>
+                      ) : (
+                        <Link className="marketing-button quiet" href={band.href}>Start free</Link>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <a
-            className="marketing-button quiet"
-            href="mailto:kanishk@learno.ai?subject=Reg%20Mitra%20enterprise%20plan"
-          >
-            Talk to us
-          </a>
+
+          <p className="pricing-band-note">
+            Per-client cost falls as you grow, so moving up a band is a volume discount rather than
+            a cliff. Start on the 7-day trial — no card, full product, your real client book.
+          </p>
         </section>
 
         <p className="pricing-foot">
-          Have a question about a plan? <a href="mailto:kanishk@learno.ai">Email us</a> or message
+          Have a question about a plan? <a href={`mailto:${CONTACT_EMAIL}`}>Email us</a> or message
           us on <a href="https://wa.me/919711017316" target="_blank" rel="noreferrer">WhatsApp</a>.
         </p>
       </main>

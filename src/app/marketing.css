@@ -2381,3 +2381,68 @@
 .public-site select:focus-visible {
   border-color: var(--green-600);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Pricing — bands on book size
+   ───────────────────────────────────────────────────────────────────────────
+   A table, not cards: the argument is that per-client cost falls from ₹160 to
+   ₹60 as the book grows, and only a table lets someone read down that column.
+   Rows are separated by their own fill rather than rules — quieter than a
+   gridded table and it keeps the row a single readable block.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.pricing-band-section { margin-top: 8px; }
+.pricing-band-intro {
+  max-width: 62ch;
+  margin: 0 0 26px;
+  color: var(--ink-600);
+  font-size: var(--text-md);
+  line-height: 1.65;
+}
+/* A narrow phone still gets the full table; it scrolls in its own box rather
+   than forcing the page sideways. */
+.pricing-band-table-wrap { overflow-x: auto; }
+.pricing-band-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  font-size: var(--text-md);
+}
+.pricing-band-table thead th {
+  padding: 13px 20px;
+  background: var(--surface-hover);
+  color: var(--ink-950);
+  font-weight: 620;
+  text-align: left;
+  white-space: nowrap;
+}
+.pricing-band-table thead th:first-child { border-radius: 10px 0 0 10px; }
+.pricing-band-table thead th:last-child { border-radius: 0 10px 10px 0; }
+.pricing-band-table tbody th,
+.pricing-band-table tbody td {
+  padding: 16px 20px;
+  background: var(--surface-muted);
+  color: var(--ink-800);
+  font-weight: 450;
+  text-align: left;
+  vertical-align: middle;
+}
+.pricing-band-table tbody th {
+  border-radius: 10px 0 0 10px;
+  color: var(--ink-950);
+  font-weight: 600;
+}
+.pricing-band-table tbody td:last-child { border-radius: 0 10px 10px 0; }
+/* Money and counts line up column-wise only with tabular figures. */
+.pricing-band-price,
+.pricing-band-per { font-variant-numeric: tabular-nums; }
+.pricing-band-price { color: var(--ink-950); font-weight: 600; }
+.pricing-band-cta { text-align: right !important; }
+.pricing-band-cta .marketing-button { padding: 7px 14px; font-size: var(--text-sm, 13px); white-space: nowrap; }
+.pricing-band-note {
+  max-width: 62ch;
+  margin: 22px 0 0;
+  color: var(--ink-600);
+  font-size: var(--text-md);
+  line-height: 1.65;
+}
