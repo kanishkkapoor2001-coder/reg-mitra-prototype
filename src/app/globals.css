@@ -3548,3 +3548,16 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 @media (hover: hover) and (pointer: fine) {
   .topbar-fullscreen:hover { background: var(--surface-muted); color: var(--ink-800); }
 }
+
+/* Badge for answers that cite no indexed source: amber, not green — the reader
+   must know this reply is not backed by the corpus. */
+.answer-mode-badge.unsourced {
+  border-color: color-mix(in srgb, var(--amber-700, #a86a1a) 40%, transparent);
+  background: color-mix(in srgb, var(--amber-700, #a86a1a) 9%, transparent);
+  color: var(--amber-700, #a86a1a);
+}
+[data-theme="dark"] .answer-mode-badge.unsourced {
+  border-color: #6b5426;
+  background: #2e2517;
+  color: var(--amber-700);
+}

@@ -1164,9 +1164,21 @@ export function AssistantExperience({
                       {message.mode === "act" ? "Internal draft" : "Source-grounded answer"} · Reg Mitra
                     </p>
                     {!message.streaming ? (
-                      <span className={`answer-mode-badge ${message.mode}`}>
-                        {message.mode === "act" ? "Professional review required" : "Official sources attached"}
-                      </span>
+                      message.mode === "act" ? (
+                        <span className="answer-mode-badge act">Professional review required</span>
+                      ) : templateMode || (
+                        message.retrieval
+                        && message.retrieval.citationState !== "unsupported"
+                        && message.retrieval.citedSourceIds.length > 0
+                      ) ? (
+                        <span className="answer-mode-badge ask">Official sources attached</span>
+                      ) : (
+                        // An answer that cites nothing must not wear the badge —
+                        // claiming attached sources on an unsourced reply is
+                        // exactly the kind of false assurance this product exists
+                        // to prevent.
+                        <span className="answer-mode-badge unsourced">No indexed source cited</span>
+                      )
                     ) : null}
                   </div>
 
