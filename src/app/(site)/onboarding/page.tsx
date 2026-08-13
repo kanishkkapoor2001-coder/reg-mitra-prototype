@@ -48,26 +48,32 @@ export default async function OnboardingPage({
               required
               type="text"
             />
-            <label htmlFor="workspace-slug">Workspace address</label>
+            {/* Both derived from the firm name and the signed-in address when
+                left blank. The address field also had a `pattern` attribute, so
+                the browser silently refused to submit anything with a capital
+                or a space — with no message saying why. The server normalises
+                it now instead of rejecting it. */}
+            <label htmlFor="workspace-slug">
+              Workspace address <span className="field-optional">optional</span>
+            </label>
             <input
               autoCapitalize="none"
               id="workspace-slug"
               name="slug"
-              pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               placeholder="mehta-shah"
-              required
               type="text"
             />
-            <label htmlFor="workspace-domain">Firm website or domain</label>
+            <label htmlFor="workspace-domain">
+              Firm website or domain <span className="field-optional">optional</span>
+            </label>
             <input
               autoCapitalize="none"
               id="workspace-domain"
               name="organization_domain"
               placeholder="yourfirm.in"
-              required
               type="text"
             />
-            <small>The domain identifies your firm and enforces one trial per organization.</small>
+            <small>Leave either blank and we’ll work it out from your firm name and email.</small>
             {error ? <p className="form-error" role="alert">{error}</p> : null}
             <button className="marketing-button primary wide" type="submit">
               Create workspace <span>→</span>
