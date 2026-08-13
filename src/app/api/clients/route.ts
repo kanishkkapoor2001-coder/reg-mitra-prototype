@@ -62,10 +62,33 @@ export async function POST(request: Request) {
   // filled the profile in — which is why every impact sat unreviewed. These
   // arrive already reviewed on screen, so they are a recorded answer, not a
   // guess. create_client returns void, hence the read-back for the id.
-  const facts = textValue(formData, "facts", 4000);
+  // Two shapes reach here: a JSON blob from the chat and import paths, and
+  // "fact:company.x" inputs from the manual form. Both end up as one object.
+  const parsedFacts: Record<string, unknown> = {};
+  const factsBlob = textValue(formData, "facts", 8000);
+  if (factsBlob) {
+    try {
+      Object.assign(parsedFacts, JSON.parse(factsBlob) as Record<string, unknown>);
+    } catch {
+      console.error("[clients] facts blob was not JSON");
+    }
+  }
+  for (const [field, value] of formData.entries()) {
+    if (!field.startsWith("fact:") || typeof value !== "string") continue;
+    const raw = value.trim();
+    if (!raw) continue;
+    const key = field.slice(5);
+    if (raw === "true" || raw === "false") parsedFacts[key] = raw === "true";
+    else {
+      const asNumber = Number(raw.replace(/[, ]/g, ""));
+      parsedFacts[key] = Number.isFinite(asNumber) && /^[\d,. ]+$/.test(raw) ? asNumber : raw;
+    }
+  }
+
+  const facts = Object.keys(parsedFacts).length ? "present" : "";
   if (facts) {
     try {
-      const parsed = JSON.parse(facts) as Record<string, unknown>;
+      const parsed = parsedFacts;
       const { data: created } = await supabase
         .from("clients")
         .select("id")
