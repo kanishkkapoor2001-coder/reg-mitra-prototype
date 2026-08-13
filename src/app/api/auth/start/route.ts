@@ -66,10 +66,14 @@ export async function POST(request: NextRequest) {
   // Only the sign-up form asks for these; the sign-in form posts here too and
   // sends neither, which is why sendMagicLink fills blanks rather than
   // overwriting.
+  // Whatever they typed is what gets stored. The only bound is a length cap, so
+  // a paste of a whole document cannot bloat the auth record — there is no
+  // minimum and no shape check, because a one-word firm name and a mononym are
+  // both real, and rejecting them teaches nothing.
   const readField = (key: string, max: number) => {
     const value = formData.get(key);
     const trimmed = typeof value === "string" ? value.trim() : "";
-    return trimmed.length >= 2 && trimmed.length <= max ? trimmed : null;
+    return trimmed ? trimmed.slice(0, max) : null;
   };
 
   const outcome = await sendMagicLink(

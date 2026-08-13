@@ -1987,6 +1987,15 @@
   font-weight: var(--weight-bold);
 }
 
+/* Marks a field as skippable without making it look secondary — the label stays
+   the same weight, only the qualifier is quiet. */
+.field-optional {
+  margin-left: 6px;
+  color: var(--ink-400);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-normal);
+}
+
 .signup-email-form { display: grid; gap: 10px; margin-top: 18px; }
 .signup-email-form label { color: var(--ink-800); font-size: var(--text-md); font-weight: var(--weight-bold); }
 .signup-email-form input[type="email"] {

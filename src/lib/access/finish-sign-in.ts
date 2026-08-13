@@ -5,7 +5,6 @@ import { notifyOperatorOfSignup, recordAccessRequest } from "@/lib/access";
 import { autoApproveTrial } from "@/lib/access/approve";
 import { INTENT_COOKIE, parseIntent } from "@/lib/billing/signup-intent";
 import { parseTier } from "@/lib/billing/tiers";
-import { emailDomain, isPublicEmailDomain } from "@/lib/trials/domain";
 
 // Session cookies live on the response the Supabase client wrote to; a fresh
 // redirect must carry them over or the user lands signed-out.
@@ -54,22 +53,25 @@ export async function finishSignIn(
     let result = await recordAccessRequest(identity);
     let autoApproved = false;
 
-    // A free trial should start when they ask for it, not when someone reads an
-    // email. Only trials, and only from a firm's own domain — a paid request
-    // still goes to a human, because that conversation is the point.
+    // A free trial starts when they ask for it, not when someone reads an
+    // email. Any address qualifies — the earlier work-domain requirement sent
+    // anyone on gmail to a waiting page, which is most sole practitioners and
+    // every person trying the product before trusting it with a firm address.
+    //
+    // Each trial gets its own workspace, so an unwanted signup sees nobody
+    // else's data; the exposure is gateway spend, which the rate limiter caps.
+    // A paid request still reaches a human, because that conversation is the
+    // point of it.
     //
     // Runs before the operator alert so the alert can say "already in" rather
     // than asking for a decision that has already been made.
     if (result.status === "pending" && intent === "trial") {
-      const domain = emailDomain(user.email);
-      if (domain && !isPublicEmailDomain(domain)) {
-        const outcome = await autoApproveTrial(user.email);
-        if (outcome.approved) {
-          autoApproved = true;
-          result = { ...result, status: "approved" };
-        } else {
-          console.error("[auth] trial auto-approval failed", outcome.reason);
-        }
+      const outcome = await autoApproveTrial(user.email);
+      if (outcome.approved) {
+        autoApproved = true;
+        result = { ...result, status: "approved" };
+      } else {
+        console.error("[auth] trial auto-approval failed", outcome.reason);
       }
     }
 

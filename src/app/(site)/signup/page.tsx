@@ -14,7 +14,7 @@ const errors: Record<string, string> = {
   not_configured: "Sign-up is not available right now. Please try again shortly.",
   invalid_provider: "Choose Google or Microsoft to continue.",
   provider_failed: "We could not reach that sign-in provider. Please try again.",
-  invalid_email: "Enter a valid work email address.",
+  invalid_email: "Enter a valid email address.",
   send_failed: "We could not send the sign-up link. Please try again.",
   rate_limited: "Too many sign-up links have been sent in the last hour. Please try again shortly, or email us and we’ll set you up directly.",
 };
@@ -39,16 +39,16 @@ export default async function SignupPage({
         <section className="login-copy">
           <p className="marketing-kicker">Create your account</p>
           <h1>Start your 7-day trial.</h1>
-          {/* Trials from a firm's own domain now approve themselves, so the old
-              "we review every request by hand" is no longer true for the path
-              most visitors take. */}
+          {/* Trials approve themselves now, so "we review every request by hand"
+              is no longer true for the path most visitors take. And no "work
+              email" anywhere: any address gets in, so naming a kind of address
+              reads as a rule the form does not actually apply. */}
           <p>
-            Sign up with your firm’s work email and your workspace opens straight away — no waiting
-            on us, no card, nothing to cancel. Firms that want to start on a paid plan we set up
-            personally instead.
+            Sign up and your workspace opens straight away — no waiting on us, no card, nothing to
+            cancel. Firms that want to start on a paid plan we set up personally instead.
           </p>
           <ul>
-            <li><span>01</span> Sign up with {oauth ? "Google, Microsoft or your work email" : "your work email"}</li>
+            <li><span>01</span> Sign up with {oauth ? "Google, Microsoft or your email" : "your email address"}</li>
             <li><span>02</span> Your workspace opens immediately</li>
             <li><span>03</span> Run Reg Mitra against your real client book for 7 days</li>
           </ul>
@@ -57,13 +57,15 @@ export default async function SignupPage({
         <section className="login-panel" aria-labelledby="signup-title">
           <div className="login-mark">R/M</div>
           <h2 id="signup-title">Sign up</h2>
-          <p className="login-panel-note">Use the work account linked to your firm.</p>
+          <p className="login-panel-note">The address you want your regulatory alerts sent to.</p>
 
           {error ? <p className="login-error" role="alert">{error}</p> : null}
+          {/* A trial no longer waits on a review, so promising one described a
+              queue the visitor will never be in. */}
           {sent ? (
             <p className="login-sent" role="status">
-              <strong>Check your email.</strong> We’ve sent a sign-up link. Open it on this device to
-              finish — then we’ll review your request and email you when your workspace is open.
+              <strong>Check your email.</strong> We’ve sent a sign-up link — open it on this device
+              and your workspace opens straight away.
             </p>
           ) : null}
 
@@ -75,8 +77,10 @@ export default async function SignupPage({
           <form className="signup-email-form" action="/api/auth/start" method="post">
             {/* Asked here rather than chased later: without them the operator
                 alert says "(no name given)" and gives no way to tell which firm
-                is asking, which is the one thing needed to decide. */}
-            <label htmlFor="signup-name">Your name</label>
+                is asking. Not required, though — a blocked submit button is a
+                worse outcome than a missing name, and nothing downstream needs
+                either field to be present. */}
+            <label htmlFor="signup-name">Your name <span className="field-optional">optional</span></label>
             <input
               id="signup-name"
               type="text"
@@ -84,11 +88,10 @@ export default async function SignupPage({
               autoComplete="name"
               placeholder="Kanishk Kapoor"
               maxLength={120}
-              required
               autoFocus
             />
 
-            <label htmlFor="signup-firm">Firm name</label>
+            <label htmlFor="signup-firm">Firm name <span className="field-optional">optional</span></label>
             <input
               id="signup-firm"
               type="text"
@@ -96,10 +99,9 @@ export default async function SignupPage({
               autoComplete="organization"
               placeholder="Mehta Shah & Associates"
               maxLength={160}
-              required
             />
 
-            <label htmlFor="signup-email">Work email</label>
+            <label htmlFor="signup-email">Email address</label>
             <input
               id="signup-email"
               type="email"
