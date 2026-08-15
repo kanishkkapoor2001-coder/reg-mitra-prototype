@@ -511,6 +511,8 @@ export function AssistantExperience({
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Prompt generator: suggestions built from this firm's own client book.
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [improved, setImproved] = useState<string | null>(null);
+  const [improvedFrom, setImprovedFrom] = useState("");
   const [suggestBusy, setSuggestBusy] = useState(false);
   const [suggestOpen, setSuggestOpen] = useState(false);
   const composerRef = useRef<HTMLTextAreaElement>(null);
@@ -913,21 +915,28 @@ export function AssistantExperience({
       return;
     }
     setSuggestOpen(true);
-    if (suggestions.length && !draft.trim()) return;
+    const intent = draft.trim();
+    // Nothing typed and already generated once — reopen what we had rather than
+    // spending another model call on the same empty box.
+    if (suggestions.length && !intent && !improved) return;
     setSuggestBusy(true);
+    setImproved(null);
+    setImprovedFrom(intent);
     try {
       const response = await fetch("/api/chat/prompts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ intent: draft.trim(), mode }),
+        body: JSON.stringify({ intent, mode }),
       });
-      const payload = (await response.json()) as { prompts?: string[] };
+      const payload = (await response.json()) as { prompts?: string[]; improved?: string };
+      setImproved(payload.improved ?? null);
       setSuggestions(payload.prompts ?? []);
     } catch {
       // The route already falls back to usable questions; a network failure
       // just leaves the panel empty rather than showing an error for something
       // the CA did not ask for.
       setSuggestions([]);
+      setImproved(null);
     } finally {
       setSuggestBusy(false);
     }
@@ -958,7 +967,7 @@ export function AssistantExperience({
       {suggestOpen ? (
         <div className="prompt-suggest" role="group" aria-label="Suggested questions">
           <div className="prompt-suggest-head">
-            <strong>{draft.trim() ? "Sharper versions of that" : "Ask about your clients"}</strong>
+            <strong>{improvedFrom ? "Your question, sharpened" : "Ask about your clients"}</strong>
             <button aria-label="Close suggestions" onClick={() => setSuggestOpen(false)} type="button">
               <CloseIcon />
             </button>
@@ -967,8 +976,38 @@ export function AssistantExperience({
             <div className="prompt-suggest-loading" aria-hidden="true">
               <span /><span /><span />
             </div>
-          ) : suggestions.length ? (
-            <ul>
+          ) : (
+            <>
+              {/* The rewrite of what they actually typed leads, with the original
+                  underneath — an "improvement" you cannot compare against the
+                  original is just a replacement. */}
+              {improved ? (
+                <div className="prompt-improved">
+                  <button
+                    onClick={() => {
+                      setDraft(improved);
+                      setSuggestOpen(false);
+                      window.requestAnimationFrame(() => {
+                        composerRef.current?.focus();
+                        autoGrowComposer();
+                      });
+                    }}
+                    type="button"
+                  >
+                    <span className="prompt-improved-text">{improved}</span>
+                    <span className="prompt-improved-use">Use this</span>
+                  </button>
+                  {improvedFrom ? (
+                    <p className="prompt-improved-from">
+                      <span>You wrote</span> {improvedFrom}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+              {suggestions.length ? (
+                <>
+                  {improved ? <p className="prompt-suggest-or">Or ask instead</p> : null}
+                  <ul>
               {suggestions.map((suggestion) => (
                 <li key={suggestion}>
                   <button
@@ -986,9 +1025,13 @@ export function AssistantExperience({
                   </button>
                 </li>
               ))}
-            </ul>
-          ) : (
-            <p className="prompt-suggest-empty">No suggestions right now. Type the question as you would say it out loud.</p>
+                  </ul>
+                </>
+              ) : null}
+              {!improved && !suggestions.length ? (
+                <p className="prompt-suggest-empty">No suggestions right now. Type the question as you would say it out loud.</p>
+              ) : null}
+            </>
           )}
         </div>
       ) : null}

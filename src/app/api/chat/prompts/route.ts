@@ -99,12 +99,28 @@ export async function POST(request: Request) {
     "- Return exactly 4 lines. One question per line. No numbering, no bullets, no preamble.",
     "- Each must be specific and answerable — name a statute, form, return, or deadline where you can.",
     clientLines
-      ? "- Name real clients from the list below in at least two of them. Use their sector and state."
+      ? "- Name real clients from the list below where it makes the question sharper. Use their sector and state."
       : "- The firm has no clients recorded yet, so keep them general to Indian compliance practice.",
     "- Never invent a client, a circular number, a rate or a due date. Ask about them instead.",
+    "- Never answer the question. You are rewriting the question, not researching it.",
     "",
     clientLines ? `The firm's clients:\n${clientLines}` : "",
-    intent ? `\nThe CA has started typing this — sharpen it into 4 precise alternatives:\n"${intent}"` : "",
+    // With something typed, line 1 is a rewrite of THEIR question — same intent,
+    // sharper wording — and only then alternatives. Replacing what a CA meant
+    // with four things they did not ask is not an improvement.
+    intent
+      ? [
+        "",
+        `The CA typed this:`,
+        `"${intent}"`,
+        "",
+        "LINE 1 must be their question rewritten: the same intent, made precise and",
+        "answerable — fix the shorthand, name the statute or form they meant, add the",
+        "period or entity if it is obvious from their wording or their client list.",
+        "Do not change what they are asking about. Do not broaden it.",
+        "LINES 2-4 are different questions they may have meant instead.",
+      ].join("\n")
+      : "",
   ].filter(Boolean).join("\n");
 
   try {
@@ -118,7 +134,14 @@ export async function POST(request: Request) {
     const prompts = parsePrompts(text);
     // A short or malformed answer is not worth showing; the fallback is always
     // a usable question.
-    return Response.json({ prompts: prompts.length >= 2 ? prompts : FALLBACK_PROMPTS });
+    if (prompts.length < 2) {
+      return Response.json({ prompts: FALLBACK_PROMPTS });
+    }
+    // With something typed, the first line is the rewrite of what they wrote and
+    // is presented as such; the rest are alternatives.
+    return intent
+      ? Response.json({ improved: prompts[0], prompts: prompts.slice(1) })
+      : Response.json({ prompts });
   } catch (error) {
     console.error("[chat/prompts] failed", (error as Error)?.message);
     return Response.json({ prompts: FALLBACK_PROMPTS });
