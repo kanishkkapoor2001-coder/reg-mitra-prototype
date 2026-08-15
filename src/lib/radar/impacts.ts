@@ -1,33 +1,15 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { RadarDecision } from "@/lib/radar/evaluate";
-import { getAttributeDefinition } from "@/lib/radar/facts";
 
 // Reading side of the matcher's output, for the client page, the clients list
-// and the Today queue.
+// and the Today queue. The impact shape and its pure helpers live in
+// impact-types.ts so client components can import them without pulling this
+// server-only module into the browser bundle; the re-export below keeps every
+// existing server-side import path working.
 
-export type ReviewState = "not_reviewed" | "in_review" | "approved" | "rejected";
-
-export type ImpactEvidence = { id: string; marker: string; quote: string; location: string };
-
-export type ClientImpact = {
-  id: string;
-  clientId: string;
-  clientName: string;
-  decision: RadarDecision;
-  reviewState: ReviewState;
-  applicability: string;
-  evidence: ImpactEvidence[];
-  missingAttributes: string[];
-  matchedAt: string | null;
-  source: {
-    id: string;
-    authority: string;
-    title: string;
-    url: string;
-    publishedAt: string | null;
-  };
-};
+export * from "@/lib/radar/impact-types";
+import type { ClientImpact, ReviewState } from "@/lib/radar/impact-types";
+import type { RadarDecision } from "@/lib/radar/evaluate";
 
 export type ClientRadarSummary = {
   flagged: number;
@@ -139,17 +121,3 @@ export async function readPendingDecisions(
 }
 
 /** Turns missing attribute keys into the questions worth asking. */
-export function questionsFor(impacts: ClientImpact[], limit = 3) {
-  const counts = new Map<string, number>();
-  for (const impact of impacts) {
-    if (impact.decision !== "more_information_needed") continue;
-    for (const key of impact.missingAttributes) {
-      counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-  }
-  return [...counts]
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .slice(0, limit)
-    .map(([key, resolves]) => ({ key, resolves, definition: getAttributeDefinition(key) }))
-    .filter((item) => item.definition !== null);
-}

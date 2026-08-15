@@ -45,19 +45,27 @@ export function TodayExperience({
     .filter((item) => item.dueAt)
     .sort((left, right) => String(left.dueAt).localeCompare(String(right.dueAt)))[0];
 
-  async function markReviewed(id: string) {
+  function markReviewed(id: string) {
     setReviewError("");
-    if (mode === "product") {
-      const response = await fetch(`/api/tasks/${encodeURIComponent(id)}/review`, { method: "POST" });
-      if (!response.ok) {
-        setReviewError("This item could not be marked reviewed. Check your reviewer access and try again.");
-        return;
-      }
-    }
-
+    // Optimistic: the item leaves and the queue advances the moment the button
+    // is pressed. Waiting on the network here made the single most-pressed
+    // button in the product feel like a page load; now the write happens behind
+    // the flip and reverts with an error only if it fails.
     setReviewedIds((current) => [...current, id]);
     const nextItem = items.find((item) => item.id !== id && !reviewedIds.includes(item.id));
     setExpandedId(nextItem?.id ?? null);
+
+    if (mode === "product") {
+      void fetch(`/api/tasks/${encodeURIComponent(id)}/review`, { method: "POST" })
+        .then((response) => {
+          if (!response.ok) throw new Error(String(response.status));
+        })
+        .catch(() => {
+          setReviewedIds((current) => current.filter((item) => item !== id));
+          setExpandedId(id);
+          setReviewError("This item could not be marked reviewed. Check your reviewer access and try again.");
+        });
+    }
   }
 
   return (
@@ -89,6 +97,24 @@ export function TodayExperience({
                 ? "The fictional queue has been reviewed for this session."
                 : "No unreviewed client-impact decisions are currently assigned to you."}
           </p>
+          {/* One quiet line instead of a boxed stat strip. The headline already
+              carries the decision count in 34px; a second rendering of the same
+              number in a card, and a third in the queue header, was the "too
+              much" — the page introduced itself three times before content. */}
+          <p className="today-meta">
+            <span>{openItems.length} open</span>
+            <span aria-hidden="true">·</span>
+            <span>{verifiedSourceCount} {verifiedSourceCount === 1 ? "source" : "sources"} reviewed</span>
+            <span aria-hidden="true">·</span>
+            <TrustBadge kind="evidence" state={mode === "demo" ? "demo" : verifiedSourceCount ? "verified" : "unverified"} />
+            <span className="today-meta-note">
+              {mode === "demo"
+                ? "Demo progress resets on reload."
+                : mode === "public"
+                  ? "Progress lasts for this browser session."
+                  : "Reviews are saved to the audit history."}
+            </span>
+          </p>
         </div>
         <div className="today-hero-actions">
           {mode === "product" ? (
@@ -101,24 +127,6 @@ export function TodayExperience({
       </header>
 
       {notice ? <p className="today-notice" role="status">{notice}</p> : null}
-
-      <section className="today-summary" aria-label="Today at a glance">
-        <span><strong>{openItems.length}</strong><small>open items</small></span>
-        <i />
-        <span><strong>{decisionCount}</strong><small>need a decision</small></span>
-        <i />
-        <span><strong>{verifiedSourceCount}</strong><small>sources reviewed</small></span>
-        <div className="today-summary-note">
-          <TrustBadge kind="evidence" state={mode === "demo" ? "demo" : verifiedSourceCount ? "verified" : "unverified"} />
-          <small>
-            {mode === "demo"
-              ? "Demo progress resets on reload."
-              : mode === "public"
-                ? "Public workspace progress lasts for this browser session."
-                : "Reviews are saved to the workspace audit history."}
-          </small>
-        </div>
-      </section>
 
       <section className="focus-section">
         <div className="focus-heading">

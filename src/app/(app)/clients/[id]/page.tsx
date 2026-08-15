@@ -11,8 +11,9 @@ import { deriveFactsFromIdentifiers, readClientFactMap } from "@/lib/radar/clien
 import { readClientImpacts } from "@/lib/radar/impacts";
 import { ATTRIBUTE_DEFINITIONS, type CompanyFact } from "@/lib/radar/facts";
 import { clients, getClient, workItems } from "@/lib/demo-data";
+import { humanizeEnum } from "@/lib/format";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, getServerUser } from "@/lib/supabase/server";
 import { getCurrentWorkspace, type CurrentWorkspace } from "@/lib/workspace";
 import type { EvidenceRecord } from "@/lib/types";
 
@@ -160,15 +161,27 @@ async function ProductClientPage({
     .maybeSingle();
   if (!client) notFound();
 
+  // Impacts and the rule count depend on nothing below, so they run while the
+  // fact derivation chain (which must stay ordered: derive, then read) does.
+  const impactsPromise = readClientImpacts(supabase, client.id).catch((error) => {
+    console.error("[client] impacts unavailable", error);
+    return [];
+  });
+  const ruleCountPromise = supabase
+    .from("regulatory_rules")
+    .select("id", { count: "exact", head: true })
+    .eq("active", true)
+    .then(({ count }) => count ?? 0);
+
   // Facts the firm already proved by holding a document cost the CA nothing to
   // confirm, so they are recorded before the profile is rendered.
-  const { data: userData } = await supabase.auth.getUser();
-  if (userData.user) {
+  const user = await getServerUser();
+  if (user) {
     try {
       await deriveFactsFromIdentifiers(supabase, {
         workspaceId: workspace.id,
         clientId: client.id,
-        recordedBy: userData.user.id,
+        recordedBy: user.id,
       });
     } catch (error) {
       console.error("[client] fact derivation failed", error);
@@ -176,17 +189,7 @@ async function ProductClientPage({
   }
   const facts = await readClientFactMap(supabase, client.id);
 
-  const [impacts, ruleCount] = await Promise.all([
-    readClientImpacts(supabase, client.id).catch((error) => {
-      console.error("[client] impacts unavailable", error);
-      return [];
-    }),
-    supabase
-      .from("regulatory_rules")
-      .select("id", { count: "exact", head: true })
-      .eq("active", true)
-      .then(({ count }) => count ?? 0),
-  ]);
+  const [impacts, ruleCount] = await Promise.all([impactsPromise, ruleCountPromise]);
 
   const openTasks = (client.tasks ?? [])
     .filter((task) => task.state !== "completed" && task.state !== "dismissed")
@@ -208,7 +211,7 @@ async function ProductClientPage({
           <p className="eyebrow">Client profile</p>
           <h1>{client.display_name}</h1>
           <p className="page-subtitle">
-            {[client.legal_name, client.sector, client.state_code].filter(Boolean).join(" · ")}
+            {[client.legal_name, humanizeEnum(client.sector), client.state_code].filter(Boolean).join(" · ")}
           </p>
         </div>
       </section>
@@ -233,7 +236,6 @@ async function ProductClientPage({
       <ClientRadar
         impacts={impacts}
         editable={workspace.role !== "viewer"}
-        returnTo={`/clients/${client.id}`}
         hasRules={ruleCount > 0}
       />
 

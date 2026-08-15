@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
-import type { ClientImpact } from "@/lib/radar/impacts";
-import { questionsFor } from "@/lib/radar/impacts";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { questionsFor, type ClientImpact } from "@/lib/radar/impact-types";
+import { reviewImpact, type ReviewState } from "@/lib/radar/review-client";
 
 // The wedge, on screen: which circulars touch this client, why, and the two
 // questions that would settle the rest.
@@ -19,11 +23,19 @@ function formatDate(value: string | null): string {
 
 function ImpactCard({
   impact,
+  state,
+  failed,
   editable,
-  returnTo,
-}: Readonly<{ impact: ClientImpact; editable: boolean; returnTo: string }>) {
-  const approved = impact.reviewState === "approved";
-  const rejected = impact.reviewState === "rejected";
+  onDecide,
+}: Readonly<{
+  impact: ClientImpact;
+  state: ClientImpact["reviewState"];
+  failed: boolean;
+  editable: boolean;
+  onDecide: (impact: ClientImpact, state: ReviewState) => void;
+}>) {
+  const approved = state === "approved";
+  const rejected = state === "rejected";
 
   return (
     <article className={`radar-item${approved ? " is-approved" : ""}${rejected ? " is-dismissed" : ""}`}>
@@ -32,7 +44,7 @@ function ImpactCard({
         {impact.source.publishedAt ? (
           <span className="radar-date">{formatDate(impact.source.publishedAt)}</span>
         ) : null}
-        <span className={`radar-state radar-state-${impact.reviewState}`}>
+        <span className={`radar-state radar-state-${state}`}>
           {approved ? "Approved" : rejected ? "Dismissed" : "Needs your decision"}
         </span>
       </div>
@@ -56,29 +68,24 @@ function ImpactCard({
         </ul>
       ) : null}
 
+      {failed ? (
+        <p className="decision-failed" role="alert">Could not record that decision — try again.</p>
+      ) : null}
+
       {editable && !approved && !rejected ? (
         <div className="radar-actions">
-          <form action="/api/impacts/review" method="post">
-            <input type="hidden" name="impactId" value={impact.id} />
-            <input type="hidden" name="state" value="approved" />
-            <input type="hidden" name="returnTo" value={returnTo} />
-            <button className="button primary" type="submit">Applies to this client</button>
-          </form>
-          <form action="/api/impacts/review" method="post">
-            <input type="hidden" name="impactId" value={impact.id} />
-            <input type="hidden" name="state" value="rejected" />
-            <input type="hidden" name="returnTo" value={returnTo} />
-            <button className="button" type="submit">Not applicable</button>
-          </form>
+          <button className="button primary" onClick={() => onDecide(impact, "approved")} type="button">
+            Applies to this client
+          </button>
+          <button className="button" onClick={() => onDecide(impact, "rejected")} type="button">
+            Not applicable
+          </button>
         </div>
       ) : editable ? (
         <div className="radar-actions">
-          <form action="/api/impacts/review" method="post">
-            <input type="hidden" name="impactId" value={impact.id} />
-            <input type="hidden" name="state" value="not_reviewed" />
-            <input type="hidden" name="returnTo" value={returnTo} />
-            <button className="button quiet" type="submit">Undo</button>
-          </form>
+          <button className="button quiet" onClick={() => onDecide(impact, "not_reviewed")} type="button">
+            Undo
+          </button>
         </div>
       ) : null}
     </article>
@@ -88,16 +95,38 @@ function ImpactCard({
 export function ClientRadar({
   impacts,
   editable,
-  returnTo,
   hasRules,
 }: Readonly<{
   impacts: ClientImpact[];
   editable: boolean;
-  returnTo: string;
   hasRules: boolean;
 }>) {
+  const router = useRouter();
+  // Optimistic decisions: the card flips the moment the button is pressed and
+  // the write happens behind it, reverting with an inline error on failure.
+  const [overrides, setOverrides] = useState<Record<string, ClientImpact["reviewState"]>>({});
+  const [failedId, setFailedId] = useState<string | null>(null);
+
+  const stateOf = (impact: ClientImpact) => overrides[impact.id] ?? impact.reviewState;
+
+  function decide(impact: ClientImpact, state: ReviewState) {
+    const previous = stateOf(impact);
+    setFailedId(null);
+    setOverrides((current) => ({ ...current, [impact.id]: state }));
+    void reviewImpact(impact.id, state).then((ok) => {
+      if (!ok) {
+        setOverrides((current) => ({ ...current, [impact.id]: previous }));
+        setFailedId(impact.id);
+        return;
+      }
+      router.refresh();
+    });
+  }
+
+  // A dismissal hides the card only once the server confirms it on the next
+  // render; hiding it optimistically would also remove its Undo.
   const flagged = impacts.filter(
-    (i) => i.decision === "direct_relevance" && i.reviewState !== "rejected",
+    (i) => i.decision === "direct_relevance" && (i.reviewState !== "rejected" || overrides[i.id]),
   );
   const needsFacts = impacts.filter((i) => i.decision === "more_information_needed");
   const questions = questionsFor(needsFacts, 2);
@@ -109,9 +138,14 @@ export function ClientRadar({
           <h2>Regulatory radar</h2>
           <p>Changes checked against this client’s confirmed profile.</p>
         </div>
-        {flagged.length ? (
-          <span className="radar-count">{flagged.length} to review</span>
-        ) : null}
+        {(() => {
+          // "To review" means awaiting a decision — an approved card is done,
+          // and counting it kept the badge at 3 after all three were decided.
+          const undecided = flagged.filter(
+            (impact) => stateOf(impact) !== "approved" && stateOf(impact) !== "rejected",
+          ).length;
+          return undecided ? <span className="radar-count">{undecided} to review</span> : null;
+        })()}
       </div>
 
       {!hasRules ? (
@@ -132,7 +166,14 @@ export function ClientRadar({
       {flagged.length ? (
         <div className="radar-list">
           {flagged.map((impact) => (
-            <ImpactCard key={impact.id} impact={impact} editable={editable} returnTo={returnTo} />
+            <ImpactCard
+              key={impact.id}
+              impact={impact}
+              state={stateOf(impact)}
+              failed={failedId === impact.id}
+              editable={editable}
+              onDecide={decide}
+            />
           ))}
         </div>
       ) : null}

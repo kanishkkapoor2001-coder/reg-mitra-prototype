@@ -62,7 +62,10 @@ export default async function TodayPage({
   // so PostgREST can no longer guess which one an unqualified embed means. It
   // answers PGRST201 / HTTP 300 and returns no rows — and because the error was
   // discarded below, a full queue rendered as "You're clear for now".
-  const [{ data, error }, { count: clientCount }] = await Promise.all([
+  // One round trip's worth of waiting for all three reads: the pending
+  // decisions used to run only after the task query had returned, which put
+  // Supabase on the critical path twice for no reason.
+  const [{ data, error }, { count: clientCount }, pending] = await Promise.all([
     supabase
       .from("tasks")
       .select("id, title, priority, due_at, state, reviewed_at, client_id, metadata, clients!tasks_client_id_fkey(display_name), client_regulatory_impacts(review_state, regulatory_sources(authority))")
@@ -76,6 +79,12 @@ export default async function TodayPage({
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspace.id)
       .eq("status", "active"),
+    // Regulatory changes waiting on a decision come before task work: deciding
+    // whether a circular applies is what unblocks everything downstream.
+    readPendingDecisions(supabase, workspace.id).catch((pendingError) => {
+      console.error("[today] pending decisions unavailable", pendingError);
+      return [];
+    }),
   ]);
 
   // Never swallow this again: an empty queue and a failed query look identical
@@ -105,13 +114,6 @@ export default async function TodayPage({
       needsDecision: !impact || impact.review_state !== "approved",
       evidenceState: impact?.review_state === "approved" ? "verified" as const : "unverified" as const,
     };
-  });
-
-  // Regulatory changes waiting on a decision come before task work: deciding
-  // whether a circular applies is what unblocks everything downstream.
-  const pending = await readPendingDecisions(supabase, workspace.id).catch((error) => {
-    console.error("[today] pending decisions unavailable", error);
-    return [];
   });
 
   return (

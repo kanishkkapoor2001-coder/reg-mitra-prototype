@@ -70,7 +70,9 @@ export function RegulationsExperience({
           {freshness.warning ? <span className="corpus-freshness-warning">{freshness.warning}</span> : null}
         </p>
       ) : null}
-      <WorkspaceTrustSummary />
+      {/* The sample-data disclaimer is for the signed-out sample. Showing it to
+          a signed-in firm told them their real client book was fictional. */}
+      {mode === "product" ? null : <WorkspaceTrustSummary />}
       <div className="portfolio-controls">
         <label className="search-field">
           <SearchIcon />

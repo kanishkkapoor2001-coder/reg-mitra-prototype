@@ -3801,3 +3801,70 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
   letter-spacing: .06em;
   text-transform: uppercase;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TOUCH TEXTURE — what "snappy" is actually made of
+   ───────────────────────────────────────────────────────────────────────────
+   Three things distinguish an app that feels native from a website: pressing
+   something responds THIS frame (scale, not colour alone), nothing flashes the
+   OS tap-highlight rectangle, and taps fire immediately instead of waiting for
+   the double-tap-zoom timeout. All three are texture, not architecture, which
+   is why they are one block here rather than scattered per component.
+
+   :where() keeps every rule at zero specificity — components that define their
+   own press behaviour (send-button, new-chat-button) keep it; everything else
+   inherits this floor.
+   ═══════════════════════════════════════════════════════════════════════════ */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, summary, label, [role="button"]) { touch-action: manipulation; }
+
+.app-shell :where(.button, .nav-link, .topbar-calendar-link, .topbar-fullscreen,
+  .conversation-card, .prompt-chip, .prompt-card, .composer-icon-button,
+  .decision-client, .chat-history-toggle, .chat-topline-new, .global-search):active {
+  transform: scale(.97);
+}
+/* Cards and rows compress less than buttons — a whole panel shrinking reads as
+   glitch, a 1% settle reads as contact. */
+.app-shell :where(.decision-group, .work-item, .radar-item, .client-row):active {
+  transform: scale(.995);
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell :where(.button, .nav-link, .conversation-card, .prompt-chip):active { transform: none; }
+  .app-shell :where(.decision-group, .work-item, .radar-item, .client-row):active { transform: none; }
+}
+
+/* The optimistic decision queue: a row that failed to record says so inline. */
+.decision-failed {
+  margin: 0 10px;
+  color: var(--red-700);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.decisions-done {
+  margin: 0;
+  padding: 14px 18px 16px;
+  color: var(--ink-600);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* Today, condensed: the stat strip is now a single meta line in the hero. */
+.today-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+  color: var(--ink-600);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.today-meta-note { color: var(--ink-500); }
+/* The queue header repeats what the hero just said; keep it as a light rule
+   line over the list rather than a second heading block. */
+.focus-heading { margin-top: 4px; }
+.focus-heading h2 { font-size: 15px; }
+
+/* Count pills sit on forest-950, which vanishes against a dark canvas. */
+[data-theme="dark"] .radar-count { background: var(--green-100); color: var(--green-700); }

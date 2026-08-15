@@ -2,27 +2,22 @@ import { cookies } from "next/headers";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/app-shell";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerUser } from "@/lib/supabase/server";
+import { getCurrentWorkspace } from "@/lib/workspace";
 
 export default async function AppGroupLayout({ children }: Readonly<{ children: ReactNode }>) {
   const sessionCookie = (await cookies()).get("reg_mitra_session")?.value;
   let sessionMode: "demo" | "product" | null = sessionCookie === "demo" ? "demo" : null;
   let workspaceName: string | null = null;
 
+  // Both lookups are request-cached, so the page rendering beneath this layout
+  // reuses them instead of asking Supabase again. This layout used to run its
+  // own auth check and its own membership query on every navigation.
   if (!sessionMode && getSupabasePublicConfig()) {
-    const supabase = await createSupabaseServerClient();
-    const { data } = await supabase.auth.getUser();
-    if (data.user) {
+    const user = await getServerUser();
+    if (user) {
       sessionMode = "product";
-      const { data: membership } = await supabase
-        .from("workspace_memberships")
-        .select("workspaces(name)")
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-      const workspaceValue = membership?.workspaces;
-      const workspace = Array.isArray(workspaceValue) ? workspaceValue[0] : workspaceValue;
-      workspaceName = workspace?.name ?? null;
+      workspaceName = (await getCurrentWorkspace())?.name ?? null;
     }
   }
 

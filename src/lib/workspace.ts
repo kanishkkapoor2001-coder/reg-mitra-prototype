@@ -1,4 +1,5 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { cache } from "react";
+import { createSupabaseServerClient, getServerUser } from "@/lib/supabase/server";
 import { hasFounderAccess } from "@/lib/billing/entitlements";
 import { DEFAULT_TIER, parseTier, type PlanTier } from "@/lib/billing/tiers";
 
@@ -12,10 +13,14 @@ export interface CurrentWorkspace {
   founderAccess: boolean;
 }
 
-export async function getCurrentWorkspace(): Promise<CurrentWorkspace | null> {
+// react `cache` dedupes per request: the app layout, the page and any nested
+// server component all share one auth check and one membership lookup per
+// navigation instead of re-running them independently. Route handlers get a
+// fresh call per request, which is unchanged behaviour.
+export const getCurrentWorkspace = cache(async (): Promise<CurrentWorkspace | null> => {
+  const user = await getServerUser();
+  if (!user) return null;
   const supabase = await createSupabaseServerClient();
-  const { data: userData } = await supabase.auth.getUser();
-  if (!userData.user) return null;
 
   const { data: membership, error } = await supabase
     .from("workspace_memberships")
@@ -38,6 +43,6 @@ export async function getCurrentWorkspace(): Promise<CurrentWorkspace | null> {
     subscriptionStatus: subscription?.status ?? "expired",
     trialEndsAt: subscription?.trial_ends_at ?? null,
     tier: subscription?.tier ? parseTier(subscription.tier) : DEFAULT_TIER,
-    founderAccess: hasFounderAccess(userData.user.email),
+    founderAccess: hasFounderAccess(user.email),
   };
-}
+});

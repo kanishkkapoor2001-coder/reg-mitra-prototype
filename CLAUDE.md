@@ -38,6 +38,26 @@ Note these only get you *past the gate*. There is still no local database, so `g
 returns null and pages render their sample branch. To see the product against **real** data, use
 `/founder` with `FOUNDER_ACCESS_CODE` on the deployed site.
 
+## Keeping it fast (enforced by `src/lib/snappiness.test.ts`)
+
+The app must feel native, and that property decays one commit at a time. Three rules,
+each enforced by a failing test if broken:
+
+1. **Mutations are optimistic.** Update client state first, `fetch()` behind it, revert
+   with an inline error on failure — see `pending-decisions.tsx` or `client-radar.tsx`.
+   Never `<form action="/api/...">` for an in-app action; the allowlist in the test names
+   the few flows where reload semantics are correct (auth, creation-that-navigates).
+2. **Pages/layouts use the request-cached lookups** — `getServerUser()` and
+   `getCurrentWorkspace()` — never `supabase.auth.getUser()` directly. One auth round
+   trip per navigation, shared by layout and page.
+3. **`(app)/loading.tsx` stays.** It is the streaming boundary that paints the shell
+   before data; without it every navigation is a blank pause.
+
+Also part of the texture (in `globals.css`, TOUCH TEXTURE block): `:active` scale on
+every pressable, no `-webkit-tap-highlight`, `touch-action: manipulation`. New
+interactive components inherit this via `:where()` — don't opt out without a reason.
+Independent page queries go in one `Promise.all`, never awaited in sequence.
+
 ### Before changing any prompt, model, retrieval or corpus code
 
 ```bash

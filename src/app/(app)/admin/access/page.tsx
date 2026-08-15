@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { listAccessRequests } from "@/lib/access/approve";
 import { hasFounderAccess } from "@/lib/billing/entitlements";
 import { TIERS } from "@/lib/billing/tiers";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerUser } from "@/lib/supabase/server";
 
 // Approving a firm used to mean running SQL by hand. This is the same decision
 // as a button, which is the difference between onboarding someone in ten
@@ -19,9 +19,7 @@ function formatWhen(value: string): string {
 export default async function AdminAccessPage({
   searchParams,
 }: Readonly<{ searchParams: Promise<{ done?: string; error?: string }> }>) {
-  const supabase = await createSupabaseServerClient();
-  const { data: userData } = await supabase.auth.getUser();
-  const email = userData.user?.email;
+  const email = (await getServerUser())?.email;
 
   // Anyone else should not learn this page exists.
   if (!email || !hasFounderAccess(email)) notFound();

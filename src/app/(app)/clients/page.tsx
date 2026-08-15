@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { ClientsExperience } from "@/components/clients-experience";
 import { TIERS, clientLimitFor } from "@/lib/billing/tiers";
 import { readWorkspaceRadarSummary, type ClientRadarSummary } from "@/lib/radar/impacts";
+import { humanizeEnum } from "@/lib/format";
 import { clients as demoClients } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -67,7 +68,7 @@ export default async function ClientsPage() {
       id: client.id,
       name: client.display_name || client.legal_name,
       identifier: "Protected",
-      sector: [client.sector, client.state_code].filter(Boolean).join(" · ") || "Profile incomplete",
+      sector: [humanizeEnum(client.sector), client.state_code].filter(Boolean).join(" · ") || "Profile incomplete",
       risk: highestPriority >= 3 ? "high" as const : highestPriority === 2 ? "medium" as const : "low" as const,
       pending: openTasks.length,
       nextDeadline: deadlines[0]

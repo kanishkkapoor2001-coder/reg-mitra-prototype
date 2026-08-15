@@ -8,6 +8,10 @@ import { getCurrentWorkspace } from "@/lib/workspace";
 const ALLOWED = new Set(["approved", "rejected", "not_reviewed"]);
 
 export async function POST(request: Request) {
+  // Optimistic clients say so and get JSON; a plain form post gets the
+  // original redirect flow. Same route, so the decision logic cannot drift.
+  const wantsJson = (request.headers.get("accept") ?? "").includes("application/json");
+
   let formData: FormData;
   try {
     formData = await request.formData();
@@ -20,19 +24,26 @@ export async function POST(request: Request) {
   const returnTo = String(formData.get("returnTo") ?? "/today");
   const safeReturn = returnTo.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/today";
 
+  const fail = (status: number) =>
+    wantsJson
+      ? NextResponse.json({ ok: false }, { status })
+      : NextResponse.redirect(new URL(`${safeReturn}?error=unavailable`, request.url), 303);
+
   if (!impactId || !ALLOWED.has(state)) {
-    return NextResponse.redirect(new URL(safeReturn, request.url), 303);
+    return wantsJson
+      ? NextResponse.json({ ok: false }, { status: 400 })
+      : NextResponse.redirect(new URL(safeReturn, request.url), 303);
   }
 
   const workspace = await getCurrentWorkspace();
   if (!workspace || workspace.role === "viewer") {
-    return NextResponse.redirect(new URL(`${safeReturn}?error=unavailable`, request.url), 303);
+    return fail(403);
   }
 
   const supabase = await createSupabaseServerClient();
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) {
-    return NextResponse.redirect(new URL(`${safeReturn}?error=unavailable`, request.url), 303);
+    return fail(401);
   }
 
   // The workspace id is passed to the function, which scopes the update — a
@@ -46,8 +57,10 @@ export async function POST(request: Request) {
 
   if (error || data === false) {
     console.error("[impacts/review] failed", error?.message);
-    return NextResponse.redirect(new URL(`${safeReturn}?error=unavailable`, request.url), 303);
+    return fail(500);
   }
 
-  return NextResponse.redirect(new URL(`${safeReturn}?reviewed=1`, request.url), 303);
+  return wantsJson
+    ? NextResponse.json({ ok: true })
+    : NextResponse.redirect(new URL(`${safeReturn}?reviewed=1`, request.url), 303);
 }
