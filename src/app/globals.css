@@ -3675,3 +3675,71 @@ h3 { margin-bottom: 5px; font-size: 13px; font-weight: 680; letter-spacing: -.01
 @media (prefers-reduced-motion: reduce) {
   .decisions-chevron { transition: none; }
 }
+
+/* Prompt generator — suggested questions, inside the composer.
+   Sits above the textarea rather than in a floating popover: it is about to
+   become the text in that box, so it should read as part of it. */
+.prompt-suggest {
+  margin: -2px -4px 10px;
+  padding: 10px 12px 6px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-muted);
+}
+.prompt-suggest-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.prompt-suggest-head strong { color: var(--ink-600); font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.prompt-suggest-head button {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink-500);
+  cursor: pointer;
+}
+.prompt-suggest-head button svg { width: 14px; height: 14px; }
+@media (hover: hover) and (pointer: fine) {
+  .prompt-suggest-head button:hover { background: var(--surface-hover); color: var(--ink-800); }
+}
+.prompt-suggest ul { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.prompt-suggest li button {
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink-800);
+  font-size: 13.5px;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .prompt-suggest li button:hover { background: var(--surface); color: var(--ink-950); }
+}
+.prompt-suggest-empty { margin: 4px 10px 8px; color: var(--ink-500); font-size: 12.5px; line-height: 1.5; }
+/* Skeleton lines, not a spinner: the shape of what is coming. */
+.prompt-suggest-loading { display: grid; gap: 8px; padding: 6px 10px 10px; }
+.prompt-suggest-loading span {
+  height: 11px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--surface) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: prompt-shimmer 1.1s ease-in-out infinite;
+}
+.prompt-suggest-loading span:nth-child(2) { width: 88%; }
+.prompt-suggest-loading span:nth-child(3) { width: 72%; }
+@keyframes prompt-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .prompt-suggest-loading span { animation: none; }
+  .prompt-suggest li button { transition: none; }
+}

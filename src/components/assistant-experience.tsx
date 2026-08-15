@@ -14,6 +14,7 @@ import {
   SparklesIcon,
   StopIcon,
   SyncIcon,
+  WandIcon,
 } from "@/components/icons";
 import { ReviewGate } from "@/components/review-gate";
 import {
@@ -508,6 +509,10 @@ export function AssistantExperience({
   // History and reference material live in an on-demand drawer so the conversation
   // itself gets the whole canvas.
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // Prompt generator: suggestions built from this firm's own client book.
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestBusy, setSuggestBusy] = useState(false);
+  const [suggestOpen, setSuggestOpen] = useState(false);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -897,6 +902,37 @@ export function AssistantExperience({
   const lastUserId = [...messages].reverse().find((message) => message.role === "user")?.id ?? null;
   const lastAssistantId = [...messages].reverse().find((message) => message.role === "assistant")?.id ?? null;
 
+  /**
+   * Turn "I don't know what to ask" into four questions about this firm's own
+   * clients. Whatever is already typed is treated as a rough intent to sharpen,
+   * so it works both from a blank box and from half a thought.
+   */
+  async function suggestPrompts() {
+    if (suggestOpen) {
+      setSuggestOpen(false);
+      return;
+    }
+    setSuggestOpen(true);
+    if (suggestions.length && !draft.trim()) return;
+    setSuggestBusy(true);
+    try {
+      const response = await fetch("/api/chat/prompts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ intent: draft.trim(), mode }),
+      });
+      const payload = (await response.json()) as { prompts?: string[] };
+      setSuggestions(payload.prompts ?? []);
+    } catch {
+      // The route already falls back to usable questions; a network failure
+      // just leaves the panel empty rather than showing an error for something
+      // the CA did not ask for.
+      setSuggestions([]);
+    } finally {
+      setSuggestBusy(false);
+    }
+  }
+
   // A notice under review replaces the composer wherever the composer lives.
   const noticeReviewPanel = draftNotice ? (
     <NoticeReview
@@ -919,6 +955,43 @@ export function AssistantExperience({
   // the bottom once a conversation exists — so it is built once here.
   const composerForm = (
     <form className="composer chat-composer" onSubmit={submit}>
+      {suggestOpen ? (
+        <div className="prompt-suggest" role="group" aria-label="Suggested questions">
+          <div className="prompt-suggest-head">
+            <strong>{draft.trim() ? "Sharper versions of that" : "Ask about your clients"}</strong>
+            <button aria-label="Close suggestions" onClick={() => setSuggestOpen(false)} type="button">
+              <CloseIcon />
+            </button>
+          </div>
+          {suggestBusy ? (
+            <div className="prompt-suggest-loading" aria-hidden="true">
+              <span /><span /><span />
+            </div>
+          ) : suggestions.length ? (
+            <ul>
+              {suggestions.map((suggestion) => (
+                <li key={suggestion}>
+                  <button
+                    onClick={() => {
+                      setDraft(suggestion);
+                      setSuggestOpen(false);
+                      window.requestAnimationFrame(() => {
+                        composerRef.current?.focus();
+                        autoGrowComposer();
+                      });
+                    }}
+                    type="button"
+                  >
+                    {suggestion}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="prompt-suggest-empty">No suggestions right now. Type the question as you would say it out loud.</p>
+          )}
+        </div>
+      ) : null}
       {attachedNotice ? (
         <div className="notice-chip">
           <span>
@@ -985,6 +1058,19 @@ export function AssistantExperience({
           >
             <RegulationsIcon />
           </Link>
+          {/* Not everyone arrives knowing the question. This builds one from
+              the firm's own client book, or sharpens whatever is half-typed. */}
+          <button
+            aria-expanded={suggestOpen}
+            aria-label="Help me ask"
+            className="composer-icon-button"
+            disabled={requestState === "loading"}
+            onClick={() => void suggestPrompts()}
+            title={draft.trim() ? "Sharpen this question" : "Help me ask — suggests questions about your clients"}
+            type="button"
+          >
+            <WandIcon />
+          </button>
           <div aria-label="Assistant mode" className="composer-mode-switch" role="group">
             {(["ask", "act"] as const).map((item) => (
               <button
