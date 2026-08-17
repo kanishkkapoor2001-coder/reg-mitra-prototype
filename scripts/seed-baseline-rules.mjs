@@ -119,14 +119,20 @@ const RULES = [
       quote: "food business operator, who manufactures or sells any article of\nfood himself or a petty retailer, street food vendor, hawker, itinerant vendor or temporary stall holder or\nfood truck or distributes foods",
       location: "Para 3 — definition of Petty Food Business Operator",
     }],
+    // Sector only, deliberately. The first version also tested
+    // company.fssai_licensed via an any(), which was logically sound and
+    // practically noise: for every client whose licence status was unrecorded
+    // the matcher could not rule the rule out, so it asked co-operative BANKS
+    // whether they hold a food licence. A question that makes the reader
+    // distrust the asker costs more than the edge case it covers.
     condition: (ids) => ({
-      type: "any",
-      children: [
-        { type: "predicate", attribute: "company.fssai_licensed", operator: "equals", value: true, evidenceIds: [ids[0]] },
-        { type: "predicate", attribute: "company.sector", operator: "equals", value: "FOOD", evidenceIds: [ids[0]] },
-      ],
+      type: "predicate",
+      attribute: "company.sector",
+      operator: "equals",
+      value: "FOOD",
+      evidenceIds: [ids[0]],
     }),
-    attributes: ["company.fssai_licensed", "company.sector"],
+    attributes: ["company.sector"],
   },
 ];
 
