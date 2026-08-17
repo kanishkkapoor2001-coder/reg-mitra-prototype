@@ -4,6 +4,9 @@ import { ComplianceCalendar } from "@/components/compliance-calendar";
 import { SparklesIcon } from "@/components/icons";
 import { PageHeading } from "@/components/page-heading";
 import { getLiveCalendarSnapshot } from "@/lib/live-calendar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Compliance calendar" };
 
 export default async function CalendarPage() {
   const session = (await cookies()).get("reg_mitra_session")?.value;

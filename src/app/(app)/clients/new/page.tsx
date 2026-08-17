@@ -3,6 +3,9 @@ import { ClientChat } from "@/components/client-chat";
 import { ClientImport } from "@/components/client-import";
 import { PageHeading } from "@/components/page-heading";
 import { ATTRIBUTE_DEFINITIONS, type AttributeDefinition } from "@/lib/radar/facts";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Add a client" };
 
 const errors: Record<string, string> = {
   invalid_client: "Enter the legal name and the name your team uses.",

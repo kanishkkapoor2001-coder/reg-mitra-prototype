@@ -2,6 +2,9 @@ import Link from "next/link";
 import { PageHeading } from "@/components/page-heading";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentWorkspace } from "@/lib/workspace";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Add a work item" };
 
 const errors: Record<string, string> = {
   invalid_task: "Enter a title for the work item.",

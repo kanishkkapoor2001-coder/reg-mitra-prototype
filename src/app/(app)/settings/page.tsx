@@ -5,6 +5,9 @@ import { TrustBadge } from "@/components/trust-badge";
 import { getCorpusHealth } from "@/lib/rag/corpus";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { corpusFreshness } from "@/lib/rag/freshness";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
   const corpus = getCorpusHealth();

@@ -5,6 +5,9 @@ import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentWorkspace } from "@/lib/workspace";
 import type { ChatRetrievalPayload } from "@/lib/rag/types";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Assistant" };
 
 interface AssistantPageProps {
   searchParams: Promise<{ prompt?: string | string[]; conversation?: string | string[]; new?: string | string[] }>;

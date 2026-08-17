@@ -6,6 +6,9 @@ import { workItems } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentWorkspace } from "@/lib/workspace";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Today" };
 
 const generatedNotices: Record<string, string> = {
   no_clients: "Add a client first — then build the queue from the statutory calendar.",

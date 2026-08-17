@@ -7,6 +7,9 @@ import { clients as demoClients } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentWorkspace } from "@/lib/workspace";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Clients" };
 
 export default async function ClientsPage() {
   const isDemo = (await cookies()).get("reg_mitra_session")?.value === "demo";

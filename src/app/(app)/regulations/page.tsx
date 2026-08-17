@@ -5,6 +5,9 @@ import { regulatoryCorpus } from "@/lib/rag/corpus";
 import { corpusFreshness } from "@/lib/rag/freshness";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { getCurrentWorkspace } from "@/lib/workspace";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Official sources" };
 
 function formatDate(value: string | null | undefined): string {
   if (!value) return "Not recorded";
