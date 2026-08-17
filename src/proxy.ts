@@ -128,6 +128,7 @@ export const config = {
     "/briefings/:path*",
     "/regulations/:path*",
     "/settings/:path*",
+    "/reconcile/:path*",
     "/billing/:path*",
     "/onboarding/:path*",
     "/api/workspaces/:path*",

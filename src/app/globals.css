@@ -3868,3 +3868,82 @@ html { -webkit-tap-highlight-color: transparent; }
 
 /* Count pills sit on forest-950, which vanishes against a dark canvas. */
 [data-theme="dark"] .radar-count { background: var(--green-100); color: var(--green-700); }
+
+/* ═══ Reconcile 2B ═══════════════════════════════════════════════════════ */
+.recon-uploads { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.recon-drop {
+  display: grid;
+  justify-items: start;
+  gap: 3px;
+  padding: 18px 20px;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .recon-drop:hover { border-color: var(--green-700); background: var(--surface-muted); }
+}
+.recon-drop svg { width: 20px; height: 20px; color: var(--ink-500); }
+.recon-drop strong { color: var(--ink-950); font-size: 14.5px; }
+.recon-drop span { color: var(--ink-600); font-size: 12.5px; }
+.recon-loaded { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; color: var(--green-700); font-size: 12px; font-style: normal; font-weight: 650; }
+.recon-loaded svg { width: 14px; height: 14px; color: var(--green-700); }
+.recon-privacy { margin: 10px 0 0; color: var(--ink-500); font-size: 12.5px; }
+.recon-summary { margin-top: 18px; }
+.recon-headline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.recon-headline > svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--green-700); }
+.recon-headline p { flex: 1 1 320px; margin: 0; color: var(--ink-600); font-size: 13.5px; line-height: 1.6; }
+.recon-headline strong { color: var(--ink-950); font-variant-numeric: tabular-nums; }
+.recon-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.recon-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-600);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.recon-filter span { font-variant-numeric: tabular-nums; color: var(--ink-500); }
+.recon-filter.active { border-color: var(--forest-900); background: var(--forest-900); color: #fff; }
+.recon-filter.active span { color: #cfe3d7; }
+.recon-table-wrap { margin-top: 12px; overflow-x: auto; }
+.recon-table { width: 100%; min-width: 860px; border-collapse: collapse; font-size: 13px; }
+.recon-table th { padding: 9px 10px; border-bottom: 1px solid var(--line-strong); color: var(--ink-500); font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-align: left; text-transform: uppercase; }
+.recon-table td { padding: 10px; border-bottom: 1px solid var(--line); color: var(--ink-800); vertical-align: top; }
+.recon-table td strong { display: block; color: var(--ink-950); font-weight: 600; }
+.recon-table td small { display: block; color: var(--ink-500); font-size: 11.5px; }
+.recon-amount { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.recon-note { max-width: 320px; color: var(--ink-600); font-size: 12.5px; line-height: 1.5; }
+.recon-status { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+.recon-status.is-good { background: var(--green-100); color: var(--green-700); }
+.recon-status.is-warn { background: var(--amber-100); color: var(--amber-700); }
+.recon-status.is-bad { background: var(--red-100); color: var(--red-700); }
+.recon-await {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 40px 20px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  color: var(--ink-500);
+}
+.recon-await svg { width: 20px; height: 20px; }
+.recon-await p { margin: 0; font-size: 13.5px; }

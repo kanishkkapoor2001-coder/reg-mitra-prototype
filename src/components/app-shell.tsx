@@ -17,6 +17,7 @@ import {
   RegulationsIcon,
   SearchIcon,
   SettingsIcon,
+  SyncIcon,
   SparklesIcon,
   TodayIcon,
 } from "@/components/icons";
@@ -147,6 +148,7 @@ export function AppShell({
           <summary aria-label="More workspace options"><MoreIcon /><span>More</span></summary>
           <div className="more-menu-panel">
             <Link href="/calculators"><CalculatorIcon /><span><strong>Calculators</strong><small>Interest, late fee and due dates</small></span></Link>
+            <Link href="/reconcile"><SyncIcon /><span><strong>Reconcile 2B</strong><small>Match supplier filings to the books</small></span></Link>
             <Link href="/practice"><ClientsIcon /><span><strong>Your practice</strong><small>Tune answers to your clients</small></span></Link>
             {/* Briefings is sample-only and duplicates Assistant · Prepare, so it
                 stays out of a firm's navigation until it runs on real drafts. */}
