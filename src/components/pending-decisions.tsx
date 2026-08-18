@@ -20,6 +20,20 @@ import type { ClientImpact } from "@/lib/radar/impact-types";
 // Collapsible via <details>, because it sits above the day's review queue and a
 // busy book can push that queue off the screen entirely.
 
+/**
+ * The stored applicability reads as the matcher's own instruction — "Examine
+ * this circular if Sector is Food." A CA looking at a named client needs the
+ * fact that matched, not the machine's conditional.
+ */
+function plainMatch(applicability: string): string {
+  const condition = applicability
+    .replace(/^\s*Examine this circular if\s*/i, "")
+    .replace(/\.\s*$/, "")
+    .trim();
+  if (!condition) return "Matched on this client's recorded profile";
+  return `Matched because ${condition.charAt(0).toLowerCase()}${condition.slice(1)}`;
+}
+
 export function PendingDecisions({ impacts }: Readonly<{ impacts: ClientImpact[] }>) {
   const router = useRouter();
   const [decided, setDecided] = useState<Record<string, ReviewState>>({});
@@ -67,7 +81,7 @@ export function PendingDecisions({ impacts }: Readonly<{ impacts: ClientImpact[]
       <summary className="panel-header decisions-summary">
         <div>
           <h2>Changes needing your decision</h2>
-          <p>Matched to your client book against the facts you have confirmed.</p>
+          <p>Say whether each one applies. Approving adds it to your work queue.</p>
         </div>
         <span className="radar-count">{open.length}</span>
         <span aria-hidden="true" className="decisions-chevron"><ChevronRightIcon /></span>
@@ -81,6 +95,18 @@ export function PendingDecisions({ impacts }: Readonly<{ impacts: ClientImpact[]
         <div className="decisions-list">
           {[...groups.values()].map((group) => (
             <article className="decision-group" key={group.url}>
+              {/* The question first, the citation under it. This card used to
+                  lead with a ninety-character instrument name and then explain
+                  the matcher's own rule ("Examine this circular if Sector is
+                  Food") — the software describing itself, in a place where a CA
+                  is trying to decide something. */}
+              <p className="decision-ask">
+                Does this {group.authority} change apply to{" "}
+                {group.items.length === 1
+                  ? group.items[0]!.clientName
+                  : `these ${group.items.length} clients`}?
+              </p>
+
               <div className="decision-head">
                 <span className="radar-authority">{group.authority}</span>
                 <a href={group.url} target="_blank" rel="noreferrer" className="decision-title">
@@ -88,18 +114,16 @@ export function PendingDecisions({ impacts }: Readonly<{ impacts: ClientImpact[]
                 </a>
               </div>
 
-              <p className="decision-why">{group.items[0]?.applicability}</p>
-
-              {group.items[0]?.evidence.length ? (
-                <p className="decision-quote">“{group.items[0].evidence[0]!.quote}”</p>
-              ) : null}
-
               <ul className="decision-clients">
                 {group.items.map((impact) => (
                   <li key={impact.id}>
-                    <Link className="decision-client" href={`/clients/${impact.clientId}#radar`}>
-                      {impact.clientName}
-                    </Link>
+                    <span className="decision-client-block">
+                      <Link className="decision-client" href={`/clients/${impact.clientId}#radar`}>
+                        {impact.clientName}
+                      </Link>
+                      {/* Why THIS client, in their terms — not the rule's. */}
+                      <small>{plainMatch(impact.applicability)}</small>
+                    </span>
                     {failedId === impact.id ? (
                       <span className="decision-failed" role="alert">Could not record — try again</span>
                     ) : null}
@@ -109,7 +133,7 @@ export function PendingDecisions({ impacts }: Readonly<{ impacts: ClientImpact[]
                         onClick={() => decide(impact, "approved")}
                         type="button"
                       >
-                        Applies
+                        Applies — add to work
                       </button>
                       <button
                         className="button small"
@@ -122,6 +146,17 @@ export function PendingDecisions({ impacts }: Readonly<{ impacts: ClientImpact[]
                   </li>
                 ))}
               </ul>
+
+              {/* Justification, not the decision — so it folds away. */}
+              {group.items[0]?.evidence.length ? (
+                <details className="decision-evidence">
+                  <summary>Why it was flagged</summary>
+                  <p className="decision-quote">“{group.items[0].evidence[0]!.quote}”</p>
+                  <p className="decision-evidence-note">
+                    Quoted from the official text. Reg Mitra flags; you decide.
+                  </p>
+                </details>
+              ) : null}
             </article>
           ))}
         </div>
