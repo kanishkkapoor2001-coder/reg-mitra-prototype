@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { HomeComposer } from "@/components/home-composer";
+import { HomeChat } from "@/components/home-chat";
 import { readPendingDecisions } from "@/lib/radar/impacts";
 import { getCorpusHealth } from "@/lib/rag/corpus";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
@@ -85,7 +85,7 @@ export default async function HomePage() {
         <h1>{greeting}</h1>
       </header>
 
-      <HomeComposer />
+      <HomeChat />
 
       <div className="home-brief">
         {/* Where the practice stands — one sentence, one door. */}

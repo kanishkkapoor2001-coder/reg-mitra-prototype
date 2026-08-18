@@ -4568,3 +4568,22 @@ a.q-client-row { text-decoration: none; }
 }
 .q-search input:focus, .q-search input:focus-visible { outline: none; box-shadow: none; border: 0; }
 .q-search:focus-within { border-bottom-color: var(--ink-400); }
+
+/* ═══ Layout: anchor left, fill the canvas ═══════════════════════════════
+   Centring a 660px column in a 1200px canvas left dead flanks both sides and
+   the page read as floating. Content now anchors to the left edge like every
+   app worth copying; whitespace lives on ONE side, where it reads as room
+   rather than absence. */
+.q { max-width: 780px; margin: 0; }
+.home { max-width: 780px; margin: 3vh 0 0; }
+
+/* Home chat: the exchange under the composer. */
+.hc-exchange { margin-top: 22px; }
+.hc-q { margin: 0 0 8px; color: var(--ink-500); font-size: 13px; }
+.hc-a { color: var(--ink-950); font-size: 14px; line-height: 1.65; }
+.hc-a p { margin: 0 0 10px; }
+.hc-a ul { margin: 0 0 10px; padding-left: 20px; }
+.hc-a li { margin: 3px 0; }
+.hc-heading { font-weight: 600; margin-top: 14px; }
+.hc-thinking { color: var(--ink-400); font-style: italic; }
+.home-chat .q-actions { margin-top: 4px; }
