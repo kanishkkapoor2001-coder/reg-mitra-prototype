@@ -35,7 +35,7 @@ export default async function LoginPage({
   const oauth = hasAnyOauthProvider();
   const from = params.from?.startsWith("/") && !params.from.startsWith("//")
     ? params.from
-    : "/today";
+    : "/home";
 
   return (
     <PublicShell authPage>

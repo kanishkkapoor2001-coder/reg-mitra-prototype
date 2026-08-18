@@ -9,7 +9,7 @@ import { createSupabaseRequestClient } from "@/lib/supabase/request";
 // URL fragment the server cannot read.
 
 function safeDestination(value: string | null): string {
-  return value?.startsWith("/") && !value.startsWith("//") ? value : "/today";
+  return value?.startsWith("/") && !value.startsWith("//") ? value : "/home";
 }
 
 export async function GET(request: NextRequest) {

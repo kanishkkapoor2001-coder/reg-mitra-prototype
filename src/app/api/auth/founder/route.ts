@@ -10,7 +10,7 @@ import { FOUNDER_CODE_HOURLY, callerKey, checkRateLimit } from "@/lib/rate-limit
 function safeDestination(value: FormDataEntryValue | null): string {
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
     ? value
-    : "/today";
+    : "/home";
 }
 
 function founderUrl(request: NextRequest, error: string, destination: string) {

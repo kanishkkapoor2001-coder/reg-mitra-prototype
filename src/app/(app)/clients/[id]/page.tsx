@@ -197,23 +197,27 @@ async function ProductClientPage({
     .join("");
 
   const profileIncomplete = answeredFacts < ATTRIBUTE_DEFINITIONS.length;
-  // The profile leads only for a client we barely know — a new record, or a
-  // thin spreadsheet import — where answering IS the work. Past that it goes
-  // last: most books will carry a question or two that genuinely never applies,
-  // and letting that push the decisions and the filings below a thirteen-field
-  // form every visit rebuilds the exact burial this page was fixing. The header
-  // line still names the gap and links straight down to it.
-  const profileLeads = answeredFacts * 2 < ATTRIBUTE_DEFINITIONS.length;
   const startOfToday = new Date(new Date().toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
+  const weekOut = new Date(startOfToday);
+  weekOut.setDate(weekOut.getDate() + 7);
 
-  const profileSection = (
-    <ClientProfile
-      clientId={client.id}
-      facts={facts}
-      editable={workspace.role !== "viewer"}
-      saved={saved}
-    />
-  );
+  // The first line of the page answers the only question a CA opens a client
+  // file with: where do they stand. Everything below is the detail of that
+  // answer — never a questionnaire. The profile stays last, always: asking
+  // before telling was what made this page read as pointless.
+  const overdueCount = openTasks.filter((task) => task.due_at && new Date(task.due_at) < startOfToday).length;
+  const weekCount = openTasks.filter((task) => {
+    if (!task.due_at) return false;
+    const due = new Date(task.due_at);
+    return due >= startOfToday && due <= weekOut;
+  }).length;
+  const undecidedCount = impacts.filter((impact) => impact.reviewState === "not_reviewed").length;
+  const standing = [
+    overdueCount ? `${overdueCount} ${overdueCount === 1 ? "filing" : "filings"} overdue` : "",
+    weekCount ? `${weekCount} due this week` : "",
+    undecidedCount ? `${undecidedCount} ${undecidedCount === 1 ? "change" : "changes"} waiting on your decision` : "",
+  ].filter(Boolean).join(" · ")
+    || (openTasks.length ? `Nothing urgent — ${openTasks.length} scheduled later` : "All clear — nothing open");
 
   return (
     <>
@@ -229,24 +233,16 @@ async function ProductClientPage({
           <p className="page-subtitle">
             {[client.legal_name, humanizeEnum(client.sector), client.state_code].filter(Boolean).join(" · ")}
           </p>
-          <p className="detail-profile-state">
-            {profileIncomplete ? (
-              <>
-                <strong>
-                  {ATTRIBUTE_DEFINITIONS.length - answeredFacts} of {ATTRIBUTE_DEFINITIONS.length} profile
-                  {" "}questions unanswered
-                </strong>
-                {" — rules that depend on them stay undecided. "}
-                <a href="#profile">Answer them</a>.
-              </>
-            ) : (
-              <>Profile complete — all {ATTRIBUTE_DEFINITIONS.length} facts available for matching.</>
-            )}
-          </p>
+          <p className={`detail-standing${overdueCount ? " is-late" : ""}`}>{standing}</p>
+          {profileIncomplete ? (
+            <p className="detail-profile-state">
+              {ATTRIBUTE_DEFINITIONS.length - answeredFacts} profile{" "}
+              {ATTRIBUTE_DEFINITIONS.length - answeredFacts === 1 ? "question" : "questions"} unanswered —
+              matching can miss this client until <a href="#profile">you answer them</a>.
+            </p>
+          ) : null}
         </div>
       </section>
-
-      {profileLeads ? profileSection : null}
 
       {/* What applies to them. */}
       <ClientRadar
@@ -281,7 +277,12 @@ async function ProductClientPage({
         })}
       />
 
-      {!profileLeads ? profileSection : null}
+      <ClientProfile
+        clientId={client.id}
+        facts={facts}
+        editable={workspace.role !== "viewer"}
+        saved={saved}
+      />
     </>
   );
 }

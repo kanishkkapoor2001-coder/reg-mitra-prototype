@@ -9,7 +9,7 @@ import { createSupabaseRequestClient } from "@/lib/supabase/request";
 function safeDestination(value: FormDataEntryValue | null): string {
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
     ? value
-    : "/today";
+    : "/home";
 }
 
 export async function POST(request: NextRequest) {

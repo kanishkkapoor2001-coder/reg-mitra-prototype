@@ -19,6 +19,7 @@ import {
   SyncIcon,
   ToolsIcon,
   TodayIcon,
+  HomeIcon,
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
 
@@ -74,6 +75,7 @@ export function AppShell({
   }, []);
 
   const primaryIcons = {
+    home: HomeIcon,
     today: TodayIcon,
     clients: ClientsIcon,
     assistant: SparklesIcon,
@@ -102,7 +104,7 @@ export function AppShell({
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <Link className="brand" href="/today" aria-label="Reg Mitra workspace home">
+        <Link className="brand" href="/home" aria-label="Reg Mitra workspace home">
           <span className="brand-mark"><CheckCircleIcon /></span>
           <span>
             <strong>Reg Mitra</strong>

@@ -111,3 +111,11 @@ export function StopIcon(props: IconProps) {
 export function EditIcon(props: IconProps) {
   return <IconBase {...props}><path d="M12 20h9" {...strokeProps} /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" {...strokeProps} /></IconBase>;
 }
+
+export function HomeIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" fill="none" height="18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" viewBox="0 0 24 24" width="18" {...props}>
+      <path d="M3 10.5 12 3l9 7.5" /><path d="M5.5 9.5V20a1 1 0 0 0 1 1h4v-6h3v6h4a1 1 0 0 0 1-1V9.5" />
+    </svg>
+  );
+}

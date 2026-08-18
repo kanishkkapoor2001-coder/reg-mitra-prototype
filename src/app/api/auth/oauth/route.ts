@@ -12,7 +12,7 @@ const PROVIDERS = { google: "google", microsoft: "azure" } as const;
 function safeDestination(value: FormDataEntryValue | null): string {
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
     ? value
-    : "/today";
+    : "/home";
 }
 
 export async function POST(request: NextRequest) {
