@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CheckCircleIcon, ChevronRightIcon, SparklesIcon } from "@/components/icons";
+import { reviewImpact } from "@/lib/radar/review-client";
 import type { EvidenceState, RiskLevel } from "@/lib/types";
 
 export interface TodayItem {
@@ -36,68 +37,162 @@ function asInstruction(title: string, client: string): string {
   return client && client !== "Firm-wide" ? `${verb} ${head} — ${client}` : `${verb} ${head}`;
 }
 
-type Bucket = { overdue: TodayItem[]; thisWeek: TodayItem[]; later: TodayItem[] };
+/** A regulation change waiting on a decision, folded into its client. */
+export type TodayChange = {
+  id: string;
+  clientId: string;
+  clientName: string;
+  authority: string;
+  title: string;
+  url: string;
+  applicability: string;
+};
 
-// A CA reads a workload by when it falls due, not by a priority integer. Thirty
-// items in one flat list is a wall; the same thirty as "1 overdue, 6 this week,
-// 23 later" is a morning's plan — and the two urgent ones stop hiding behind
-// twenty-eight that can wait.
-const GROUPS: readonly {
-  key: "overdue" | "week" | "later";
-  label: string;
-  pick: (bucket: Bucket) => TodayItem[];
-}[] = [
-  { key: "overdue", label: "Overdue", pick: (b) => b.overdue },
-  { key: "week", label: "Due this week", pick: (b) => b.thisWeek },
-  { key: "later", label: "Later", pick: (b) => b.later },
-];
+type ClientSession = {
+  clientId: string | null;
+  clientName: string;
+  items: TodayItem[];
+  changes: TodayChange[];
+  overdue: number;
+  dueThisWeek: number;
+  /** Earliest date across the client's open work, for ordering. */
+  soonest: string | null;
+  oldestOverdue: string | null;
+};
+
+// A CA does not do thirty filings; they do six clients. They open one client's
+// file, clear everything that client needs, and close it. Grouping by deadline
+// meant regrouping thirty rows into six work sessions in your head, every time
+// you opened the page — which is the friction that survived every layer of
+// visual tidying. Deadline still decides the ORDER; the client is the unit.
+
+function startOfTodayIST(): Date {
+  return new Date(new Date().toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
+}
+
+function buildSessions(items: readonly TodayItem[], changes: readonly TodayChange[]): ClientSession[] {
+  const today = startOfTodayIST();
+  const weekOut = new Date(today);
+  weekOut.setDate(weekOut.getDate() + 7);
+
+  const byClient = new Map<string, ClientSession>();
+  const keyFor = (id: string | null, name: string) => id ?? `name:${name}`;
+
+  const ensure = (clientId: string | null, clientName: string): ClientSession => {
+    const key = keyFor(clientId, clientName);
+    let session = byClient.get(key);
+    if (!session) {
+      session = {
+        clientId, clientName, items: [], changes: [],
+        overdue: 0, dueThisWeek: 0, soonest: null, oldestOverdue: null,
+      };
+      byClient.set(key, session);
+    }
+    return session;
+  };
+
+  for (const item of items) {
+    const session = ensure(item.clientId, item.client);
+    session.items.push(item);
+    if (item.dueAt) {
+      const due = new Date(item.dueAt);
+      if (due < today) {
+        session.overdue += 1;
+        if (!session.oldestOverdue || item.dueAt < session.oldestOverdue) session.oldestOverdue = item.dueAt;
+      } else if (due <= weekOut) {
+        session.dueThisWeek += 1;
+      }
+      if (!session.soonest || item.dueAt < session.soonest) session.soonest = item.dueAt;
+    }
+  }
+  for (const change of changes) {
+    ensure(change.clientId, change.clientName).changes.push(change);
+  }
+
+  for (const session of byClient.values()) {
+    session.items.sort((a, b) => String(a.dueAt ?? "").localeCompare(String(b.dueAt ?? "")));
+  }
+
+  // Most trouble first: overdue count, then oldest overdue, then next deadline.
+  return [...byClient.values()].sort((a, b) => {
+    if (a.overdue !== b.overdue) return b.overdue - a.overdue;
+    if (a.oldestOverdue && b.oldestOverdue) return a.oldestOverdue.localeCompare(b.oldestOverdue);
+    if (a.changes.length !== b.changes.length) return b.changes.length - a.changes.length;
+    return String(a.soonest ?? "9999").localeCompare(String(b.soonest ?? "9999"));
+  });
+}
+
+/** The one line under a client's name: how much trouble they are in. */
+function sessionSummary(session: ClientSession, formatDate: (iso: string) => string): string {
+  const parts: string[] = [];
+  if (session.overdue) {
+    parts.push(`${session.overdue} overdue${session.oldestOverdue ? ` · oldest ${formatDate(session.oldestOverdue)}` : ""}`);
+  }
+  if (session.dueThisWeek) parts.push(`${session.dueThisWeek} due this week`);
+  if (session.changes.length) {
+    parts.push(`${session.changes.length} new ${session.changes.length === 1 ? "change" : "changes"}`);
+  }
+  if (!parts.length) {
+    const remaining = session.items.length;
+    parts.push(remaining ? `${remaining} scheduled later` : "nothing due");
+  }
+  return parts.join(" · ");
+}
 
 export function TodayExperience({
   items,
   mode,
+  changes = [],
   hasClients = false,
   notice = "",
   watching,
 }: Readonly<{
   items: readonly TodayItem[];
+  changes?: readonly TodayChange[];
   mode: "demo" | "public" | "product";
   hasClients?: boolean;
   notice?: string;
   /** One sentence: what is being watched, for whom, and when it was last checked. */
   watching?: string;
 }>) {
-  const [expandedId, setExpandedId] = useState<string | null>(items[0]?.id ?? null);
   const [reviewedIds, setReviewedIds] = useState<readonly string[]>([]);
+  const [decidedChanges, setDecidedChanges] = useState<readonly string[]>([]);
+  const [openClient, setOpenClient] = useState<string | null>(null);
   const [reviewError, setReviewError] = useState("");
 
   const openItems = useMemo(
     () => items.filter((item) => !reviewedIds.includes(item.id)),
     [items, reviewedIds],
   );
-  // Bucketed against today in IST, since every statutory date in the product is
-  // an IST date. An item with no recorded due date is not urgent by default —
-  // it sorts to "Later" rather than inventing a deadline for it.
-  const { overdue, thisWeek, later } = useMemo(() => {
-    const startOfToday = new Date(new Date().toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
-    const weekOut = new Date(startOfToday);
-    weekOut.setDate(weekOut.getDate() + 7);
-    const bucket: Bucket = { overdue: [], thisWeek: [], later: [] };
-    for (const item of openItems) {
-      if (!item.dueAt) {
-        bucket.later.push(item);
-        continue;
+  const openChanges = useMemo(
+    () => changes.filter((change) => !decidedChanges.includes(change.id)),
+    [changes, decidedChanges],
+  );
+
+  const sessions = useMemo(
+    () => buildSessions(openItems, openChanges),
+    [openItems, openChanges],
+  );
+
+  const formatDate = (iso: string) =>
+    new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" })
+      .format(new Date(iso));
+
+  const totalOverdue = sessions.reduce((total, session) => total + session.overdue, 0);
+  const clientsInTrouble = sessions.filter((session) => session.overdue).length;
+  // The most urgent client opens by itself: the page should present one obvious
+  // first move rather than a row of equal options.
+  const activeKey = openClient ?? (sessions[0] ? (sessions[0].clientId ?? sessions[0].clientName) : null);
+
+  function decideChange(change: TodayChange, state: "approved" | "rejected") {
+    setDecidedChanges((current) => [...current, change.id]);
+    void reviewImpact(change.id, state).then((ok) => {
+      if (!ok) {
+        setDecidedChanges((current) => current.filter((id) => id !== change.id));
+        setReviewError("That decision could not be saved. Try again.");
       }
-      const due = new Date(item.dueAt);
-      if (due < startOfToday) bucket.overdue.push(item);
-      else if (due <= weekOut) bucket.thisWeek.push(item);
-      else bucket.later.push(item);
-    }
-    const byDate = (a: TodayItem, b: TodayItem) => String(a.dueAt ?? "").localeCompare(String(b.dueAt ?? ""));
-    bucket.overdue.sort(byDate);
-    bucket.thisWeek.sort(byDate);
-    bucket.later.sort(byDate);
-    return bucket;
-  }, [openItems]);
+    });
+  }
 
   /**
    * Completing a row asserts the filing was DONE — or that it did not arise
@@ -110,8 +205,6 @@ export function TodayExperience({
   function complete(id: string, outcome: "filed" | "not_applicable") {
     setReviewError("");
     setReviewedIds((current) => [...current, id]);
-    const nextItem = items.find((item) => item.id !== id && !reviewedIds.includes(item.id));
-    setExpandedId(nextItem?.id ?? null);
 
     if (mode === "product") {
       void fetch(`/api/tasks/${encodeURIComponent(id)}/complete`, {
@@ -124,7 +217,6 @@ export function TodayExperience({
         })
         .catch(() => {
           setReviewedIds((current) => current.filter((item) => item !== id));
-          setExpandedId(id);
           setReviewError("That could not be saved. Check your workspace access and try again.");
         });
     }
@@ -152,24 +244,20 @@ export function TodayExperience({
               scheduled filings, not decisions — and alarming, which is the
               opposite of what a work queue is for. */}
           <h1>
-            {overdue.length
-              ? `${overdue.length} ${overdue.length === 1 ? "filing is" : "filings are"} overdue`
-              : thisWeek.length
-                ? `${thisWeek.length} due this week`
-                : openItems.length
-                  ? "Nothing due this week"
-                  : "You’re clear for now"}
+            {clientsInTrouble
+              ? `${clientsInTrouble} ${clientsInTrouble === 1 ? "client needs" : "clients need"} you today`
+              : sessions.length
+                ? "Nothing overdue"
+                : "You’re clear for now"}
           </h1>
           <p>
-            {overdue.length
-              ? "Start here. Everything else has time."
-              : thisWeek.length
-                ? "The rest can wait — they are listed below by when they fall due."
-                : openItems.length
-                  ? `${openItems.length} ${openItems.length === 1 ? "item" : "items"} scheduled later.`
-                  : mode === "demo"
-                    ? "The fictional queue has been reviewed for this session."
-                    : "No client work is currently assigned to you."}
+            {clientsInTrouble
+              ? `${totalOverdue} ${totalOverdue === 1 ? "filing is" : "filings are"} past due. Start at the top and clear one client at a time.`
+              : sessions.length
+                ? "Work is grouped by client, most urgent first."
+                : mode === "demo"
+                  ? "The fictional queue has been cleared for this session."
+                  : "No client work is currently assigned to you."}
           </p>
 
         </div>
@@ -186,73 +274,92 @@ export function TodayExperience({
       {notice ? <p className="today-notice" role="status">{notice}</p> : null}
 
       <section className="focus-section">
-
         {reviewError ? <p className="form-error" role="alert">{reviewError}</p> : null}
-        {GROUPS.map((group) => {
-          const items = group.pick({ overdue, thisWeek, later });
-          if (!items.length) return null;
-          return (
-            <div className="queue-group" key={group.key}>
-              <div className="queue-group-head">
-                <h2>{group.label}</h2>
-                <span>{items.length}</span>
-              </div>
-              <div className="decision-list">
-                {items.map((item) => {
-                  const expanded = expandedId === item.id;
-                  return (
-                    <article className={`decision-item ${expanded ? "expanded" : ""}`} key={item.id}>
-                      <button
-                        aria-expanded={expanded}
-                        className="decision-trigger"
-                        onClick={() => setExpandedId(expanded ? null : item.id)}
-                        type="button"
-                      >
-                        <span className="decision-copy">
-                          <strong>{asInstruction(item.title, item.client)}</strong>
-                          <small>{item.authority}</small>
-                        </span>
-                        <span className={`decision-due ${group.key === "overdue" ? "high" : item.urgency}`}>
-                          {group.key === "overdue" ? `Was due ${item.due}` : item.due}
-                        </span>
-                        <ChevronRightIcon className="decision-chevron" />
-                      </button>
 
-                      {expanded ? (
-                        <div className="decision-detail">
-                          {/* Was: "No approved applicability is attached. Confirm
-                              the official source and client facts before taking
-                              action." — internal state, in language nobody uses. */}
-                          <p className="decision-why">
-                            {item.evidenceState === "verified"
-                              ? "An approved regulation is attached to this item. Check the client’s current position before you file."
-                              : "This is a scheduled obligation, not tied to a reviewed regulation. Confirm it still applies to this client."}
-                          </p>
-                          <div className="decision-actions">
-                            <button className="button primary" onClick={() => complete(item.id, "filed")} type="button">
-                              <CheckCircleIcon /> Mark filed
-                            </button>
-                            <button className="button" onClick={() => complete(item.id, "not_applicable")} type="button">
-                              Not applicable this period
-                            </button>
-                            <span className="decision-actions-spacer" />
-                            {item.clientId ? <Link className="text-link" href={`/clients/${item.clientId}`}>Open client</Link> : null}
-                            <Link className="text-link" href={`/assistant?prompt=${encodeURIComponent(item.title)}`}>
-                              Ask the assistant
-                            </Link>
-                          </div>
+        <div className="session-list">
+          {sessions.map((session) => {
+            const key = session.clientId ?? session.clientName;
+            const open = activeKey === key;
+            return (
+              <article className={`session ${open ? "open" : ""} ${session.overdue ? "is-late" : ""}`} key={key}>
+                <button
+                  aria-expanded={open}
+                  className="session-head"
+                  onClick={() => setOpenClient(open ? "" : key)}
+                  type="button"
+                >
+                  <span className="session-name">
+                    <strong>{session.clientName}</strong>
+                    <small>{sessionSummary(session, formatDate)}</small>
+                  </span>
+                  <span className="session-open">{open ? "Close" : "Start"}</span>
+                  <ChevronRightIcon className="session-chevron" />
+                </button>
+
+                {open ? (
+                  <div className="session-body">
+                    {/* A change waiting on a decision belongs with its client,
+                        not in a separate panel above the work. */}
+                    {session.changes.map((change) => (
+                      <div className="session-change" key={change.id}>
+                        <p className="session-change-ask">
+                          <span className="radar-authority">{change.authority}</span>
+                          Does this apply to {session.clientName}?
+                        </p>
+                        <a href={change.url} target="_blank" rel="noreferrer" className="session-change-title">
+                          {change.title} <span aria-hidden="true">↗</span>
+                        </a>
+                        <p className="session-change-why">{change.applicability}</p>
+                        <div className="session-change-actions">
+                          <button className="button small primary" onClick={() => decideChange(change, "approved")} type="button">
+                            Applies — add to work
+                          </button>
+                          <button className="button small" onClick={() => decideChange(change, "rejected")} type="button">
+                            Not applicable
+                          </button>
                         </div>
+                      </div>
+                    ))}
+
+                    {session.items.map((item) => {
+                      const late = Boolean(item.dueAt && new Date(item.dueAt) < startOfTodayIST());
+                      return (
+                        <div className={`session-item ${late ? "late" : ""}`} key={item.id}>
+                          <span className="session-item-copy">
+                            <strong>{asInstruction(item.title, "")}</strong>
+                            <small>{item.authority}</small>
+                          </span>
+                          <span className={`decision-due ${late ? "high" : item.urgency}`}>
+                            {late ? `Was due ${item.due}` : item.due}
+                          </span>
+                          <span className="session-item-actions">
+                            <button className="button small primary" onClick={() => complete(item.id, "filed")} type="button">
+                              <CheckCircleIcon /> Filed
+                            </button>
+                            <button className="button small" onClick={() => complete(item.id, "not_applicable")} type="button">
+                              N/A
+                            </button>
+                          </span>
+                        </div>
+                      );
+                    })}
+
+                    <div className="session-foot">
+                      {session.clientId ? (
+                        <Link className="text-link" href={`/clients/${session.clientId}`}>Open {session.clientName}</Link>
                       ) : null}
-                    </article>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+                      <Link className="text-link" href={`/assistant?prompt=${encodeURIComponent(`What needs attention for ${session.clientName}?`)}`}>
+                        Ask the assistant about this client
+                      </Link>
+                    </div>
+                  </div>
+                ) : null}
+              </article>
+            );
+          })}
+        </div>
 
         <div className="decision-list">
-
           {!openItems.length ? (
             mode === "product" ? (
               <div className="queue-complete">

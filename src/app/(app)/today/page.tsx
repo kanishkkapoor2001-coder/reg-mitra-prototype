@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import { PendingDecisions } from "@/components/pending-decisions";
 import { readPendingDecisions } from "@/lib/radar/impacts";
 import { TodayExperience } from "@/components/today-experience";
 import { workItems } from "@/lib/demo-data";
@@ -129,9 +128,22 @@ export default async function TodayPage({
 
   return (
     <>
-      {pending.length ? <PendingDecisions impacts={pending} /> : null}
+      {/* Changes no longer get a panel of their own above the work: each one is
+          folded into the client it concerns, because that is where the CA will
+          be when they are in a position to judge it. */}
       <TodayExperience
         items={items}
+        changes={pending
+          .filter((impact) => impact.clientId)
+          .map((impact) => ({
+            id: impact.id,
+            clientId: impact.clientId,
+            clientName: impact.clientName,
+            authority: impact.source.authority,
+            title: impact.source.title,
+            url: impact.source.url,
+            applicability: impact.applicability,
+          }))}
         mode="product"
         hasClients={(clientCount ?? 0) > 0}
         notice={noticeForGenerated(params.generated)}
