@@ -20,6 +20,14 @@ import type { ClientImpact } from "@/lib/radar/impact-types";
 // Collapsible via <details>, because it sits above the day's review queue and a
 // busy book can push that queue off the screen entirely.
 
+/** The recorded fact behind a match — "Sector is Food" from the stored rule. */
+function matchedFact(applicability: string): string {
+  return applicability
+    .replace(/^\s*Examine this circular if\s*/i, "")
+    .replace(/\.\s*$/, "")
+    .trim() || "matching this client's profile";
+}
+
 /**
  * The stored applicability reads as the matcher's own instruction — "Examine
  * this circular if Sector is Food." A CA looking at a named client needs the
@@ -147,14 +155,29 @@ export function PendingDecisions({ impacts }: Readonly<{ impacts: ClientImpact[]
                 ))}
               </ul>
 
-              {/* Justification, not the decision — so it folds away. */}
+              {/* Justification, not the decision — so it folds away. Opened, it
+                  shows the reasoning as two halves rather than one bare quote:
+                  the fact recorded about the client, and the scope the official
+                  text sets. A quote on its own never said why THIS client. */}
               {group.items[0]?.evidence.length ? (
                 <details className="decision-evidence">
-                  <summary>Why it was flagged</summary>
-                  <p className="decision-quote">“{group.items[0].evidence[0]!.quote}”</p>
-                  <p className="decision-evidence-note">
-                    Quoted from the official text. Reg Mitra flags; you decide.
-                  </p>
+                  <summary>Why Reg Mitra thinks this may apply</summary>
+                  <div className="decision-reasoning">
+                    <p>
+                      <span>You recorded</span>
+                      {group.items.map((impact) => impact.clientName).join(", ")}
+                      {" as "}
+                      <strong>{matchedFact(group.items[0]!.applicability)}</strong>.
+                    </p>
+                    <p>
+                      <span>The change is addressed to</span>
+                      “{group.items[0].evidence[0]!.quote}”
+                    </p>
+                    <p className="decision-evidence-note">
+                      That overlap is why it is here. It is a proposal, not a
+                      conclusion — confirm against the client’s actual position.
+                    </p>
+                  </div>
                 </details>
               ) : null}
             </article>

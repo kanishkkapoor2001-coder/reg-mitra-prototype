@@ -4156,3 +4156,28 @@ html { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) {
   .decision-evidence > summary::before { transition: none; }
 }
+
+
+/* The rail: only the spacer grows.
+   .primary-nav carried flex: 1, so it absorbed the free space and pushed Tools
+   into the middle of an empty column. Sizing it to its content lets Tools sit
+   directly under Assistant, where it belongs, and leaves the spacer to push
+   Settings to the foot. */
+.sidebar > .primary-nav { flex: 0 0 auto; overflow-y: visible; }
+@media (max-width: 899px) {
+  .sidebar > .primary-nav { flex: unset; }
+}
+
+/* The two halves of a match: your fact, the regulation's scope. */
+.decision-reasoning { display: grid; gap: 8px; margin-top: 8px; }
+.decision-reasoning p { margin: 0; color: var(--ink-700, var(--ink-800)); font-size: 13px; line-height: 1.6; }
+.decision-reasoning p > span:first-child {
+  display: block;
+  margin-bottom: 1px;
+  color: var(--ink-500);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.decision-reasoning strong { color: var(--ink-950); font-weight: 620; }
