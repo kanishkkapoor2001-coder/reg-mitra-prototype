@@ -4587,3 +4587,24 @@ a.q-client-row { text-decoration: none; }
 .hc-heading { font-weight: 600; margin-top: 14px; }
 .hc-thinking { color: var(--ink-400); font-style: italic; }
 .home-chat .q-actions { margin-top: 4px; }
+
+/* Home brief: each change carries its verdict for this book. */
+.home-brief-copy { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.home-brief-authority {
+  flex: none; color: var(--ink-500); font-size: 11px; font-weight: 650;
+  letter-spacing: .05em; text-transform: uppercase;
+}
+.home-brief-list .q-line-main { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-brief-list .q-client-row { gap: 20px; }
+.home-verdict-act { color: var(--green-700); font-weight: 600; }
+.home-verdict-done { color: var(--ink-700); }
+.home-verdict-quiet { color: var(--ink-400); }
+.home-foot { margin-top: 22px; }
+.home .home-composer { margin-bottom: 4px; }
+
+/* Long instrument titles must truncate, not stretch the page: a nowrap child
+   inside flex needs min-width:0 at every level or it wins the width fight. */
+.home-brief-copy { flex: 1 1 auto; }
+.home-brief-list .q-client-row { min-width: 0; }
+.home > * { min-width: 0; }
+.home .home-composer { max-width: 100%; }
