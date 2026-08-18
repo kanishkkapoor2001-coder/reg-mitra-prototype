@@ -4219,3 +4219,17 @@ html { -webkit-tap-highlight-color: transparent; }
    already ordered by date. */
 .decision-trigger { grid-template-columns: minmax(0, 1fr) auto 18px; }
 .decision-detail { grid-template-columns: 1fr; gap: 12px; }
+
+/* ═══ Today: one measure for the whole page ═════════════════════════════
+   The decisions panel and hero followed the page width while the queue, the
+   notice and the footer were capped at 1040px — so on any screen wider than
+   ~1290px the page had two right edges, 140px apart, and every block below the
+   hero looked shunted left. One column, one edge. */
+.focus-section,
+.today-notice,
+.next-up { max-width: none; }
+
+/* The detail's 52px left inset tracked the index chip that no longer exists,
+   so the expanded text sat 36px right of the row title above it. Match the
+   trigger's own padding instead. */
+.decision-detail { padding-left: 15px; }
