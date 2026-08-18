@@ -30,6 +30,7 @@ export function ClientWork({
   editable: boolean;
 }>) {
   const [doneIds, setDoneIds] = useState<readonly string[]>([]);
+  const [openRow, setOpenRow] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const open = items.filter((item) => !doneIds.includes(item.id));
@@ -37,6 +38,7 @@ export function ClientWork({
   function complete(id: string, outcome: "filed" | "not_applicable") {
     setError("");
     setDoneIds((current) => [...current, id]);
+    setOpenRow(null);
     void fetch(`/api/tasks/${encodeURIComponent(id)}/complete`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -47,56 +49,74 @@ export function ClientWork({
       })
       .catch(() => {
         setDoneIds((current) => current.filter((item) => item !== id));
+        setOpenRow(null);
         setError("That could not be saved. Check your workspace access and try again.");
       });
   }
 
   return (
-    <section className="client-section">
-      <div className="client-section-head">
-        <h2>Their work</h2>
-        <p>
-          {open.length
-            ? `${open.length} open ${open.length === 1 ? "filing" : "filings"} — the same queue as Today.`
-            : "Nothing open for this client."}
-        </p>
-      </div>
+    <section className="q-section">
+      <h2 className="q-section-head">
+        Work
+        <span>{open.length ? `${open.length} open` : "nothing open"}</span>
+      </h2>
 
       {error ? <p className="form-error" role="alert">{error}</p> : null}
 
       {open.length ? (
-        <div className="client-work-list">
-          {open.map((item) => (
-            <div className={`session-item ${item.overdue ? "late" : ""}`} key={item.id}>
-              <span className="session-item-copy">
-                <strong>{item.title}</strong>
-                <small>{item.authority}</small>
-              </span>
-              <span className={`decision-due ${item.overdue ? "high" : "low"}`}>
-                {item.overdue ? `Was due ${item.due}` : item.due}
-              </span>
-              {editable ? (
-                <span className="session-item-actions">
-                  <button className="button small primary" onClick={() => complete(item.id, "filed")} type="button">
-                    <CheckCircleIcon /> Filed
+        <div className="q-client-body">
+          {open.map((item) => {
+            const expanded = openRow === item.id;
+            return (
+              <div className="q-item" key={item.id}>
+                <div className="q-item-row">
+                  {editable ? (
+                    <button
+                      aria-label={`Mark ${item.title} filed`}
+                      className="q-mark"
+                      onClick={() => complete(item.id, "filed")}
+                      type="button"
+                    >
+                      <CheckCircleIcon />
+                    </button>
+                  ) : <span className="q-mark" />}
+                  <button
+                    aria-expanded={expanded}
+                    className="q-line"
+                    onClick={() => setOpenRow(expanded ? null : item.id)}
+                    type="button"
+                  >
+                    <span className="q-line-main">{item.title}</span>
+                    <span className={`q-line-meta${item.overdue ? " late" : ""}`}>
+                      {item.overdue ? `was due ${item.due}` : item.due}
+                    </span>
                   </button>
-                  <button className="button small" onClick={() => complete(item.id, "not_applicable")} type="button">
-                    N/A
-                  </button>
-                </span>
-              ) : null}
-            </div>
-          ))}
+                </div>
+                {expanded ? (
+                  <div className="q-detail">
+                    <p className="q-detail-why">{item.authority}</p>
+                    {editable ? (
+                      <p className="q-actions">
+                        <button className="q-act" onClick={() => complete(item.id, "not_applicable")} type="button">
+                          Not applicable this period
+                        </button>
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
         </div>
       ) : (
-        <p className="client-section-empty">
-          Work appears here when a filing falls due, or when you approve a change above.
-        </p>
+        <p className="q-empty">Work appears here when a filing falls due, or when you approve a change.</p>
       )}
 
-      <Link className="text-link" href={`/assistant?prompt=${encodeURIComponent(`What needs attention for ${clientName}?`)}`}>
-        Ask the assistant about {clientName}
-      </Link>
+      <p className="q-actions">
+        <Link className="q-act" href={`/assistant?prompt=${encodeURIComponent(`What needs attention for ${clientName}?`)}`}>
+          Ask the assistant about {clientName}
+        </Link>
+      </p>
     </section>
   );
 }

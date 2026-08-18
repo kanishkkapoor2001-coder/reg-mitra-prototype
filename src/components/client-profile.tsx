@@ -109,19 +109,15 @@ export function ClientProfile({
   const staleKeys = [...facts.values()].filter((fact) => isStale(fact)).map((fact) => fact.key);
 
   return (
-    <section className="panel" id="profile">
-      <div className="panel-header">
-        <div>
-          <h2>Company profile</h2>
-          <p>
-            The facts Reg Mitra matches new circulars against. Nothing is assumed — an unanswered
-            question means a rule that depends on it stays undecided.
-          </p>
-        </div>
-        <span className={`profile-progress${answered === total ? " is-complete" : ""}`}>
-          {answered} of {total} answered
-        </span>
-      </div>
+    <details className="q-section q-fold" id="profile" open={answered === 0}>
+      <summary className="q-section-head">
+        Profile
+        <span>{answered} of {total} answered</span>
+      </summary>
+      <p className="q-fold-note">
+        The facts Reg Mitra matches new circulars against. An unanswered question means a
+        rule that depends on it stays undecided.
+      </p>
 
       {saved ? (
         <p className="profile-saved" role="status">Profile saved. Matching will use the updated facts.</p>
@@ -173,6 +169,6 @@ export function ClientProfile({
           </div>
         ) : null}
       </form>
-    </section>
+    </details>
   );
 }

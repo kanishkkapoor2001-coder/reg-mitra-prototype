@@ -220,31 +220,27 @@ async function ProductClientPage({
     || (openTasks.length ? `Nothing urgent — ${openTasks.length} scheduled later` : "All clear — nothing open");
 
   return (
-    <>
-      <Link className="text-link" href="/clients">← All clients</Link>
+    <div className="q">
+      <p className="q-back"><Link className="text-link" href="/clients">← All clients</Link></p>
 
-      {/* Who they are. The identity line carries the facts matching runs on,
-          so the profile state belongs in the header rather than in a warning
-          banner underneath it. */}
-      <section className="detail-hero" style={{ marginTop: 16 }}>
-        <span className="detail-avatar">{initials || "CL"}</span>
-        <div>
-          <h1>{client.display_name}</h1>
-          <p className="page-subtitle">
-            {[client.legal_name, humanizeEnum(client.sector), client.state_code].filter(Boolean).join(" · ")}
-          </p>
-          <p className={`detail-standing${overdueCount ? " is-late" : ""}`}>{standing}</p>
-          {profileIncomplete ? (
-            <p className="detail-profile-state">
+      {/* Class 1: where they stand. The identity line is metadata above it,
+          and the profile gap is a link, not a banner. */}
+      <header className="q-head">
+        <p className="q-date">
+          {[client.legal_name, humanizeEnum(client.sector), client.state_code].filter(Boolean).join(" · ")}
+        </p>
+        <h1 className="q-verdict">{client.display_name}</h1>
+        <p className={`q-sub${overdueCount ? " late" : ""}`}>{standing}</p>
+        {profileIncomplete ? (
+          <p className="q-head-links">
+            <a className="text-link" href="#profile">
               {ATTRIBUTE_DEFINITIONS.length - answeredFacts} profile{" "}
-              {ATTRIBUTE_DEFINITIONS.length - answeredFacts === 1 ? "question" : "questions"} unanswered —
-              matching can miss this client until <a href="#profile">you answer them</a>.
-            </p>
-          ) : null}
-        </div>
-      </section>
+              {ATTRIBUTE_DEFINITIONS.length - answeredFacts === 1 ? "question" : "questions"} unanswered
+            </a>
+          </p>
+        ) : null}
+      </header>
 
-      {/* What applies to them. */}
       <ClientRadar
         impacts={impacts}
         editable={workspace.role !== "viewer"}
@@ -283,6 +279,6 @@ async function ProductClientPage({
         editable={workspace.role !== "viewer"}
         saved={saved}
       />
-    </>
+    </div>
   );
 }

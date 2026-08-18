@@ -37,58 +37,62 @@ function ImpactCard({
   const approved = state === "approved";
   const rejected = state === "rejected";
 
+  // One line on the surface; the citation, the quote and the secondary action
+  // all live one click deeper. The old card showed everything at once — a box
+  // inside a box with a permanently-open quote block.
   return (
-    <article className={`radar-item${approved ? " is-approved" : ""}${rejected ? " is-dismissed" : ""}`}>
-      <div className="radar-item-head">
-        <span className="radar-authority">{impact.source.authority}</span>
-        {impact.source.publishedAt ? (
-          <span className="radar-date">{formatDate(impact.source.publishedAt)}</span>
-        ) : null}
-        <span className={`radar-state radar-state-${state}`}>
-          {approved ? "Approved" : rejected ? "Dismissed" : "Needs your decision"}
+    <details className={`q-item q-impact${approved ? " is-approved" : ""}${rejected ? " is-dismissed" : ""}`}>
+      <summary className="q-item-row">
+        <span aria-hidden="true" className={`q-mark${approved ? " done" : rejected ? " off" : " q-mark-ask"}`}>
+          {approved ? "✓" : rejected ? "—" : "?"}
         </span>
-      </div>
+        <span className="q-line">
+          <span className="q-line-main">
+            {approved
+              ? `${impact.source.authority} change applies`
+              : rejected
+                ? `${impact.source.authority} change — not applicable`
+                : `Does this ${impact.source.authority} change apply?`}
+          </span>
+          <span className="q-line-meta">
+            {impact.source.publishedAt ? formatDate(impact.source.publishedAt) : "decide"}
+          </span>
+        </span>
+      </summary>
 
-      <h3 className="radar-title">
-        <a href={impact.source.url} target="_blank" rel="noreferrer">
+      <div className="q-detail">
+        <a className="q-detail-source" href={impact.source.url} target="_blank" rel="noreferrer">
           {impact.source.title} <span aria-hidden="true">↗</span>
         </a>
-      </h3>
+        <p className="q-detail-why">{impact.applicability}</p>
 
-      <p className="radar-why">{impact.applicability}</p>
+        {impact.evidence.length ? (
+          <p className="q-detail-quote">
+            “{impact.evidence[0]!.quote}”
+            <span>{impact.evidence[0]!.location}</span>
+          </p>
+        ) : null}
 
-      {impact.evidence.length ? (
-        <ul className="radar-evidence">
-          {impact.evidence.map((item) => (
-            <li key={item.id}>
-              <span className="radar-quote">“{item.quote}”</span>
-              <span className="radar-locator">{item.location}</span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+        {failed ? (
+          <p className="decision-failed" role="alert">Could not record that decision — try again.</p>
+        ) : null}
 
-      {failed ? (
-        <p className="decision-failed" role="alert">Could not record that decision — try again.</p>
-      ) : null}
-
-      {editable && !approved && !rejected ? (
-        <div className="radar-actions">
-          <button className="button primary" onClick={() => onDecide(impact, "approved")} type="button">
-            Applies to this client
-          </button>
-          <button className="button" onClick={() => onDecide(impact, "rejected")} type="button">
-            Not applicable
-          </button>
-        </div>
-      ) : editable ? (
-        <div className="radar-actions">
-          <button className="button quiet" onClick={() => onDecide(impact, "not_reviewed")} type="button">
-            Undo
-          </button>
-        </div>
-      ) : null}
-    </article>
+        {editable && !approved && !rejected ? (
+          <p className="q-actions">
+            <button className="q-act strong" onClick={() => onDecide(impact, "approved")} type="button">
+              Applies to this client
+            </button>
+            <button className="q-act" onClick={() => onDecide(impact, "rejected")} type="button">
+              Not applicable
+            </button>
+          </p>
+        ) : editable ? (
+          <p className="q-actions">
+            <button className="q-act" onClick={() => onDecide(impact, "not_reviewed")} type="button">Undo</button>
+          </p>
+        ) : null}
+      </div>
+    </details>
   );
 }
 
@@ -132,21 +136,11 @@ export function ClientRadar({
   const questions = questionsFor(needsFacts, 2);
 
   return (
-    <section className="panel" id="radar">
-      <div className="panel-header">
-        <div>
-          <h2>Regulatory radar</h2>
-          <p>Changes checked against this client’s confirmed profile.</p>
-        </div>
-        {(() => {
-          // "To review" means awaiting a decision — an approved card is done,
-          // and counting it kept the badge at 3 after all three were decided.
-          const undecided = flagged.filter(
-            (impact) => stateOf(impact) !== "approved" && stateOf(impact) !== "rejected",
-          ).length;
-          return undecided ? <span className="radar-count">{undecided} to review</span> : null;
-        })()}
-      </div>
+    <section className="q-section">
+      <h2 className="q-section-head">
+        Changes
+        <span>{impacts.length ? `${impacts.length} matched` : "none matched"}</span>
+      </h2>
 
       {!hasRules ? (
         <div className="empty-state">

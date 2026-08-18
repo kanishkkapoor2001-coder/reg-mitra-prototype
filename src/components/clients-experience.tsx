@@ -72,106 +72,76 @@ export function ClientsExperience({
   const incomplete = clients.filter((client) => client.unanswered > 0).length;
 
   return (
-    <>
-      <header className="portfolio-hero">
-        <div>
-          <p className="eyebrow">Client register</p>
-          <h1>Clients</h1>
-          {/* Says what the page is FOR. Without this the roster looks like a
-              read-only report and nobody learns that the profile drives every
-              match the product makes. */}
-          <p>
-            {mode === "demo"
-              ? "Sample client profiles, showing the facts matching runs on."
-              : incomplete
-                ? `Reg Mitra matches circulars against what you record here. ${incomplete} ${incomplete === 1 ? "client is" : "clients are"} missing profile facts.`
-                : "Reg Mitra matches circulars against what you record here."}
-          </p>
-        </div>
+    <div className="q">
+      <header className="q-head">
+        <p className="q-date">Client register</p>
+        <h1 className="q-verdict">
+          {incomplete
+            ? `${incomplete} ${incomplete === 1 ? "client is" : "clients are"} missing facts`
+            : "Clients"}
+        </h1>
+        <p className="q-sub">
+          {mode === "demo"
+            ? "Sample profiles, showing the facts matching runs on."
+            : "Reg Mitra matches circulars against what you record here."}
+        </p>
+        <p className="q-head-links">
+          {mode === "product" ? (
+            clientLimit !== null && clients.length >= clientLimit ? (
+              <Link className="text-link" href="/billing">Plan full — upgrade</Link>
+            ) : (
+              <>
+                <Link className="text-link" href="/clients/new">Add client</Link>
+                <Link className="text-link" href="/clients/import">Import a spreadsheet</Link>
+              </>
+            )
+          ) : null}
+        </p>
       </header>
 
-      <div className="portfolio-controls">
-        <label className="search-field">
-          <SearchIcon />
-          <span className="sr-only">Search clients</span>
-          <input
-            aria-label="Search clients"
-            defaultValue={query}
-            key={query}
-            onChange={(event) => updateParams({ q: event.target.value || null })}
-            placeholder="Find a client"
-          />
-        </label>
-        <span className="result-count">
-          {visibleClients.length} {visibleClients.length === 1 ? "client" : "clients"}
-        </span>
-        {mode === "product" && clientLimit !== null ? (
-          <span className={`plan-usage${clients.length >= clientLimit ? " is-full" : ""}`}>
-            {clients.length} of {clientLimit} used{planName ? ` · ${planName}` : ""}
-          </span>
-        ) : null}
-        {mode === "product" ? (
-          clientLimit !== null && clients.length >= clientLimit ? (
-            <Link className="button" href="/billing" title={`Your plan covers ${clientLimit} client companies`}>
-              Plan full — upgrade
-            </Link>
-          ) : (
-            <>
-              <Link className="button primary" href="/clients/new">Add client</Link>
-              <Link className="button" href="/clients/import">Import a spreadsheet</Link>
-            </>
-          )
-        ) : null}
-      </div>
+      <label className="q-search">
+        <SearchIcon />
+        <span className="sr-only">Search clients</span>
+        <input
+          aria-label="Search clients"
+          defaultValue={query}
+          key={query}
+          onChange={(event) => updateParams({ q: event.target.value || null })}
+          placeholder="Find a client"
+        />
+      </label>
 
       {visibleClients.length ? (
-        <div className="roster">
+        <div className="q-list">
           {visibleClients.map((client) => (
-            <Link className="roster-row" href={`/clients/${client.id}`} key={client.id}>
-              <span className="roster-name">
-                <strong>{client.name}</strong>
-                <small>{client.sector}</small>
-              </span>
-
-              {/* The page's own column: what it can fix. */}
-              <span className={`roster-profile${client.unanswered ? " is-open" : ""}`}>
-                {client.unanswered
-                  ? `${client.unanswered} ${client.unanswered === 1 ? "question" : "questions"} unanswered`
-                  : "Profile complete"}
-              </span>
-
-              <span className="roster-work">
-                {client.undecided ? (
-                  <span className="roster-flag">
-                    {client.undecided} to decide
-                  </span>
-                ) : null}
-                {client.pending
-                  ? `${client.pending} open`
-                  : <span className="roster-clear">Nothing open</span>}
+            <Link className="q-client-row" href={`/clients/${client.id}`} key={client.id}>
+              <span className="q-client-name">{client.name}</span>
+              <span className="q-client-sum">
+                {[
+                  client.undecided ? `${client.undecided} to decide` : "",
+                  client.pending ? `${client.pending} open` : "",
+                  client.unanswered ? `${client.unanswered} unanswered` : "",
+                ].filter(Boolean).join(" · ") || "clear"}
               </span>
             </Link>
           ))}
         </div>
       ) : (
-        <section className="empty-state portfolio-empty">
-          <SearchIcon />
-          <h2>{clients.length ? "No clients match" : "Add your first client"}</h2>
-          <p>
-            {clients.length
-              ? "Change the search."
-              : "Record a client and their profile facts — matching runs on those facts."}
-          </p>
+        <p className="q-empty">
           {clients.length ? (
-            <button className="button" onClick={() => router.replace(pathname)} type="button">Clear search</button>
+            <>Nothing matches that search.</>
           ) : mode === "product" ? (
-            <>
-              <Link className="button primary" href="/clients/new">Add client</Link>
-              <Link className="button" href="/clients/import">Import a spreadsheet</Link>
-            </>
-          ) : null}
-        </section>
+            <>No clients yet. <Link className="text-link" href="/clients/new">Add your first client</Link>.</>
+          ) : "No clients."}
+        </p>
       )}
-    </>
+
+      <p className="q-watch">
+        {visibleClients.length} of {clients.length} {clients.length === 1 ? "client" : "clients"}
+        {mode === "product" && clientLimit !== null
+          ? ` · ${clients.length} of ${clientLimit} on ${planName ?? "your plan"}`
+          : ""}
+      </p>
+    </div>
   );
 }

@@ -2,10 +2,22 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { CheckCircleIcon, ChevronRightIcon, SparklesIcon } from "@/components/icons";
+import { CheckCircleIcon, SparklesIcon } from "@/components/icons";
 import { reviewImpact } from "@/lib/radar/review-client";
 import { asInstruction } from "@/lib/format";
 import type { EvidenceState, RiskLevel } from "@/lib/types";
+
+// The queue, under one presentation system with four priority classes:
+//
+//   1. the verdict  — one line, the only large text on the page
+//   2. the list     — one plain line per client, hairlines, no boxes
+//   3. metadata     — small, grey, right-aligned, never in a filled pill
+//   4. actions      — hidden until a row is opened
+//
+// Density is fixed by LAYERING, not by shrinking: the surface carries the
+// minimum a CA needs to choose what to touch, and every supporting detail —
+// authority, evidence, secondary actions — lives one click deeper. Nothing is
+// boxed inside anything else; whitespace and type scale do the separating.
 
 export interface TodayItem {
   id: string;
@@ -38,31 +50,26 @@ type ClientSession = {
   changes: TodayChange[];
   overdue: number;
   dueThisWeek: number;
-  /** Earliest date across the client's open work, for ordering. */
   soonest: string | null;
   oldestOverdue: string | null;
 };
-
-// A CA does not do thirty filings; they do six clients. They open one client's
-// file, clear everything that client needs, and close it. Grouping by deadline
-// meant regrouping thirty rows into six work sessions in your head, every time
-// you opened the page — which is the friction that survived every layer of
-// visual tidying. Deadline still decides the ORDER; the client is the unit.
 
 function startOfTodayIST(): Date {
   return new Date(new Date().toLocaleDateString("en-US", { timeZone: "Asia/Kolkata" }));
 }
 
+// A CA does not do thirty filings; they do six clients — open one client's
+// file, clear what it needs, close it. Deadline decides the ORDER; the client
+// is the UNIT.
 function buildSessions(items: readonly TodayItem[], changes: readonly TodayChange[]): ClientSession[] {
   const today = startOfTodayIST();
   const weekOut = new Date(today);
   weekOut.setDate(weekOut.getDate() + 7);
 
   const byClient = new Map<string, ClientSession>();
-  const keyFor = (id: string | null, name: string) => id ?? `name:${name}`;
 
   const ensure = (clientId: string | null, clientName: string): ClientSession => {
-    const key = keyFor(clientId, clientName);
+    const key = clientId ?? `name:${clientName}`;
     let session = byClient.get(key);
     if (!session) {
       session = {
@@ -96,7 +103,6 @@ function buildSessions(items: readonly TodayItem[], changes: readonly TodayChang
     session.items.sort((a, b) => String(a.dueAt ?? "").localeCompare(String(b.dueAt ?? "")));
   }
 
-  // Most trouble first: overdue count, then oldest overdue, then next deadline.
   return [...byClient.values()].sort((a, b) => {
     if (a.overdue !== b.overdue) return b.overdue - a.overdue;
     if (a.oldestOverdue && b.oldestOverdue) return a.oldestOverdue.localeCompare(b.oldestOverdue);
@@ -105,27 +111,20 @@ function buildSessions(items: readonly TodayItem[], changes: readonly TodayChang
   });
 }
 
-/** The one line under a client's name: how much trouble they are in. */
-function sessionSummary(session: ClientSession, formatDate: (iso: string) => string): string {
+/** Class 3, next to a client's name: how much trouble they are in. */
+function sessionSummary(session: ClientSession): string {
   const parts: string[] = [];
-  if (session.overdue) {
-    parts.push(`${session.overdue} overdue${session.oldestOverdue ? ` · oldest ${formatDate(session.oldestOverdue)}` : ""}`);
-  }
-  if (session.dueThisWeek) parts.push(`${session.dueThisWeek} due this week`);
-  if (session.changes.length) {
-    parts.push(`${session.changes.length} new ${session.changes.length === 1 ? "change" : "changes"}`);
-  }
-  if (!parts.length) {
-    const remaining = session.items.length;
-    parts.push(remaining ? `${remaining} scheduled later` : "nothing due");
-  }
-  return parts.join(" · ");
+  if (session.overdue) parts.push(`${session.overdue} overdue`);
+  if (session.dueThisWeek) parts.push(`${session.dueThisWeek} due`);
+  if (session.changes.length) parts.push(`${session.changes.length} to decide`);
+  if (parts.length) return parts.join(" · ");
+  return session.items.length ? `${session.items.length} later` : "clear";
 }
 
 export function TodayExperience({
   items,
-  mode,
   changes = [],
+  mode,
   hasClients = false,
   notice = "",
   watching,
@@ -135,12 +134,15 @@ export function TodayExperience({
   mode: "demo" | "public" | "product";
   hasClients?: boolean;
   notice?: string;
-  /** One sentence: what is being watched, for whom, and when it was last checked. */
+  /** One sentence: what is being watched and when it was last checked. */
   watching?: string;
 }>) {
   const [reviewedIds, setReviewedIds] = useState<readonly string[]>([]);
   const [decidedChanges, setDecidedChanges] = useState<readonly string[]>([]);
   const [openClient, setOpenClient] = useState<string | null>(null);
+  // One open row at a time. Actions are class 4, and two open action strips on
+  // screen is exactly the noise this system exists to remove.
+  const [openRow, setOpenRow] = useState<string | null>(null);
   const [reviewError, setReviewError] = useState("");
 
   const openItems = useMemo(
@@ -151,43 +153,41 @@ export function TodayExperience({
     () => changes.filter((change) => !decidedChanges.includes(change.id)),
     [changes, decidedChanges],
   );
-
   const sessions = useMemo(
     () => buildSessions(openItems, openChanges),
     [openItems, openChanges],
   );
 
-  const formatDate = (iso: string) =>
-    new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" })
-      .format(new Date(iso));
-
   const totalOverdue = sessions.reduce((total, session) => total + session.overdue, 0);
   const clientsInTrouble = sessions.filter((session) => session.overdue).length;
-  // The most urgent client opens by itself: the page should present one obvious
-  // first move rather than a row of equal options.
-  const activeKey = openClient ?? (sessions[0] ? (sessions[0].clientId ?? sessions[0].clientName) : null);
+  const first = sessions[0];
+  const activeKey = openClient ?? (first ? (first.clientId ?? first.clientName) : null);
 
-  function decideChange(change: TodayChange, state: "approved" | "rejected") {
-    setDecidedChanges((current) => [...current, change.id]);
-    void reviewImpact(change.id, state).then((ok) => {
-      if (!ok) {
-        setDecidedChanges((current) => current.filter((id) => id !== change.id));
-        setReviewError("That decision could not be saved. Try again.");
-      }
-    });
-  }
+  const dateLine = new Intl.DateTimeFormat("en-IN", {
+    weekday: "long", day: "numeric", month: "long", timeZone: "Asia/Kolkata",
+  }).format(new Date());
 
-  /**
-   * Completing a row asserts the filing was DONE — or that it did not arise
-   * this period. The old button stamped "reviewed", so a filed return stayed
-   * open forever and the page tracked reading instead of compliance.
-   *
-   * Optimistic, like every other decision in the product: the row leaves on
-   * press and the write happens behind it.
-   */
+  // Class 1. Not a count of what exists — the next move, named.
+  const verdict = totalOverdue && first
+    ? `Start with ${first.clientName}`
+    : openChanges.length && first
+      ? `Decide ${first.clientName}’s change`
+      : openItems.length
+        ? "Nothing overdue"
+        : "You’re clear";
+
+  const subline = totalOverdue
+    ? `${totalOverdue} ${totalOverdue === 1 ? "filing" : "filings"} past due across ${clientsInTrouble} ${clientsInTrouble === 1 ? "client" : "clients"}. Everything else has time.`
+    : openItems.length
+      ? "Listed by client, most urgent first."
+      : mode === "demo"
+        ? "The sample queue has been cleared for this session."
+        : "No client work is currently assigned to you.";
+
   function complete(id: string, outcome: "filed" | "not_applicable") {
     setReviewError("");
     setReviewedIds((current) => [...current, id]);
+    setOpenRow(null);
 
     if (mode === "product") {
       void fetch(`/api/tasks/${encodeURIComponent(id)}/complete`, {
@@ -205,186 +205,165 @@ export function TodayExperience({
     }
   }
 
-  return (
-    <>
-      {/* Public mode shows a worked example so the page is legible on a first
-          visit, but it must never read as the professional's own work. */}
-      {mode === "public" ? (
-        <div className="sample-banner" role="note">
-          <span className="sample-banner-tag">Sample</span>
-          <p>
-            <strong>This is an example queue.</strong> Sharma Pharma and Royal Spice are
-            fictional clients, shown so you can see how the review queue works.
-          </p>
-          <Link className="button primary" href="/practice">Add your clients</Link>
-        </div>
-      ) : null}
-      <header className="today-hero">
-        <div>
-          <p className="eyebrow">Today · Review queue</p>
-          {/* What is true and actionable, not a count of everything that exists.
-              "29 things need your decision" was both wrong — these are
-              scheduled filings, not decisions — and alarming, which is the
-              opposite of what a work queue is for. */}
-          <h1>
-            {clientsInTrouble
-              ? `${clientsInTrouble} ${clientsInTrouble === 1 ? "client needs" : "clients need"} you today`
-              : sessions.length
-                ? "Nothing overdue"
-                : "You’re clear for now"}
-          </h1>
-          <p>
-            {clientsInTrouble
-              ? `${totalOverdue} ${totalOverdue === 1 ? "filing is" : "filings are"} past due. Start at the top and clear one client at a time.`
-              : sessions.length
-                ? "Work is grouped by client, most urgent first."
-                : mode === "demo"
-                  ? "The fictional queue has been cleared for this session."
-                  : "No client work is currently assigned to you."}
-          </p>
+  function decideChange(change: TodayChange, state: "approved" | "rejected") {
+    setDecidedChanges((current) => [...current, change.id]);
+    setOpenRow(null);
+    void reviewImpact(change.id, state).then((ok) => {
+      if (!ok) {
+        setDecidedChanges((current) => current.filter((id) => id !== change.id));
+        setReviewError("That decision could not be saved. Try again.");
+      }
+    });
+  }
 
-        </div>
-        <div className="today-hero-actions">
-          {mode === "product" ? (
-            <Link className="button" href="/tasks/new">Add work item</Link>
-          ) : null}
-          <Link className="button primary" href="/assistant">
-            <SparklesIcon /> Assistant
-          </Link>
-        </div>
+  return (
+    <div className="q">
+      {mode === "public" ? (
+        <p className="q-sample" role="note">
+          <strong>Sample queue.</strong> These are fictional clients, shown so you can see
+          how the review flow works. <Link className="text-link" href="/practice">Add your clients</Link>
+        </p>
+      ) : null}
+
+      <header className="q-head">
+        <p className="q-date">{dateLine}</p>
+        <h1 className="q-verdict">{verdict}</h1>
+        <p className="q-sub">{subline}</p>
+        <p className="q-head-links">
+          {mode === "product" ? <Link className="text-link" href="/tasks/new">Add work</Link> : null}
+          <Link className="text-link" href="/assistant"><SparklesIcon /> Assistant</Link>
+        </p>
       </header>
 
-      {notice ? <p className="today-notice" role="status">{notice}</p> : null}
+      {notice ? <p className="q-notice" role="status">{notice}</p> : null}
+      {reviewError ? <p className="form-error" role="alert">{reviewError}</p> : null}
 
-      <section className="focus-section">
-        {reviewError ? <p className="form-error" role="alert">{reviewError}</p> : null}
+      <div className="q-list">
+        {sessions.map((session) => {
+          const key = session.clientId ?? session.clientName;
+          const open = activeKey === key;
+          return (
+            <section className={`q-client${open ? " open" : ""}`} key={key}>
+              <button
+                aria-expanded={open}
+                className="q-client-row"
+                onClick={() => setOpenClient(open ? "" : key)}
+                type="button"
+              >
+                <span className="q-client-name">{session.clientName}</span>
+                <span className={`q-client-sum${session.overdue ? " late" : ""}`}>
+                  {sessionSummary(session)}
+                </span>
+              </button>
 
-        <div className="session-list">
-          {sessions.map((session) => {
-            const key = session.clientId ?? session.clientName;
-            const open = activeKey === key;
-            return (
-              <article className={`session ${open ? "open" : ""} ${session.overdue ? "is-late" : ""}`} key={key}>
-                <button
-                  aria-expanded={open}
-                  className="session-head"
-                  onClick={() => setOpenClient(open ? "" : key)}
-                  type="button"
-                >
-                  <span className="session-name">
-                    <strong>{session.clientName}</strong>
-                    <small>{sessionSummary(session, formatDate)}</small>
-                  </span>
-                  <span className="session-open">{open ? "Close" : "Start"}</span>
-                  <ChevronRightIcon className="session-chevron" />
-                </button>
-
-                {open ? (
-                  <div className="session-body">
-                    {/* A change waiting on a decision belongs with its client,
-                        not in a separate panel above the work. */}
-                    {session.changes.map((change) => (
-                      <div className="session-change" key={change.id}>
-                        <p className="session-change-ask">
-                          <span className="radar-authority">{change.authority}</span>
-                          Does this apply to {session.clientName}?
-                        </p>
-                        <a href={change.url} target="_blank" rel="noreferrer" className="session-change-title">
-                          {change.title} <span aria-hidden="true">↗</span>
-                        </a>
-                        <p className="session-change-why">{change.applicability}</p>
-                        <div className="session-change-actions">
-                          <button className="button small primary" onClick={() => decideChange(change, "approved")} type="button">
-                            Applies — add to work
-                          </button>
-                          <button className="button small" onClick={() => decideChange(change, "rejected")} type="button">
-                            Not applicable
+              {open ? (
+                <div className="q-client-body">
+                  {session.changes.map((change) => {
+                    const expanded = openRow === change.id;
+                    return (
+                      <div className="q-item" key={change.id}>
+                        <div className="q-item-row">
+                          <span aria-hidden="true" className="q-mark q-mark-ask">?</span>
+                          <button
+                            aria-expanded={expanded}
+                            className="q-line"
+                            onClick={() => setOpenRow(expanded ? null : change.id)}
+                            type="button"
+                          >
+                            <span className="q-line-main">Does this {change.authority} change apply?</span>
+                            <span className="q-line-meta">decide</span>
                           </button>
                         </div>
+                        {expanded ? (
+                          <div className="q-detail">
+                            <a className="q-detail-source" href={change.url} target="_blank" rel="noreferrer">
+                              {change.title} <span aria-hidden="true">↗</span>
+                            </a>
+                            <p className="q-detail-why">{change.applicability}</p>
+                            <p className="q-actions">
+                              <button className="q-act strong" onClick={() => decideChange(change, "approved")} type="button">
+                                Applies — add to work
+                              </button>
+                              <button className="q-act" onClick={() => decideChange(change, "rejected")} type="button">
+                                Not applicable
+                              </button>
+                            </p>
+                          </div>
+                        ) : null}
                       </div>
-                    ))}
+                    );
+                  })}
 
-                    {session.items.map((item) => {
-                      const late = Boolean(item.dueAt && new Date(item.dueAt) < startOfTodayIST());
-                      return (
-                        <div className={`session-item ${late ? "late" : ""}`} key={item.id}>
-                          <span className="session-item-copy">
-                            <strong>{asInstruction(item.title, "")}</strong>
-                            <small>{item.authority}</small>
-                          </span>
-                          <span className={`decision-due ${late ? "high" : item.urgency}`}>
-                            {late ? `Was due ${item.due}` : item.due}
-                          </span>
-                          <span className="session-item-actions">
-                            <button className="button small primary" onClick={() => complete(item.id, "filed")} type="button">
-                              <CheckCircleIcon /> Filed
-                            </button>
-                            <button className="button small" onClick={() => complete(item.id, "not_applicable")} type="button">
-                              N/A
-                            </button>
-                          </span>
+                  {session.items.map((item) => {
+                    const late = Boolean(item.dueAt && new Date(item.dueAt) < startOfTodayIST());
+                    const expanded = openRow === item.id;
+                    return (
+                      <div className="q-item" key={item.id}>
+                        <div className="q-item-row">
+                          {/* The circle IS filing it — one tap, no labelled
+                              button. Ten "Filed / N-A" pairs on screen was
+                              most of the noise on this page. */}
+                          <button
+                            aria-label={`Mark ${item.title} filed`}
+                            className="q-mark"
+                            onClick={() => complete(item.id, "filed")}
+                            type="button"
+                          >
+                            <CheckCircleIcon />
+                          </button>
+                          <button
+                            aria-expanded={expanded}
+                            className="q-line"
+                            onClick={() => setOpenRow(expanded ? null : item.id)}
+                            type="button"
+                          >
+                            <span className="q-line-main">{asInstruction(item.title, "")}</span>
+                            <span className={`q-line-meta${late ? " late" : ""}`}>
+                              {late ? `was due ${item.due}` : item.due}
+                            </span>
+                          </button>
                         </div>
-                      );
-                    })}
-
-                    <div className="session-foot">
-                      {session.clientId ? (
-                        <Link className="text-link" href={`/clients/${session.clientId}`}>Open {session.clientName}</Link>
-                      ) : null}
-                      <Link className="text-link" href={`/assistant?prompt=${encodeURIComponent(`What needs attention for ${session.clientName}?`)}`}>
-                        Ask the assistant about this client
-                      </Link>
-                    </div>
-                  </div>
-                ) : null}
-              </article>
-            );
-          })}
-        </div>
-
-        <div className="decision-list">
-          {!openItems.length ? (
-            mode === "product" ? (
-              <div className="queue-complete">
-                <CheckCircleIcon />
-                <h2>{hasClients ? "Your queue is empty" : "Set up your first queue"}</h2>
-                <p>
-                  {hasClients
-                    ? "Build a review queue from the statutory compliance calendar for your clients, or add a work item yourself."
-                    : "Add a client first, then build a review queue from the statutory compliance calendar."}
-                </p>
-                <div className="queue-empty-actions">
-                  {hasClients ? (
-                    <>
-                      <form action="/api/tasks/generate" method="post">
-                        <button className="button primary" type="submit">Build my queue from the calendar</button>
-                      </form>
-                      <Link className="button" href="/tasks/new">Add a work item</Link>
-                    </>
-                  ) : (
-                    <Link className="button primary" href="/clients/new">Add your first client</Link>
-                  )}
+                        {expanded ? (
+                          <div className="q-detail">
+                            <p className="q-detail-why">{item.authority}</p>
+                            <p className="q-actions">
+                              <button className="q-act" onClick={() => complete(item.id, "not_applicable")} type="button">
+                                Not applicable this period
+                              </button>
+                              {item.clientId ? (
+                                <Link className="q-act" href={`/clients/${item.clientId}`}>Open client</Link>
+                              ) : null}
+                              <Link className="q-act" href={`/assistant?prompt=${encodeURIComponent(item.title)}`}>
+                                Ask the assistant
+                              </Link>
+                            </p>
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
-            ) : (
-              <div className="queue-complete">
-                <CheckCircleIcon />
-                <h2>No unreviewed work</h2>
-                <p>{mode === "demo" ? "Every demo item was handled for this session." : "New source impacts and assigned tasks will appear here."}</p>
-              </div>
-            )
-          ) : null}
-        </div>
-      </section>
+              ) : null}
+            </section>
+          );
+        })}
 
-      {/* The whole reason to trust the page, in one sentence, once — replacing
-          the badges, the "sources reviewed" count and the audit reassurance
-          that were interleaved with the work. */}
-      <p className="today-watching">
+        {!sessions.length ? (
+          <p className="q-empty">
+            {mode === "product" && !hasClients ? (
+              <>No clients yet. <Link className="text-link" href="/clients/new">Add your first client</Link> to build a queue.</>
+            ) : (
+              "Nothing open."
+            )}
+          </p>
+        ) : null}
+      </div>
+
+      <p className="q-watch">
         {watching ?? "Reg Mitra checks the official sources for you."}
         {" "}
         <Link className="text-link" href="/calendar">See the calendar</Link>
       </p>
-    </>
+    </div>
   );
 }
