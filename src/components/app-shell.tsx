@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { CommandPalette } from "@/components/command-palette";
 import {
-  AppearanceIcon,
   CalendarIcon,
   CheckCircleIcon,
   CalculatorIcon,
@@ -13,12 +12,12 @@ import {
   FileIcon,
   FullscreenExitIcon,
   FullscreenIcon,
-  MoreIcon,
   RegulationsIcon,
   SearchIcon,
   SettingsIcon,
-  SyncIcon,
   SparklesIcon,
+  SyncIcon,
+  ToolsIcon,
   TodayIcon,
 } from "@/components/icons";
 import { navigation } from "@/lib/navigation";
@@ -44,7 +43,6 @@ export function AppShell({
   const pathname = usePathname();
   const router = useRouter();
   const [commandOpen, setCommandOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [fullscreen, setFullscreen] = useState(false);
   // Fullscreen is a browser capability, not app state: render the control only
   // where the API exists (it does not on iPhone Safari), and track the actual
@@ -74,12 +72,6 @@ export function AppShell({
     window.addEventListener("keydown", onShortcut);
     return () => window.removeEventListener("keydown", onShortcut);
   }, []);
-
-  function toggleTheme() {
-    const nextTheme = theme === "light" ? "dark" : "light";
-    setTheme(nextTheme);
-    document.documentElement.dataset.theme = nextTheme;
-  }
 
   const primaryIcons = {
     today: TodayIcon,
@@ -144,24 +136,34 @@ export function AppShell({
           })}
         </nav>
 
-        <details className="more-menu">
-          <summary aria-label="More workspace options"><MoreIcon /><span>More</span></summary>
-          <div className="more-menu-panel">
+        {/* "More" was a junk drawer: six unrelated things behind one word that
+            described none of them. The things you DO live under Tools; the
+            things you CONFIGURE live in Settings, which now sits where More was
+            rather than hiding inside it. */}
+        <details className="tools-menu">
+          <summary aria-label="Tools"><ToolsIcon /><span>Tools</span></summary>
+          <div className="tools-panel">
             <Link href="/calculators"><CalculatorIcon /><span><strong>Calculators</strong><small>Interest, late fee and due dates</small></span></Link>
             <Link href="/reconcile"><SyncIcon /><span><strong>Reconcile 2B</strong><small>Match supplier filings to the books</small></span></Link>
             <Link href="/practice"><ClientsIcon /><span><strong>Your practice</strong><small>Tune answers to your clients</small></span></Link>
+            <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Official sources and updates</small></span></Link>
             {/* Briefings is sample-only and duplicates Assistant · Prepare, so it
                 stays out of a firm's navigation until it runs on real drafts. */}
             {sessionMode === "product" ? null : (
               <Link href="/briefings"><FileIcon /><span><strong>Briefings</strong><small>Internal drafts and review</small></span></Link>
             )}
-            <Link href="/regulations"><RegulationsIcon /><span><strong>Regulations</strong><small>Official sources and updates</small></span></Link>
-            <Link href="/settings"><SettingsIcon /><span><strong>Settings</strong><small>Sources, team, and review policy</small></span></Link>
-            <button className="appearance-button" onClick={toggleTheme} type="button">
-              <AppearanceIcon /><span><strong>Appearance</strong><small>Use {theme === "light" ? "dark" : "light"} mode</small></span>
-            </button>
           </div>
         </details>
+
+        <div className="nav-spacer" />
+
+        <Link
+          aria-current={isActive(pathname, "/settings") ? "page" : undefined}
+          className={`sidebar-settings ${isActive(pathname, "/settings") ? "active" : ""}`}
+          href="/settings"
+        >
+          <SettingsIcon /><span>Settings</span>
+        </Link>
 
         <div className="firm-card">
           <span className="firm-avatar">{firmAvatar}</span>

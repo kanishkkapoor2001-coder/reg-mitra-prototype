@@ -6,6 +6,7 @@ import { getCorpusHealth } from "@/lib/rag/corpus";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { corpusFreshness } from "@/lib/rag/freshness";
 import type { Metadata } from "next";
+import { AppearanceSetting } from "@/components/appearance-setting";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -18,6 +19,7 @@ export default async function SettingsPage() {
   return (
     <>
       <PageHeading eyebrow="Workspace policy" title="Settings" description="Manage your firm, selected sources, reviewer roles, and workspace policy." />
+      <AppearanceSetting />
       <ConnectorControlCenter productMode={productMode} />
       <section style={{ marginTop: 26 }}>
         <div className="page-heading" style={{ marginBottom: 14 }}>

@@ -88,6 +88,10 @@ export function CalculatorIcon(props: IconProps) {
   return <IconBase {...props}><rect height="18" rx="2" width="14" x="5" y="3" {...strokeProps} /><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h4.01M8 19h.01M12 19h.01" {...strokeProps} /></IconBase>;
 }
 
+export function ToolsIcon(props: IconProps) {
+  return <IconBase {...props}><rect x="3.5" y="3.5" width="7" height="7" rx="1.6" {...strokeProps} /><rect x="13.5" y="3.5" width="7" height="7" rx="1.6" {...strokeProps} /><rect x="3.5" y="13.5" width="7" height="7" rx="1.6" {...strokeProps} /><rect x="13.5" y="13.5" width="7" height="7" rx="1.6" {...strokeProps} /></IconBase>;
+}
+
 export function WandIcon(props: IconProps) {
   return <IconBase {...props}><path d="M4 20 15 9M17.5 3.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1ZM7 4l.6 1.4L9 6l-1.4.6L7 8l-.6-1.4L5 6l1.4-.6L7 4Z" {...strokeProps} /></IconBase>;
 }

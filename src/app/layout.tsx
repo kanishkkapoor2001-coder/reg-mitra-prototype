@@ -28,7 +28,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${newsreader.variable}`}>
+    <html lang="en" className={`${jakarta.variable} ${newsreader.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Applies the saved theme before first paint. Without this a dark-mode
+            user gets a white flash on every load, which is the one thing a
+            theme preference exists to prevent. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("reg-mitra-theme");if(t==="dark")document.documentElement.dataset.theme="dark"}catch(e){}`,
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

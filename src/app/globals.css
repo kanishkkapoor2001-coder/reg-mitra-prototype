@@ -3947,3 +3947,173 @@ html { -webkit-tap-highlight-color: transparent; }
 }
 .recon-await svg { width: 20px; height: 20px; }
 .recon-await p { margin: 0; font-size: 13.5px; }
+
+/* ═══ Sidebar: Tools group and Settings ══════════════════════════════════
+   "More" was a junk drawer. Tools holds what you DO; Settings sits where More
+   used to and holds what you CONFIGURE. */
+.tools-menu { margin: 2px 0 0; }
+.tools-menu > summary {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 38px;
+  padding: 0 11px;
+  border-radius: 9px;
+  color: rgb(255 255 255 / 62%);
+  font-size: 13.5px;
+  font-weight: 550;
+  cursor: pointer;
+  list-style: none;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+.tools-menu > summary::-webkit-details-marker { display: none; }
+.tools-menu > summary svg { width: 18px; height: 18px; flex: 0 0 auto; }
+@media (hover: hover) and (pointer: fine) {
+  .tools-menu > summary:hover { background: rgb(255 255 255 / 7%); color: #fff; }
+}
+.tools-menu[open] > summary { color: #fff; }
+.tools-panel { display: grid; gap: 1px; margin: 2px 0 0; padding-left: 6px; }
+.tools-panel a {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: rgb(255 255 255 / 62%);
+  text-decoration: none;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+.tools-panel a svg { width: 16px; height: 16px; flex: 0 0 auto; margin-top: 2px; }
+.tools-panel strong { display: block; font-size: 12.5px; font-weight: 600; }
+.tools-panel small { display: block; color: rgb(255 255 255 / 42%); font-size: 11px; line-height: 1.4; }
+@media (hover: hover) and (pointer: fine) {
+  .tools-panel a:hover { background: rgb(255 255 255 / 7%); color: #fff; }
+}
+
+.sidebar-settings {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 38px;
+  margin-bottom: 6px;
+  padding: 0 11px;
+  border-radius: 9px;
+  color: rgb(255 255 255 / 62%);
+  font-size: 13.5px;
+  font-weight: 550;
+  text-decoration: none;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+.sidebar-settings svg { width: 18px; height: 18px; flex: 0 0 auto; }
+@media (hover: hover) and (pointer: fine) {
+  .sidebar-settings:hover { background: rgb(255 255 255 / 7%); color: #fff; }
+}
+.sidebar-settings.active { background: rgb(255 255 255 / 10%); color: #fff; }
+/* The spacer pushes Settings to the foot of the rail on desktop. */
+.sidebar { display: flex; flex-direction: column; }
+.nav-spacer { flex: 1 1 auto; min-height: 6px; }
+
+/* Appearance, now a Settings panel. */
+.appearance-choice { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; padding: 16px 17px 17px; }
+.appearance-option {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+.appearance-option strong { display: block; color: var(--ink-950); font-size: 13.5px; font-weight: 620; }
+.appearance-option small { display: block; color: var(--ink-500); font-size: 12px; }
+.appearance-option.active { border-color: var(--green-700); background: color-mix(in srgb, var(--green-700) 7%, transparent); }
+.appearance-swatch { width: 26px; height: 26px; flex: 0 0 auto; border: 1px solid var(--line-strong); border-radius: 7px; }
+.appearance-swatch.is-light { background: linear-gradient(135deg, #ffffff 50%, #f1f3f0 50%); }
+.appearance-swatch.is-dark { background: linear-gradient(135deg, #17201c 50%, #0f1613 50%); }
+
+/* ═══ Mobile: the rail becomes one five-tab bar ══════════════════════════
+   Tools and Settings have to reach the phone too, and the old layout could
+   only hold the three primary links. The sidebar itself becomes the fixed bar
+   and its children flatten into it, so desktop and mobile navigate through the
+   same five destinations rather than diverging. */
+@media (max-width: 899px) {
+  .sidebar {
+    position: fixed;
+    z-index: 60;
+    /* top: auto is load-bearing — the desktop rail is sticky with top: 0, and a
+       fixed box with both top and bottom pinned stretches the whole viewport. */
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    /* The desktop rail is a column; the bar is a row. Without this the sidebar
+       keeps flex-direction: column and each tab takes a full screen height. */
+    flex-direction: row;
+    width: auto;
+    /* The rail is height: 100vh on desktop; the bar must claim only its own
+       content or it covers the whole screen. */
+    height: auto;
+    min-height: 0;
+    align-items: stretch;
+    gap: 2px;
+    padding: 6px max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    border-top: 1px solid rgb(255 255 255 / 10%);
+    background: rgb(21 45 36 / 97%);
+    backdrop-filter: blur(16px);
+  }
+  .app-shell:has(.chat-shell) .sidebar { display: flex; }
+  .sidebar .brand,
+  .app-shell:has(.chat-shell) .sidebar .brand { display: none; }
+  .nav-spacer, .firm-card { display: none; }
+
+  /* Flatten the wrappers so every destination is a direct child of the bar and
+     they share the width evenly. */
+  .primary-nav, .nav-group, .tools-menu { display: contents; }
+  .primary-nav { position: static; padding: 0; border: 0; background: none; backdrop-filter: none; }
+
+  .nav-link,
+  .tools-menu > summary,
+  .sidebar-settings {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 52px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    margin: 0;
+    padding: 4px 2px;
+    border-radius: 8px;
+    font-size: 11px;
+    text-align: center;
+  }
+  .nav-link span:last-child,
+  .tools-menu > summary span,
+  .sidebar-settings span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  /* Tools opens upward as a sheet above the bar. */
+  .tools-panel {
+    position: fixed;
+    right: 8px;
+    bottom: 74px;
+    left: 8px;
+    z-index: 61;
+    gap: 2px;
+    padding: 8px;
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: var(--radius-lg);
+    background: rgb(21 45 36 / 98%);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 -10px 40px rgb(8 16 12 / 45%);
+  }
+  .tools-panel a { padding: 11px 12px; }
+  .tools-panel strong { font-size: 13.5px; }
+}
