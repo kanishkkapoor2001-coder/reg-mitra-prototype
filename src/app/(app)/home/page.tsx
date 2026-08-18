@@ -127,6 +127,20 @@ export default async function HomePage() {
     weekday: "long", day: "numeric", month: "long", timeZone: "Asia/Kolkata",
   }).format(now);
 
+  // The rail: who needs attention, condensed from the same task rows.
+  const byClient = new Map<string, { name: string; overdue: number; open: number }>();
+  for (const task of open) {
+    const clientValue = task.clients;
+    const name = (Array.isArray(clientValue) ? clientValue[0] : clientValue)?.display_name ?? "Firm-wide";
+    const entry = byClient.get(name) ?? { name, overdue: 0, open: 0 };
+    entry.open += 1;
+    if (task.due_at && new Date(task.due_at) < startOfToday) entry.overdue += 1;
+    byClient.set(name, entry);
+  }
+  const dayClients = [...byClient.values()]
+    .sort((a, b) => b.overdue - a.overdue || b.open - a.open)
+    .slice(0, 4);
+
   const actionable = brief.filter((item) => item.verdict.kind === "act");
   const headline = actionable.length
     ? `${actionable.length === 1 ? "One new change" : `${actionable.length} new changes`} may touch your clients`
@@ -144,53 +158,85 @@ export default async function HomePage() {
 
 
   return (
-    <div className="home q">
-      <header className="q-head">
+    <div className="home">
+      <header className="q-head home-span">
         <p className="q-date">{dateLine} · {greeting}</p>
         <h1 className="q-verdict">{headline}</h1>
         {/* Proof of work even when the answer is "nothing": the reason a firm
             keeps paying is knowing the checking happened. */}
-        <p className="q-sub">
-          {standing} Watching {ruleCount ?? 0} rules for your {clientCount ?? 0}{" "}
-          {(clientCount ?? 0) === 1 ? "client" : "clients"}; sources last checked {lastChecked}.
-        </p>
+        <p className="q-sub">{standing}</p>
       </header>
 
-      <HomeChat />
+      <div className="home-main">
+        <HomeChat />
 
-      <section className="q-section">
+        <section className="q-section">
+          <h2 className="q-section-head">
+            From the regulators
+            <span>read against your book</span>
+          </h2>
+          <div className="q-list home-brief-list">
+            {brief.map((item) => (
+              <a
+                className="q-client-row"
+                href={item.verdict.kind === "act" && item.clientHref ? item.clientHref : item.url}
+                key={item.id}
+                rel={item.verdict.kind === "act" ? undefined : "noreferrer"}
+                target={item.verdict.kind === "act" ? undefined : "_blank"}
+              >
+                <span className="home-brief-copy">
+                  <span className="home-brief-authority">{item.authority}</span>
+                  <span className="q-line-main">{item.title}</span>
+                </span>
+                <span className={`q-client-sum home-verdict-${item.verdict.kind}`}>
+                  {item.verdict.text}{item.date && item.verdict.kind === "quiet" ? ` · ${item.date}` : ""}
+                </span>
+              </a>
+            ))}
+            {!brief.length ? (
+              <p className="q-empty">No regulatory changes recorded yet.</p>
+            ) : null}
+          </div>
+        </section>
+      </div>
+
+      {/* The other half of the morning: who needs you. A condensed Today, so
+          the front door carries the whole picture instead of a thin column. */}
+      <aside className="home-rail">
         <h2 className="q-section-head">
-          From the regulators
-          <span>latest changes, read against your book</span>
+          Your day
+          <span>{overdue.length ? `${overdue.length} overdue` : "clear"}</span>
         </h2>
-        <div className="q-list home-brief-list">
-          {brief.map((item) => (
-            <a
-              className="q-client-row"
-              href={item.verdict.kind === "act" && item.clientHref ? item.clientHref : item.url}
-              key={item.id}
-              rel={item.verdict.kind === "act" ? undefined : "noreferrer"}
-              target={item.verdict.kind === "act" ? undefined : "_blank"}
-            >
-              <span className="home-brief-copy">
-                <span className="home-brief-authority">{item.authority}</span>
-                <span className="q-line-main">{item.title}</span>
+        <div className="rail-list">
+          {dayClients.map((client) => (
+            <Link className="rail-row" href="/today" key={client.name}>
+              <span className="rail-name">{client.name}</span>
+              <span className={`rail-sum${client.overdue ? " late" : ""}`}>
+                {client.overdue ? `${client.overdue} overdue` : `${client.open} open`}
               </span>
-              <span className={`q-client-sum home-verdict-${item.verdict.kind}`}>
-                {item.verdict.text}{item.date && item.verdict.kind === "quiet" ? ` · ${item.date}` : ""}
-              </span>
-            </a>
+            </Link>
           ))}
-          {!brief.length ? (
-            <p className="q-empty">No regulatory changes recorded yet.</p>
-          ) : null}
+          {!dayClients.length ? <p className="q-empty">Nothing assigned.</p> : null}
         </div>
-      </section>
+        <p className="q-actions rail-foot">
+          <Link className="q-act strong" href="/today">Open Today</Link>
+        </p>
 
-      <p className="q-actions home-foot">
-        <Link className="q-act strong" href="/today">Open Today — {standing.toLowerCase()}</Link>
-        <Link className="q-act" href="/regulations">All updates</Link>
-      </p>
+        <h2 className="q-section-head rail-gap">
+          Shortcuts
+          <span />
+        </h2>
+        <div className="rail-list">
+          <Link className="rail-row" href="/calendar"><span className="rail-name">Statutory calendar</span></Link>
+          <Link className="rail-row" href="/reconcile"><span className="rail-name">Reconcile 2B</span></Link>
+          <Link className="rail-row" href="/regulations"><span className="rail-name">All regulatory updates</span></Link>
+        </div>
+
+        <p className="q-watch">
+          Watching {ruleCount ?? 0} rules for your {clientCount ?? 0}{" "}
+          {(clientCount ?? 0) === 1 ? "client" : "clients"} · sources last checked {lastChecked}
+        </p>
+      </aside>
     </div>
   );
 }

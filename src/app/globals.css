@@ -4608,3 +4608,40 @@ a.q-client-row { text-decoration: none; }
 .home-brief-list .q-client-row { min-width: 0; }
 .home > * { min-width: 0; }
 .home .home-composer { max-width: 100%; }
+
+/* ═══ Canvas: wider, centred, and on home — filled ═══════════════════════
+   A 780px column anchored left just moved the emptiness to one side. Pages
+   now centre a wider column, and home stops being a single thin column at
+   all: brief on the left, the day on the right. */
+.q { max-width: 960px; margin: 0 auto; }
+
+.home {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  column-gap: 56px;
+  row-gap: 0;
+  max-width: 1150px;
+  margin: 2vh auto 0;
+}
+.home-span { grid-column: 1 / -1; }
+.home-main { min-width: 0; }
+.home-rail { min-width: 0; }
+.home-rail .q-section-head { margin-top: 0; }
+.rail-gap { margin-top: 26px !important; }
+.rail-list { display: grid; }
+.rail-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  padding: 10px 2px; border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  text-decoration: none;
+}
+.rail-row:last-child { border-bottom: 0; }
+.rail-name { color: var(--ink-950); font-size: 13.5px; font-weight: 500; }
+.rail-sum { color: var(--ink-400); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rail-sum.late { color: var(--red-700); }
+.rail-foot { margin: 10px 0 0; }
+.home-rail .q-watch { margin-top: 26px; }
+
+@media (max-width: 980px) {
+  .home { grid-template-columns: minmax(0, 1fr); }
+  .home-rail { margin-top: 8px; }
+}
