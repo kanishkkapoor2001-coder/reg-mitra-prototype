@@ -3,6 +3,7 @@ import { PendingDecisions } from "@/components/pending-decisions";
 import { readPendingDecisions } from "@/lib/radar/impacts";
 import { TodayExperience } from "@/components/today-experience";
 import { workItems } from "@/lib/demo-data";
+import { getCorpusHealth } from "@/lib/rag/corpus";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentWorkspace } from "@/lib/workspace";
@@ -53,7 +54,6 @@ export default async function TodayPage({
           evidenceState: "unverified",
         }))}
         mode="public"
-        verifiedSourceCount={0}
         hasClients
       />
     );
@@ -68,7 +68,7 @@ export default async function TodayPage({
   // One round trip's worth of waiting for all three reads: the pending
   // decisions used to run only after the task query had returned, which put
   // Supabase on the critical path twice for no reason.
-  const [{ data, error }, { count: clientCount }, pending] = await Promise.all([
+  const [{ data, error }, { count: clientCount }, { count: ruleCount }, pending] = await Promise.all([
     supabase
       .from("tasks")
       .select("id, title, priority, due_at, state, reviewed_at, client_id, metadata, clients!tasks_client_id_fkey(display_name), client_regulatory_impacts(review_state, regulatory_sources(authority))")
@@ -82,6 +82,10 @@ export default async function TodayPage({
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspace.id)
       .eq("status", "active"),
+    supabase
+      .from("regulatory_rules")
+      .select("id", { count: "exact", head: true })
+      .eq("active", true),
     // Regulatory changes waiting on a decision come before task work: deciding
     // whether a circular applies is what unblocks everything downstream.
     readPendingDecisions(supabase, workspace.id).catch((pendingError) => {
@@ -93,6 +97,10 @@ export default async function TodayPage({
   // Never swallow this again: an empty queue and a failed query look identical
   // on screen, and this one went unnoticed because nothing said a word.
   if (error) console.error("[today] task query failed", error);
+
+  const lastChecked = new Intl.DateTimeFormat("en-IN", {
+    day: "numeric", month: "short", timeZone: "Asia/Kolkata",
+  }).format(new Date(getCorpusHealth().generatedAt));
 
   const items = (data ?? []).map((task) => {
     const clientValue = task.clients;
@@ -125,9 +133,11 @@ export default async function TodayPage({
       <TodayExperience
         items={items}
         mode="product"
-        verifiedSourceCount={items.filter((item) => item.evidenceState === "verified").length}
         hasClients={(clientCount ?? 0) > 0}
         notice={noticeForGenerated(params.generated)}
+        // The trust claim, stated once at the foot of the page instead of as
+        // badges and counts interleaved with the work.
+        watching={`Watching ${ruleCount ?? 0} rules across your ${clientCount ?? 0} ${(clientCount ?? 0) === 1 ? "client" : "clients"}. Sources last checked ${lastChecked}.`}
       />
     </>
   );

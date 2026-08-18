@@ -4233,3 +4233,21 @@ html { -webkit-tap-highlight-color: transparent; }
    so the expanded text sat 36px right of the row title above it. Match the
    trigger's own padding instead. */
 .decision-detail { padding-left: 15px; }
+
+/* ═══ Today: the work reads as work ═════════════════════════════════════
+   Rows now lead with the verb, so the primary action is the largest thing on
+   the row and the actions below it are ordered by what the CA will press. */
+.decision-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.decision-actions-spacer { flex: 1 1 auto; min-width: 0; }
+.decision-actions .text-link { font-size: 12.5px; }
+
+/* The trust claim, once, at the foot. */
+.today-watching {
+  margin: 22px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-500);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.today-watching .text-link { font-size: 12.5px; }

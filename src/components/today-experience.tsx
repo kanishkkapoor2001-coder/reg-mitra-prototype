@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CheckCircleIcon, ChevronRightIcon, SparklesIcon } from "@/components/icons";
-import { TrustBadge } from "@/components/trust-badge";
 import type { EvidenceState, RiskLevel } from "@/lib/types";
 
 export interface TodayItem {
@@ -17,6 +16,24 @@ export interface TodayItem {
   urgency: RiskLevel;
   needsDecision: boolean;
   evidenceState: Extract<EvidenceState, "verified" | "unverified">;
+}
+
+/**
+ * Rows arrive labelled — "GSTR-1 · Sharma Pharma" — which names a thing rather
+ * than asking for an act. A queue is read fastest when every line starts with
+ * the verb, so the eye can skim what to DO down the left edge.
+ */
+function asInstruction(title: string, client: string): string {
+  const head = title.split("·")[0]?.trim() ?? title;
+  if (/^apply:/i.test(head)) return head.replace(/^apply:\s*/i, "Apply ");
+  const verb = /statement|return|gstr|itr|form|tds\b/i.test(head)
+    ? "File"
+    : /deposit|payment|challan/i.test(head)
+      ? "Pay"
+      : /epf|esi|pf\b/i.test(head)
+        ? "File"
+        : "Complete";
+  return client && client !== "Firm-wide" ? `${verb} ${head} — ${client}` : `${verb} ${head}`;
 }
 
 type Bucket = { overdue: TodayItem[]; thisWeek: TodayItem[]; later: TodayItem[] };
@@ -38,15 +55,16 @@ const GROUPS: readonly {
 export function TodayExperience({
   items,
   mode,
-  verifiedSourceCount,
   hasClients = false,
   notice = "",
+  watching,
 }: Readonly<{
   items: readonly TodayItem[];
   mode: "demo" | "public" | "product";
-  verifiedSourceCount: number;
   hasClients?: boolean;
   notice?: string;
+  /** One sentence: what is being watched, for whom, and when it was last checked. */
+  watching?: string;
 }>) {
   const [expandedId, setExpandedId] = useState<string | null>(items[0]?.id ?? null);
   const [reviewedIds, setReviewedIds] = useState<readonly string[]>([]);
@@ -81,29 +99,33 @@ export function TodayExperience({
     return bucket;
   }, [openItems]);
 
-  const nextDue = openItems
-    .filter((item) => item.dueAt)
-    .sort((left, right) => String(left.dueAt).localeCompare(String(right.dueAt)))[0];
-
-  function markReviewed(id: string) {
+  /**
+   * Completing a row asserts the filing was DONE — or that it did not arise
+   * this period. The old button stamped "reviewed", so a filed return stayed
+   * open forever and the page tracked reading instead of compliance.
+   *
+   * Optimistic, like every other decision in the product: the row leaves on
+   * press and the write happens behind it.
+   */
+  function complete(id: string, outcome: "filed" | "not_applicable") {
     setReviewError("");
-    // Optimistic: the item leaves and the queue advances the moment the button
-    // is pressed. Waiting on the network here made the single most-pressed
-    // button in the product feel like a page load; now the write happens behind
-    // the flip and reverts with an error only if it fails.
     setReviewedIds((current) => [...current, id]);
     const nextItem = items.find((item) => item.id !== id && !reviewedIds.includes(item.id));
     setExpandedId(nextItem?.id ?? null);
 
     if (mode === "product") {
-      void fetch(`/api/tasks/${encodeURIComponent(id)}/review`, { method: "POST" })
+      void fetch(`/api/tasks/${encodeURIComponent(id)}/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ outcome }),
+      })
         .then((response) => {
           if (!response.ok) throw new Error(String(response.status));
         })
         .catch(() => {
           setReviewedIds((current) => current.filter((item) => item !== id));
           setExpandedId(id);
-          setReviewError("This item could not be marked reviewed. Check your reviewer access and try again.");
+          setReviewError("That could not be saved. Check your workspace access and try again.");
         });
     }
   }
@@ -149,24 +171,7 @@ export function TodayExperience({
                     ? "The fictional queue has been reviewed for this session."
                     : "No client work is currently assigned to you."}
           </p>
-          {/* One quiet line instead of a boxed stat strip. The headline already
-              carries the decision count in 34px; a second rendering of the same
-              number in a card, and a third in the queue header, was the "too
-              much" — the page introduced itself three times before content. */}
-          <p className="today-meta">
-            <span>{openItems.length} open</span>
-            <span aria-hidden="true">·</span>
-            <span>{verifiedSourceCount} {verifiedSourceCount === 1 ? "source" : "sources"} reviewed</span>
-            <span aria-hidden="true">·</span>
-            <TrustBadge kind="evidence" state={mode === "demo" ? "demo" : verifiedSourceCount ? "verified" : "unverified"} />
-            <span className="today-meta-note">
-              {mode === "demo"
-                ? "Demo progress resets on reload."
-                : mode === "public"
-                  ? "Progress lasts for this browser session."
-                  : "Reviews are saved to the audit history."}
-            </span>
-          </p>
+
         </div>
         <div className="today-hero-actions">
           {mode === "product" ? (
@@ -204,8 +209,8 @@ export function TodayExperience({
                         type="button"
                       >
                         <span className="decision-copy">
-                          <strong>{item.title}</strong>
-                          <small>{item.client} · {item.authority}</small>
+                          <strong>{asInstruction(item.title, item.client)}</strong>
+                          <small>{item.authority}</small>
                         </span>
                         <span className={`decision-due ${group.key === "overdue" ? "high" : item.urgency}`}>
                           {group.key === "overdue" ? `Was due ${item.due}` : item.due}
@@ -224,13 +229,17 @@ export function TodayExperience({
                               : "This is a scheduled obligation, not tied to a reviewed regulation. Confirm it still applies to this client."}
                           </p>
                           <div className="decision-actions">
-                            {item.clientId ? <Link className="button" href={`/clients/${item.clientId}`}>Open client</Link> : null}
-                            <Link className="button" href={`/assistant?prompt=${encodeURIComponent(item.title)}`}>
-                              <SparklesIcon /> Prepare review
-                            </Link>
-                            <button className="button primary" onClick={() => markReviewed(item.id)} type="button">
-                              <CheckCircleIcon /> Done
+                            <button className="button primary" onClick={() => complete(item.id, "filed")} type="button">
+                              <CheckCircleIcon /> Mark filed
                             </button>
+                            <button className="button" onClick={() => complete(item.id, "not_applicable")} type="button">
+                              Not applicable this period
+                            </button>
+                            <span className="decision-actions-spacer" />
+                            {item.clientId ? <Link className="text-link" href={`/clients/${item.clientId}`}>Open client</Link> : null}
+                            <Link className="text-link" href={`/assistant?prompt=${encodeURIComponent(item.title)}`}>
+                              Ask the assistant
+                            </Link>
                           </div>
                         </div>
                       ) : null}
@@ -278,14 +287,14 @@ export function TodayExperience({
         </div>
       </section>
 
-      <section className="next-up">
-        <div>
-          <p className="eyebrow">Next recorded deadline</p>
-          <h2>{nextDue ? `${nextDue.title} · ${nextDue.due}` : "No task deadline recorded"}</h2>
-          <p>{nextDue ? `${nextDue.client} · ${nextDue.authority}` : "Open the calendar to review source-linked recurring obligations."}</p>
-        </div>
-        <Link className="text-link" href="/calendar">Open source-linked calendar →</Link>
-      </section>
+      {/* The whole reason to trust the page, in one sentence, once — replacing
+          the badges, the "sources reviewed" count and the audit reassurance
+          that were interleaved with the work. */}
+      <p className="today-watching">
+        {watching ?? "Reg Mitra checks the official sources for you."}
+        {" "}
+        <Link className="text-link" href="/calendar">See the calendar</Link>
+      </p>
     </>
   );
 }
