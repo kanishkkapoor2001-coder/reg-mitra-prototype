@@ -4,22 +4,29 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { SearchIcon } from "@/components/icons";
-import type { RiskLevel } from "@/lib/types";
+
+// The roster — the firm's register of who it acts for, and what Reg Mitra
+// knows about each of them.
+//
+// This page used to be a six-column sortable table of workload: highest task
+// priority, next deadline, open work, impact review. All of that is Today's
+// job, and Today does it better, so the page read as a worse second copy of
+// another screen. Its own job — the profile facts every match is computed
+// from — was not even a column.
+//
+// So the columns are now: who they are, what we know about them, and how much
+// work is open (a pointer back to Today, not a workload view of its own).
 
 export interface PortfolioClient {
   id: string;
   name: string;
-  identifier: string;
   sector: string;
-  risk: RiskLevel;
+  /** Profile questions still unanswered — what only this page can fix. */
+  unanswered: number;
+  /** Regulatory changes waiting on a decision for this client. */
+  undecided: number;
   pending: number;
-  nextDeadline: string;
-  sourceStatus: string;
 }
-
-type SortKey = "name" | "identifier" | "risk" | "nextDeadline" | "pending" | "sourceStatus";
-
-const riskRank: Record<RiskLevel, number> = { high: 3, medium: 2, low: 1 };
 
 export function ClientsExperience({
   clients,
@@ -37,9 +44,6 @@ export function ClientsExperience({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const query = searchParams.get("q") ?? "";
-  const risk = searchParams.get("risk") ?? "all";
-  const sort = (searchParams.get("sort") ?? "risk") as SortKey;
-  const direction = searchParams.get("direction") === "asc" ? "asc" : "desc";
 
   function updateParams(changes: Record<string, string | null>) {
     const next = new URLSearchParams(searchParams.toString());
@@ -50,48 +54,39 @@ export function ClientsExperience({
     router.replace(`${pathname}${next.size ? `?${next.toString()}` : ""}`);
   }
 
-  function changeSort(key: SortKey) {
-    updateParams({
-      sort: key,
-      direction: sort === key && direction === "asc" ? "desc" : "asc",
-    });
-  }
-
   const visibleClients = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     return [...clients]
-      .filter((client) => risk === "all" || client.risk === risk)
       .filter((client) =>
-        !normalized
-        || `${client.name} ${client.identifier} ${client.sector}`.toLowerCase().includes(normalized),
+        !normalized || `${client.name} ${client.sector}`.toLowerCase().includes(normalized),
       )
+      // Clients the page can still do something about come first: an
+      // undecided change, then an incomplete profile, then the rest by name.
       .sort((left, right) => {
-        const leftValue = sort === "risk" ? riskRank[left.risk] : left[sort];
-        const rightValue = sort === "risk" ? riskRank[right.risk] : right[sort];
-        const comparison = typeof leftValue === "number" && typeof rightValue === "number"
-          ? leftValue - rightValue
-          : String(leftValue).localeCompare(String(rightValue), "en-IN", { numeric: true });
-        return direction === "asc" ? comparison : -comparison;
+        if (left.undecided !== right.undecided) return right.undecided - left.undecided;
+        if (left.unanswered !== right.unanswered) return right.unanswered - left.unanswered;
+        return left.name.localeCompare(right.name, "en-IN");
       });
-  }, [clients, direction, query, risk, sort]);
+  }, [clients, query]);
 
-  const highRiskCount = clients.filter((client) => client.risk === "high").length;
+  const incomplete = clients.filter((client) => client.unanswered > 0).length;
 
   return (
     <>
       <header className="portfolio-hero">
         <div>
-          <p className="eyebrow">Client workspace</p>
+          <p className="eyebrow">Client register</p>
           <h1>Clients</h1>
+          {/* Says what the page is FOR. Without this the roster looks like a
+              read-only report and nobody learns that the profile drives every
+              match the product makes. */}
           <p>
             {mode === "demo"
-              ? "Sample client profiles demonstrate the review workflow."
-              : "Review recorded client facts, possible regulatory impact, and open work."}
+              ? "Sample client profiles, showing the facts matching runs on."
+              : incomplete
+                ? `Reg Mitra matches circulars against what you record here. ${incomplete} ${incomplete === 1 ? "client is" : "clients are"} missing profile facts.`
+                : "Reg Mitra matches circulars against what you record here."}
           </p>
-        </div>
-        <div className="portfolio-stat">
-          <strong>{highRiskCount}</strong>
-          <span>{highRiskCount === 1 ? "client with" : "clients with"} high-priority work</span>
         </div>
       </header>
 
@@ -107,20 +102,9 @@ export function ClientsExperience({
             placeholder="Find a client"
           />
         </label>
-        <label className="filter-label">
-          <span className="sr-only">Filter by highest task priority</span>
-          <select
-            className="filter-select"
-            onChange={(event) => updateParams({ risk: event.target.value })}
-            value={risk}
-          >
-            <option value="all">All priorities</option>
-            <option value="high">High priority</option>
-            <option value="medium">Medium priority</option>
-            <option value="low">Low priority</option>
-          </select>
-        </label>
-        <span className="result-count">{visibleClients.length} {visibleClients.length === 1 ? "client" : "clients"}</span>
+        <span className="result-count">
+          {visibleClients.length} {visibleClients.length === 1 ? "client" : "clients"}
+        </span>
         {mode === "product" && clientLimit !== null ? (
           <span className={`plan-usage${clients.length >= clientLimit ? " is-full" : ""}`}>
             {clients.length} of {clientLimit} used{planName ? ` · ${planName}` : ""}
@@ -141,42 +125,45 @@ export function ClientsExperience({
       </div>
 
       {visibleClients.length ? (
-        <div className="client-table-wrap">
-          <table className="client-table">
-            <thead>
-              <tr>
-                <SortableHeading active={sort} direction={direction} label="Client" onSort={changeSort} sortKey="name" />
-                <SortableHeading active={sort} direction={direction} label="Primary identifier" onSort={changeSort} sortKey="identifier" />
-                <SortableHeading active={sort} direction={direction} label="Highest task priority" onSort={changeSort} sortKey="risk" />
-                <SortableHeading active={sort} direction={direction} label="Next deadline" onSort={changeSort} sortKey="nextDeadline" />
-                <SortableHeading active={sort} direction={direction} label="Open work" numeric onSort={changeSort} sortKey="pending" />
-                <SortableHeading active={sort} direction={direction} label="Impact review" onSort={changeSort} sortKey="sourceStatus" />
-              </tr>
-            </thead>
-            <tbody>
-              {visibleClients.map((client) => (
-                <tr key={client.id}>
-                  <th scope="row">
-                    <Link href={`/clients/${client.id}`}>{client.name}</Link>
-                    <small>{client.sector}</small>
-                  </th>
-                  <td className="client-identifier">{client.identifier}</td>
-                  <td><span className={`risk-chip ${client.risk}`}>{client.risk}</span></td>
-                  <td>{client.nextDeadline}</td>
-                  <td className="numeric">{client.pending}</td>
-                  <td>{client.sourceStatus}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="roster">
+          {visibleClients.map((client) => (
+            <Link className="roster-row" href={`/clients/${client.id}`} key={client.id}>
+              <span className="roster-name">
+                <strong>{client.name}</strong>
+                <small>{client.sector}</small>
+              </span>
+
+              {/* The page's own column: what it can fix. */}
+              <span className={`roster-profile${client.unanswered ? " is-open" : ""}`}>
+                {client.unanswered
+                  ? `${client.unanswered} ${client.unanswered === 1 ? "question" : "questions"} unanswered`
+                  : "Profile complete"}
+              </span>
+
+              <span className="roster-work">
+                {client.undecided ? (
+                  <span className="roster-flag">
+                    {client.undecided} to decide
+                  </span>
+                ) : null}
+                {client.pending
+                  ? `${client.pending} open`
+                  : <span className="roster-clear">Nothing open</span>}
+              </span>
+            </Link>
+          ))}
         </div>
       ) : (
         <section className="empty-state portfolio-empty">
           <SearchIcon />
           <h2>{clients.length ? "No clients match" : "Add your first client"}</h2>
-          <p>{clients.length ? "Change the search or priority filter." : "Create a client profile before mapping regulatory impact or assigning work."}</p>
+          <p>
+            {clients.length
+              ? "Change the search."
+              : "Record a client and their profile facts — matching runs on those facts."}
+          </p>
           {clients.length ? (
-            <button className="button" onClick={() => router.replace(pathname)} type="button">Clear filters</button>
+            <button className="button" onClick={() => router.replace(pathname)} type="button">Clear search</button>
           ) : mode === "product" ? (
             <>
               <Link className="button primary" href="/clients/new">Add client</Link>
@@ -186,34 +173,5 @@ export function ClientsExperience({
         </section>
       )}
     </>
-  );
-}
-
-function SortableHeading({
-  active,
-  direction,
-  label,
-  numeric = false,
-  onSort,
-  sortKey,
-}: Readonly<{
-  active: SortKey;
-  direction: "asc" | "desc";
-  label: string;
-  numeric?: boolean;
-  onSort: (key: SortKey) => void;
-  sortKey: SortKey;
-}>) {
-  const isActive = active === sortKey;
-  return (
-    <th
-      aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
-      className={numeric ? "numeric" : undefined}
-      scope="col"
-    >
-      <button onClick={() => onSort(sortKey)} type="button">
-        {label}<span aria-hidden="true">{isActive ? (direction === "asc" ? " ↑" : " ↓") : ""}</span>
-      </button>
-    </th>
   );
 }

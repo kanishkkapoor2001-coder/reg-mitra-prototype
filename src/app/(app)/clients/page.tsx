@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { ClientsExperience } from "@/components/clients-experience";
 import { TIERS, clientLimitFor } from "@/lib/billing/tiers";
 import { readWorkspaceRadarSummary, type ClientRadarSummary } from "@/lib/radar/impacts";
+import { ATTRIBUTE_DEFINITIONS } from "@/lib/radar/facts";
 import { humanizeEnum } from "@/lib/format";
 import { clients as demoClients } from "@/lib/demo-data";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
@@ -24,12 +25,10 @@ export default async function ClientsPage() {
         clients={demoClients.map((client) => ({
           id: client.id,
           name: client.shortName,
-          identifier: client.identifiers[0] ?? "Not recorded",
           sector: client.sector,
-          risk: client.risk,
+          unanswered: 0,
+          undecided: 0,
           pending: client.pending,
-          nextDeadline: client.dueThisWeek ? "This week" : "No deadline",
-          sourceStatus: "Sample data",
         }))}
         mode="public"
       />
@@ -48,46 +47,42 @@ export default async function ClientsPage() {
 
   if (error) console.error("[clients] client query failed", error);
 
-  const radar = await readWorkspaceRadarSummary(supabase, workspace.id).catch((radarError) => {
-    console.error("[clients] radar summary unavailable", radarError);
-    return new Map<string, ClientRadarSummary>();
-  });
+  // Profile completeness is what this page is for, so it is read here rather
+  // than left to a per-client fetch on the detail page.
+  const [radar, { data: factRows }] = await Promise.all([
+    readWorkspaceRadarSummary(supabase, workspace.id).catch((radarError) => {
+      console.error("[clients] radar summary unavailable", radarError);
+      return new Map<string, ClientRadarSummary>();
+    }),
+    supabase
+      .from("client_facts")
+      .select("client_id, fact_key")
+      .eq("workspace_id", workspace.id)
+      .is("superseded_at", null),
+  ]);
+
+  const trackedKeys = new Set(ATTRIBUTE_DEFINITIONS.map((definition) => definition.key));
+  const answeredByClient = new Map<string, Set<string>>();
+  for (const row of factRows ?? []) {
+    if (!trackedKeys.has(row.fact_key)) continue;
+    const answered = answeredByClient.get(row.client_id) ?? new Set<string>();
+    answered.add(row.fact_key);
+    answeredByClient.set(row.client_id, answered);
+  }
 
   const clients = (data ?? []).map((client) => {
     const openTasks = (client.tasks ?? []).filter(
       (task) => task.state !== "completed" && task.state !== "dismissed",
     );
-    const highestPriority = openTasks.reduce(
-      (highest, task) => Math.max(highest, task.priority),
-      0,
-    );
-    const deadlines = openTasks
-      .map((task) => task.due_at)
-      .filter((value): value is string => Boolean(value))
-      .sort();
     const summary = radar.get(client.id);
 
     return {
       id: client.id,
       name: client.display_name || client.legal_name,
-      identifier: "Protected",
-      sector: [humanizeEnum(client.sector), client.state_code].filter(Boolean).join(" · ") || "Profile incomplete",
-      risk: highestPriority >= 3 ? "high" as const : highestPriority === 2 ? "medium" as const : "low" as const,
+      sector: [humanizeEnum(client.sector), client.state_code].filter(Boolean).join(" · ") || "Sector not recorded",
+      unanswered: ATTRIBUTE_DEFINITIONS.length - (answeredByClient.get(client.id)?.size ?? 0),
+      undecided: summary?.flagged ?? 0,
       pending: openTasks.length,
-      nextDeadline: deadlines[0]
-        ? new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" }).format(new Date(deadlines[0]))
-        : "No deadline",
-      // Reads what the matcher actually found, rather than the old blanket
-      // "Not assessed" that every client showed.
-      sourceStatus: !summary
-        ? "Not scanned yet"
-        : summary.flagged > 0
-          ? `${summary.flagged} to review`
-          : summary.needsFacts > 0
-            ? `${summary.needsFacts} need facts`
-            : summary.approved > 0
-              ? `${summary.approved} approved`
-              : "Nothing outstanding",
     };
   });
 
